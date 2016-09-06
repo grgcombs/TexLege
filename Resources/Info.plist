@@ -4,10 +4,17 @@
 <dict>
 	<key>CFBuildNumber</key>
 	<string>1</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>CFBuildVersion</key>
 	<string>${CURRENT_PROJECT_VERSION}</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.reference</string>
 	<key>CFBundleDisplayName</key>
 	<string>TexLege</string>
 	<key>CFBundleExecutable</key>
@@ -36,6 +43,8 @@
 	<string>UIInterfaceOrientationLandscapeLeft</string>
 	<key>UIInterfaceOrientation~iphone</key>
 	<string>UIInterfaceOrientationPortrait</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

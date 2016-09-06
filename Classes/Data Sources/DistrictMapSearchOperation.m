@@ -22,19 +22,22 @@
 @end
 
 @implementation DistrictMapSearchOperation
-@synthesize delegate;
-@synthesize searchCoordinate, searchIDs, foundIDs;
+
+@synthesize delegate = _delegate;
+@synthesize searchCoordinate = _searchCoordinate;
+@synthesize searchIDs = _searchIDs;
+@synthesize foundIDs = _foundIDs;
 
 - (id) initWithDelegate:(NSObject <DistrictMapSearchOperationDelegate> *)newDelegate 
 			 coordinate:(CLLocationCoordinate2D)aCoordinate searchDistricts:(NSArray *)districtIDs {
 	if ((self = [super init])) {
 		
 		if (newDelegate)
-			delegate = newDelegate;
-		searchCoordinate = aCoordinate;
+			_delegate = newDelegate;
+		_searchCoordinate = aCoordinate;
 		
 		if (districtIDs)
-			searchIDs = [districtIDs retain];
+			_searchIDs = [districtIDs copy];
 	}
 	return self;
 }
@@ -42,15 +45,15 @@
 - (void) dealloc {
 	self.foundIDs = nil;
 	self.searchIDs = nil;
-	delegate = nil;
+	self.delegate = nil;
 	[super dealloc];
 }
 
 - (void)informDelegateOfFailureWithMessage:(NSString *)message failOption:(DistrictMapSearchOperationFailOption)failOption;
 {
-    if ([delegate respondsToSelector:@selector(districtMapSearchOperationDidFail:errorMessage:option:)])
+    if ([self.delegate respondsToSelector:@selector(districtMapSearchOperationDidFail:errorMessage:option:)])
     {
-        NSInvocation *invocation = [NSInvocation invocationWithTarget:delegate 
+        NSInvocation *invocation = [NSInvocation invocationWithTarget:self.delegate
                                                              selector:@selector(districtMapSearchOperationDidFail:errorMessage:option:)
                                                       retainArguments:YES, self, message, failOption];
         [invocation invokeOnMainThreadWaitUntilDone:YES];
@@ -59,9 +62,9 @@
 
 - (void)informDelegateOfSuccess
 {
-    if ([delegate respondsToSelector:@selector(districtMapSearchOperationDidFinishSuccessfully:)])
+    if ([self.delegate respondsToSelector:@selector(districtMapSearchOperationDidFinishSuccessfully:)])
     {
-        [delegate performSelectorOnMainThread:@selector(districtMapSearchOperationDidFinishSuccessfully:) 
+        [self.delegate performSelectorOnMainThread:@selector(districtMapSearchOperationDidFinishSuccessfully:)
                                    withObject:self 
                                 waitUntilDone:NO];
     }
@@ -78,11 +81,11 @@
 		
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		
-		if (foundIDs)
-			[foundIDs release];
-		foundIDs = [[NSMutableArray alloc] init];
+		if (_foundIDs)
+			[_foundIDs release];
+		_foundIDs = [[NSMutableArray alloc] init];
 					
-		for (NSNumber *distID in searchIDs) {
+		for (NSNumber *distID in _searchIDs) {
 
 			DistrictMapObj * map = [DistrictMapObj objectWithPrimaryKeyValue:distID];
 			if ([map districtContainsCoordinate:[self searchCoordinate]]) {

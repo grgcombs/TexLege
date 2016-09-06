@@ -81,6 +81,7 @@
 		3742D6EF122E18D100698483 /* DistrictMapSearchOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3742D6EE122E18D100698483 /* DistrictMapSearchOperation.m */; };
 		3742D723122E1FDF00698483 /* NSInvocation+CWVariableArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 3742D722122E1FDF00698483 /* NSInvocation+CWVariableArguments.m */; };
 		3747C25D11E7B15300A6D8C6 /* PartisanIndexStats.m in Sources */ = {isa = PBXBuildFile; fileRef = 3747C25C11E7B15300A6D8C6 /* PartisanIndexStats.m */; };
+		374BEC541D7F3420009645A2 /* VotingRecordDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5AC7133D6F8B0070EA64 /* VotingRecordDataSource.m */; };
 		374C36BA1215E55F006B6ADA /* CalendarMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 374C36B91215E55F006B6ADA /* CalendarMasterViewController.m */; };
 		374C36E61215E8DA006B6ADA /* CapitolMapsMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 374C36E51215E8DA006B6ADA /* CapitolMapsMasterViewController.m */; };
 		374C37051215EB2D006B6ADA /* LinksMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 374C37041215EB2D006B6ADA /* LinksMasterViewController.m */; };
@@ -393,6 +394,9 @@
 		37A720B4122ECD3B0015AAE0 /* TexLegeInfo~iphone.htm in Resources */ = {isa = PBXBuildFile; fileRef = 37A720B3122ECD3B0015AAE0 /* TexLegeInfo~iphone.htm */; };
 		37A8F14513315D4D00085AAF /* BillMetadataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A8F14413315D4D00085AAF /* BillMetadataLoader.m */; };
 		37A8F14613315D4D00085AAF /* BillMetadataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A8F14413315D4D00085AAF /* BillMetadataLoader.m */; };
+		37A9D3181D7F335F00403A59 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA2716A22959005C7CCE /* ImageIO.framework */; };
+		37A9D3191D7F336B00403A59 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 377075421397E4C300E82CA8 /* AddressBook.framework */; };
+		37A9D31A1D7F33A900403A59 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37678E851AFEC2C20016B8E5 /* libRestKit.a */; };
 		37AD57BB11DA651700D68934 /* CommitteeDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AD57B911DA651500D68934 /* CommitteeDetailViewController.m */; };
 		37AD57BC11DA651700D68934 /* CommitteeDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37AD57BA11DA651700D68934 /* CommitteeDetailViewController~iphone.xib */; };
 		37B253E512EBF681000B6EE2 /* StafferObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B253E412EBF681000B6EE2 /* StafferObj+RestKit.m */; };
@@ -1179,6 +1183,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37A9D31A1D7F33A900403A59 /* libRestKit.a in Frameworks */,
 				3701B64019AD34F500A9F631 /* libSDWebImage.a in Frameworks */,
 				3701B64119AD34F500A9F631 /* libSDWebImage+MKAnnotation.a in Frameworks */,
 				37C7846014D30AA3006BBEDE /* libz.dylib in Frameworks */,
@@ -1189,6 +1194,7 @@
 				37735BF81323104A0033F343 /* CoreGraphics.framework in Frameworks */,
 				37735BF91323104A0033F343 /* CoreData.framework in Frameworks */,
 				37735BFB1323104A0033F343 /* MapKit.framework in Frameworks */,
+				37A9D3191D7F336B00403A59 /* AddressBook.framework in Frameworks */,
 				37735BFC1323104A0033F343 /* MessageUI.framework in Frameworks */,
 				37735BFD1323104A0033F343 /* CoreLocation.framework in Frameworks */,
 				37735BFE1323104A0033F343 /* AddressBookUI.framework in Frameworks */,
@@ -1197,6 +1203,7 @@
 				37735C011323104A0033F343 /* QuartzCore.framework in Frameworks */,
 				37735C081323104A0033F343 /* CFNetwork.framework in Frameworks */,
 				37735C091323104A0033F343 /* MobileCoreServices.framework in Frameworks */,
+				37A9D3181D7F335F00403A59 /* ImageIO.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2798,6 +2805,7 @@
 				37735B6C1323104A0033F343 /* CommitteeDetailViewController.m in Sources */,
 				37735B6D1323104A0033F343 /* PartisanIndexStats.m in Sources */,
 				37735B6F1323104A0033F343 /* CapitolMap.m in Sources */,
+				374BEC541D7F3420009645A2 /* VotingRecordDataSource.m in Sources */,
 				37735B701323104A0033F343 /* WnomObj+RestKit.m in Sources */,
 				37735B711323104A0033F343 /* PolygonMath.m in Sources */,
 				37735B721323104A0033F343 /* CalendarDataSource.m in Sources */,
@@ -2986,7 +2994,6 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = TXL;
@@ -3012,7 +3019,6 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = TXL;
@@ -3022,74 +3028,80 @@
 		37735C0C1323104A0033F343 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = TexLege_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"RESTKIT_GENERATE_SEED_DB=1",
 					"DEBUG=1",
 				);
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)/include",
+					"\"$(SRCROOT)/Vendor/RestKit\"/**",
+					"\"$(SRCROOT)/Vendor/SDWebImage\"",
+					"\"$(SRCROOT)/Vendor/Kal/src/\"",
+					"\"/usr/include/libxml2\"/**",
+					"${inherited}",
+				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
-				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		37735C0D1323104A0033F343 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = TexLege_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)/include",
+					"\"$(SRCROOT)/Vendor/RestKit\"/**",
+					"\"$(SRCROOT)/Vendor/SDWebImage\"",
+					"\"$(SRCROOT)/Vendor/Kal/src/\"",
+					"\"/usr/include/libxml2\"/**",
+					"${inherited}",
+				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
-				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
 		37735C0E1323104A0033F343 /* AdHoc Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = TexLege_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)/include",
+					"\"$(SRCROOT)/Vendor/RestKit\"/**",
+					"\"$(SRCROOT)/Vendor/SDWebImage\"",
+					"\"$(SRCROOT)/Vendor/Kal/src/\"",
+					"\"/usr/include/libxml2\"/**",
+					"${inherited}",
+				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
-				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "AdHoc Distribution";
 		};
 		37735C0F1323104A0033F343 /* iTunes Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = TexLege_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)/include",
+					"\"$(SRCROOT)/Vendor/RestKit\"/**",
+					"\"$(SRCROOT)/Vendor/SDWebImage\"",
+					"\"$(SRCROOT)/Vendor/Kal/src/\"",
+					"\"/usr/include/libxml2\"/**",
+					"${inherited}",
+				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
-				INSTALL_PATH = /Applications;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "iTunes Distribution";
 		};
 		377629C9102A0A45004700EC /* iTunes Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ADDITIONAL_SDKS = "";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -3098,7 +3110,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = 2.8.2;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
@@ -3112,7 +3124,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-licucore",
@@ -3121,9 +3133,9 @@
 					"-lxml2",
 				);
 				PRODUCT_NAME = TexLege;
-				PROVISIONING_PROFILE = "257b216b-86cb-4304-8a47-3843dbfa1456";
+				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos9.3;
 				SEPARATE_STRIP = YES;
 				STRIP_STYLE = all;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3152,8 +3164,6 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
-				PROVISIONING_PROFILE = "003bd220-7212-4be8-90ab-636e84db0b47";
 				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = TXL;
@@ -3163,7 +3173,6 @@
 		37B2D28410224AC900B493C8 /* AdHoc Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ADDITIONAL_SDKS = "";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -3173,7 +3182,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = Data/Entitlements.plist;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 2.8.2;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
@@ -3187,7 +3196,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
@@ -3197,9 +3206,9 @@
 					"-lxml2",
 				);
 				PRODUCT_NAME = TexLege;
-				PROVISIONING_PROFILE = "1ab7718b-5284-42ca-924a-bc3cd0e23341";
+				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos9.3;
 				SEPARATE_STRIP = YES;
 				STRIP_STYLE = all;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3228,8 +3237,6 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
-				PROVISIONING_PROFILE = "0ffed5ca-f472-4713-9b5d-7c1af6f7d3e5";
 				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = TXL;
@@ -3239,7 +3246,6 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ADDITIONAL_SDKS = "";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -3264,7 +3270,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-licucore",
@@ -3275,7 +3281,7 @@
 				PRODUCT_NAME = TexLege;
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos9.3;
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = all;
@@ -3288,7 +3294,6 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ADDITIONAL_SDKS = "";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -3312,7 +3317,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-licucore",
@@ -3323,7 +3328,7 @@
 				PRODUCT_NAME = TexLege;
 				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos9.3;
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = all;

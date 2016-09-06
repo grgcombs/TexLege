@@ -12,12 +12,13 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
-typedef enum {
+
+typedef NS_ENUM(NSUInteger, DistrictMapSearchOperationFailOption) {
     DistrictMapSearchOperationFailOptionLog,
     DistrictMapSearchOperationShowAlert,
-    
-   DistrictMapSearchOperationFailOptionCount
-} DistrictMapSearchOperationFailOption;
+
+    DistrictMapSearchOperationFailOptionCount,
+};
 
 @class DistrictMapSearchOperation;
 
@@ -30,11 +31,12 @@ typedef enum {
 
 @interface DistrictMapSearchOperation : NSOperation 
 {
-    __weak  NSObject <DistrictMapSearchOperationDelegate> *delegate;
+    __unsafe_unretained  NSObject <DistrictMapSearchOperationDelegate> *delegate;
 	CLLocationCoordinate2D searchCoordinate;
 	NSArray *searchIDs;
 	NSMutableArray *foundIDs;
 }
+
 @property (assign) NSObject <DistrictMapSearchOperationDelegate> *delegate;
 @property (assign) CLLocationCoordinate2D searchCoordinate;
 @property (retain) NSArray *searchIDs;
