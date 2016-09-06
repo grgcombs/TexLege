@@ -32,8 +32,6 @@
 #import "BillMetadataLoader.h"
 #import "CalendarEventsLoader.h"
 
-#import "TVOutManager.h"
-
 #import "StateMetaLoader.h"
 
 @interface TexLegeAppDelegate (Private)
@@ -389,11 +387,11 @@ NSInteger kNoSelection = -1;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-	[[TVOutManager sharedInstance] startTVOut];
+
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-	[[TVOutManager sharedInstance] stopTVOut];
+
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
