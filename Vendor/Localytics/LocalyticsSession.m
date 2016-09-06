@@ -666,9 +666,16 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 	UIDevice *thisDevice = [UIDevice currentDevice];
 	NSLocale *locale = [NSLocale currentLocale];
 	NSLocale *english = [[[NSLocale alloc] initWithLocaleIdentifier: @"en_US"] autorelease];
-	NSLocale *device_locale = [[NSLocale preferredLanguages] objectAtIndex:0];	
-    NSString *device_language = [english displayNameForKey:NSLocaleIdentifier value:device_locale];
-	NSString *locale_country = [english displayNameForKey:NSLocaleCountryCode value:[locale objectForKey:NSLocaleCountryCode]];
+
+    NSArray *preferredLanguages = [NSLocale preferredLanguages];
+    NSString *preferredLanguage = @"en";
+    if (preferredLanguages.count)
+        preferredLanguage = preferredLanguages[0];
+
+    NSString *countryCode = [locale objectForKey:NSLocaleCountryCode];
+
+    NSString *locale_language = [english displayNameForKey:NSLocaleIdentifier value:preferredLanguage];
+	NSString *locale_country = [english displayNameForKey:NSLocaleCountryCode value:countryCode];
     NSString *uuid = [self getRandomUUID];
     NSString *device_uuid = [self uniqueDeviceIdentifier];
 
@@ -699,9 +706,9 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 // MAC Address collection. Uncomment the following line to add Mac address to the mix of collected identifiers
 //    [headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_MAC value:[self hashString:[self macAddress]]     ]];    
 	[headerString appendString:[NSString stringWithFormat:@",\"%@\":%ld", PARAM_DEVICE_MEMORY, (long)[self availableMemory]  ]];	
-	[headerString appendString:[self formatAttributeWithName:PARAM_LOCALE_LANGUAGE   value:device_language]];
+	[headerString appendString:[self formatAttributeWithName:PARAM_LOCALE_LANGUAGE   value:locale_language]];
 	[headerString appendString:[self formatAttributeWithName:PARAM_LOCALE_COUNTRY    value:locale_country]];
-	[headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_COUNTRY    value:[locale objectForKey:NSLocaleCountryCode]]];
+	[headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_COUNTRY    value:countryCode]];
 	[headerString appendString:[NSString stringWithFormat:@",\"%@\":%@", PARAM_JAILBROKEN, [self isDeviceJailbroken] ? @"true" : @"false"]];
     
     //  Close second level - attributes
