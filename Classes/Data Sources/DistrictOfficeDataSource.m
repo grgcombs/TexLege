@@ -389,82 +389,83 @@
 
    
 #warning state specific
-- (NSError *) geocodeDistrictOffice:(DistrictOfficeObj *)office {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+- (NSError *) geocodeDistrictOffice:(DistrictOfficeObj *)office
+{
+    @autoreleasepool {
 
-	NSError *parseError = nil;
-	NSString *searchQuery = [NSString stringWithFormat:@"%@, %@, %@, %@", office.address, office.city, office.stateCode, office.zipCode];
-	
-	// Create the url to Googles geocoding API, we want the response to be in XML
-	NSString* mapsUrl = [[NSString alloc] initWithFormat:@"http://maps.google.com/maps/api/geocode/xml?address=%@&sensor=false&region=us", 
-						 searchQuery];
-	
-	// Create the url object for our request. It's important to escape the 
-	// search string to support spaces and international characters
-	NSURL *url = [[NSURL alloc] initWithString:[mapsUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-	
-	// Run the KML parser
-	BSGoogleV3KmlParser *parser = [[BSGoogleV3KmlParser alloc] init];
-	
-	[parser parseXMLFileAtURL:url parseError:&parseError ignoreAddressComponents:NO];
-	
-	[url release];
-	[mapsUrl release];
-	
-	// If the query was successfull we store the array with results
-	if(parser.statusCode == G_GEO_SUCCESS)
-	{
-		BSKmlResult *firstResult = nil;
-		
-		for (BSKmlResult *result in parser.results) {
-			if (result.addressDict && ([[result.addressDict valueForKey:@"address"] length] || [result.formattedAddress length])) {
-				//debug_NSLog(@"%@ ..... %@", [result.addressDict valueForKey:@"address"], result.formattedAddress);
-				firstResult = result;
-				break;
-			}
-		}
-		if (!firstResult) {
-			firstResult = [parser.results objectAtIndex:0];
-			debug_NSLog(@"Troublesome address for %@", [office.legislator legProperName]);
-		}
-		
-		NSDictionary *addressDict = firstResult.addressDict;
-		
-		
-		BOOL missingAddress = (addressDict && [[addressDict valueForKey:@"address"] length] == 0);
-		
-		if (missingAddress) {
-			debug_NSLog(@"[Forward Geocoder] Has a missing address: MISSINGADDR=%d, %@", missingAddress, searchQuery);
-			//[addressDict setValue:@"Post Office Box" forKey:@"formattedAddress"];
-			[addressDict setValue:office.address forKey:@"formattedAddress"];
-		}
-		
-		office.formattedAddress = [addressDict valueForKey:@"formattedAddress"];
-		office.county = [firstResult county];
-		office.latitude = [NSNumber numberWithDouble:[firstResult latitude]];
-		office.longitude = [NSNumber numberWithDouble:[firstResult longitude]];
-		office.spanLat = [NSNumber numberWithDouble:firstResult.coordinateSpan.latitudeDelta];
-		office.spanLon = [NSNumber numberWithDouble:firstResult.coordinateSpan.longitudeDelta];
-	}
-	
-	//debug_NSLog(@"Found placemarks: %d", [parser.results count]);
-	
-    if ([parser.results count] == 0) {
-		debug_NSLog(@"Nothing found for %@", searchQuery);
+        NSError *parseError = nil;
+        NSString *searchQuery = [NSString stringWithFormat:@"%@, %@, %@, %@", office.address, office.city, office.stateCode, office.zipCode];
+
+        // Create the url to Googles geocoding API, we want the response to be in XML
+        NSString* mapsUrl = [[NSString alloc] initWithFormat:@"http://maps.google.com/maps/api/geocode/xml?address=%@&sensor=false&region=us",
+                             searchQuery];
+
+        // Create the url object for our request. It's important to escape the
+        // search string to support spaces and international characters
+        NSURL *url = [[NSURL alloc] initWithString:[mapsUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+
+        // Run the KML parser
+        BSGoogleV3KmlParser *parser = [[BSGoogleV3KmlParser alloc] init];
+
+        [parser parseXMLFileAtURL:url parseError:&parseError ignoreAddressComponents:NO];
+
+        [url release];
+        [mapsUrl release];
+
+        // If the query was successfull we store the array with results
+        if(parser.statusCode == G_GEO_SUCCESS)
+        {
+            BSKmlResult *firstResult = nil;
+
+            for (BSKmlResult *result in parser.results) {
+                if (result.addressDict && ([[result.addressDict valueForKey:@"address"] length] || [result.formattedAddress length])) {
+                    //debug_NSLog(@"%@ ..... %@", [result.addressDict valueForKey:@"address"], result.formattedAddress);
+                    firstResult = result;
+                    break;
+                }
+            }
+            if (!firstResult) {
+                firstResult = [parser.results objectAtIndex:0];
+                debug_NSLog(@"Troublesome address for %@", [office.legislator legProperName]);
+            }
+
+            NSDictionary *addressDict = firstResult.addressDict;
+
+
+            BOOL missingAddress = (addressDict && [[addressDict valueForKey:@"address"] length] == 0);
+
+            if (missingAddress) {
+                debug_NSLog(@"[Forward Geocoder] Has a missing address: MISSINGADDR=%d, %@", missingAddress, searchQuery);
+                //[addressDict setValue:@"Post Office Box" forKey:@"formattedAddress"];
+                [addressDict setValue:office.address forKey:@"formattedAddress"];
+            }
+
+            office.formattedAddress = [addressDict valueForKey:@"formattedAddress"];
+            office.county = [firstResult county];
+            office.latitude = [NSNumber numberWithDouble:[firstResult latitude]];
+            office.longitude = [NSNumber numberWithDouble:[firstResult longitude]];
+            office.spanLat = [NSNumber numberWithDouble:firstResult.coordinateSpan.latitudeDelta];
+            office.spanLon = [NSNumber numberWithDouble:firstResult.coordinateSpan.longitudeDelta];
+        }
+        
+        //debug_NSLog(@"Found placemarks: %d", [parser.results count]);
+        
+        if ([parser.results count] == 0) {
+            debug_NSLog(@"Nothing found for %@", searchQuery);
+        }
+        
+        [parser release];	
+        
+        
+        if(parseError != nil)
+        {
+            debug_NSLog(@"Geocode parse error: %@", [parseError localizedDescription]);
+        }
+
     }
-	
-	[parser release];	
-	
-	
-	if(parseError != nil)
-	{
-		debug_NSLog(@"Geocode parse error: %@", [parseError localizedDescription]);
-	}
-	
-	[pool drain];
+    
+    return parseError;
 
-	return parseError;
-	
 }
 
 - (void) checkDistrictOffices {

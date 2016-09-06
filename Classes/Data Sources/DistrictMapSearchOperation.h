@@ -30,19 +30,13 @@ typedef NS_ENUM(NSUInteger, DistrictMapSearchOperationFailOption) {
 @end
 
 @interface DistrictMapSearchOperation : NSOperation 
-{
-    __unsafe_unretained  NSObject <DistrictMapSearchOperationDelegate> *delegate;
-	CLLocationCoordinate2D searchCoordinate;
-	NSArray *searchIDs;
-	NSMutableArray *foundIDs;
-}
 
-@property (assign) NSObject <DistrictMapSearchOperationDelegate> *delegate;
-@property (assign) CLLocationCoordinate2D searchCoordinate;
-@property (retain) NSArray *searchIDs;
-@property (retain) NSMutableArray *foundIDs;
+@property (nonatomic,unsafe_unretained) NSObject <DistrictMapSearchOperationDelegate> *delegate;
+@property (nonatomic,assign) CLLocationCoordinate2D searchCoordinate;
+@property (nonatomic,copy) NSArray *searchIDs;
+@property (nonatomic,copy) NSMutableArray *foundIDs;
 
-- (id) initWithDelegate:(NSObject <DistrictMapSearchOperationDelegate> *)newDelegate 
-			 coordinate:(CLLocationCoordinate2D)aCoordinate searchDistricts:(NSArray *)districtIDs;
-	
+- (instancetype) initWithDelegate:(NSObject <DistrictMapSearchOperationDelegate> *)newDelegate
+                       coordinate:(CLLocationCoordinate2D)aCoordinate searchDistricts:(NSArray *)districtIDs;
+
 @end

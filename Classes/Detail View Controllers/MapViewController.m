@@ -141,8 +141,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	longPressRecognizer.delegate = self;
 	[self.mapView addGestureRecognizer:longPressRecognizer];        
 	[longPressRecognizer release];
-	
-	
 }
 
 - (void) viewDidUnload {	
@@ -345,31 +343,31 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	}
 }
 
-- (void)districtMapSearchOperationDidFinishSuccessfully:(DistrictMapSearchOperation *)op {	
-	//debug_NSLog(@"Found some search results in %d districts", [op.foundDistricts count]);
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+- (void)districtMapSearchOperationDidFinishSuccessfully:(DistrictMapSearchOperation *)op {
+    //debug_NSLog(@"Found some search results in %d districts", [op.foundDistricts count]);
 
-	for (NSNumber *districtID in op.foundIDs) {
-		DistrictMapObj *district = [DistrictMapObj objectWithPrimaryKeyValue:districtID];
-		if (district) {
-			[self.mapView addAnnotation:district];
+    @autoreleasepool {
+        for (NSNumber *districtID in op.foundIDs) {
+            DistrictMapObj *district = [DistrictMapObj objectWithPrimaryKeyValue:districtID];
+            if (district) {
+                [self.mapView addAnnotation:district];
 
-            __block MapViewController *bself = self;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                if (!bself)
-                    return;
-                [bself.mapView addOverlay:district.polygon];
-            });
+                __block MapViewController *bself = self;
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    if (!bself)
+                        return;
+                    [bself.mapView addOverlay:district.polygon];
+                });
 
-			[district.managedObjectContext refreshObject:district mergeChanges:NO];	// re-fault it to free memory
-		}
-	}	
-	
-	if (self.genericOperationQueue)
-		[self.genericOperationQueue cancelAllOperations];
-	self.genericOperationQueue = nil;
-	
-	[pool drain];
+                [district.managedObjectContext refreshObject:district mergeChanges:NO];	// re-fault it to free memory
+            }
+        }
+        
+        if (self.genericOperationQueue)
+            [self.genericOperationQueue cancelAllOperations];
+        self.genericOperationQueue = nil;
+        
+    }
 }
 
 - (void)districtMapSearchOperationDidFail:(DistrictMapSearchOperation *)op 
@@ -398,7 +396,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 
 	UIBarButtonItem *locateItem = [[UIBarButtonItem alloc] 
 								   initWithImage:[UIImage imageNamed:@"locationarrow.png"]
-									style:UIBarButtonItemStyleBordered
+									style:UIBarButtonItemStylePlain
 									target:self
 									action:@selector(locateUser:)];
 
@@ -432,7 +430,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 
 - (void)showLocateActivityButton {
 	[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-
 
 	UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
 	[activityIndicator startAnimating];
@@ -526,13 +523,13 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 - (IBAction) showAllDistricts:(id)sender {
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"SHOWING_ALL_DISTRICTS"];
 	
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSArray *districts = [TexLegeCoreDataUtils allDistrictMapsLight];
-	if (districts) {
-		[self resetMapViewWithAnimation:YES];
-		[self.mapView addAnnotations:districts];
-	}
-	[pool drain];
+    @autoreleasepool {
+        NSArray *districts = [TexLegeCoreDataUtils allDistrictMapsLight];
+        if (districts) {
+            [self resetMapViewWithAnimation:YES];
+            [self.mapView addAnnotations:districts];
+        }
+    }
 }
 #endif
 

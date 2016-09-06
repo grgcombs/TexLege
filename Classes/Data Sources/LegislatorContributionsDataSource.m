@@ -213,244 +213,244 @@
 
 
 - (void)parseJSONObject:(id)jsonDeserialized {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
 
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
-    [numberFormatter setMaximumFractionDigits:0];
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
+        [numberFormatter setMaximumFractionDigits:0];
 
-    if (!self.sectionList)
-        self.sectionList = [NSMutableArray array];
+        if (!self.sectionList)
+            self.sectionList = [NSMutableArray array];
 
-    if ([self.queryType integerValue] == kContributionQueryEntitySearch) {
-        NSArray *jsonArray = jsonDeserialized;
+        if ([self.queryType integerValue] == kContributionQueryEntitySearch) {
+            NSArray *jsonArray = jsonDeserialized;
 
-        // only one section right now
-        [self.sectionList removeAllObjects];
+            // only one section right now
+            [self.sectionList removeAllObjects];
 
-        NSMutableArray *thisSection = [[NSMutableArray alloc] init];
+            NSMutableArray *thisSection = [[NSMutableArray alloc] init];
 
-        for (NSDictionary *dict in jsonArray) {
-            NSString *localizedString = NSLocalizedStringFromTable(@"Unknown", @"DataTableUI", @"This is an unknown entity (person, company, group, etc)");
+            for (NSDictionary *dict in jsonArray) {
+                NSString *localizedString = NSLocalizedStringFromTable(@"Unknown", @"DataTableUI", @"This is an unknown entity (person, company, group, etc)");
 
-            NSString *entityType = [[dict objectForKey:@"type"] capitalizedString];
-            //NSString *valueKey = @"";
-            NSNumber *action = nil;
-            if ([entityType isEqualToString:@"Politician"]) {
-                //valueKey = @"total_received";
-                localizedString = NSLocalizedStringFromTable(@"Politician", @"DataTableUI", @"The entity is a politician");
-                action = [NSNumber numberWithInteger:kContributionQueryRecipient];
+                NSString *entityType = [[dict objectForKey:@"type"] capitalizedString];
+                //NSString *valueKey = @"";
+                NSNumber *action = nil;
+                if ([entityType isEqualToString:@"Politician"]) {
+                    //valueKey = @"total_received";
+                    localizedString = NSLocalizedStringFromTable(@"Politician", @"DataTableUI", @"The entity is a politician");
+                    action = [NSNumber numberWithInteger:kContributionQueryRecipient];
+                }
+                else if ([entityType isEqualToString:@"Organization"]) {
+                    //valueKey = @"total_given";
+                    localizedString = NSLocalizedStringFromTable(@"Organization", @"DataTableUI", @"The entity is an organization or interest group");
+                    action = [NSNumber numberWithInteger:kContributionQueryDonor];
+                }
+                else if ([entityType isEqualToString:@"Individual"]) {
+                    //valueKey = @"total_given";
+                    localizedString = NSLocalizedStringFromTable(@"Individual", @"DataTableUI", @"The entity is an individual / private citizen");
+                    action = [NSNumber numberWithInteger:kContributionQueryIndividual];
+                }
+
+                TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
+                cellInfo.title = [dict valueForKey:@"name"];
+                cellInfo.subtitle = localizedString;
+                cellInfo.entryValue = [dict objectForKey:@"id"];
+                cellInfo.entryType = [self.queryType integerValue];
+                cellInfo.isClickable = YES;
+                cellInfo.action = action;
+                cellInfo.parameter = @"-1";
+
+                [thisSection addObject:cellInfo];
+                [cellInfo release];
             }
-            else if ([entityType isEqualToString:@"Organization"]) {
-                //valueKey = @"total_given";
-                localizedString = NSLocalizedStringFromTable(@"Organization", @"DataTableUI", @"The entity is an organization or interest group");
-                action = [NSNumber numberWithInteger:kContributionQueryDonor];
-            }
-            else if ([entityType isEqualToString:@"Individual"]) {
-                //valueKey = @"total_given";
-                localizedString = NSLocalizedStringFromTable(@"Individual", @"DataTableUI", @"The entity is an individual / private citizen");
-                action = [NSNumber numberWithInteger:kContributionQueryIndividual];
-            }
 
-            TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
-            cellInfo.title = [dict valueForKey:@"name"];
-            cellInfo.subtitle = localizedString;
-            cellInfo.entryValue = [dict objectForKey:@"id"];
-            cellInfo.entryType = [self.queryType integerValue];
-            cellInfo.isClickable = YES;
-            cellInfo.action = action;
-            cellInfo.parameter = @"-1";
+            if (![jsonArray count]) {	// no search results!
+                NSString *name = [self.queryEntityID stringByReplacingOccurrencesOfString:@"+" withString:@" "];
 
-            [thisSection addObject:cellInfo];
-            [cellInfo release];
+                TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
+                cellInfo.title = name;
+                cellInfo.subtitle = NSLocalizedStringFromTable(@"Nothing for", @"DataTableUI", @"There is no information available for .... someone");
+                cellInfo.entryValue = nil;
+                cellInfo.entryType = [self.queryType integerValue];
+                cellInfo.isClickable = NO;
+                cellInfo.action = nil;
+                cellInfo.parameter = nil;
+
+                [thisSection addObject:cellInfo];
+                [cellInfo release];
+            }
+            [self.sectionList addObject:thisSection];
+            [thisSection release];
+
         }
+        else if ([self.queryType integerValue] == kContributionQueryTop10RecipientsIndiv) {
+            NSArray *jsonArray = jsonDeserialized;
 
-        if (![jsonArray count]) {	// no search results!
-            NSString *name = [self.queryEntityID stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+            // only one section right now
+            [self.sectionList removeAllObjects];
+
+            NSMutableArray *thisSection = [[NSMutableArray alloc] init];
+
+            for (NSDictionary *dict in jsonArray) {
+                double tempDouble = [[dict objectForKey:@"amount"] doubleValue];
+                NSNumber *amount = [NSNumber numberWithDouble:tempDouble];
+
+                TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
+                NSString *name = [[dict objectForKey:@"recipient_name"] capitalizedString];
+
+                id dataID = [dict objectForKey:@"recipient_entity"];
+
+                cellInfo.title = name;
+                cellInfo.subtitle = [numberFormatter stringFromNumber:amount];
+                cellInfo.entryValue = dataID;
+                cellInfo.entryType = [self.queryType integerValue];
+                cellInfo.isClickable = YES;
+                cellInfo.parameter = self.queryCycle;
+                cellInfo.action = [NSNumber numberWithInteger:kContributionQueryRecipient];
+
+                //#warning state specific (Bob Perry Contributions)
+
+                if (!dataID || [[NSNull null] isEqual:dataID] || ![dataID isKindOfClass:[NSString class]]) {
+                    NSLog(@"ERROR - Contribution results have an empty entity ID for: %@", name);
+                    if ([[name uppercaseString] isEqualToString:@"BOB PERRY HOMES"])	// ala Bob Perry Homes
+                        name = @"Perry Homes";
+                    else if ([[name uppercaseString] hasPrefix:@"BOB PERRY"])	// ala Bob Perry Homes
+                        name = @"Bob Perry";
+                    else if ([[name uppercaseString] hasPrefix:@"HUMAN RIGHTS CAMPAIGN TEXAS FAMILIES"])
+                        name = @"HRC TEXAS FAMILIES PAC";
+                    else if ([[name uppercaseString] hasPrefix:@"TEXANS FOR RICK PERRY"])
+                        name = @"RICK PERRY";
+                    NSString *nameSearch = [name stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+                    cellInfo.entryValue = nameSearch;
+                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryEntitySearch];
+                }
+                [thisSection addObject:cellInfo];
+                [cellInfo release];
+            }
+
+            [self.sectionList addObject:thisSection];
+            [thisSection release];
+
+        }
+        else if (([self.queryType integerValue] == kContributionQueryTop10Donors) ||
+                 ([self.queryType integerValue] == kContributionQueryTop10Recipients)) {
+            NSArray *jsonArray = jsonDeserialized;
+
+            // only one section right now
+            [self.sectionList removeAllObjects];
+
+            NSMutableArray *thisSection = [[NSMutableArray alloc] init];
+
+            for (NSDictionary *dict in jsonArray) {
+                double tempDouble = [[dict objectForKey:@"total_amount"] doubleValue];
+                NSNumber *amount = [NSNumber numberWithDouble:tempDouble];
+
+                TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
+                NSString *name = [[dict objectForKey:@"name"] capitalizedString];
+
+                id dataID = [dict objectForKey:@"id"];
+
+                cellInfo.title = name;
+                cellInfo.subtitle = [numberFormatter stringFromNumber:amount];
+                cellInfo.entryValue = dataID;
+                cellInfo.entryType = [self.queryType integerValue];
+                cellInfo.isClickable = YES;
+                cellInfo.parameter = self.queryCycle;
+                if ([self.queryType integerValue] == kContributionQueryTop10Donors)
+                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryDonor];
+                else
+                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryRecipient];
+
+                if (!dataID || [[NSNull null] isEqual:dataID] || ![dataID isKindOfClass:[NSString class]]) {
+                    NSLog(@"ERROR - Contribution results have an empty entity ID for: %@", name);
+                    if ([[name uppercaseString] isEqualToString:@"BOB PERRY HOMES"])	// ala Bob Perry Homes
+                        name = @"Perry Homes";
+                    else if ([[name uppercaseString] hasPrefix:@"BOB PERRY"])	// ala Bob Perry Homes
+                        name = @"Bob Perry";
+                    else if ([[name uppercaseString] hasPrefix:@"HUMAN RIGHTS CAMPAIGN TEXAS FAMILIES"])
+                        name = @"HRC TEXAS FAMILIES PAC";
+                    else if ([[name uppercaseString] hasPrefix:@"TEXANS FOR RICK PERRY"])
+                        name = @"RICK PERRY";
+
+                    NSString *nameSearch = [name stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+                    cellInfo.entryValue = nameSearch;
+                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryEntitySearch];
+                }
+                [thisSection addObject:cellInfo];
+                [cellInfo release];
+            }
+
+            [self.sectionList addObject:thisSection];
+            [thisSection release];
+
+        }
+        else if ([self.queryType integerValue] == kContributionQueryRecipient ||
+                 [self.queryType integerValue] == kContributionQueryDonor ||
+                 [self.queryType integerValue] == kContributionQueryIndividual )
+        {
+            NSDictionary *jsonDict = jsonDeserialized;
+
+            [self.sectionList removeAllObjects];
+            NSMutableArray *thisSection = nil;
+
+            NSDictionary *totals = [jsonDict objectForKey:@"totals"];
+            NSArray *yearKeys = [totals allKeys];
+            yearKeys = [yearKeys sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 
             TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
-            cellInfo.title = name;
-            cellInfo.subtitle = NSLocalizedStringFromTable(@"Nothing for", @"DataTableUI", @"There is no information available for .... someone");
-            cellInfo.entryValue = nil;
+            cellInfo.title = [[jsonDict objectForKey:@"name"] capitalizedString];
+            cellInfo.subtitle = [[jsonDict objectForKey:@"type"] capitalizedString];
+            cellInfo.entryValue = [jsonDict objectForKey:@"id"];
             cellInfo.entryType = [self.queryType integerValue];
             cellInfo.isClickable = NO;
             cellInfo.action = nil;
-            cellInfo.parameter = nil;
-
-            [thisSection addObject:cellInfo];
-            [cellInfo release];
-        }
-        [self.sectionList addObject:thisSection];
-        [thisSection release];
-
-    }
-    else if ([self.queryType integerValue] == kContributionQueryTop10RecipientsIndiv) {
-        NSArray *jsonArray = jsonDeserialized;
-
-        // only one section right now
-        [self.sectionList removeAllObjects];
-
-        NSMutableArray *thisSection = [[NSMutableArray alloc] init];
-
-        for (NSDictionary *dict in jsonArray) {
-            double tempDouble = [[dict objectForKey:@"amount"] doubleValue];
-            NSNumber *amount = [NSNumber numberWithDouble:tempDouble];
-
-            TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
-            NSString *name = [[dict objectForKey:@"recipient_name"] capitalizedString];
-
-            id dataID = [dict objectForKey:@"recipient_entity"];
-
-            cellInfo.title = name;
-            cellInfo.subtitle = [numberFormatter stringFromNumber:amount];
-            cellInfo.entryValue = dataID;
-            cellInfo.entryType = [self.queryType integerValue];
-            cellInfo.isClickable = YES;
             cellInfo.parameter = self.queryCycle;
-            cellInfo.action = [NSNumber numberWithInteger:kContributionQueryRecipient];
 
-            //#warning state specific (Bob Perry Contributions)
-
-            if (!dataID || [[NSNull null] isEqual:dataID] || ![dataID isKindOfClass:[NSString class]]) {
-                NSLog(@"ERROR - Contribution results have an empty entity ID for: %@", name);
-                if ([[name uppercaseString] isEqualToString:@"BOB PERRY HOMES"])	// ala Bob Perry Homes
-                    name = @"Perry Homes";
-                else if ([[name uppercaseString] hasPrefix:@"BOB PERRY"])	// ala Bob Perry Homes
-                    name = @"Bob Perry";
-                else if ([[name uppercaseString] hasPrefix:@"HUMAN RIGHTS CAMPAIGN TEXAS FAMILIES"])
-                    name = @"HRC TEXAS FAMILIES PAC";
-                else if ([[name uppercaseString] hasPrefix:@"TEXANS FOR RICK PERRY"])
-                    name = @"RICK PERRY";
-                NSString *nameSearch = [name stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-                cellInfo.entryValue = nameSearch;
-                cellInfo.action = [NSNumber numberWithInteger:kContributionQueryEntitySearch];
-            }
-            [thisSection addObject:cellInfo];
+            thisSection = [NSMutableArray arrayWithObject:cellInfo];
+            [self.sectionList addObject:thisSection];
             [cellInfo release];
-        }
 
-        [self.sectionList addObject:thisSection];
-        [thisSection release];
+            thisSection = [[NSMutableArray alloc] init];
+            NSString *amountKey = ([self.queryType integerValue] == kContributionQueryRecipient) ? @"recipient_amount" : @"contributor_amount";
 
-    }
-    else if (([self.queryType integerValue] == kContributionQueryTop10Donors) ||
-             ([self.queryType integerValue] == kContributionQueryTop10Recipients)) {
-        NSArray *jsonArray = jsonDeserialized;
+            for (NSString *yearKey in [yearKeys reverseObjectEnumerator]) {
+                NSDictionary *dict = [totals objectForKey:yearKey];
 
-        // only one section right now
-        [self.sectionList removeAllObjects];
+                double tempDouble = [[dict objectForKey:amountKey] doubleValue];
+                NSNumber *amount = [NSNumber numberWithDouble:tempDouble];
 
-        NSMutableArray *thisSection = [[NSMutableArray alloc] init];
-
-        for (NSDictionary *dict in jsonArray) {
-            double tempDouble = [[dict objectForKey:@"total_amount"] doubleValue];
-            NSNumber *amount = [NSNumber numberWithDouble:tempDouble];
-
-            TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
-            NSString *name = [[dict objectForKey:@"name"] capitalizedString];
-
-            id dataID = [dict objectForKey:@"id"];
-
-            cellInfo.title = name;
-            cellInfo.subtitle = [numberFormatter stringFromNumber:amount];
-            cellInfo.entryValue = dataID;
-            cellInfo.entryType = [self.queryType integerValue];
-            cellInfo.isClickable = YES;
-            cellInfo.parameter = self.queryCycle;
-            if ([self.queryType integerValue] == kContributionQueryTop10Donors)
-                cellInfo.action = [NSNumber numberWithInteger:kContributionQueryDonor];
-            else
-                cellInfo.action = [NSNumber numberWithInteger:kContributionQueryRecipient];
-
-            if (!dataID || [[NSNull null] isEqual:dataID] || ![dataID isKindOfClass:[NSString class]]) {
-                NSLog(@"ERROR - Contribution results have an empty entity ID for: %@", name);
-                if ([[name uppercaseString] isEqualToString:@"BOB PERRY HOMES"])	// ala Bob Perry Homes
-                    name = @"Perry Homes";
-                else if ([[name uppercaseString] hasPrefix:@"BOB PERRY"])	// ala Bob Perry Homes
-                    name = @"Bob Perry";
-                else if ([[name uppercaseString] hasPrefix:@"HUMAN RIGHTS CAMPAIGN TEXAS FAMILIES"])
-                    name = @"HRC TEXAS FAMILIES PAC";
-                else if ([[name uppercaseString] hasPrefix:@"TEXANS FOR RICK PERRY"])
-                    name = @"RICK PERRY";
-
-                NSString *nameSearch = [name stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-                cellInfo.entryValue = nameSearch;
-                cellInfo.action = [NSNumber numberWithInteger:kContributionQueryEntitySearch];
-            }
-            [thisSection addObject:cellInfo];
-            [cellInfo release];
-        }
-
-        [self.sectionList addObject:thisSection];
-        [thisSection release];
-
-    }
-    else if ([self.queryType integerValue] == kContributionQueryRecipient ||
-             [self.queryType integerValue] == kContributionQueryDonor ||
-             [self.queryType integerValue] == kContributionQueryIndividual )
-    {
-        NSDictionary *jsonDict = jsonDeserialized;
-
-        [self.sectionList removeAllObjects];
-        NSMutableArray *thisSection = nil;
-
-        NSDictionary *totals = [jsonDict objectForKey:@"totals"];
-        NSArray *yearKeys = [totals allKeys];
-        yearKeys = [yearKeys sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-
-        TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
-        cellInfo.title = [[jsonDict objectForKey:@"name"] capitalizedString];
-        cellInfo.subtitle = [[jsonDict objectForKey:@"type"] capitalizedString];
-        cellInfo.entryValue = [jsonDict objectForKey:@"id"];
-        cellInfo.entryType = [self.queryType integerValue];
-        cellInfo.isClickable = NO;
-        cellInfo.action = nil;
-        cellInfo.parameter = self.queryCycle;
-
-        thisSection = [NSMutableArray arrayWithObject:cellInfo];
-        [self.sectionList addObject:thisSection];
-        [cellInfo release];
-
-        thisSection = [[NSMutableArray alloc] init];
-        NSString *amountKey = ([self.queryType integerValue] == kContributionQueryRecipient) ? @"recipient_amount" : @"contributor_amount";
-
-        for (NSString *yearKey in [yearKeys reverseObjectEnumerator]) {
-            NSDictionary *dict = [totals objectForKey:yearKey];
-
-            double tempDouble = [[dict objectForKey:amountKey] doubleValue];
-            NSNumber *amount = [NSNumber numberWithDouble:tempDouble];
-
-            cellInfo = [[TableCellDataObject alloc] init];
-            cellInfo.subtitle = yearKey;
-            cellInfo.title = [numberFormatter stringFromNumber:amount];
-            cellInfo.entryValue = [jsonDict objectForKey:@"id"];
-            cellInfo.entryType = [self.queryType integerValue];
-            cellInfo.isClickable = YES;
-            cellInfo.parameter = yearKey;
-            
-            if ([self.queryType integerValue] == kContributionQueryRecipient)
-                cellInfo.action = [NSNumber numberWithInteger:kContributionQueryTop10Donors];
-            else if ([self.queryType integerValue] == kContributionQueryIndividual)
-                cellInfo.action = [NSNumber numberWithInteger:kContributionQueryTop10RecipientsIndiv];
-            else
-                cellInfo.action = [NSNumber numberWithInteger:kContributionQueryTop10Recipients];
-            
-            if ([yearKey isEqualToString:@"-1"]) {
-                cellInfo.subtitle = NSLocalizedStringFromTable(@"Total", @"DataTableUI", @"Total contributions for a political campaign");
-                //cellInfo.entryType = kContributionTotal;
-                //cellInfo.isClickable = NO;
+                cellInfo = [[TableCellDataObject alloc] init];
+                cellInfo.subtitle = yearKey;
+                cellInfo.title = [numberFormatter stringFromNumber:amount];
+                cellInfo.entryValue = [jsonDict objectForKey:@"id"];
+                cellInfo.entryType = [self.queryType integerValue];
+                cellInfo.isClickable = YES;
+                cellInfo.parameter = yearKey;
+                
+                if ([self.queryType integerValue] == kContributionQueryRecipient)
+                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryTop10Donors];
+                else if ([self.queryType integerValue] == kContributionQueryIndividual)
+                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryTop10RecipientsIndiv];
+                else
+                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryTop10Recipients];
+                
+                if ([yearKey isEqualToString:@"-1"]) {
+                    cellInfo.subtitle = NSLocalizedStringFromTable(@"Total", @"DataTableUI", @"Total contributions for a political campaign");
+                    //cellInfo.entryType = kContributionTotal;
+                    //cellInfo.isClickable = NO;
+                }
+                
+                [thisSection addObject:cellInfo];
+                [cellInfo release];
             }
             
-            [thisSection addObject:cellInfo];
-            [cellInfo release];
+            [self.sectionList addObject:thisSection];
+            [thisSection release];
         }
         
-        [self.sectionList addObject:thisSection];
-        [thisSection release];
+        [numberFormatter release];
     }
-    
-    [numberFormatter release];
-    [pool drain];
 }
 
 

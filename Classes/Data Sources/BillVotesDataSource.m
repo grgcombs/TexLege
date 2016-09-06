@@ -184,54 +184,54 @@
 	nice_release(voters_);
 	voters_ = [[NSMutableArray alloc] init];
 	
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-	NSInteger chamber = chamberFromOpenStatesString([billVotes_ objectForKey:@"chamber"]);
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.legtype == %d", chamber];
-	
-	NSArray *allMembers = [LegislatorObj objectsWithPredicate:predicate];
-	NSDictionary *memberLookup = [allMembers indexKeyedDictionaryWithKey:@"openstatesID"];
-	
-	NSArray *voteTypes = [NSArray arrayWithObjects:@"other", @"no", @"yes", nil];
+    @autoreleasepool {
 
-	NSInteger codeIndex = BillVotesTypePNV;
-	for (NSString *type in voteTypes) {
-		NSString *countString = [type stringByAppendingString:@"_count"];
-		NSString *votesString = [type stringByAppendingString:@"_votes"];
-		NSNumber *voteCode = [NSNumber numberWithInteger:codeIndex];
-		
-		if ([billVotes_ objectForKey:countString] && [[billVotes_ objectForKey:countString] integerValue]) {
-			for (NSMutableDictionary *voter in [billVotes_ objectForKey:votesString]) {
-				/* We sometimes (all the time?) have to hard code in the Speaker ... let's just hope 
-				 they don't get rid of Joe Straus any time soon. */
-				if ((![voter objectForKey:@"leg_id"] || [[voter objectForKey:@"leg_id"] isEqual:[NSNull null]]) &&
-					([[voter objectForKey:@"name"] hasSubstring:@"Speaker" caseInsensitive:NO]))
-					[voter setObject:@"TXL000347" forKey:@"leg_id"];
-					
-				LegislatorObj *member = [memberLookup objectForKey:[voter objectForKey:@"leg_id"]];
-				if (member) {
-					NSMutableDictionary *voter = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-												  [member shortNameForButtons], @"name",
-												  [member fullNameLastFirst], @"nameReverse",
-												  member.lastnameInitial, @"initial",
-												  member.legislatorID, @"legislatorID",
-												  voteCode, @"vote",
-												  [member labelSubText], @"subtitle",
-												  member.photo_url, @"photo_url",
-												  nil];
-					[voters_ addObject:voter];
-					[voter release];
-				}
-			}
-		}
-		codeIndex++;
-	}
-	
-	[voters_ sortUsingDescriptors:[NSArray arrayWithObject:
-								   [NSSortDescriptor sortDescriptorWithKey:@"nameReverse" ascending:YES]]];
-	
-	[pool drain];
-	
+        NSInteger chamber = chamberFromOpenStatesString([billVotes_ objectForKey:@"chamber"]);
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.legtype == %d", chamber];
+
+        NSArray *allMembers = [LegislatorObj objectsWithPredicate:predicate];
+        NSDictionary *memberLookup = [allMembers indexKeyedDictionaryWithKey:@"openstatesID"];
+
+        NSArray *voteTypes = [NSArray arrayWithObjects:@"other", @"no", @"yes", nil];
+
+        NSInteger codeIndex = BillVotesTypePNV;
+        for (NSString *type in voteTypes) {
+            NSString *countString = [type stringByAppendingString:@"_count"];
+            NSString *votesString = [type stringByAppendingString:@"_votes"];
+            NSNumber *voteCode = [NSNumber numberWithInteger:codeIndex];
+
+            if ([billVotes_ objectForKey:countString] && [[billVotes_ objectForKey:countString] integerValue]) {
+                for (NSMutableDictionary *voter in [billVotes_ objectForKey:votesString]) {
+                    /* We sometimes (all the time?) have to hard code in the Speaker ... let's just hope
+                     they don't get rid of Joe Straus any time soon. */
+                    if ((![voter objectForKey:@"leg_id"] || [[voter objectForKey:@"leg_id"] isEqual:[NSNull null]]) &&
+                        ([[voter objectForKey:@"name"] hasSubstring:@"Speaker" caseInsensitive:NO]))
+                        [voter setObject:@"TXL000347" forKey:@"leg_id"];
+
+                    LegislatorObj *member = [memberLookup objectForKey:[voter objectForKey:@"leg_id"]];
+                    if (member) {
+                        NSMutableDictionary *voter = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                                      [member shortNameForButtons], @"name",
+                                                      [member fullNameLastFirst], @"nameReverse",
+                                                      member.lastnameInitial, @"initial",
+                                                      member.legislatorID, @"legislatorID",
+                                                      voteCode, @"vote",
+                                                      [member labelSubText], @"subtitle",
+                                                      member.photo_url, @"photo_url",
+                                                      nil];
+                        [voters_ addObject:voter];
+                        [voter release];
+                    }
+                }
+            }
+            codeIndex++;
+        }
+        
+        [voters_ sortUsingDescriptors:[NSArray arrayWithObject:
+                                       [NSSortDescriptor sortDescriptorWithKey:@"nameReverse" ascending:YES]]];
+
+    }
+
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"BILLVOTES_LOADED" object:self];
 	
 }

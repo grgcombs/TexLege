@@ -67,28 +67,27 @@
 
 /* Build a list of files */
 - (void)createSectionList {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        NSString *thePath = [[NSBundle mainBundle] pathForResource:@"CapitolMaps" ofType:@"plist"];
+        NSArray *mapSectionsPlist = [[NSArray alloc] initWithContentsOfFile:thePath];
 
-	NSString *thePath = [[NSBundle mainBundle] pathForResource:@"CapitolMaps" ofType:@"plist"];
-	NSArray *mapSectionsPlist = [[NSArray alloc] initWithContentsOfFile:thePath];
-	
-	for (NSArray * section in mapSectionsPlist)
-	{
-		NSMutableArray *tempSection = [[NSMutableArray alloc] initWithCapacity:[section count]];
+        for (NSArray * section in mapSectionsPlist)
+        {
+            NSMutableArray *tempSection = [[NSMutableArray alloc] initWithCapacity:[section count]];
 
-		for (NSDictionary * mapEntry in section)
-		{
-			CapitolMap *newMap = [[CapitolMap alloc] init];
-			[newMap importFromDictionary:mapEntry];
-			[tempSection addObject:newMap];
-			[newMap release];
-		}
-		[self.sectionList addObject:tempSection];
-		[tempSection release];
-	}
-	
-	[mapSectionsPlist release];
-	[pool drain];
+            for (NSDictionary * mapEntry in section)
+            {
+                CapitolMap *newMap = [[CapitolMap alloc] init];
+                [newMap importFromDictionary:mapEntry];
+                [tempSection addObject:newMap];
+                [newMap release];
+            }
+            [self.sectionList addObject:tempSection];
+            [tempSection release];
+        }
+        
+        [mapSectionsPlist release];
+    }
 }
 
 

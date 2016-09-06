@@ -451,8 +451,8 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 	
 	//We're on the main RunLoop, so an NSAutoreleasePool is not necessary, but is added defensively
 	// in case someone uses the Reachablity object in a different thread.
-	NSAutoreleasePool* pool = [NSAutoreleasePool new]; {
-	
+    @autoreleasepool {
+
 		Reachability *r = (Reachability *) info;
 		
 		logKey(r);
@@ -476,7 +476,6 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 		[r didChangeValueForKey:  kConnectionOnDemandKey];
 		[r didChangeValueForKey:  kInterventionRequiredKey];
 	}
-	[pool release], pool = nil;
 
 } // ReachabilityCallback()
 

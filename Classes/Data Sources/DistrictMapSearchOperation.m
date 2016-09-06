@@ -23,14 +23,11 @@
 
 @implementation DistrictMapSearchOperation
 
-@synthesize delegate = _delegate;
-@synthesize searchCoordinate = _searchCoordinate;
-@synthesize searchIDs = _searchIDs;
-@synthesize foundIDs = _foundIDs;
-
-- (id) initWithDelegate:(NSObject <DistrictMapSearchOperationDelegate> *)newDelegate 
-			 coordinate:(CLLocationCoordinate2D)aCoordinate searchDistricts:(NSArray *)districtIDs {
-	if ((self = [super init])) {
+- (instancetype) initWithDelegate:(NSObject <DistrictMapSearchOperationDelegate> *)newDelegate
+                       coordinate:(CLLocationCoordinate2D)aCoordinate searchDistricts:(NSArray *)districtIDs
+{
+	if ((self = [super init]))
+    {
 		
 		if (newDelegate)
 			_delegate = newDelegate;
@@ -42,7 +39,8 @@
 	return self;
 }
 
-- (void) dealloc {
+- (void) dealloc
+{
 	self.foundIDs = nil;
 	self.searchIDs = nil;
 	self.delegate = nil;
@@ -75,50 +73,53 @@
 {	
 	BOOL success = NO;
 	
-    @try 
-    {		
-        // Operation task here
-		
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		
-		if (_foundIDs)
-			[_foundIDs release];
-		_foundIDs = [[NSMutableArray alloc] init];
-					
-		for (NSNumber *distID in _searchIDs) {
+    @autoreleasepool {
 
-			DistrictMapObj * map = [DistrictMapObj objectWithPrimaryKeyValue:distID];
-			if ([map districtContainsCoordinate:[self searchCoordinate]]) {
+        @try
+        {
+            if (_foundIDs)
+                [_foundIDs release];
+            _foundIDs = [[NSMutableArray alloc] init];
 
-				if ([map.districtMapID integerValue] == 41 || [map.district integerValue] == 83) {
-					DistrictMapObj * holeDist = [DistrictMapObj objectWithPrimaryKeyValue:[NSNumber numberWithInt:40]];	// dist 84
-					if (NO == [holeDist districtContainsCoordinate:[self searchCoordinate]]) {
-						[foundIDs addObject:distID];
-						success = YES;
-					}
-					[[map managedObjectContext] refreshObject:map mergeChanges:NO];
-				}
-				else {
-					[foundIDs addObject:distID];
-					success = YES;
-				}
-			}
-			// this frees up memory and re-faults the unneeded objects
-			[[map managedObjectContext] refreshObject:map mergeChanges:NO];
-		}
-		[pool drain];
+            CLLocationCoordinate2D searchCoord = _searchCoordinate;
+
+            for (NSNumber *distID in _searchIDs)
+            {
+
+                DistrictMapObj * map = [DistrictMapObj objectWithPrimaryKeyValue:distID];
+                if ([map districtContainsCoordinate:searchCoord])
+                {
+                    if (map.districtMapID.intValue == 41
+                        || map.district.intValue == 83)
+                    {
+                        DistrictMapObj * holeDist = [DistrictMapObj objectWithPrimaryKeyValue:@40];	// dist 84
+                        if (NO == [holeDist districtContainsCoordinate:_searchCoordinate])
+                        {
+                            [_foundIDs addObject:distID];
+                            success = YES;
+                        }
+                        [[map managedObjectContext] refreshObject:map mergeChanges:NO];
+                    }
+                    else
+                    {
+                        [_foundIDs addObject:distID];
+                        success = YES;
+                    }
+                }
+                // this frees up memory and re-faults the unneeded objects
+                [[map managedObjectContext] refreshObject:map mergeChanges:NO];
+            }
+        }
+        @catch (NSException * e)
+        {
+            debug_NSLog(@"Exception: %@", e);
+        }
     }
-    @catch (NSException * e) 
-    {
-        debug_NSLog(@"Exception: %@", e);
-    }
-	
+
 	if (success)
 		[self informDelegateOfSuccess];
 	else
 		[self informDelegateOfFailureWithMessage:@"Could not find a district map with those coordinates." failOption:DistrictMapSearchOperationFailOptionLog];
-	
-}
-	
+}	
 
 @end

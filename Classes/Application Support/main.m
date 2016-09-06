@@ -15,8 +15,11 @@
 
 int main(int argc, char *argv[])
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	int retVal = UIApplicationMain(argc, argv, nil, NSStringFromClass([TexLegeAppDelegate class]));
-    [pool drain];
+    int retVal = 0;
+
+    @autoreleasepool {
+        retVal = UIApplicationMain(argc, argv, nil, NSStringFromClass([TexLegeAppDelegate class]));
+    }
+
     return retVal;
 }
