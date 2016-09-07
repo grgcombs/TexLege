@@ -866,7 +866,6 @@
 		37B253E412EBF681000B6EE2 /* StafferObj+RestKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "StafferObj+RestKit.m"; sourceTree = "<group>"; };
 		37B2C1FA130BCEFC00140212 /* BillsMasterViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = BillsMasterViewController.xib; path = Resources/BillsMasterViewController.xib; sourceTree = "<group>"; };
 		37B2C206130BCF9800140212 /* BillsDetailViewController~ipad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "BillsDetailViewController~ipad.xib"; path = "Resources-iPad/BillsDetailViewController~ipad.xib"; sourceTree = "<group>"; };
-		37B2D28A10224B2800B493C8 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Entitlements.plist; path = Data/Entitlements.plist; sourceTree = "<group>"; };
 		37B3CE8F1249365E00FB3F94 /* MapMiniDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapMiniDetailViewController.h; path = "Classes/Detail View Controllers/MapMiniDetailViewController.h"; sourceTree = SOURCE_ROOT; };
 		37B3CE901249365E00FB3F94 /* MapMiniDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MapMiniDetailViewController.m; path = "Classes/Detail View Controllers/MapMiniDetailViewController.m"; sourceTree = SOURCE_ROOT; };
 		37B3CE981249373100FB3F94 /* MapMiniDetailViewController~ipad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "MapMiniDetailViewController~ipad.xib"; path = "Resources/MapMiniDetailViewController~ipad.xib"; sourceTree = "<group>"; };
@@ -1253,7 +1252,6 @@
 				374036D91186AE2F0047E70A /* Resources-iPad */,
 				378678F511E452EF0003690F /* Resources-iPhone */,
 				8D1107310486CEB800E47090 /* Info.plist */,
-				37B2D28A10224B2800B493C8 /* Entitlements.plist */,
 				37B2C1FA130BCEFC00140212 /* BillsMasterViewController.xib */,
 				373B820511E378CD00A81142 /* LegislatorMasterViewController.xib */,
 				3735DFFD120917490000AF5A /* CommitteeMasterViewController.xib */,
@@ -2282,7 +2280,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = TXL;
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Gregory S. Combs";
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
@@ -2964,7 +2962,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = NO;
 				HEADER_SEARCH_PATHS = (
@@ -2978,6 +2975,8 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = 5EMVYB9KRX.com.texlege.TexLege;
+				PROVISIONING_PROFILE = "";
 				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = TXL;
@@ -2990,7 +2989,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3004,6 +3002,8 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = 5EMVYB9KRX.com.texlege.TexLege;
+				PROVISIONING_PROFILE = "";
 				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = TXL;
@@ -3095,7 +3095,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
 				CURRENT_PROJECT_VERSION = 2.8.2;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
@@ -3118,9 +3118,8 @@
 					"-lxml2",
 				);
 				PRODUCT_NAME = TexLege;
-				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos9.3;
+				SDKROOT = iphoneos;
 				SEPARATE_STRIP = YES;
 				STRIP_STYLE = all;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3136,7 +3135,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3150,6 +3148,8 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = 5EMVYB9KRX.com.texlege.TexLege;
+				PROVISIONING_PROFILE = "db3443be-fef5-4761-ac07-b17a10529e1b";
 				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = TXL;
@@ -3167,8 +3167,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = Data/Entitlements.plist;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
 				CURRENT_PROJECT_VERSION = 2.8.2;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
@@ -3192,9 +3191,8 @@
 					"-lxml2",
 				);
 				PRODUCT_NAME = TexLege;
-				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos9.3;
+				SDKROOT = iphoneos;
 				SEPARATE_STRIP = YES;
 				STRIP_STYLE = all;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3210,7 +3208,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3224,6 +3221,8 @@
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
 				INFOPLIST_PREPROCESS = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = 5EMVYB9KRX.com.texlege.TexLege;
+				PROVISIONING_PROFILE = "db3443be-fef5-4761-ac07-b17a10529e1b";
 				STRIP_STYLE = "non-global";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = TXL;
@@ -3241,10 +3240,11 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2.8.2;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3266,9 +3266,8 @@
 					"-lxml2",
 				);
 				PRODUCT_NAME = TexLege;
-				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos9.3;
+				SDKROOT = iphoneos;
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = all;
@@ -3289,7 +3288,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
 				CURRENT_PROJECT_VERSION = 2.8.2;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
@@ -3313,9 +3312,8 @@
 					"-lxml2",
 				);
 				PRODUCT_NAME = TexLege;
-				PROVISIONING_PROFILE = "";
 				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos9.3;
+				SDKROOT = iphoneos;
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = all;
