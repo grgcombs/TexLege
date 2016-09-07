@@ -326,13 +326,43 @@
 		debug_NSLog(@"PartisanIndex: using cached metadata in the documents folder.");
 	}
 	
-	NSData *jsonFile = [NSData dataWithContentsOfFile:localPath];
+	NSData *jsonFile = [NSData dataWithContentsOfFile:localPath options:NSDataReadingMappedIfSafe error:&newError];
+
+    if (!jsonFile || !jsonFile.length)
+    {
+        if (newError)
+        {
+            debug_NSLog(@"Unable to read aggregate partisan scores from the bundled JSON: %@", newError);
+        }
+    }
+    else
+    {
+        if (m_rawPartisanIndexAggregates)
+        {
+            [m_rawPartisanIndexAggregates release];
+            m_rawPartisanIndexAggregates = nil;
+        }
+
+        @try {
+            NSMutableArray *aggregates = [NSJSONSerialization JSONObjectWithData:jsonFile options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:&newError];
+            if (newError)
+            {
+                debug_NSLog(@"Error while attempting to parse aggregate partisan scores from the bundled JSON: %@", newError);
+            }
+
+            if (aggregates
+                && [aggregates isKindOfClass:[NSArray class]]
+                && aggregates.count)
+            {
+                m_rawPartisanIndexAggregates = [aggregates mutableCopy];
+            }
+        } @catch (NSException *exception) {
+            NSLog(@"Exception while attempting to parse and consume aggregate partisan scores from the bundled JSON: %@", exception);
+        }
+    }
+
 	if (m_rawPartisanIndexAggregates)
-		[m_rawPartisanIndexAggregates release];
-
-    m_rawPartisanIndexAggregates = [[NSJSONSerialization JSONObjectWithData:jsonFile options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:&newError] retain];
-
-	if (m_rawPartisanIndexAggregates) {
+    {
 		[self resetData:nil];
 		[[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyLoaded object:nil];
 	}
@@ -372,20 +402,35 @@
 	if ([request isGET] && [response isOK]) {  
 		// Success! Let's take a look at the data  
 		if (m_rawPartisanIndexAggregates)
-			[m_rawPartisanIndexAggregates release];	
+        {
+			[m_rawPartisanIndexAggregates release];
+            m_rawPartisanIndexAggregates = nil;
+        }
 
         NSError *error = nil;
-        m_rawPartisanIndexAggregates = [[NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error] retain];
 
-		if (m_rawPartisanIndexAggregates) {
-			if (updated)
+        NSMutableArray *aggregates = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:&error];
+        if (error)
+        {
+            debug_NSLog(@"Error while attempting to parse aggregate partisan scores from the bundled JSON: %@", error);
+        }
+
+        if (aggregates
+            && [aggregates isKindOfClass:[NSArray class]]
+            && aggregates.count)
+        {
+            m_rawPartisanIndexAggregates = [aggregates mutableCopy];
+
+            if (updated)
 				[updated release];
 			updated = [[NSDate date] retain];
 			NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kPartisanIndexFile];
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:m_rawPartisanIndexAggregates options:NSJSONWritingPrettyPrinted error:&error];
 			if (![jsonData writeToFile:localPath atomically:YES])
+            {
 				NSLog(@"PartisanIndex: error writing cache to file: %@", localPath);
-			isFresh = YES;
+            }
+            isFresh = YES;
 			[self resetData:nil];
 			[[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyLoaded object:nil];
 			debug_NSLog(@"PartisanIndex network download successful, archiving for others.");
