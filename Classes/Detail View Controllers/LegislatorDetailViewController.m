@@ -51,6 +51,8 @@
 #import "OpenLegislativeAPIs.h"
 #import "TexLegeTheme.h"
 
+#import <SafariServices/SFSafariViewController.h>
+
 @interface LegislatorDetailViewController (Private)
 - (void) setupHeader;
 @end
@@ -487,18 +489,26 @@
 		else if (cellInfo.entryType > kDirectoryTypeIsURLHandler &&
 				 cellInfo.entryType < kDirectoryTypeIsExternalHandler) {	// handle the URL ourselves in a webView
 			NSURL *url = [cellInfo generateURL];
-			
+            if (!url)
+                return;
+
 			if ([TexLegeReachability canReachHostWithURL:url]) { // do we have a good URL/connection?
 
 				if ([[url scheme] isEqualToString:@"twitter"])
 					[[UIApplication sharedApplication] openURL:url];
 				else {
 					NSString *urlString = [url absoluteString];
-					
-					SVWebViewController *webViewController = [[SVWebViewController alloc] initWithAddress:urlString];
-					webViewController.modalPresentationStyle = UIModalPresentationPageSheet;
-					[self presentViewController:webViewController animated:YES completion:nil];
-					[webViewController release];
+                    
+                    UIViewController *webController = nil;
+                    
+                    if ([url.scheme hasPrefix:@"http"])
+                        webController = [[SFSafariViewController alloc] initWithURL:url];
+                    else // can't use anything except http: or https: with SFSafariViewControllers
+                        webController = [[SVWebViewController alloc] initWithAddress:urlString];
+                    
+                    webController.modalPresentationStyle = UIModalPresentationPageSheet;
+                    [self presentViewController:webController animated:YES completion:nil];
+                    [webController release];
 				}
 			}
 		}

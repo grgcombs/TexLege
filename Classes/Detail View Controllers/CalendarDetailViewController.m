@@ -20,6 +20,7 @@
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
 #import "CalendarEventsLoader.h"
+#import <SafariServices/SFSafariViewController.h>
 
 @interface CalendarDetailViewController (Private) 
 	
@@ -240,11 +241,20 @@
 		}
 		else {
 			NSString *urlString = [url absoluteString];
-			
-			SVWebViewController *webViewController = [[SVWebViewController alloc] initWithAddress:urlString];
-			webViewController.modalPresentationStyle = UIModalPresentationPageSheet;
-            [self presentViewController:webViewController animated:YES completion:nil];
-			[webViewController release];
+            NSURL *url = [NSURL URLWithString:urlString];
+            if (!url)
+                return;
+            
+            UIViewController *webController = nil;
+            
+            if ([url.scheme hasPrefix:@"http"])
+                webController = [[SFSafariViewController alloc] initWithURL:url];
+            else // can't use anything except http: or https: with SFSafariViewControllers
+                webController = [[SVWebViewController alloc] initWithAddress:urlString];
+
+			webController.modalPresentationStyle = UIModalPresentationPageSheet;
+            [self presentViewController:webController animated:YES completion:nil];
+			[webController release];
 		}		
 	}
 }

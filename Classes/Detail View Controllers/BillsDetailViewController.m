@@ -32,6 +32,7 @@
 #import "LocalyticsSession.h"
 #import "AppendingFlowView.h"
 #import "BillActionParser.h"
+#import <SafariServices/SafariServices.h>
 
 @interface BillsDetailViewController (Private)
 - (void)setupHeader;
@@ -588,13 +589,26 @@ enum _billSections {
 			break;
 		case kBillVersions: {
 			NSDictionary *version = [[bill objectForKey:@"versions"] objectAtIndex:newIndexPath.row];
-			if (version) {
+			if (version)
+            {
 				NSString *urlString = [version objectForKey:@"url"];
-								
-				SVWebViewController *webViewController = [[SVWebViewController alloc] initWithAddress:urlString];
-				webViewController.modalPresentationStyle = UIModalPresentationPageSheet;
-				[self presentViewController:webViewController animated:YES completion:nil];
-				[webViewController release];
+                if (urlString && [urlString isKindOfClass:[NSString class]])
+                {
+                    UIViewController *webController = nil;
+                    
+                    NSURL *url = [NSURL URLWithString:urlString];
+                    if (!url)
+                        break;
+                    
+                    if ([url.scheme hasPrefix:@"http"])
+                        webController = [[SFSafariViewController alloc] initWithURL:url];
+                    else // can't use anything except http: or https: with SFSafariViewControllers
+                        webController = [[SVWebViewController alloc] initWithAddress:urlString];
+
+                    webController.modalPresentationStyle = UIModalPresentationPageSheet;
+                    [self presentViewController:webController animated:YES completion:nil];
+                    [webController release];
+                }
 			}
 		}
 			break;

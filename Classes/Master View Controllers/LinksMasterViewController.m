@@ -22,6 +22,7 @@
 #import "TexLegeEmailComposer.h"
 #import "TexLegeReachability.h"
 #import "LinkObj+RestKit.h"
+#import <SafariServices/SFSafariViewController.h>
 
 @implementation LinksMasterViewController
 
@@ -148,15 +149,27 @@
 		[appDelegate setSavedTableSelection:newIndexPath forKey:NSStringFromClass([self class])];
 		//self.selectObjectOnAppear= link;
 
-		NSString *urlString = [[link actualURL] absoluteString];
+        NSURL *url = [link actualURL];
+        if (!url)
+            return;
+        
+		NSString *urlString = [url absoluteString];
 		
-		if (isSplitViewDetail == NO) {
-			SVWebViewController *webViewController = [[SVWebViewController alloc] initWithAddress:urlString];
-			webViewController.hidesBottomBarWhenPushed = YES;
-			[self.navigationController pushViewController:webViewController animated:YES];	
-			[webViewController release];			
+		if (isSplitViewDetail == NO)
+        {
+            UIViewController *webController = nil;
+            
+            if ([url.scheme hasPrefix:@"http"])
+                webController = [[SFSafariViewController alloc] initWithURL:url];
+            else // can't use anything except http: or https: with SFSafariViewControllers
+                webController = [[SVWebViewController alloc] initWithAddress:urlString];
+            
+            webController.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:webController animated:YES];
+            [webController release];
 		}
-		else if (self.detailViewController) {
+		else if (self.detailViewController)
+        {
 			SVWebViewController *webViewController = (SVWebViewController*)self.detailViewController;
 			webViewController.address = urlString;
 		}
