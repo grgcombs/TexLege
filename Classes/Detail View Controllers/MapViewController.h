@@ -10,17 +10,22 @@
 //
 //
 
-#import <UIKit/UIKit.h>
-#import <MapKit/MapKit.h>
-#import "SVPlacemark.h"
-#import "DistrictMapSearchOperation.h"
 @import CoreLocation;
+@import MapKit;
+@import UIKit;
 
-@class DistrictMapDataSource, UserPinAnnotation;
-@interface MapViewController : UIViewController <MKMapViewDelegate, UISearchBarDelegate, UIPopoverControllerDelegate,
-                                                 UISplitViewControllerDelegate, UIActionSheetDelegate,
-                                                 UIGestureRecognizerDelegate, DistrictMapSearchOperationDelegate,
-                                                 CLLocationManagerDelegate>
+#import "UserPinAnnotation.h"
+#import "DistrictMapSearchOperation.h"
+
+@interface MapViewController : UIViewController <MKMapViewDelegate,
+                                                 UISearchBarDelegate,
+                                                 UIPopoverControllerDelegate,
+                                                 UISplitViewControllerDelegate,
+                                                 UIActionSheetDelegate,
+                                                 UIGestureRecognizerDelegate,
+                                                 DistrictMapSearchOperationDelegate,
+                                                 CLLocationManagerDelegate,
+                                                 UserPinAnnotationDelegate>
 
 @property (nonatomic,retain) IBOutlet UIPopoverController *masterPopover;
 @property (nonatomic,retain) IBOutlet MKMapView *mapView;

@@ -10,23 +10,27 @@
 //
 //
 
-#import <Foundation/Foundation.h>
-#import <MapKit/MapKit.h>
-#import "SVPlacemark.h"
+@import MapKit;
+@import CoreLocation;
 
-#define kUserPinAnnotationAddressChangeKey @"UserPinAnnotationAddressChangeNotification"
-@interface UserPinAnnotation : SVPlacemark <MKAnnotation> {
-}
+@protocol UserPinAnnotationDelegate <NSObject>
+- (void)annotationCoordinateChanged:(id)sender;
+@end
 
-@property (nonatomic, copy)		NSNumber				*pinColorIndex;
-@property (nonatomic, copy)		NSString				*title;
-@property (nonatomic, copy)		NSString				*subtitle;
-@property (nonatomic, copy)		NSString				*imageName;
 
-@property (nonatomic, retain) id	coordinateChangedDelegate;
+@interface UserPinAnnotation : MKPointAnnotation
 
--(id)initWithSVPlacemark:(SVPlacemark*)placemark;
+- (instancetype)initWithPlacemark:(CLPlacemark *)placemark;
+
+@property (nonatomic, copy)		NSNumber *pinColorIndex;
+@property (nonatomic, copy)		NSString *imageName;
+@property (nonatomic, copy)     CLPlacemark *placemark;
+@property (nonatomic, readonly) NSDictionary *addressDictionary;
+@property (nonatomic, unsafe_unretained) id <UserPinAnnotationDelegate>	coordinateChangedDelegate;
 
 - (UIImage *)image;
 
 @end
+
+extern NSString * const kUserPinAnnotationAddressChangeKey;
+

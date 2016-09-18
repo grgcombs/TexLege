@@ -17,52 +17,88 @@
 #import "UtilityMethods.h"
 #import "MapViewController.h"
 
-@interface UserPinAnnotation (Private)
-- (void)reloadTitle;
-@end
+NSString * const kUserPinAnnotationAddressChangeKey = @"UserPinAnnotationAddressChangeNotification";
 
 @implementation UserPinAnnotation
 
-@synthesize pinColorIndex;
-@synthesize title, subtitle, imageName, coordinateChangedDelegate;
-
--(id)initWithSVPlacemark:(SVPlacemark*) placemark {
-	self = [super initWithCoordinate:placemark.coordinate addressDictionary:placemark.addressDictionary];
-	if (self != nil) {
-		pinColorIndex = [NSNumber numberWithInteger:MKPinAnnotationColorPurple]; 
-		
-		[self reloadTitle];
-	}
-	return self;
-}
-
 - (instancetype)initWithPlacemark:(CLPlacemark *)placemark
 {
-    self = [super initWithPlacemark:placemark];
+    self = [super init];
     if (self)
     {
-        pinColorIndex = [NSNumber numberWithInteger:MKPinAnnotationColorPurple];
+        if (placemark)
+        {
+            _placemark = [placemark copy];
+            self.coordinate = placemark.location.coordinate;
+        }
+
+        _pinColorIndex = [@(MKPinAnnotationColorPurple) copy];
+        
         [self reloadTitle];
+
     }
     return self;
 }
 
-- (void)dealloc {
-	self.imageName = nil;
-	self.pinColorIndex = nil;
-	self.coordinateChangedDelegate = nil;
-	self.title = nil;
-	self.subtitle = nil;
+- (NSDictionary *)addressDictionary;
+{
+    CLPlacemark *placemark = self.placemark;
+    if (!placemark)
+        return nil;
+    return placemark.addressDictionary;
+}
+
+- (NSString*)debugDescription
+{
+    CLLocationCoordinate2D coordinate = self.coordinate;
+    NSDictionary *address = self.addressDictionary;
+    if (!address)
+        address = @{};
+    NSDictionary *values = @{
+                             @"address": address,
+                             @"coordinate": @{
+                                     @"latitude": @(coordinate.latitude),
+                                     @"longitude": @(coordinate.longitude)
+                                     }
+                             };
+    
+    return [values description];
+}
+
+- (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate
+{
+    super.coordinate = newCoordinate;
+    
+    self.title = [[NSString alloc] initWithFormat:@"%f %f", newCoordinate.latitude, newCoordinate.longitude];
+    
+    if (self.coordinateChangedDelegate
+        && [self.coordinateChangedDelegate respondsToSelector:@selector(annotationCoordinateChanged:)])
+    {
+        [self.coordinateChangedDelegate annotationCoordinateChanged:self];
+    }
+}
+
+- (void)dealloc
+{
+    nice_release(_imageName);
+    nice_release(_pinColorIndex);
+    nice_release(_placemark);
+
+    self.coordinateChangedDelegate = nil;
+
 	[super dealloc];
 }
 
-- (void)reloadTitle {
+- (void)reloadTitle
+{
 	NSMutableString *formattedAddress = [[NSMutableString alloc] init];
 
-	if (self.addressDictionary) {
-		NSString *street = [self.addressDictionary valueForKey:(NSString*)kABPersonAddressStreetKey];
-		NSString *city = [self.addressDictionary valueForKey:(NSString*)kABPersonAddressCityKey];
-		NSString *state = [self.addressDictionary valueForKey:(NSString*)kABPersonAddressStateKey];
+    NSDictionary *addressDict = self.addressDictionary;
+	if (addressDict)
+    {
+		NSString *street = addressDict[(NSString*)kABPersonAddressStreetKey];
+		NSString *city = addressDict[(NSString*)kABPersonAddressCityKey];
+		NSString *state = addressDict[(NSString*)kABPersonAddressStateKey];
 		
 		if (NO == IsEmpty(street)) {
 			[formattedAddress appendFormat:@"%@, ", street];
@@ -71,41 +107,39 @@
 			[formattedAddress appendFormat:@"%@, %@", city, state];
 		}		
 	}
-	if (IsEmpty(formattedAddress)) {
-		[formattedAddress appendFormat:@"%f %f", self.coordinate.latitude, self.coordinate.longitude];
+    
+	if (!formattedAddress.length)
+    {
+        CLLocationCoordinate2D coordinate = self.coordinate;
+		[formattedAddress appendFormat:@"%f %f", coordinate.latitude, coordinate.longitude];
 	}
+    
 	self.title = formattedAddress;
-	[formattedAddress release];		
+    
+    nice_release(formattedAddress);
 }
 
 #pragma mark -
 #pragma mark MKAnnotation properties
 
-- (UIImage *)image {
-	if (IsEmpty(self.imageName)) {
+- (UIImage *)image
+{
+    NSString *imageName = self.imageName;
+	if (IsEmpty(imageName))
+    {
 		return [UIImage imageNamed:@"silverstar.png"];
 	}
-	else {
-		return [UIImage imageNamed:self.imageName];
-	}
+    return [UIImage imageNamed:imageName];
 }
 
-- (NSString *)subtitle {
-	if (!IsEmpty(subtitle)) {
-		return subtitle;
-	}
-	else {
-		return NSLocalizedStringFromTable(@"Tap & hold to move pin", @"StandardUI", @"Instructions for moving a location pin on the map");
-	}
+- (NSString *)subtitle
+{
+    NSString *subtitle = [super subtitle];
+	if (IsEmpty(subtitle))
+    {
+        return NSLocalizedStringFromTable(@"Tap & hold to move pin", @"StandardUI", @"Instructions for moving a location pin on the map");
+    }
+    return subtitle;
 }
 
-- (void) setCoordinate:(CLLocationCoordinate2D)newCoordinate {
-	[super setCoordinate:newCoordinate];
-	
-	self.title = [NSString	stringWithFormat:@"%f %f", newCoordinate.latitude, newCoordinate.longitude];
-	
-	if (self.coordinateChangedDelegate && [self.coordinateChangedDelegate respondsToSelector:@selector(annotationCoordinateChanged:)]) {
-		[self.coordinateChangedDelegate performSelector:@selector(annotationCoordinateChanged:) withObject:self];
-	}
-}
 @end

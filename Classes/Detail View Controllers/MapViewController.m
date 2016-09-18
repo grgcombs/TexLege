@@ -89,7 +89,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	self.districtOfficesButton = nil;
 	self.searchBar = nil;
 	self.masterPopover = nil;
-	self.searchLocation = nil;
     self.texasAreaRegion = nil;
     if (self.locationManager)
     {
@@ -97,6 +96,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
         [self.locationManager stopMonitoringSignificantLocationChanges];
     }
     self.locationManager = nil;
+    self.searchLocation = nil;
 	[super dealloc];
 }
 
@@ -347,26 +347,26 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
     //debug_NSLog(@"Found some search results in %d districts", [op.foundDistricts count]);
 
     @autoreleasepool {
-        for (NSNumber *districtID in op.foundIDs) {
+        for (NSNumber *districtID in op.foundIDs)
+        {
             DistrictMapObj *district = [DistrictMapObj objectWithPrimaryKeyValue:districtID];
-            if (district) {
+            if (district)
+            {
                 [self.mapView addAnnotation:district];
 
                 __block MapViewController *bself = self;
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    if (!bself)
+                    if (!bself || !bself.isViewLoaded || !bself.mapView)
                         return;
                     [bself.mapView addOverlay:district.polygon];
+                    [district.managedObjectContext refreshObject:district mergeChanges:NO];	// re-fault it to free memory
                 });
-
-                [district.managedObjectContext refreshObject:district mergeChanges:NO];	// re-fault it to free memory
             }
         }
         
         if (self.genericOperationQueue)
             [self.genericOperationQueue cancelAllOperations];
         self.genericOperationQueue = nil;
-        
     }
 }
 

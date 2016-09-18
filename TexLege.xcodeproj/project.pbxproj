@@ -141,10 +141,6 @@
 		376F62D4132973D800F2B3DA /* BillMetadata.json in Resources */ = {isa = PBXBuildFile; fileRef = 376F62D3132973D800F2B3DA /* BillMetadata.json */; };
 		376F62D5132973D800F2B3DA /* BillMetadata.json in Resources */ = {isa = PBXBuildFile; fileRef = 376F62D3132973D800F2B3DA /* BillMetadata.json */; };
 		376F632D13298DE000F2B3DA /* BillsCategoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 376F62D0132972E200F2B3DA /* BillsCategoriesViewController.m */; };
-		377074DB1397B2B400E82CA8 /* SVGeocoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 377074D51397B2B400E82CA8 /* SVGeocoder.m */; };
-		377074DC1397B2B400E82CA8 /* SVPlacemark.m in Sources */ = {isa = PBXBuildFile; fileRef = 377074D71397B2B400E82CA8 /* SVPlacemark.m */; };
-		377074E01397B2B400E82CA8 /* SVGeocoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 377074D51397B2B400E82CA8 /* SVGeocoder.m */; };
-		377074E11397B2B400E82CA8 /* SVPlacemark.m in Sources */ = {isa = PBXBuildFile; fileRef = 377074D71397B2B400E82CA8 /* SVPlacemark.m */; };
 		377075431397E4C300E82CA8 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 377075421397E4C300E82CA8 /* AddressBook.framework */; };
 		3770C66813A49BE800906021 /* BillActionParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3770C66713A49BE800906021 /* BillActionParser.m */; };
 		3770C66913A49BE800906021 /* BillActionParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3770C66713A49BE800906021 /* BillActionParser.m */; };
@@ -757,10 +753,6 @@
 		376F62CF132972E200F2B3DA /* BillsCategoriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillsCategoriesViewController.h; sourceTree = "<group>"; };
 		376F62D0132972E200F2B3DA /* BillsCategoriesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillsCategoriesViewController.m; sourceTree = "<group>"; };
 		376F62D3132973D800F2B3DA /* BillMetadata.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BillMetadata.json; path = SeedDB/BillMetadata.json; sourceTree = "<group>"; };
-		377074D41397B2B400E82CA8 /* SVGeocoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGeocoder.h; sourceTree = "<group>"; };
-		377074D51397B2B400E82CA8 /* SVGeocoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGeocoder.m; sourceTree = "<group>"; };
-		377074D61397B2B400E82CA8 /* SVPlacemark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVPlacemark.h; sourceTree = "<group>"; };
-		377074D71397B2B400E82CA8 /* SVPlacemark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVPlacemark.m; sourceTree = "<group>"; };
 		377075421397E4C300E82CA8 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3770C66613A49BE800906021 /* BillActionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillActionParser.h; sourceTree = "<group>"; };
 		3770C66713A49BE800906021 /* BillActionParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillActionParser.m; sourceTree = "<group>"; };
@@ -1364,7 +1356,6 @@
 				37CF6BB11226595D00456D29 /* UIColor-Utilities */,
 				37A4E5BA1223830800BCE44D /* Localytics */,
 				3768E93413B156F600BA5A67 /* SVWebViewController */,
-				377074CE1397B2B400E82CA8 /* SVGeocoder */,
 				37F2CA0A1343ADFC001D9D7B /* DDActionHeaderView */,
 			);
 			name = "Vendor Modules";
@@ -1606,18 +1597,6 @@
 			name = "Common UI Elements";
 			path = error;
 			sourceTree = "<group>";
-		};
-		377074CE1397B2B400E82CA8 /* SVGeocoder */ = {
-			isa = PBXGroup;
-			children = (
-				377074D41397B2B400E82CA8 /* SVGeocoder.h */,
-				377074D51397B2B400E82CA8 /* SVGeocoder.m */,
-				377074D61397B2B400E82CA8 /* SVPlacemark.h */,
-				377074D71397B2B400E82CA8 /* SVPlacemark.m */,
-			);
-			name = SVGeocoder;
-			path = Vendor/SVGeocoder/SVGeocoder;
-			sourceTree = SOURCE_ROOT;
 		};
 		37735C22132310E90033F343 /* SeedDB */ = {
 			isa = PBXGroup;
@@ -2280,7 +2259,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = TXL;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Gregory S. Combs";
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
@@ -2731,8 +2710,6 @@
 				371D54481365F60E00A61BD4 /* Base64Transcoder.c in Sources */,
 				371D54491365F60E00A61BD4 /* NSData_Base64Extensions.m in Sources */,
 				371D544A1365F60E00A61BD4 /* NSData_Extensions.m in Sources */,
-				377074DB1397B2B400E82CA8 /* SVGeocoder.m in Sources */,
-				377074DC1397B2B400E82CA8 /* SVPlacemark.m in Sources */,
 				37E635FC139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m in Sources */,
 				37E36CF1139E695C00917F40 /* BillsRecentViewController.m in Sources */,
 				37E36D03139E6D0A00917F40 /* VTPGAdvancedLog.m in Sources */,
@@ -2866,8 +2843,6 @@
 				371D54451365F60E00A61BD4 /* Base64Transcoder.c in Sources */,
 				371D54461365F60E00A61BD4 /* NSData_Base64Extensions.m in Sources */,
 				371D54471365F60E00A61BD4 /* NSData_Extensions.m in Sources */,
-				377074E01397B2B400E82CA8 /* SVGeocoder.m in Sources */,
-				377074E11397B2B400E82CA8 /* SVPlacemark.m in Sources */,
 				37E635FE139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m in Sources */,
 				37E36CF2139E695C00917F40 /* BillsRecentViewController.m in Sources */,
 				37E36D04139E6D0A00917F40 /* VTPGAdvancedLog.m in Sources */,
@@ -3087,12 +3062,15 @@
 		377629C9102A0A45004700EC /* iTunes Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
@@ -3159,12 +3137,15 @@
 		37B2D28410224AC900B493C8 /* AdHoc Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
@@ -3232,12 +3213,15 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
@@ -3280,12 +3264,15 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
