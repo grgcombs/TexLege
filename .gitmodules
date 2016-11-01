@@ -1,30 +1,30 @@
 [submodule "Vendor/JSONKit"]
 	path = Vendor/JSONKit
-	url = git://github.com/grgcombs/JSONKit.git
+	url = https://github.com/grgcombs/JSONKit.git
 [submodule "Vendor/Kal"]
 	path = Vendor/Kal
-	url = git://github.com/grgcombs/Kal.git
+	url = https://github.com/grgcombs/Kal.git
 [submodule "Vendor/SVGeocoder"]
 	path = Vendor/SVGeocoder
-	url = git://github.com/grgcombs/SVGeocoder.git
+	url = https://github.com/grgcombs/SVGeocoder.git
 [submodule "Vendor/SVWebViewController"]
 	path = Vendor/SVWebViewController
-	url = git://github.com/grgcombs/SVWebViewController.git
+	url = https://github.com/grgcombs/SVWebViewController.git
 [submodule "Vendor/IntelligentSplitViewController"]
 	path = Vendor/IntelligentSplitViewController
-	url = git://github.com/grgcombs/IntelligentSplitViewController.git
+	url = https://github.com/grgcombs/IntelligentSplitViewController.git
 [submodule "Vendor/AppendingFlowView"]
 	path = Vendor/AppendingFlowView
-	url = git://github.com/grgcombs/AppendingFlowView.git
+	url = https://github.com/grgcombs/AppendingFlowView.git
 [submodule "Vendor/TTTOrdinalNumberFormatter"]
 	path = Vendor/TTTOrdinalNumberFormatter
-	url = git://github.com/grgcombs/TTTOrdinalNumberFormatter.git
+	url = https://github.com/grgcombs/TTTOrdinalNumberFormatter.git
 [submodule "Vendor/S7GraphView"]
 	path = Vendor/S7GraphView
-	url = git://github.com/grgcombs/Customed-s7graphview.git
+	url = https://github.com/grgcombs/Customed-s7graphview.git
 [submodule "Vendor/DDActionHeaderView"]
 	path = Vendor/DDActionHeaderView
-	url = git://github.com/grgcombs/DDActionHeaderView.git
+	url = https://github.com/grgcombs/DDActionHeaderView.git
 [submodule "Vendor/SDWebImage"]
 	path = Vendor/SDWebImage
-	url = git@github.com:grgcombs/SDWebImage.git
+	url = https://github.com/grgcombs/SDWebImage.git
