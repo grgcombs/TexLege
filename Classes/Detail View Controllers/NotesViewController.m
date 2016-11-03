@@ -64,8 +64,8 @@
 	[[NSUserDefaults standardUserDefaults] synchronize];	
 	NSDictionary *storedNotesDict = [[NSUserDefaults standardUserDefaults] valueForKey:@"LEGE_NOTES"];
 	if (storedNotesDict) {
-		NSString *temp = [storedNotesDict valueForKey:[self.legislator.legislatorID stringValue]];
-		if (temp && [temp length])
+		NSString *temp = [storedNotesDict valueForKey:(self.legislator.legislatorID).stringValue];
+		if (temp && temp.length)
 			notesString = temp;
 	}
 	if (!notesString)
@@ -73,7 +73,7 @@
 	
     // Update the views appropriately
     self.nameLabel.text = [self.legislator shortNameForButtons];    
-	if (!notesString || [notesString length] == 0) {
+	if (!notesString || notesString.length == 0) {
 		self.notesText.text = kStaticNotes;
 	}
 	else
@@ -100,7 +100,7 @@
 - (void)setLegislator:(LegislatorObj *)anObject {	
 	self.dataObjectID = nil;
 	if (anObject) {
-		self.dataObjectID = [anObject legislatorID];
+		self.dataObjectID = anObject.legislatorID;
 	}
 }
 
@@ -129,7 +129,7 @@
 				newDictionary = [NSMutableDictionary dictionaryWithDictionary:storedNotesDict];
 			}
 			
-			[newDictionary setObject:self.notesText.text forKey:[self.legislator.legislatorID stringValue]];
+			newDictionary[(self.legislator.legislatorID).stringValue] = self.notesText.text;
 			[[NSUserDefaults standardUserDefaults] setObject:newDictionary forKey:@"LEGE_NOTES"];
 			[[NSUserDefaults standardUserDefaults] synchronize];
 

@@ -13,10 +13,9 @@
 #import <Foundation/Foundation.h>
 #import "LegislatorObj.h"
 
-@interface LegislatorDetailDataSource : NSObject <UITableViewDataSource> {
-}
+@interface LegislatorDetailDataSource : NSObject <UITableViewDataSource>
 
-- (id)initWithLegislator:(LegislatorObj *)newObject;
+- (instancetype)initWithLegislator:(LegislatorObj *)newObject;
 - (id) dataObjectForIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)indexPathForDataObject:(id)dataObject;
 	

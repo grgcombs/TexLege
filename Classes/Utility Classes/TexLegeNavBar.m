@@ -20,7 +20,7 @@
 {
 	// Bug workaround. 
 	
-	[super setTintColor:[self tintColor]];
+	super.tintColor = self.tintColor;
 }
 
 @end

@@ -31,10 +31,10 @@
 @property (readonly) BOOL usesCoreData;
 @property (readonly) BOOL canEdit;
 
-- (BOOL)showDisclosureIcon;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL showDisclosureIcon;
 
 @optional
-- (Class)dataClass;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) Class dataClass;
 
 @property (nonatomic, readonly) BOOL hasFilter;
 - (void) setFilterByString:(NSString *)filter;

@@ -91,12 +91,12 @@
 
 	NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
 	if (segPrefs) {
-		NSNumber *segIndex = [segPrefs objectForKey:@"DistrictMapChamberKey"];
+		NSNumber *segIndex = segPrefs[@"DistrictMapChamberKey"];
 		if (segIndex)
-			self.chamberControl.selectedSegmentIndex = [segIndex integerValue];
-		segIndex = [segPrefs objectForKey:@"DistrictMapSortTypeKey"];
+			self.chamberControl.selectedSegmentIndex = segIndex.integerValue;
+		segIndex = segPrefs[@"DistrictMapSortTypeKey"];
 		if (segIndex)
-			self.sortControl.selectedSegmentIndex = [segIndex integerValue];
+			self.sortControl.selectedSegmentIndex = segIndex.integerValue;
 		
 	}
 
@@ -111,7 +111,7 @@
                                scope:self.chamberControl.selectedSegmentIndex];
 
     BOOL byDistrict = (self.sortControl.selectedSegmentIndex == 1);
-    [(DistrictMapDataSource *) self.dataSource setByDistrict:byDistrict];
+    ((DistrictMapDataSource *) self.dataSource).byDistrict = byDistrict;
     [(DistrictMapDataSource *) self.dataSource sortByType:self.sortControl];
 
     [super reapplyFiltersAndSort];
@@ -148,8 +148,9 @@
 
 	if (map) {
 		MapViewController *mapVC = (MapViewController *)self.detailViewController;
-		[mapVC view];
-		
+        if (!mapVC.isViewLoaded)
+            [mapVC loadView];
+
 		MKMapView *mapView = mapVC.mapView;
 		if (mapVC && mapView) {			
 			[mapVC clearAnnotationsAndOverlays];
@@ -196,7 +197,7 @@
 	 Update the filtered array based on the search text and scope.
 	 */
 	if ([self.dataSource respondsToSelector:@selector(setFilterChamber:)])
-		[self.dataSource setFilterChamber:scope];
+		(self.dataSource).filterChamber = scope;
 	
 	// start filtering names...
 	if (searchText.length > 0) {
@@ -217,9 +218,9 @@
 
     NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
     if (segPrefs) {
-        NSNumber *segIndex = [NSNumber numberWithInteger:self.chamberControl.selectedSegmentIndex];
+        NSNumber *segIndex = @(self.chamberControl.selectedSegmentIndex);
         NSMutableDictionary *newDict = [segPrefs mutableCopy];
-        [newDict setObject:segIndex forKey:@"DistrictMapChamberKey"];
+        newDict[@"DistrictMapChamberKey"] = segIndex;
         [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [newDict release];
@@ -234,9 +235,9 @@
 
     NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
     if (segPrefs) {
-        NSNumber *segIndex = [NSNumber numberWithInteger:self.sortControl.selectedSegmentIndex];
+        NSNumber *segIndex = @(self.sortControl.selectedSegmentIndex);
         NSMutableDictionary *newDict = [segPrefs mutableCopy];
-        [newDict setObject:segIndex forKey:@"DistrictMapSortTypeKey"];
+        newDict[@"DistrictMapSortTypeKey"] = segIndex;
         [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [newDict release];

@@ -16,7 +16,7 @@
 {
 }
 
-- (NSNumber *) year;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSNumber *year;
 @end
 
 

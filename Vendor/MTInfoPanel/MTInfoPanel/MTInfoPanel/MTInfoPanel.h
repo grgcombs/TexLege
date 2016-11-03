@@ -23,14 +23,14 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-typedef enum {    
+typedef NS_ENUM(unsigned int, MTInfoPanelType) {    
     MTInfoPanelTypeInfo,        // blue
     MTInfoPanelTypeNotice,      // gray
     MTInfoPanelTypeSuccess,     // green
     MTInfoPanelTypeWarning,     // yellow
     MTInfoPanelTypeError,       // red
     MTInfoPanelTypeActivity,    // blue + activity indicator
-} MTInfoPanelType;
+};
 
 @interface MTInfoPanel : UIView
 

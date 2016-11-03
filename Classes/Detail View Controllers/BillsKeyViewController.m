@@ -34,7 +34,7 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style {
+- (instancetype)initWithStyle:(UITableViewStyle)style {
 	if ((self = [super initWithStyle:style])) {
 		loadingStatus = LOADING_IDLE;
 		keyBills_ = [[NSMutableArray alloc] init];
@@ -48,8 +48,8 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
 	if ([UtilityMethods isIPadDevice] && UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
-		if ([[[[TexLegeAppDelegate appDelegate] masterNavigationController] topViewController] isKindOfClass:[BillsKeyViewController class]])
-			if ([self.navigationController isEqual:[[TexLegeAppDelegate appDelegate] detailNavigationController]])
+		if ([[TexLegeAppDelegate appDelegate].masterNavigationController.topViewController isKindOfClass:[BillsKeyViewController class]])
+			if ([self.navigationController isEqual:[TexLegeAppDelegate appDelegate].detailNavigationController])
 				[self.navigationController popToRootViewControllerAnimated:YES];
 	}	
 }
@@ -74,10 +74,10 @@
 	NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"TexLegeStrings" ofType:@"plist"];
 	NSDictionary *textDict = [NSDictionary dictionaryWithContentsOfFile:thePath];
 	NSString *myClass = NSStringFromClass([self class]);
-	NSDictionary *menuItem = [[textDict objectForKey:@"BillMenuItems"] findWhereKeyPath:@"class" equals:myClass];
+	NSDictionary *menuItem = [textDict[@"BillMenuItems"] findWhereKeyPath:@"class" equals:myClass];
 	
 	if (menuItem)
-		self.title = [menuItem objectForKey:@"title"];
+		self.title = menuItem[@"title"];
 	
 	self.tableView.delegate = self;
 	self.tableView.dataSource = self;
@@ -119,18 +119,18 @@
 		
 	BOOL useDark = (indexPath.row % 2 == 0);
 	cell.backgroundColor = useDark ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
-	NSDictionary *bill = [keyBills_ objectAtIndex:indexPath.row];
+	NSDictionary *bill = keyBills_[indexPath.row];
 	if (bill) {
-		NSString *bill_title = [bill objectForKey:@"title"];
+		NSString *bill_title = bill[@"title"];
 		bill_title = [bill_title chopPrefix:@"Relating to " capitalizingFirst:YES];
 
 		cell.detailTextLabel.text = bill_title;
-		NSMutableString *name = [NSMutableString stringWithString:[bill objectForKey:@"bill_id"]];
-		if (!IsEmpty([bill objectForKey:@"passFail"]))
-			[name appendFormat:@" - %@", [bill objectForKey:@"passFail"]];
+		NSMutableString *name = [NSMutableString stringWithString:bill[@"bill_id"]];
+		if (!IsEmpty(bill[@"passFail"]))
+			[name appendFormat:@" - %@", bill[@"passFail"]];
 		
 		cell.textLabel.text = [NSString stringWithFormat:@"(%@) %@", 
-							   [bill objectForKey:@"session"],
+							   bill[@"session"],
 							   name];
 		//cell.textLabel.text = name;
 	}	
@@ -171,7 +171,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 	if (!IsEmpty(keyBills_))
-		return [keyBills_ count];
+		return keyBills_.count;
 	else if (loadingStatus > LOADING_IDLE)
 		return 1;
 	else
@@ -182,18 +182,18 @@
 	if (![UtilityMethods isIPadDevice])
 		[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-	if (IsEmpty(keyBills_) || [keyBills_ count] <= indexPath.row)
+	if (IsEmpty(keyBills_) || keyBills_.count <= indexPath.row)
 		return;
 	
-	NSDictionary *bill = [keyBills_ objectAtIndex:indexPath.row];
-	if (bill && [bill objectForKey:@"bill_id"]) {
+	NSDictionary *bill = keyBills_[indexPath.row];
+	if (bill && bill[@"bill_id"]) {
 		if (bill) {
 			
 			BOOL changingViews = NO;
 			
 			BillsDetailViewController *detailView = nil;
 			if ([UtilityMethods isIPadDevice]) {
-				id aDetail = [[[TexLegeAppDelegate appDelegate] detailNavigationController] visibleViewController];
+				id aDetail = [TexLegeAppDelegate appDelegate].detailNavigationController.visibleViewController;
 				if ([aDetail isKindOfClass:[BillsDetailViewController class]])
 					detailView = aDetail;
 			}
@@ -203,16 +203,16 @@
 				changingViews = YES;
 			}
 			
-			[detailView setDataObject:bill];
-			[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:[bill objectForKey:@"bill_id"] 
-																			   session:[bill objectForKey:@"session"] // nil defaults to current session
+			detailView.dataObject = bill;
+			[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:bill[@"bill_id"] 
+																			   session:bill[@"session"] // nil defaults to current session
 																			  delegate:detailView];
 			
 			if (![UtilityMethods isIPadDevice])
 				[self.navigationController pushViewController:detailView animated:YES];
 			else if (changingViews)
 				//[[[TexLegeAppDelegate appDelegate] detailNavigationController] pushViewController:detailView animated:YES];
-				[[[TexLegeAppDelegate appDelegate] detailNavigationController] setViewControllers:[NSArray arrayWithObject:detailView] animated:NO];
+				[[TexLegeAppDelegate appDelegate].detailNavigationController setViewControllers:@[detailView] animated:NO];
 		}			
 	}
 }
@@ -267,8 +267,8 @@
 
 		// if we wanted blocks, we'd do this instead:
 		[keyBills_ sortUsingComparator:^(NSMutableDictionary *item1, NSMutableDictionary *item2) {
-			NSString *bill_id1 = [item1 objectForKey:@"bill_id"];
-			NSString *bill_id2 = [item2 objectForKey:@"bill_id"];
+			NSString *bill_id1 = item1[@"bill_id"];
+			NSString *bill_id2 = item2[@"bill_id"];
 			return [bill_id1 compare:bill_id2 options:NSNumericSearch];
 		}];
 		

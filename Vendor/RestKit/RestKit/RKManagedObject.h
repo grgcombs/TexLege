@@ -49,7 +49,7 @@
  * Fetches the first object identified by the fetch request. A limit of one will be
  * applied to the fetch request before dispatching.
  */
-+ (id)objectWithFetchRequest:(NSFetchRequest*)fetchRequest;
++ (instancetype)objectWithFetchRequest:(NSFetchRequest*)fetchRequest;
 
 /**
  * Fetches all objects from the persistent store by constructing a fetch request and
@@ -62,7 +62,7 @@
  * Fetches the first object matching a predicate from the persistent store. A fetch request
  * will be constructed for you and a fetch limit of 1 will be applied.
  */
-+ (id)objectWithPredicate:(NSPredicate*)predicate;
++ (instancetype)objectWithPredicate:(NSPredicate*)predicate;
 
 /**
  * Fetches all managed objects of this class from the persistent store as an array
@@ -86,7 +86,7 @@
 /**
  *	Creates a new managed object and inserts it into the managedObjectContext.
  */
-+ (id)object;
++ (instancetype)object;
 
 /**
  * The name of an object mapped property existing on this class representing the unique primary key. 
@@ -104,7 +104,7 @@
  * Returns the instance of this class where the primary key value is value or nil when not found. This
  * is the preferred way to retrieve a single unique object.
  */
-+ (id)objectWithPrimaryKeyValue:(id)value;
++ (instancetype)objectWithPrimaryKeyValue:(id)value;
 
 /**
  * Must return a dictionary mapping Core Data relationships for the managed object
@@ -127,11 +127,11 @@
 /**
  * Returns the value of the primary key property for this object
  */
-- (id)primaryKeyValue;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) id primaryKeyValue;
 
 /**
  * Returns YES when an object has not been saved to the managed object context yet
  */
-- (BOOL)isNew;
+@property (NS_NONATOMIC_IOSONLY, getter=isNew, readonly) BOOL new;
 
 @end

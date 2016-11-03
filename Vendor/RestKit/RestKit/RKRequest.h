@@ -149,12 +149,12 @@ typedef NS_ENUM(NSUInteger, RKRequestBackgroundPolicy) {
 /**
  * Initialize a synchronous request
  */
-- (id)initWithURL:(NSURL*)URL;
+- (instancetype)initWithURL:(NSURL*)URL;
 
 /**
  * Initialize a REST request and prepare it for dispatching
  */
-- (id)initWithURL:(NSURL*)URL delegate:(id)delegate;
+- (instancetype)initWithURL:(NSURL*)URL delegate:(id)delegate;
 
 
 /**
@@ -176,7 +176,7 @@ typedef NS_ENUM(NSUInteger, RKRequestBackgroundPolicy) {
 /**
  * Send the request synchronously and return a hydrated response object
  */
-- (RKResponse*)sendSynchronously;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) RKResponse *sendSynchronously;
 
 /**
  * Callback performed to notify the request that the underlying NSURLConnection
@@ -201,32 +201,32 @@ typedef NS_ENUM(NSUInteger, RKRequestBackgroundPolicy) {
 /**
  * Returns YES when this is a GET request
  */
-- (BOOL)isGET;
+@property (NS_NONATOMIC_IOSONLY, getter=isGET, readonly) BOOL GET;
 
 /**
  * Returns YES when this is a POST request
  */
-- (BOOL)isPOST;
+@property (NS_NONATOMIC_IOSONLY, getter=isPOST, readonly) BOOL POST;
 
 /**
  * Returns YES when this is a PUT request
  */
-- (BOOL)isPUT;
+@property (NS_NONATOMIC_IOSONLY, getter=isPUT, readonly) BOOL PUT;
 
 /**
  * Returns YES when this is a DELETE request
  */
-- (BOOL)isDELETE;
+@property (NS_NONATOMIC_IOSONLY, getter=isDELETE, readonly) BOOL DELETE;
 
 /**
  * Returns YES when this request is in-progress
  */
-- (BOOL)isLoading;
+@property (NS_NONATOMIC_IOSONLY, getter=isLoading, readonly) BOOL loading;
 
 /**
  * Returns YES when this request has been completed
  */
-- (BOOL)isLoaded;
+@property (NS_NONATOMIC_IOSONLY, getter=isLoaded, readonly) BOOL loaded;
 
 /**
  * Returns YES when the request was sent to the specified resource path

@@ -71,7 +71,7 @@
 - (void)awakeFromNib {
 	[super awakeFromNib];
 	if (!self.webView && [UtilityMethods isIPadDevice]) {
-		[[NSBundle mainBundle] loadNibNamed:[self nibName] owner:self options:nil];
+		[[NSBundle mainBundle] loadNibNamed:self.nibName owner:self options:nil];
 	}
 	
 	[self finalizeUI];
@@ -114,7 +114,7 @@
 	if ([UtilityMethods isIPadDevice] && !self.chamberCalendar && ![UtilityMethods isLandscapeOrientation])  {
 		TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
 		
-		self.chamberCalendar = [[appDelegate calendarMasterVC] selectObjectOnAppear];		
+		self.chamberCalendar = appDelegate.calendarMasterVC.selectObjectOnAppear;		
 	}
 	
 	if (self.chamberCalendar)
@@ -141,7 +141,7 @@
 }
 
 - (void)setDataObject:(id)newObj {
-	[self setChamberCalendar:newObj];
+	self.chamberCalendar = newObj;
 }
 
 - (void)setChamberCalendar:(ChamberCalendarObj *)newObj {
@@ -159,12 +159,13 @@
 			[masterPopover dismissPopoverAnimated:YES];
 		
 		chamberCalendar = [newObj retain];
+
+        if (!self.isViewLoaded)
+            [self loadView];
 		
-		[self view];
-		
-		[self setDelegate:self];
-		[self setDataSource:chamberCalendar];
-		[self.searchDisplayController setSearchResultsDataSource:chamberCalendar];
+		self.delegate = self;
+		self.dataSource = chamberCalendar;
+		(self.searchDisplayController).searchResultsDataSource = chamberCalendar;
 				
 		[self showAndSelectDate:[NSDate date]];
 	}
@@ -222,13 +223,13 @@
 	
 	if (tv == self.searchDisplayController.searchResultsTableView) {
 		[self.searchDisplayController setActive:NO animated:YES];
-		[self showAndSelectDate:[eventDict objectForKey:kCalendarEventsLocalizedDateKey]];
+		[self showAndSelectDate:eventDict[kCalendarEventsLocalizedDateKey]];
 	}
 
-    if (IsEmpty([eventDict objectForKey:kCalendarEventsAnnouncementURLKey])) {
+    if (IsEmpty(eventDict[kCalendarEventsAnnouncementURLKey])) {
         return;
     }
-	NSURL *url = [eventDict objectForKey:kCalendarEventsAnnouncementURLKey];
+	NSURL *url = eventDict[kCalendarEventsAnnouncementURLKey];
 	
 	if ([TexLegeReachability canReachHostWithURL:url]) { // do we have a good URL/connection?
 		if ([UtilityMethods isIPadDevice]) {	
@@ -240,7 +241,7 @@
 			}
 		}
 		else {
-			NSString *urlString = [url absoluteString];
+			NSString *urlString = url.absoluteString;
             NSURL *url = [NSURL URLWithString:urlString];
             if (!url)
                 return;

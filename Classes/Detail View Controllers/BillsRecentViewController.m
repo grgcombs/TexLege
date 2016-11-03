@@ -23,7 +23,7 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style {
+- (instancetype)initWithStyle:(UITableViewStyle)style {
 	if ((self = [super initWithStyle:style])) {
 		dataSource.useLoadingDataCell = YES;
 	}
@@ -40,10 +40,10 @@
 	NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"TexLegeStrings" ofType:@"plist"];
 	NSDictionary *textDict = [NSDictionary dictionaryWithContentsOfFile:thePath];
 	NSString *myClass = NSStringFromClass([self class]);
-	NSDictionary *menuItem = [[textDict objectForKey:@"BillMenuItems"] findWhereKeyPath:@"class" equals:myClass];
+	NSDictionary *menuItem = [textDict[@"BillMenuItems"] findWhereKeyPath:@"class" equals:myClass];
 	
 	if (menuItem)
-		self.title = [menuItem objectForKey:@"title"];	
+		self.title = menuItem[@"title"];	
 }
 
 - (void)viewDidUnload {
@@ -65,11 +65,9 @@
 	}
 	NSString *dateString = [daysAgo stringWithFormat:[NSDate dateFormatString]];
 	
-	NSDictionary *queryParams = [NSDictionary dictionaryWithObjectsAndKeys:
-								 dateString, @"updated_since",
-								 meta.selectedState, @"state",
-								 SUNLIGHT_APIKEY, @"apikey",
-								 nil];
+	NSDictionary *queryParams = @{@"updated_since": dateString,
+								 @"state": meta.selectedState,
+								 @"apikey": SUNLIGHT_APIKEY};
 	
 	[self.dataSource startSearchWithQueryString:@"/bills" params:queryParams];
 }

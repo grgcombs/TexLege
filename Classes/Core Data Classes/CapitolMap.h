@@ -29,7 +29,7 @@
 
 + (CapitolMap *)	mapFromOfficeString:(NSString *)office;
 - (void)			importFromDictionary:(NSDictionary *)dictionary;
-- (NSDictionary *)	exportToDictionary;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *exportToDictionary;
 	
 @end
 

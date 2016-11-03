@@ -29,9 +29,9 @@
 	return nil;
 }
 
-- (id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (instancetype) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	if ((self=[super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-		controllerEnabled = [[NSNumber numberWithBool:YES] retain];
+		controllerEnabled = [@YES retain];
 		
 		NSString *statusKey = [self reachabilityStatusKey];
 		if (!IsEmpty(statusKey)) {
@@ -46,13 +46,13 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
 	if (!IsEmpty(keyPath) && [self reachabilityStatusKey] && [keyPath isEqualToString:[self reachabilityStatusKey]]) {
-		BOOL enbl = [self.controllerEnabled boolValue];
+		BOOL enbl = (self.controllerEnabled).boolValue;
 		
 		id newVal = [change valueForKey:NSKeyValueChangeNewKey];
 		if (newVal && [newVal isKindOfClass:[NSNumber class]]) {
 			enbl = [newVal intValue] > NotReachable;
 		}
-		self.controllerEnabled = [NSNumber numberWithBool:enbl];
+		self.controllerEnabled = @(enbl);
 	}
 	/*if (!IsEmpty(keyPath) && [keyPath isEqualToString:@"frame"]) {
 		NSLog(@"Class=%@ w=%f h=%f", NSStringFromClass([self class]), self.tableView.frame.size.width, self.tableView.frame.size.height);
@@ -84,14 +84,14 @@
     return YES;
 }
 
-- (void)configure {	
-		
+- (void)configure
+{
 	[self dataSource];
 	
     if (![self shouldPreselectRowOnAppear])
         return;
     
-	if ([self.dataSource usesCoreData]) {
+	if ((self.dataSource).usesCoreData) {
 		id objectID = [[TexLegeAppDelegate appDelegate] savedTableSelectionForKey:NSStringFromClass([self class])];
 		if (objectID && [objectID isKindOfClass:[NSNumber class]]) {
 			@try {
@@ -113,7 +113,7 @@
 	}
 	
 	if (self.selectObjectOnAppear && self.detailViewController && [UtilityMethods isIPadDevice]) {
-		NSLog(@"Presetting a detail view's dataObject in %@!", [self description]);
+		NSLog(@"Presetting a detail view's dataObject in %@!", self.description);
 		if ([self.detailViewController respondsToSelector:@selector(setDataObject:)]) {
 			@try {
 				[self.detailViewController performSelector:@selector(setDataObject:) withObject:self.selectObjectOnAppear];
@@ -150,13 +150,13 @@
 	
 	// create a new table using the full application frame
 	// we'll ask the datasource which type of table to use (plain or grouped)
-	CGRect tempFrame = [[UIScreen mainScreen] applicationFrame];
+	CGRect tempFrame = [UIScreen mainScreen].applicationFrame;
 	
 	if (self.navigationController) {
 		tempFrame = self.navigationController.view.bounds;
 	}
 	
-	self.tableView = [[[UITableView alloc] initWithFrame:tempFrame style:[self.dataSource tableViewStyle]] autorelease];
+	self.tableView = [[[UITableView alloc] initWithFrame:tempFrame style:(self.dataSource).tableViewStyle] autorelease];
 	
 	// set the cell separator to a single straight line.
 	//self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
@@ -178,18 +178,18 @@
 	self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
 	self.tableView.autoresizesSubviews = YES;
 
-	self.title = [self.dataSource name];	
+	self.title = (self.dataSource).name;	
 	// set the long name shown in the navigation bar
 	//self.navigationItem.title=[dataSource navigationBarName];
 	
 	// FETCH CORE DATA
-	if ([self.dataSource usesCoreData])
+	if ((self.dataSource).usesCoreData)
 	{		
 		NSError *error;
 		// You've got to delete the cache, or disable caching before you modify the predicate...
-		[NSFetchedResultsController deleteCacheWithName:[[dataSource fetchedResultsController] cacheName]];
+		[NSFetchedResultsController deleteCacheWithName:dataSource.fetchedResultsController.cacheName];
 		
-		if (![[dataSource fetchedResultsController] performFetch:&error]) {
+		if (![dataSource.fetchedResultsController performFetch:&error]) {
 			// Handle the error...
 		}					
 	}
@@ -213,7 +213,7 @@
 	//self.navigationItem.titleView = self.chamberControl;
 	
 	if ([UtilityMethods isIPadDevice]) {
-		NSUInteger sectionCount = [self.tableView numberOfSections];
+		NSUInteger sectionCount = (self.tableView).numberOfSections;
 		CGFloat tableHeight = 0;
 		NSInteger section = 0;
 		for (section=0; section < sectionCount; section++) {
@@ -321,7 +321,7 @@
 			detailNav = [self.detailViewController performSelector:@selector(navigationController)];
 		
 		if (!self.selectObjectOnAppear) {	// otherwise we pop whenever we're automatically selecting stuff ... right?
-			if (detailNav && detailNav.viewControllers && [detailNav.viewControllers count] > 1) { 
+			if (detailNav && detailNav.viewControllers && (detailNav.viewControllers).count > 1) { 
 				[detailNav popToRootViewControllerAnimated:YES];
 				
 				if ([self.detailViewController respondsToSelector:@selector(tableView)]) {

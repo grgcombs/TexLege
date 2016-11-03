@@ -15,10 +15,10 @@
  * Define the object mapping formats
  */
 // TODO: Replace this with MIME Type -> Parser registration
-typedef enum {
+typedef NS_ENUM(unsigned int, RKMappingFormat) {
 	RKMappingFormatXML = 0,
 	RKMappingFormatJSON
-} RKMappingFormat;
+};
 
 /**
  * The policy to use when a payload returned from the remote service
@@ -31,10 +31,10 @@ typedef enum {
  * When the set nil policy (RKSetNilForMissingElementMappingPolicy) is selected, the mapper
  * will set the value for the mapped property target to nil to clear its value.
  */
-typedef enum {
+typedef NS_ENUM(unsigned int, RKMissingElementMappingPolicy) {
 	RKIgnoreMissingElementMappingPolicy = 0,
 	RKSetNilForMissingElementMappingPolicy
-} RKMissingElementMappingPolicy;
+};
 
 @interface RKObjectMapper : NSObject {	
 	NSMutableDictionary* _elementToClassMappings;

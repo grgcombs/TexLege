@@ -29,7 +29,7 @@
 }
 
 
-- (id)initWithAnnotation:(id <MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier {
+- (instancetype)initWithAnnotation:(id <MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier {
 	if ((self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier])) {
 		
 		
@@ -44,7 +44,7 @@
 
 		self.canShowCallout = YES;
 
-		NSInteger pinColorIndex = [[customAnnotation pinColorIndex] integerValue];
+		NSInteger pinColorIndex = customAnnotation.pinColorIndex.integerValue;
 		if (pinColorIndex >= TexLegePinAnnotationColorBlue) {
 			UIImage *pinImage = [TexLegeMapPins imageForPinColorIndex:pinColorIndex status:TexLegePinAnnotationStatusHead];
 			UIImageView *pinHead = [[UIImageView alloc] initWithImage:pinImage];

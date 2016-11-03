@@ -17,23 +17,15 @@
 @class ChamberCalendarObj;
 @class TexLegeNavBar;
 
-@interface CalendarDetailViewController : KalViewController <UISplitViewControllerDelegate,UISearchDisplayDelegate,UITableViewDelegate, UIPopoverControllerDelegate, EKEventViewDelegate, TXLDetailProtocol> {
-	id dataObject;
-	UIPopoverController *masterPopover;
-	UIPopoverController *eventPopover;
-	
-	IBOutlet UIWebView *webView;
-	ChamberCalendarObj *chamberCalendar;
-	
-	CGRect selectedRowRect;
-}
-@property (nonatomic, assign) id dataObject;
+@interface CalendarDetailViewController : KalViewController <UISplitViewControllerDelegate,UISearchDisplayDelegate,UITableViewDelegate, UIPopoverControllerDelegate, EKEventViewDelegate, TXLDetailProtocol>
+
+@property (nonatomic, retain) id dataObject;
 @property (nonatomic, retain) UIPopoverController *masterPopover;
 @property (nonatomic, retain) UIPopoverController *eventPopover;
 
-@property (nonatomic, retain) UIWebView *webView;
+@property (nonatomic, retain) IBOutlet UIWebView *webView;
 @property (nonatomic, retain) ChamberCalendarObj *chamberCalendar;
-@property (nonatomic) CGRect selectedRowRect;
+@property (nonatomic, assign) CGRect selectedRowRect;
 
 + (NSString *)nibName;
 

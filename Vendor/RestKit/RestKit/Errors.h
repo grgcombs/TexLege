@@ -11,7 +11,7 @@
 // The error domain for RestKit generated errors
 extern NSString* const RKRestKitErrorDomain;
 
-typedef enum {
+typedef NS_ENUM(unsigned int, RKRestKitError) {
 	RKObjectLoaderRemoteSystemError = 1,
 	RKRequestBaseURLOfflineError
-} RKRestKitError;
+};

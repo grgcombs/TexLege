@@ -7,7 +7,7 @@
 @import UIKit;
 
 @interface UIImage (ResolutionIndependent)
-- (id)initWithContentsOfResolutionIndependentFile:(NSString *)path;
+- (instancetype)initWithContentsOfResolutionIndependentFile:(NSString *)path;
 + (UIImage*)imageWithContentsOfResolutionIndependentFile:(NSString *)path;
 + (NSString*)highResImagePathWithPath:(NSString *)path;
 + (NSString *)resolutionIndependentFilePath:(NSString *)path;

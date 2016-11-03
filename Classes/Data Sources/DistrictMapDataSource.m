@@ -27,7 +27,7 @@
 #endif
 
 @interface DistrictMapDataSource (Private)
-- (NSArray *)sortDescriptors;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *sortDescriptors;
 @end
 
 
@@ -44,7 +44,7 @@
 	return [DistrictMapObj class];
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self = [super init])) {
 		self.filterChamber = 0;
 		self.filterString = [NSMutableString stringWithString:@""];
@@ -75,9 +75,9 @@
 - (void)resetCoreData:(NSNotification *)notification
 {
     // You've got to delete the cache, or disable caching before you modify the predicate...
-    [NSFetchedResultsController deleteCacheWithName:[self.fetchedResultsController cacheName]];
-    [self.fetchedResultsController.fetchRequest setPredicate:[self getFilterPredicate]];
-    [self.fetchedResultsController.fetchRequest setSortDescriptors:[self sortDescriptors]];
+    [NSFetchedResultsController deleteCacheWithName:(self.fetchedResultsController).cacheName];
+    (self.fetchedResultsController.fetchRequest).predicate = [self getFilterPredicate];
+    (self.fetchedResultsController.fetchRequest).sortDescriptors = [self sortDescriptors];
 
     NSError *error = nil;
     if (![self.fetchedResultsController performFetch:&error]) {
@@ -113,7 +113,7 @@
 { return NSLocalizedStringFromTable(@"District Maps", @"StandardUI", @"Short name for district maps tab"); }
 
 - (NSString *)navigationBarName 
-{ return [self name]; }
+{ return self.name; }
 
 - (UIImage *)tabBarImage
 { return [UIImage imageNamed:@"73-radar-inv.png"]; }
@@ -232,7 +232,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {	
 	//debug_NSLog(@"%@", [self.fetchedResultsController.fetchRequest description]);
-	NSInteger count = [[self.fetchedResultsController sections] count];		
+	NSInteger count = (self.fetchedResultsController).sections.count;		
 	if (count > 0 && !self.hasFilter && !self.byDistrict)  {
 		return count; 
 	}
@@ -252,17 +252,17 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // eventually (soon) we'll need to create a new fetchedResultsController to filter for chamber selection
-    NSInteger count = [tableView numberOfSections];
+    NSInteger count = tableView.numberOfSections;
     NSArray *sections = self.fetchedResultsController.sections;
     if (sections.count <= section ||
         count == 0)
     {
         return 0;
     }
-    id <NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+    id <NSFetchedResultsSectionInfo> sectionInfo = sections[section];
     if (!sectionInfo)
         return 0;
-    return [sectionInfo numberOfObjects];
+    return sectionInfo.numberOfObjects;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -270,15 +270,15 @@
 	// [A,B,C,D,E,F,G,H,I,K,L,M,N,O,P,R,S,T,U,V,X,Y,Z]
 	// return the letter that represents the requested section
 	
-	NSInteger count = [tableView numberOfSections];
-    NSArray *sections = [fetchedResultsController sections];
+	NSInteger count = tableView.numberOfSections;
+    NSArray *sections = fetchedResultsController.sections;
     if (count > 0 &&
         sections.count > section &&
         !self.hasFilter &&
         !self.byDistrict)
     {
-		id <NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
-		return [sectionInfo indexTitle]; // or [sectionInfo name];
+		id <NSFetchedResultsSectionInfo> sectionInfo = sections[section];
+		return sectionInfo.indexTitle; // or [sectionInfo name];
 	}
 	return @"";
 }
@@ -312,7 +312,7 @@
     NSMutableString * predString = [NSMutableString stringWithString:@""];
 
     if (self.filterChamber > 0)	// do some chamber filtering
-        [predString appendFormat:@"(chamber = %@)", [NSNumber numberWithInteger:self.filterChamber]];
+        [predString appendFormat:@"(chamber = %@)", @(self.filterChamber)];
     if (self.filterString.length > 0) {		// do some string filtering
         if (predString.length > 0)	// we already have some predicate action, insert "AND"
             [predString appendString:@" AND "];
@@ -481,14 +481,14 @@
 	if (self.byDistrict) {
 		NSSortDescriptor *sort1 = [[NSSortDescriptor alloc] initWithKey:@"district" ascending:YES] ;
 		NSSortDescriptor *sort2 = [[NSSortDescriptor alloc] initWithKey:@"chamber" ascending:NO] ;
-		descriptors = [NSArray arrayWithObjects:sort1, sort2, nil];
+		descriptors = @[sort1, sort2];
 		[sort1 release];
 		[sort2 release];
 	}
 	else {
 		NSSortDescriptor *sort1 = [[NSSortDescriptor alloc] initWithKey:@"legislator.lastname" ascending:YES] ;
 		NSSortDescriptor *sort2 = [[NSSortDescriptor alloc] initWithKey:@"legislator.firstname" ascending:YES] ;
-		descriptors = [NSArray arrayWithObjects:sort1, sort2, nil];
+		descriptors = @[sort1, sort2];
 		[sort1 release];
 		[sort2 release];
 	}
@@ -508,7 +508,7 @@
 	 */
 //	[fetchRequest setPropertiesToFetch:[DistrictMapObj lightPropertiesToFetch]];
 //	[fetchRequest setResultType:NSDictionaryResultType];
-	[fetchRequest setSortDescriptors:[self sortDescriptors]];
+	fetchRequest.sortDescriptors = [self sortDescriptors];
 	
 	fetchedResultsController = [[NSFetchedResultsController alloc] 
 															 initWithFetchRequest:fetchRequest 

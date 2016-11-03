@@ -115,7 +115,7 @@ CGFloat quartzRowHeight = 73.f;
 	// we don't have a legislator selected and yet we're appearing in portrait view ... got to have something here !!! 
 	if (self.committee == nil && ![UtilityMethods isLandscapeOrientation])  {
 		
-		self.committee = [[[TexLegeAppDelegate appDelegate] committeeMasterVC] selectObjectOnAppear];		
+		self.committee = [TexLegeAppDelegate appDelegate].committeeMasterVC.selectObjectOnAppear;		
 	}
 }
 
@@ -124,8 +124,8 @@ CGFloat quartzRowHeight = 73.f;
 
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
-	UINavigationController *nav = [self navigationController];
-	if (nav && [nav.viewControllers count]>3)
+	UINavigationController *nav = self.navigationController;
+	if (nav && (nav.viewControllers).count>3)
 		[nav popToRootViewControllerAnimated:YES];
 	
     [super didReceiveMemoryWarning];
@@ -163,12 +163,12 @@ CGFloat quartzRowHeight = 73.f;
 }
 
 - (void)setDataObject:(id)newObj {
-	[self setCommittee:newObj];
+	self.committee = newObj;
 }
 
 - (void)resetTableData:(NSNotification *)notification {
 	if (self.dataObject) {
-		[self setDataObject:self.dataObject];
+		self.dataObject = self.dataObject;
 	}
 }
 
@@ -187,8 +187,10 @@ CGFloat quartzRowHeight = 73.f;
 
 - (void)setCommittee:(CommitteeObj *)newObj {
 	self.dataObjectID = nil;
-	if (newObj) {
-		[self view];
+	if (newObj)
+    {
+        if (!self.isViewLoaded)
+            [self loadView];
 
 		if (self.masterPopover)
 			[self.masterPopover dismissPopoverAnimated:YES];
@@ -203,7 +205,6 @@ CGFloat quartzRowHeight = 73.f;
 		[self.tableView reloadData];
 		[self.view setNeedsDisplay];
 	}
-
 }
 
 #pragma mark -
@@ -245,7 +246,7 @@ CGFloat quartzRowHeight = 73.f;
 	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
 				NSLocalizedStringFromTable(@"Committee", @"DataTableUI", @"Cell title listing a legislative committee"), @"subtitle",
 				self.committee.committeeName, @"title",
-				[NSNumber numberWithBool:NO], @"isClickable",
+				@NO, @"isClickable",
 				nil, @"entryValue",
 				nil];
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
@@ -256,7 +257,7 @@ CGFloat quartzRowHeight = 73.f;
 //case kInfoSectionClerk:
 	NSString *text = self.committee.clerk;
 	id val = self.committee.clerk_email;
-	clickable = (text && [text length] && val && [val length]);
+	clickable = (text && text.length && val && [val length]);
 	if (!text)
 		text = @"";
 	if (!val)
@@ -264,7 +265,7 @@ CGFloat quartzRowHeight = 73.f;
 	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
 				NSLocalizedStringFromTable(@"Clerk", @"DataTableUI", @"Cell title listing a committee's assigned clerk"), @"subtitle",
 				text, @"title",
-				[NSNumber numberWithBool:clickable], @"isClickable",
+				@(clickable), @"isClickable",
 				val, @"entryValue",
 				nil];
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
@@ -274,7 +275,7 @@ CGFloat quartzRowHeight = 73.f;
 	
 //case kInfoSectionPhone:	// dial the number
 	text = self.committee.phone;
-	clickable = (text && [text length] && [UtilityMethods canMakePhoneCalls]);
+	clickable = (text && text.length && [UtilityMethods canMakePhoneCalls]);
 	if (!text)
 		text = @"";
 	if (clickable)
@@ -284,7 +285,7 @@ CGFloat quartzRowHeight = 73.f;
 	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
 				NSLocalizedStringFromTable(@"Phone", @"DataTableUI", @"Cell title listing a phone number"), @"subtitle",
 				text, @"title",
-				[NSNumber numberWithBool:clickable], @"isClickable",
+				@(clickable), @"isClickable",
 				val, @"entryValue",
 				nil];
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
@@ -294,7 +295,7 @@ CGFloat quartzRowHeight = 73.f;
 	
 	//case kInfoSectionOffice: // open the office map
 	text = self.committee.office;
-	clickable = (text && [text length]);
+	clickable = (text && text.length);
 	if (!text)
 		text = @"";
 	if (clickable)
@@ -305,7 +306,7 @@ CGFloat quartzRowHeight = 73.f;
 	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
 				NSLocalizedStringFromTable(@"Location", @"DataTableUI", @"Cell title listing an office location (office number or stree address)"), @"subtitle",
 				text, @"title",
-				[NSNumber numberWithBool:clickable], @"isClickable",
+				@(clickable), @"isClickable",
 				val, @"entryValue",
 				nil];
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
@@ -314,7 +315,7 @@ CGFloat quartzRowHeight = 73.f;
 	[cellInfo release];
 	
 //case kInfoSectionWeb:	 // open the web page
-	clickable = (text && [text length]);
+	clickable = (text && text.length);
 	if (clickable)
 		val = [UtilityMethods safeWebUrlFromString:self.committee.url];
 	else
@@ -322,7 +323,7 @@ CGFloat quartzRowHeight = 73.f;
 	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
 				NSLocalizedStringFromTable(@"Web", @"DataTableUI", @"Cell title listing a web address"), @"subtitle",
 				NSLocalizedStringFromTable(@"Website & Meetings", @"DataTableUI", @"Cell title for a website link detailing committee meetings"), @"title",
-				[NSNumber numberWithBool:clickable], @"isClickable",
+				@(clickable), @"isClickable",
 				val, @"entryValue",
 				nil];
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
@@ -337,8 +338,8 @@ CGFloat quartzRowHeight = 73.f;
 }
 
 - (void) calcCommitteePartisanship {
-	NSArray *positions = [self.committee.committeePositions allObjects];
-	if (!positions && [positions count])
+	NSArray *positions = (self.committee.committeePositions).allObjects;
+	if (!positions && positions.count)
 		return;
 	
 	CGFloat avg = 0.0f;
@@ -356,10 +357,10 @@ CGFloat quartzRowHeight = 73.f;
 	}
 	
 	NSInteger democCount = 0, repubCount = 0;
-	NSArray *repubs = [positions findAllWhereKeyPath:@"legislator.party_id" equals:[NSNumber numberWithInteger:REPUBLICAN]];	
+	NSArray *repubs = [positions findAllWhereKeyPath:@"legislator.party_id" equals:@(REPUBLICAN)];	
 	if (repubs)
-		repubCount = [repubs count];
-	democCount = [positions count] - repubCount;
+		repubCount = repubs.count;
+	democCount = positions.count - repubCount;
 	
 	NSString *repubString = stringForParty(REPUBLICAN, TLReturnAbbrevPlural);
 	NSString *democString = stringForParty(DEMOCRAT, TLReturnAbbrevPlural);
@@ -374,13 +375,13 @@ CGFloat quartzRowHeight = 73.f;
 	
 	if (!IsEmpty(positions)) {
 		// This will give inacurate results in joint committees, at least until we're in a common dimensional space
-		LegislatorObj *anyMember = [[positions objectAtIndex:0] legislator];
+		LegislatorObj *anyMember = [positions[0] legislator];
 		
 		if (anyMember) {
 			PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
 			
-			CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:[anyMember.legtype integerValue]];
-			CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:[anyMember.legtype integerValue]];
+			CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:(anyMember.legtype).integerValue];
+			CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:(anyMember.legtype).integerValue];
 			
 			self.partisanSlider.sliderMin = minSlider;
 			self.partisanSlider.sliderMax = maxSlider;
@@ -410,7 +411,7 @@ CGFloat quartzRowHeight = 73.f;
 				rows = 1;
 			break;
 		case kMembersSection:
-			rows = [[self.committee sortedMembers] count];
+			rows = [self.committee sortedMembers].count;
 			break;
 		case kInfoSection:
 			rows = NUM_INFO_SECTION_ROWS;
@@ -425,8 +426,8 @@ CGFloat quartzRowHeight = 73.f;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSInteger row = [indexPath row];
-	NSInteger section = [indexPath section];
+	NSInteger row = indexPath.row;
+	NSInteger section = indexPath.section;
 
 	// We use the Leigislator Directory Cell identifier on purpose, since it's the same style as here..
 	
@@ -480,13 +481,13 @@ CGFloat quartzRowHeight = 73.f;
 			break;
 		case kMembersSection: {
 			NSArray * memberList = [self.committee sortedMembers];
-			if ([memberList count] >= row)
-				legislator = [memberList objectAtIndex:row];
+			if (memberList.count >= row)
+				legislator = memberList[row];
 		}
 			break;
 		case kInfoSection: {
-			if (row < [self.infoSectionArray count]) {
-				NSDictionary *cellInfo = [self.infoSectionArray objectAtIndex:row];
+			if (row < (self.infoSectionArray).count) {
+				NSDictionary *cellInfo = (self.infoSectionArray)[row];
 				if (cellInfo && [cell respondsToSelector:@selector(setCellInfo:)])
 					[cell performSelector:@selector(setCellInfo:) withObject:cellInfo];
 			}
@@ -529,14 +530,14 @@ CGFloat quartzRowHeight = 73.f;
 	
 	switch (section) {
 		case kChairSection: {
-			if ([self.committee.committeeType integerValue] == JOINT)
+			if ((self.committee.committeeType).integerValue == JOINT)
 				sectionName = NSLocalizedStringFromTable(@"Co-Chair", @"DataTableUI", @"For joint committees, House and Senate leaders are co-chair persons");
 			else
 				sectionName = NSLocalizedStringFromTable(@"Chair", @"DataTableUI", @"Cell title for a person who leads a given committee, an abbreviation for Chairperson");
 		}
 			break;
 		case kViceChairSection: {
-			if ([self.committee.committeeType integerValue] == JOINT)
+			if ((self.committee.committeeType).integerValue == JOINT)
 				sectionName = NSLocalizedStringFromTable(@"Co-Chair", @"DataTableUI", @"For joint committees, House and Senate leaders are co-chair persons");
 			else
 				sectionName = NSLocalizedStringFromTable(@"Vice Chair", @"DataTableUI", @"Cell title for a person who is second in command of a given committee, behind the Chairperson");
@@ -568,13 +569,13 @@ CGFloat quartzRowHeight = 73.f;
 - (void) pushMapViewWithMap:(CapitolMap *)capMap {
 	CapitolMapsDetailViewController *detailController = [[CapitolMapsDetailViewController alloc] initWithNibName:@"CapitolMapsDetailViewController" bundle:nil];
 	detailController.map = capMap;
-	[[self navigationController] pushViewController:detailController animated:YES];
+	[self.navigationController pushViewController:detailController animated:YES];
 	[detailController release];
 }
 
 - (void) pushInternalBrowserWithURL:(NSURL *)url {
 	if ([TexLegeReachability canReachHostWithURL:url]) { // do we have a good URL/connection?
-		NSString *urlString = [url absoluteString];
+		NSString *urlString = url.absoluteString;
 		
         NSURL *url = [NSURL URLWithString:urlString];
         if (!url)
@@ -595,13 +596,13 @@ CGFloat quartzRowHeight = 73.f;
 
 // the user selected a row in the table.
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath {
-	NSInteger row = [newIndexPath row];
-	NSInteger section = [newIndexPath section];
+	NSInteger row = newIndexPath.row;
+	NSInteger section = newIndexPath.section;
 		
 	[tableView deselectRowAtIndexPath:newIndexPath animated:YES];	
 	
 	if (section == kInfoSection) {
-		TableCellDataObject *cellInfo = [self.infoSectionArray objectAtIndex:row];
+		TableCellDataObject *cellInfo = (self.infoSectionArray)[row];
 		if (!cellInfo || !cellInfo.isClickable)
 			return;
 		
@@ -643,13 +644,13 @@ CGFloat quartzRowHeight = 73.f;
 				subDetailController.legislator = [self.committee vicechair];
 				break;
 			case kMembersSection: { // Committee Members
-				subDetailController.legislator = [[self.committee sortedMembers] objectAtIndex:row];
+				subDetailController.legislator = [self.committee sortedMembers][row];
 			}			
 				break;
 		}
 		
 		// push the detail view controller onto the navigation stack to display it
-		[[self navigationController] pushViewController:subDetailController animated:YES];
+		[self.navigationController pushViewController:subDetailController animated:YES];
 		
 		//	[self.navigationController setNavigationBarHidden:NO];
 		[subDetailController release];

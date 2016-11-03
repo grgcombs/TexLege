@@ -30,7 +30,7 @@ typedef NS_ENUM(uint16_t, ContributionQueryType) {
 
 - (id) dataObjectForIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *) indexPathForDataObject:(id)dataObject;
-- (NSString *)title;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *title;
 
 - (void)initiateQueryWithQueryID:(NSString *)aQuery type:(NSNumber *)type cycle:(NSString *)cycle;
 - (void)initiateQueryWithQueryID:(NSString *)aQuery type:(NSNumber *)type cycle:(NSString *)cycleOrNil parameter:(NSString *)parameterOrNil;

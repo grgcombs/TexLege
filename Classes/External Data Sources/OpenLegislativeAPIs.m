@@ -27,7 +27,7 @@ NSString * const followTheMoneyApiBaseURL = @"http://api.followthemoney.org";
 
 @implementation OpenLegislativeAPIs
 
-+ (id)sharedOpenLegislativeAPIs
++ (OpenLegislativeAPIs*)sharedOpenLegislativeAPIs
 {
 	static dispatch_once_t pred;
 	static OpenLegislativeAPIs *foo = nil;
@@ -37,7 +37,7 @@ NSString * const followTheMoneyApiBaseURL = @"http://api.followthemoney.org";
 }
 
 
-- (id)init {
+- (instancetype)init {
 	if ((self=[super init])) {
 		_osApiClient = [[RKClient clientWithBaseURL:osApiBaseURL] retain];
 		_transApiClient = [[RKClient clientWithBaseURL:transApiBaseURL] retain];
@@ -94,7 +94,7 @@ NSString * const followTheMoneyApiBaseURL = @"http://api.followthemoney.org";
 	
 	if (IsEmpty(billID) || IsEmpty(session) || !sender || !self.osApiClient)
 		return;
-	NSDictionary *queryParams = [NSDictionary dictionaryWithObjectsAndKeys:SUNLIGHT_APIKEY, @"apikey",nil];
+	NSDictionary *queryParams = @{@"apikey": SUNLIGHT_APIKEY};
 	NSString *queryString = [NSString stringWithFormat:@"/bills/%@/%@/%@", meta.selectedState, session, [billID stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 	[self.osApiClient get:queryString queryParams:queryParams delegate:sender];
 }

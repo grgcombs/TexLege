@@ -93,15 +93,15 @@ To use it in your Cocoa project, import the header and implementation files, and
 
 
 @interface NSDate (Helper)
-- (BOOL)equalsDefaultDate;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL equalsDefaultDate;
 
-- (NSUInteger)daysAgo;
-- (NSUInteger)daysAgoAgainstMidnight;
-- (NSString *)stringDaysAgo;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger daysAgo;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger daysAgoAgainstMidnight;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *stringDaysAgo;
 - (NSString *)stringDaysAgoAgainstMidnight:(BOOL)flag;
-- (NSUInteger)weekday;
-- (NSUInteger)year;
-- (NSString *)localWeekdayString;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger weekday;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger year;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *localWeekdayString;
 
 + (NSDate *)dateFromString:(NSString *)string;
 + (NSDate *)dateFromString:(NSString *)string withFormat:(NSString *)format;
@@ -110,13 +110,13 @@ To use it in your Cocoa project, import the header and implementation files, and
 + (NSString *)stringForDisplayFromDate:(NSDate *)date;
 + (NSString *)stringForDisplayFromDate:(NSDate *)date prefixed:(BOOL)prefixed;
 
-- (NSString *)string;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *string;
 - (NSString *)stringWithFormat:(NSString *)format;
 - (NSString *)stringWithDateStyle:(NSDateFormatterStyle)dateStyle timeStyle:(NSDateFormatterStyle)timeStyle;
 
-- (NSDate *)beginningOfWeek;
-- (NSDate *)beginningOfDay;
-- (NSDate *)endOfWeek;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDate *beginningOfWeek;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDate *beginningOfDay;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDate *endOfWeek;
 - (NSDate *)dateByAddingDays:(NSInteger)days;
 
 - (BOOL) isEarlierThanDate:(NSDate *)laterDate;
@@ -127,7 +127,7 @@ To use it in your Cocoa project, import the header and implementation files, and
 + (NSString *)timestampFormatString;
 + (NSString *)dbFormatString;
 
-- (NSString *)timestampString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *timestampString;
 + (NSDate *)dateFromTimestampString:(NSString *)timestamp;
 
 + (NSDate *)dateFromDate:(NSDate *)sourceDate fromTimeZone:(NSString *)tzAbbrev;

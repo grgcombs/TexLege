@@ -22,7 +22,7 @@
 @implementation DistrictPinAnnotationView
 
 
-- (id)initWithAnnotation:(id <MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier {
+- (instancetype)initWithAnnotation:(id <MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier {
 	if ((self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier])) {
 		self.animatesDrop = YES;
 		self.opaque = NO;
@@ -57,11 +57,11 @@
 	if ([anAnnotation respondsToSelector:@selector(pinColorIndex)]) {
 		NSNumber *pinColorNumber = [anAnnotation performSelector:@selector(pinColorIndex)];
 		if (pinColorNumber)
-			pinColorIndex = [pinColorNumber integerValue];
+			pinColorIndex = pinColorNumber.integerValue;
 	}
 		
 	if (pinColorIndex < TexLegePinAnnotationColorBlue && pinColorIndex >= 0)
-		[self setPinColor:pinColorIndex];
+		self.pinColor = pinColorIndex;
 	else {
 		UIImage *pinImage = [TexLegeMapPins imageForPinColorIndex:pinColorIndex status:TexLegePinAnnotationStatusHead];
 		if (pinImage) {

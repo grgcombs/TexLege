@@ -28,7 +28,7 @@
 @property (nonatomic, readonly) NSDictionary *addressDictionary;
 @property (nonatomic, unsafe_unretained) id <UserPinAnnotationDelegate>	coordinateChangedDelegate;
 
-- (UIImage *)image;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) UIImage *image;
 
 @end
 

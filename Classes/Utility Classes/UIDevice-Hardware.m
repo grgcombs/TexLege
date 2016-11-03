@@ -65,7 +65,7 @@
     sysctlbyname(typeSpecifier, NULL, &size, NULL, 0);
     char *answer = malloc(size);
 	sysctlbyname(typeSpecifier, answer, &size, NULL, 0);
-	NSString *results = [NSString stringWithCString:answer encoding: NSUTF8StringEncoding];
+	NSString *results = @(answer);
 	free(answer);
 	return results;
 }
@@ -115,13 +115,13 @@
 - (NSNumber *) totalDiskSpace
 {
 	NSDictionary *fattributes = [[NSFileManager defaultManager] attributesOfFileSystemForPath:NSHomeDirectory() error:nil];
-	return [fattributes objectForKey:NSFileSystemSize];
+	return fattributes[NSFileSystemSize];
 }
 
 - (NSNumber *) freeDiskSpace
 {
 	NSDictionary *fattributes = [[NSFileManager defaultManager] attributesOfFileSystemForPath:NSHomeDirectory() error:nil];
-	return [fattributes objectForKey:NSFileSystemFreeSize];
+	return fattributes[NSFileSystemFreeSize];
 }
 
 #pragma mark platform type and name utils
@@ -155,7 +155,7 @@
 	
 	if ([platform hasSuffix:@"86"])
 	{
-		if ([[UIScreen mainScreen] bounds].size.width < 768)
+		if ([UIScreen mainScreen].bounds.size.width < 768)
 			return UIDeviceiPhoneSimulatoriPhone;
 		else 
 			return UIDeviceiPhoneSimulatoriPad;
@@ -591,7 +591,7 @@
 	// NSString *outstring = [NSString stringWithFormat:@"%02x:%02x:%02x:%02x:%02x:%02x", *ptr, *(ptr+1), *(ptr+2), *(ptr+3), *(ptr+4), *(ptr+5)];
 	NSString *outstring = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x", *ptr, *(ptr+1), *(ptr+2), *(ptr+3), *(ptr+4), *(ptr+5)];
 	free(buf);
-	return [outstring uppercaseString];
+	return outstring.uppercaseString;
 }
 
 - (NSString *) platformCode

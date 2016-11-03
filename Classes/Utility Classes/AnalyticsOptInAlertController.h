@@ -19,9 +19,9 @@
 
 @property (nonatomic, retain) IBOutlet UIAlertView *currentAlert;
 
-- (BOOL) presentAnalyticsOptInAlertIfNecessary;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL presentAnalyticsOptInAlertIfNecessary;
 - (void) presentAnalyticsOptInAlert;
-- (BOOL) shouldPresentAnalyticsOptInAlert;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldPresentAnalyticsOptInAlert;
 - (void) updateOptInFromSettings;
 
 @end

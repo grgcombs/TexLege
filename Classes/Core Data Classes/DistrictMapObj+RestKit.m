@@ -13,7 +13,6 @@
 
 #import "LegislatorObj.h"
 #import "TexLegeCoreDataUtils.h"
-#import "NSData_Base64Extensions.h"
 
 @implementation DistrictMapObj (RestKit)
 
@@ -55,10 +54,15 @@
 	self.legislator = aLegislator;
 }
 
-- (void) setCoordinatesBase64:(NSString *)newCoords {
+- (void)setCoordinatesBase64:(NSString *)newCoords
+{
 	NSString *key = @"coordinatesBase64";
 
-	self.coordinatesData = [NSData dataWithBase64EncodedString:newCoords];
+    NSData *coordinatesData = [[NSData alloc] initWithBase64EncodedString:newCoords options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    self.coordinatesData = coordinatesData;
+    [coordinatesData release];
+
+    //self.coordinatesData = [NSData dataWithBase64EncodedString:newCoords];
 	
 	[self willChangeValueForKey:key];
 	[self setPrimitiveValue:nil forKey:key];

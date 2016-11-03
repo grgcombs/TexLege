@@ -36,7 +36,7 @@
 @dynamic legislator;
 
 - (NSString *)boundaryID {
-    NSString *chamberCode = [self.chamber integerValue] == 1 ? @"l" : @"u";
+    NSString *chamberCode = (self.chamber).integerValue == 1 ? @"l" : @"u";
     return [NSString stringWithFormat:@"sld%@/tx-%@", self.district, chamberCode];
 }
 

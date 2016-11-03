@@ -24,7 +24,7 @@ const CGFloat kPartisanScaleViewHeight = 32.0f;
 @synthesize sliderValue, sliderMin, sliderMax;
 @synthesize highlighted, showUnknown;
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
 	if (self) {
@@ -39,7 +39,7 @@ const CGFloat kPartisanScaleViewHeight = 32.0f;
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)coder
+- (instancetype)initWithCoder:(NSCoder *)coder
 {
 	self = [super initWithCoder:coder];
 	if (self) {
@@ -129,7 +129,7 @@ const CGFloat kPartisanScaleViewHeight = 32.0f;
 - (void)drawRect:(CGRect)dirtyRect
 {
 	CGRect imageBounds = CGRectMake(0.0f, 0.0f, kPartisanScaleViewWidth, kPartisanScaleViewHeight);
-	CGRect bounds = [self bounds];
+	CGRect bounds = self.bounds;
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	CGFloat alignStroke;
 	CGFloat resolution;
@@ -160,12 +160,12 @@ const CGFloat kPartisanScaleViewHeight = 32.0f;
 	drawRect.size.height = roundf(resolution * drawRect.size.height) / resolution;
 	CGPathAddRect(path, NULL, drawRect);
 	colors = [NSMutableArray arrayWithCapacity:3];
-	[colors addObject:(id)[[TexLegeTheme texasBlue] CGColor]];
+	[colors addObject:(id)[TexLegeTheme texasBlue].CGColor];
 	locations[0] = 0.0f;
-	[colors addObject:(id)[[TexLegeTheme texasRed] CGColor]];
+	[colors addObject:(id)[TexLegeTheme texasRed].CGColor];
 	locations[1] = 1.0f;
 	color = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f];
-	[colors addObject:(id)[color CGColor]];
+	[colors addObject:(id)color.CGColor];
 	locations[2] = 0.501f;
 	gradient = CGGradientCreateWithColors(space, (CFArrayRef)colors, locations);
 	CGContextAddPath(context, path);
@@ -279,10 +279,10 @@ const CGFloat kPartisanScaleViewHeight = 32.0f;
 		
 		colors = [NSMutableArray arrayWithCapacity:2];
 		color = [UIColor colorWithRed:0.9f green:0.9f blue:0.9f alpha:1.0f];
-		[colors addObject:(id)[color CGColor]];
+		[colors addObject:(id)color.CGColor];
 		locations[0] = 0.0f;
 		color = [UIColor colorWithRed:0.9f green:0.9f blue:0.9f alpha:1.0f];
-		[colors addObject:(id)[color CGColor]];
+		[colors addObject:(id)color.CGColor];
 		locations[1] = 1.0f;
 		gradient = CGGradientCreateWithColors(space, (CFArrayRef)colors, locations);
 		CGContextAddPath(context, path);

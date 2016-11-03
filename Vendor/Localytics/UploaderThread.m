@@ -64,7 +64,7 @@ static UploaderThread *_sharedUploaderThread = nil;
     LocalyticsDatabase *db = [LocalyticsDatabase sharedLocalyticsDatabase];
     NSString *blobString = [db uploadBlobString];
 
-    if ([blobString length] == 0) {
+    if (blobString.length == 0) {
         // There is nothing outstanding to upload.
         [self logMessage:@"Abandoning upload. There are no new events."];
 
@@ -87,11 +87,11 @@ static UploaderThread *_sharedUploaderThread = nil;
 	NSMutableURLRequest *submitRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:apiUrlString]
 																			 cachePolicy:NSURLRequestReloadIgnoringCacheData 
 																			 timeoutInterval:60.0];
-	[submitRequest setHTTPMethod:@"POST"];
+	submitRequest.HTTPMethod = @"POST";
 	[submitRequest setValue:@"application/x-gzip" forHTTPHeaderField:@"Content-Type"];
     [submitRequest setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
-	[submitRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[deflatedRequestData length]] forHTTPHeaderField:@"Content-Length"];
-	[submitRequest setHTTPBody:deflatedRequestData];
+	[submitRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)deflatedRequestData.length] forHTTPHeaderField:@"Content-Length"];
+	submitRequest.HTTPBody = deflatedRequestData;
     [deflatedRequestData release];
 	
 	// The NSURLConnection Object automatically spawns its own thread as a default behavior.
@@ -117,7 +117,7 @@ static UploaderThread *_sharedUploaderThread = nil;
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
     // Could receive multiple response callbacks, likely due to redirection.
     // Record status and act only when connection completes load.
-    _responseStatusCode = [(NSHTTPURLResponse *)response statusCode];
+    _responseStatusCode = ((NSHTTPURLResponse *)response).statusCode;
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
@@ -145,8 +145,8 @@ static UploaderThread *_sharedUploaderThread = nil;
 	// duplicate data will be ignored by the server when it is next uploaded.
 	[self logMessage:[NSString stringWithFormat: 
 					  @"Error Uploading.  Code: %ld,  Description: %@", 
-					  (long)[error code],
-					  [error localizedDescription]]];
+					  (long)error.code,
+					  error.localizedDescription]];
 
 	[self complete];
 }
@@ -168,7 +168,7 @@ static UploaderThread *_sharedUploaderThread = nil;
  */
 - (NSData *)gzipDeflatedDataWithData:(NSData *)data
 {
-	if ([data length] == 0) return data;
+	if (data.length == 0) return data;
 	
 	z_stream strm;
 	
@@ -176,8 +176,8 @@ static UploaderThread *_sharedUploaderThread = nil;
 	strm.zfree = Z_NULL;
 	strm.opaque = Z_NULL;
 	strm.total_out = 0;
-	strm.next_in=(Bytef *)[data bytes];
-	strm.avail_in = (uInt)[data length];
+	strm.next_in=(Bytef *)data.bytes;
+	strm.avail_in = (uInt)data.length;
 	
 	// Compresssion Levels:
 	//   Z_NO_COMPRESSION
@@ -191,11 +191,11 @@ static UploaderThread *_sharedUploaderThread = nil;
 	
 	do {
 		
-		if (strm.total_out >= [compressed length])
+		if (strm.total_out >= compressed.length)
 			[compressed increaseLengthBy: 16384];
 		
-		strm.next_out = [compressed mutableBytes] + strm.total_out;
-		strm.avail_out = (uInt)([compressed length] - strm.total_out);
+		strm.next_out = compressed.mutableBytes + strm.total_out;
+		strm.avail_out = (uInt)(compressed.length - strm.total_out);
 		
 		deflate(&strm, Z_FINISH);  
 		
@@ -203,7 +203,7 @@ static UploaderThread *_sharedUploaderThread = nil;
 	
 	deflateEnd(&strm);
 	
-	[compressed setLength: strm.total_out];
+	compressed.length = strm.total_out;
 	return [NSData dataWithData:compressed];
 }
 
@@ -214,7 +214,7 @@ static UploaderThread *_sharedUploaderThread = nil;
 */
 - (void) logMessage:(NSString *)message {
     if(DO_LOCALYTICS_LOGGING) {
-		NSLog(@"(localytics uploader) %s\n", [message UTF8String]);
+		NSLog(@"(localytics uploader) %s\n", message.UTF8String);
     }
 }
 

@@ -26,7 +26,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 @synthesize highlighted, questionImage;
 @synthesize sliderValue, sliderMin, sliderMax;
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
 	if (self) {
@@ -48,7 +48,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)coder
+- (instancetype)initWithCoder:(NSCoder *)coder
 {
 	self = [super initWithCoder:coder];
 	if (self) {
@@ -170,12 +170,12 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	
 	//self.rank = @"3rd most partisan (out of 76 Repubs)";
 
-	NSArray *legislators = [TexLegeCoreDataUtils allLegislatorsSortedByPartisanshipFromChamber:[value.legtype integerValue] 
-																		   andPartyID:[value.party_id integerValue]];
+	NSArray *legislators = [TexLegeCoreDataUtils allLegislatorsSortedByPartisanshipFromChamber:(value.legtype).integerValue 
+																		   andPartyID:(value.party_id).integerValue];
 	if (legislators) {
 		NSInteger rankIndex = [legislators indexOfObject:value] + 1;
-		NSInteger count = [legislators count];
-		NSString *partyShortName = stringForParty([value.party_id integerValue], TLReturnAbbrevPlural);
+		NSInteger count = legislators.count;
+		NSString *partyShortName = stringForParty((value.party_id).integerValue, TLReturnAbbrevPlural);
 		
 		NSString *ordinalRank = [UtilityMethods ordinalNumberFormat:rankIndex];
 		return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ most partisan (out of %d %@)", @"DataTableUI", @"Partisan ranking, ie. 32nd most partisan out of 55 Democrats"),
@@ -195,15 +195,15 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 		self.party = value.party_name;
 		self.name = [value legProperName];
 		self.tenure = [value tenureString];
-		self.party_id = [[value party_id] integerValue];
+		self.party_id = value.party_id.integerValue;
 		
 		PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
-		CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:[value.legtype integerValue]];
-		CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:[value.legtype integerValue]];
+		CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:(value.legtype).integerValue];
+		CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:(value.legtype).integerValue];
 		
 		self.sliderMax = maxSlider;
 		self.sliderMin = minSlider;	
-		[self setSliderValue:self.partisan_index];
+		self.sliderValue = self.partisan_index;
 		
 		self.rank = [self partisanRankStringForLegislator:value];
 	}
@@ -213,7 +213,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 - (void)drawRect:(CGRect)dirtyRect
 {
 	CGRect imageBounds = CGRectMake(0.0f, 0.0f, kCommitteeMemberCellViewWidth, kCommitteeMemberCellViewHeight);
-	CGRect bounds = [self bounds];
+	CGRect bounds = self.bounds;
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	CGFloat alignStroke;
 	CGFloat resolution;
@@ -261,7 +261,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	drawRect.size.height = roundf(resolution * drawRect.size.height) / resolution;
 	font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:11.0f];
 	[tenureColor set];
-	[[self tenure] drawInRect:drawRect withFont:font lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
+	[self.tenure drawInRect:drawRect withFont:font lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
 	
 	// District
 	
@@ -272,7 +272,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	drawRect.size.height = roundf(resolution * drawRect.size.height) / resolution;
 	font = [TexLegeTheme boldFifteen];
 	[districtColor set];
-	[[self district] drawInRect:drawRect withFont:font];
+	[self.district drawInRect:drawRect withFont:font];
 	
 	// Party
 	
@@ -283,7 +283,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	drawRect.size.height = roundf(resolution * drawRect.size.height) / resolution;
 	font = [TexLegeTheme boldFifteen];
 	[partyColor set];
-	[[self party] drawInRect:drawRect withFont:font];
+	[self.party drawInRect:drawRect withFont:font];
 	
 	// Rank
 	
@@ -294,7 +294,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	drawRect.size.height = roundf(resolution * drawRect.size.height) / resolution;
 	font = [TexLegeTheme boldTen];
 	[rankColor set];
-	[[self rank] drawInRect:drawRect withFont:font lineBreakMode:NSLineBreakByWordWrapping alignment:NSTextAlignmentRight];
+	[self.rank drawInRect:drawRect withFont:font lineBreakMode:NSLineBreakByWordWrapping alignment:NSTextAlignmentRight];
 	
 	// Title
 	
@@ -305,7 +305,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	drawRect.size.height = roundf(resolution * drawRect.size.height) / resolution;
 	font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
 	[titleColor set];
-	[[self title] drawInRect:drawRect withFont:font];
+	[self.title drawInRect:drawRect withFont:font];
 	
 	// Name
 	
@@ -316,7 +316,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	drawRect.size.height = roundf(resolution * drawRect.size.height) / resolution;
 	font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17.0f];
 	[nameColor set];
-	[[self name] drawInRect:drawRect withFont:font];
+	[self.name drawInRect:drawRect withFont:font];
 	
 	// GradientBar
 	
@@ -329,12 +329,12 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	drawRect.size.height = roundf(resolution * drawRect.size.height) / resolution;
 	CGPathAddRect(path, NULL, drawRect);
 	colors = [NSMutableArray arrayWithCapacity:3];
-	[colors addObject:(id)[[TexLegeTheme texasBlue] CGColor]];
+	[colors addObject:(id)[TexLegeTheme texasBlue].CGColor];
 	locations[0] = 0.0f;
-	[colors addObject:(id)[[TexLegeTheme texasRed] CGColor]];
+	[colors addObject:(id)[TexLegeTheme texasRed].CGColor];
 	locations[1] = 1.0f;
 	color = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f];
-	[colors addObject:(id)[color CGColor]];
+	[colors addObject:(id)color.CGColor];
 	locations[2] = 0.499f;
 	gradient = CGGradientCreateWithColors(space, (CFArrayRef)colors, locations);
 	CGContextAddPath(context, path);
@@ -383,7 +383,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 		// Setup for Shadow Effect
 		color = [UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.5f];
 		CGContextSaveGState(context);
-		CGContextSetShadowWithColor(context, CGSizeMake(0.724f * resolution, 2.703f * resolution), 1.679f * resolution, [color CGColor]);
+		CGContextSetShadowWithColor(context, CGSizeMake(0.724f * resolution, 2.703f * resolution), 1.679f * resolution, color.CGColor);
 		CGContextBeginTransparencyLayer(context, NULL);
 		
 		// Star
@@ -447,10 +447,10 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 		CGPathCloseSubpath(path);
 		colors = [NSMutableArray arrayWithCapacity:2];
 		color = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f];
-		[colors addObject:(id)[color CGColor]];
+		[colors addObject:(id)color.CGColor];
 		locations[0] = 0.0f;
 		color = [UIColor colorWithRed:0.6f green:0.6f blue:0.6f alpha:1.0f];
-		[colors addObject:(id)[color CGColor]];
+		[colors addObject:(id)color.CGColor];
 		locations[1] = 1.0f;
 		gradient = CGGradientCreateWithColors(space, (CFArrayRef)colors, locations);
 		CGContextAddPath(context, path);

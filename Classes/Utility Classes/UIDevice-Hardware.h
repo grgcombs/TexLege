@@ -30,7 +30,7 @@
 #define IPHONE_SIMULATOR_IPHONE_NAMESTRING	@"iPhone Simulator"
 #define IPHONE_SIMULATOR_IPAD_NAMESTRING	@"iPad Simulator"
 
-typedef enum {
+typedef NS_ENUM(unsigned int, UIDevicePlatform) {
 	UIDeviceUnknown,
 	UIDeviceiPhoneSimulator,
 	UIDeviceiPhoneSimulatoriPhone,
@@ -49,13 +49,13 @@ typedef enum {
 	UIDeviceUnknowniPhone,
 	UIDeviceUnknowniPod,
 	UIDeviceIFPGA,
-} UIDevicePlatform;
+};
 
-typedef enum {
+typedef NS_ENUM(unsigned int, UIDeviceFirmware) {
 	UIDeviceFirmware2,
 	UIDeviceFirmware3,
 	UIDeviceFirmware4,
-} UIDeviceFirmware;
+};
 
 enum {
 	UIDeviceSupportsTelephony = 1 << 0,
@@ -97,24 +97,24 @@ enum {
  */
 
 @interface UIDevice (Hardware)
-- (double)availableMemory;
+@property (NS_NONATOMIC_IOSONLY, readonly) double availableMemory;
 
-- (NSString *) platform;
-- (NSUInteger) platformType;
-- (NSUInteger) platformCapabilities;
-- (NSString *) platformString;
-- (NSString *) platformCode;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *platform;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger platformType;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger platformCapabilities;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *platformString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *platformCode;
 
-- (NSArray *) capabilityArray;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *capabilityArray;
 - (BOOL) platformHasCapability:(NSUInteger)capability;
 
-- (NSUInteger) cpuFrequency;
-- (NSUInteger) busFrequency;
-- (NSUInteger) totalMemory;
-- (NSUInteger) userMemory;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger cpuFrequency;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger busFrequency;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger totalMemory;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger userMemory;
 
-- (NSNumber *) totalDiskSpace;
-- (NSNumber *) freeDiskSpace;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSNumber *totalDiskSpace;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSNumber *freeDiskSpace;
 
-- (NSString *) macaddress;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *macaddress;
 @end

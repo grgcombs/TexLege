@@ -59,14 +59,14 @@
  * will encode these parameters into a serialization format (form encoded, JSON, etc). This is
  * required to use putObject: and postObject: for updating and creating remote object representations.
  */
-- (NSDictionary*)propertiesForSerialization;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *propertiesForSerialization;
 
 /**
  * Return a dictionary of relationships to be serialized for submission to a remote resource. The router
  * will encode these parameters into a serialization format (form encoded, JSON, etc). This is
  * required to use putObject: and postObject: for updating and creating remote object representations.
  */
-- (NSDictionary*)relationshipsForSerialization;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *relationshipsForSerialization;
 
 /**
  * Invoked before the mappable object is sent with an Object Loader. This

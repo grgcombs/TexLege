@@ -26,7 +26,7 @@
 #pragma mark Initialization
 
 
-- (id)initWithStyle:(UITableViewStyle)style {
+- (instancetype)initWithStyle:(UITableViewStyle)style {
     // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
     if ((self = [super initWithStyle:style])) {
 		if (!self.dataSource)
@@ -100,7 +100,7 @@
 - (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)cycleOrNil parameter:(NSString *)parameterOrNil
 {
     NSString *typeString = @"";
-	switch ([newType integerValue]) {
+	switch (newType.integerValue) {
 		case kContributionQueryDonor:
 			typeString = @"DonorSummaryQuery";
 			break;
@@ -171,7 +171,7 @@
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-	if (buttonIndex == [alertView firstOtherButtonIndex]) {
+	if (buttonIndex == alertView.firstOtherButtonIndex) {
 		NSURL *url = [NSURL URLWithString:[UtilityMethods texLegeStringWithKeyPath:@"ExternalURLs.nimspWeb"]];
 		[UtilityMethods openURLWithTrepidation:url];
 	}

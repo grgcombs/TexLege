@@ -60,7 +60,7 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 @synthesize activeUpdates;
 @synthesize infoPanel = _infoPanel;
 
-- (id) init {
+- (instancetype) init {
 	if ((self=[super init])) {
 		_queue = [[RKRequestQueue alloc] init];
 		_queue.concurrentRequestsLimit = 1;
@@ -96,7 +96,7 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 // Totally cheating my way through this right now.  But it'll pass the app store reviewers!!!
 - (UIView *)appRootView {
     @try {
-        UITabBarController *tabBarController = (UITabBarController *)[[[UIApplication sharedApplication] keyWindow] rootViewController];
+        UITabBarController *tabBarController = (UITabBarController *)[UIApplication sharedApplication].keyWindow.rootViewController;
         if (tabBarController && tabBarController.isViewLoaded)
         {
             NSAssert([tabBarController isKindOfClass:[UITabBarController class]], @"Unexpected root view controller for app's key window.");
@@ -104,12 +104,12 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
             if ([UtilityMethods isIPadDevice]) {
                 UISplitViewController *splitView = (UISplitViewController *)tabBarController.selectedViewController;
                 NSAssert([splitView isKindOfClass:[UISplitViewController class]], @"Unexpected view controller expected split view controller: %@", splitView);
-                currentVC = [splitView.viewControllers objectAtIndex:1];
+                currentVC = (splitView.viewControllers)[1];
             }
             else {
                 UINavigationController *navControl = (UINavigationController *)tabBarController.selectedViewController;
                 NSAssert([navControl isKindOfClass:[UINavigationController class]], @"Unexpected view controller expected navigation controller: %@", navControl);
-                currentVC = [navControl topViewController];
+                currentVC = navControl.topViewController;
             }
             return currentVC.view;
         }
@@ -123,54 +123,66 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 #pragma mark -
 #pragma mark Check & Perform Updates
 
-- (void) performDataUpdatesIfAvailable:(id)sender {
-	NSArray *objects = [statusBlurbsAndModels allKeys];
-	if ([TexLegeReachability texlegeReachable]) {
-		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"DATABASE_UPDATE_REQUEST"];
-		NSString *statusString = NSLocalizedStringFromTable(@"Checking for Data Updates", @"DataTableUI", @"Status indicator for updates");
-        UIView *rootView = [self appRootView];
-        if (rootView)
-            self.infoPanel = [MTInfoPanel showPanelInView:rootView type:MTInfoPanelTypeActivity title:NSLocalizedString(@"Data Update", @"") subtitle:statusString];
-		
-		self.activeUpdates = [NSCountedSet set];
-						
-		RKObjectManager* objectManager = [RKObjectManager sharedManager];
+- (void)performDataUpdatesIfAvailable:(id)sender
+{
+    if (![TexLegeReachability texlegeReachable])
+        return;
 
-		for (NSString *entityName in objects) {
+	NSArray *objects = statusBlurbsAndModels.allKeys;
+
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"DATABASE_UPDATE_REQUEST"];
+
+    NSString *statusString = NSLocalizedStringFromTable(@"Checking for Data Updates", @"DataTableUI", @"Status indicator for updates");
+    UIView *rootView = self.appRootView;
+    if (rootView)
+    {
+        self.infoPanel = [MTInfoPanel showPanelInView:rootView type:MTInfoPanelTypeActivity title:NSLocalizedString(@"Data Update", @"") subtitle:statusString];
+    }
+    
+    self.activeUpdates = [NSCountedSet set];
+
+    RKObjectManager* objectManager = [RKObjectManager sharedManager];
+
+    for (NSString *entityName in objects)
+    {
 #if FORCE_ALL_UPDATES
-			NSString *localTS = @"2008-01-01 00:00:00";
+        NSString *localTS = @"2008-01-01 00:00:00";
 #else
-			NSString *localTS = [self localDataTimestampForModel:entityName];
+        NSString *localTS = [self localDataTimestampForModel:entityName];
 #endif
-			NSString *resourcePath = [NSString stringWithFormat:@"/rest.php/%@/", entityName];
-			NSDictionary *queryParams = [NSDictionary dictionaryWithObjectsAndKeys:localTS,TXLUPDMGR_UPDATEDPARAM,nil];
-			NSString* resourcePathWithQuery = RKPathAppendQueryParams(resourcePath, queryParams);
-			
-			Class entityClass = NSClassFromString(entityName);
-			if (entityClass) {							
-				[self.activeUpdates addObject:entityName];		// we don't add WnomAggregateObj because we don't get it loaded the same way.
-				
-				RKObjectLoader *loader = [objectManager objectLoaderWithResourcePath:resourcePathWithQuery delegate:self];
-				loader.method = RKRequestMethodGET;
-				loader.objectClass = entityClass;
-				loader.backgroundPolicy = RKRequestBackgroundPolicyContinue;
-				[_queue addRequest:loader];
-			}			
-		}		
-		if ([_queue count]) {
-			[_queue start];
-		}
-	}
+        if (!localTS)
+            continue; // runtime updates are turned off for this entity, skip it
+
+        NSString *resourcePath = [NSString stringWithFormat:@"/rest.php/%@/", entityName];
+        NSDictionary *queryParams = @{TXLUPDMGR_UPDATEDPARAM: localTS};
+        NSString* resourcePathWithQuery = RKPathAppendQueryParams(resourcePath, queryParams);
+
+        Class entityClass = NSClassFromString(entityName);
+        if (!entityClass || !resourcePathWithQuery)
+            continue;
+
+        [self.activeUpdates addObject:entityName];
+
+        RKObjectLoader *loader = [objectManager objectLoaderWithResourcePath:resourcePathWithQuery delegate:self];
+        loader.method = RKRequestMethodGET;
+        loader.objectClass = entityClass;
+        loader.backgroundPolicy = RKRequestBackgroundPolicyContinue;
+        [_queue addRequest:loader];
+    }
+
+    if (_queue.count)
+        [_queue start];
 }
 
 // Send a simple query to our server's REST API.  The queryType determines the content and the resulting actions once we receive the response
-- (void) queryIDsForModel:(NSString *)entityName {
+- (void)queryIDsForModel:(NSString *)entityName
+{
 	NSString *resourcePath = [[NSString alloc] initWithFormat:@"/rest_ids.php/%@/", entityName];
 	RKRequest *request = [[RKClient sharedClient] get:resourcePath delegate:self];	
-	if (request) {
-		request.userData = [NSDictionary dictionaryWithObjectsAndKeys:
-								  entityName, TXLUPDMGR_CLASSKEY,
-								  intToNum(QUERYTYPE_IDS_ALL_PRUNE), TXLUPDMGR_QUERYKEY, nil];
+	if (request && entityName)
+    {
+		request.userData = @{TXLUPDMGR_CLASSKEY: entityName,
+                             TXLUPDMGR_QUERYKEY: intToNum(QUERYTYPE_IDS_ALL_PRUNE)};
 	}
 	else {
 		NSLog(@"DataUpdateManager Error, unable to obtain RestKit request for %@", resourcePath);
@@ -179,7 +191,8 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 }
 
 // This scans the core data entity looking for "stale" objects, ones that were deleted on the server database
-- (void)pruneModel:(NSString *)className forUpstreamIDs:(NSArray *)upstreamIDs {
+- (void)pruneModel:(NSString *)className forUpstreamIDs:(NSArray *)upstreamIDs
+{
 	Class entityClass = NSClassFromString(className);
 
 	if (!entityClass || ![[TexLegeCoreDataUtils registeredDataModels] containsObject:className])
@@ -196,25 +209,29 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 	NSMutableSet *removedItems = [NSMutableSet setWithSet:existingSet];
 	[removedItems minusSet:newSet];
 	
-	for (NSNumber *staleObjID in removedItems) {
+	for (NSNumber *staleObjID in removedItems)
+    {
 		NSLog(@"DataUpdateManager: PRUNING OBJECT FROM %@: ID = %@", className, staleObjID);
 		[TexLegeCoreDataUtils deleteObjectInEntityNamed:className withPrimaryKeyValue:staleObjID];			
 		changed = YES;
 	}
-	if (changed) {
-		[[objectManager objectStore] save];
+
+	if (changed)
+    {
+		[objectManager.objectStore save];
 		
-		NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", [className uppercaseString]];
+		NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", className.uppercaseString];
 		[[NSNotificationCenter defaultCenter] postNotificationName:notification object:nil];
 		
-		NSString *statusString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Pruned %@", @"DataTableUI", @"Status indicator for updates, these objects are being removed from the database"), [statusBlurbsAndModels objectForKey:className]];
+		NSString *statusString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Pruned %@", @"DataTableUI", @"Status indicator for updates, these objects are being removed from the database"), statusBlurbsAndModels[className]];
         if (self.infoPanel)
             self.infoPanel.subtitle = statusString;
 	}	
 }
 
-- (void)updateProgress {	
-	NSInteger count = [_queue count];
+- (void)updateProgress
+{
+	NSInteger count = _queue.count;
 	CGFloat progress = 1.0f;
 	if (count > 0)
 		progress = 1.0f / (CGFloat)count;
@@ -224,26 +241,30 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 #pragma mark -
 #pragma mark RKRequestQueueDelegate methods
 
-- (void)requestQueue:(RKRequestQueue *)queue didSendRequest:(RKRequest *)request {
-    //_statusLabel.text = [NSString stringWithFormat:@"RKRequestQueue %@ sharedQueue is current loading %d of %d requests", 
-    //                     queue, [queue loadingCount], [queue count]];
+- (void)requestQueue:(RKRequestQueue *)queue didSendRequest:(RKRequest *)request
+{
+    //_statusLabel.text = [NSString stringWithFormat:@"RKRequestQueue %@ sharedQueue is current loading %d of %d requests", queue, [queue loadingCount], [queue count]];
 	[self updateProgress];
 }
 
-- (void)requestQueueDidBeginLoading:(RKRequestQueue *)queue {
+- (void)requestQueueDidBeginLoading:(RKRequestQueue *)queue
+{
 //    _statusLabel.text = [NSString stringWithFormat:@"Queue %@ Began Loading...", queue];
 }
 
-- (void)requestQueueDidFinishLoading:(RKRequestQueue *)queue {
+- (void)requestQueueDidFinishLoading:(RKRequestQueue *)queue
+{
 //    _statusLabel.text = [NSString stringWithFormat:@"Queue %@ Finished Loading...", queue];
 	[self updateProgress];
-	if ([_queue count] == 0) {
+	if (_queue.count == 0)
+    {
         NSString *statusString = NSLocalizedStringFromTable(@"Update Completed", @"DataTableUI", @"Status indicator for updates");
-        if (self.infoPanel) {
+        if (self.infoPanel)
+        {
             self.infoPanel.subtitle = statusString;
             [self.infoPanel hidePanel];
         }
-        UIView *rootView = [self appRootView];
+        UIView *rootView = self.appRootView;
         if (rootView)
             self.infoPanel = [MTInfoPanel showPanelInView:rootView type:MTInfoPanelTypeSuccess title:NSLocalizedString(@"Data Update", @"") subtitle:statusString hideAfter:4];
     }
@@ -252,32 +273,40 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 #pragma mark -
 #pragma mark RKRequestDelegate methods
 
-- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error {
-	if (error && request) {
+- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
+{
+	if (error && request)
+    {
 		debug_NSLog(@"Error loading data model query from %@: %@", [request description], [error localizedDescription]);		
 	}	
 }
 
 // Handling GET Requests  
-- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response {  
-	if ([request isGET] && [response isOK]) {  
+- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response
+{
+	if ([request isGET] && [response isOK])
+    {
 		// Success! Let's take a look at the data  
 		
 		if (!request.userData)
 			return; // We've got no user data, can't do anything...
 
-		NSString *className = [request.userData objectForKey:TXLUPDMGR_CLASSKEY];
-		NSInteger queryType = numToInt([request.userData objectForKey:TXLUPDMGR_QUERYKEY]);
+		NSString *className = (request.userData)[TXLUPDMGR_CLASSKEY];
+		NSInteger queryType = numToInt((request.userData)[TXLUPDMGR_QUERYKEY]);
 		
-		if (NO == queryIsComplete(queryType)) { // we're only working with an array of IDs
+		if (NO == queryIsComplete(queryType))  // we're only working with an array of IDs
+        {
             NSError *error = nil;
             NSArray *resultIDs = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
 
-			if (resultIDs && [resultIDs count]) {
-				if (queryType == QUERYTYPE_IDS_NEW) {
+			if (resultIDs && resultIDs.count)
+            {
+				if (queryType == QUERYTYPE_IDS_NEW)
+                {
 					// DO SOMETHING
 				}
-				else if (queryType == QUERYTYPE_IDS_ALL_PRUNE) {
+				else if (queryType == QUERYTYPE_IDS_ALL_PRUNE)
+                {
 					[self pruneModel:className forUpstreamIDs:resultIDs];
 				}
 			}
@@ -288,78 +317,94 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 #pragma mark -
 #pragma mark RKObjectLoaderDelegate methods
 
-- (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects {
+- (void)objectLoader:(RKObjectLoader*)objectLoader didLoadObjects:(NSArray*)objects
+{
 	NSString *className = NSStringFromClass(objectLoader.objectClass);
+    if (!className)
+        return;
 
 	@try {
-		if (className) {
-			[self.activeUpdates removeObject:className];
-			
-			if (objects && [objects count]) {
-				NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", [className uppercaseString]];
-				debug_NSLog(@"%@ %lu objects", notification, (unsigned long)[objects count]);
-				
-				NSString *statusString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Updated %@", @"DataTableUI", @"Status indicator for updates"), [statusBlurbsAndModels objectForKey:className]];
-                if (self.infoPanel) {
-                    self.infoPanel.subtitle = statusString;
-                }
 
-			
-				// We shouldn't do a costly reset if there's another reset headed out way in a few seconds.
-				if (([className isEqualToString:@"DistrictMapObj"] &! [self.activeUpdates containsObject:@"LegislatorObj"]) 
-					|| ([className isEqualToString:@"LegislatorObj"] &! [self.activeUpdates containsObject:@"DistrictMapObj"])) 
-				{
-					for (DistrictMapObj *map in [DistrictMapObj allObjects]) {
-						[map resetRelationship:self];
-					}
-				}
-				[[[RKObjectManager sharedManager] objectStore] save];
-				[[NSNotificationCenter defaultCenter] postNotificationName:notification object:nil];				
-			}
-			[self queryIDsForModel:className];	// THIS TRIGGERS A PRUNING
-		}			
-	}
+        [self.activeUpdates removeObject:className];
+
+        if (objects && objects.count)
+        {
+            NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", className.uppercaseString];
+            debug_NSLog(@"%@ %lu objects", notification, (unsigned long)[objects count]);
+
+            NSString *statusString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Updated %@", @"DataTableUI", @"Status indicator for updates"), statusBlurbsAndModels[className]];
+            if (self.infoPanel)
+            {
+                self.infoPanel.subtitle = statusString;
+            }
+
+            // We shouldn't do a costly reset if there's another reset headed out way in a few seconds.
+            if (
+                ([className isEqualToString:@"DistrictMapObj"]
+                 && ![self.activeUpdates containsObject:@"LegislatorObj"])
+                || ([className isEqualToString:@"LegislatorObj"]
+                    && ![self.activeUpdates containsObject:@"DistrictMapObj"]))
+            {
+                for (DistrictMapObj *map in [DistrictMapObj allObjects])
+                {
+                    [map resetRelationship:self];
+                }
+            }
+            [[RKObjectManager sharedManager].objectStore save];
+            [[NSNotificationCenter defaultCenter] postNotificationName:notification object:nil];
+        }
+
+        [self queryIDsForModel:className];	// THIS TRIGGERS A PRUNING
+    }			
 	@catch (NSException * e) {
-		NSLog(@"RestKit Load Error %@: %@", className, [e description]);
+		NSLog(@"RestKit Load Error %@: %@", className, e.description);
 	}	
 }
 
-- (void)objectLoader:(RKObjectLoader*)objectLoader didFailWithError:(NSError*)error {
+- (void)objectLoader:(RKObjectLoader*)objectLoader didFailWithError:(NSError*)error
+{
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"RESTKIT_DATA_ERROR"];
-    UIView *rootView = [self appRootView];
+    UIView *rootView = self.appRootView;
     if (rootView)
+    {
         self.infoPanel = [MTInfoPanel showPanelInView:rootView type:MTInfoPanelTypeError title:NSLocalizedString(@"Data Update", @"") subtitle:NSLocalizedStringFromTable(@"Error During Update", @"AppAlerts", @"Status indicator for updates") hideAfter:5];
+    }
 	NSString *className = NSStringFromClass(objectLoader.objectClass);
 	if (className)
 		[self.activeUpdates removeObject:className];
 	
-	NSLog(@"RestKit Data error loading %@: %@", className, [error localizedDescription]);
+	NSLog(@"RestKit Data error loading %@: %@", className, error.localizedDescription);
 }
 
 #pragma mark -
 #pragma mark Timestamp Files
 
-- (NSString *)localDataTimestampForModel:(NSString *)classString {
-	if (NSClassFromString(classString)) {
+- (NSString *)localDataTimestampForModel:(NSString *)classString
+{
+	if (NSClassFromString(classString))
+    {
 		NSFetchRequest *request = [NSClassFromString(classString) fetchRequest];
 		NSSortDescriptor *desc = [[NSSortDescriptor alloc] initWithKey:TXLUPDMGR_UPDATEDPROP ascending:NO];	// the most recent update will be the first item in the array (descending)
-		[request setSortDescriptors:[NSArray arrayWithObject:desc]];
-		[request setResultType:NSDictionaryResultType];												// This is necessary to limit it to specific properties during the fetch
-		[request setPropertiesToFetch:[NSArray arrayWithObject:TXLUPDMGR_UPDATEDPROP]];						// We don't want to fetch everything, we'll get a huge ass memory hit otherwise.
+		request.sortDescriptors = @[desc];
+		request.resultType = NSDictionaryResultType;												// This is necessary to limit it to specific properties during the fetch
+		request.propertiesToFetch = @[TXLUPDMGR_UPDATEDPROP];						// We don't want to fetch everything, we'll get a huge ass memory hit otherwise.
 		[desc release];
 		
 		return [[NSClassFromString(classString) objectWithFetchRequest:request] valueForKey:TXLUPDMGR_UPDATEDPROP];	// this relies on objectWithFetchRequest returning the object at index 0
 	}
-	else if ([classString isEqualToString:@"WnomAggregateObj"]) {
+	else if ([classString isEqualToString:@"WnomAggregateObj"])
+    {
 #if WNOMAGGREGATES_UPDATING
 		NSError *error = nil;
 		NSString *path = [[UtilityMethods applicationDocumentsDirectory] stringByAppendingPathComponent:@"WnomAggregateObj.json"];
 		NSString *json = [NSString stringWithContentsOfFile:path encoding:JSONDATA_ENCODING error:&error];
-		if (!error && json) {
+		if (!error && json)
+        {
 			NSArray *aggregates = [json objectFromJSONString];
 			NSString *timestamp = [self localDataTimestampForArray:aggregates];
 		}
-		else {
+		else
+        {
 			NSLog(@"DataModelUpdateManager:timestampForModel - error loading aggregates json - %@", path);
 		}
 #endif
@@ -369,7 +414,8 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 }
 
 #if WNOMAGGREGATES_UPDATING
-- (NSString *) localDataTimestampForArray:(NSArray *)entityArray {
+- (NSString *) localDataTimestampForArray:(NSArray *)entityArray
+{
 	if (!entityArray || ![entityArray count])
 		return [[NSDate date] timestampString];
 	
@@ -380,14 +426,16 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 
 	NSString *timestamp = nil;
 	id object = [[tempSorted objectAtIndex:0] objectForKey:JSONDATA_TIMESTAMPKEY];
-	if (!object) {
+	if (!object)
+    {
 		NSLog(@"DataModelUpdateManager:timestampForArray - no 'updated' timestamp key found.");
 	}
 	else if ([object isKindOfClass:[NSString class]])
 		timestamp = object;
 	else if ([object isKindOfClass:[NSDate class]])
 		timestamp = [object timestampString];
-	else {
+	else
+    {
 		NSLog(@"DataModelUpdateManager:timestampForArray - Unexpected type in dictionary, wanted timestamp string, %@", [object description]);
 	}
 

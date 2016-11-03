@@ -20,7 +20,7 @@
 @property (nonatomic, readonly) CGFloat luminance;
 @property (nonatomic, readonly) UInt32 rgbHex;
 
-- (NSString *)colorSpaceString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *colorSpaceString;
 - (NSArray *)arrayFromRGBAComponents;
 
 // Bulk access to RGB and HSB components of the color
@@ -29,7 +29,7 @@
 - (BOOL)hue:(CGFloat *)h saturation:(CGFloat *)s brightness:(CGFloat *)b alpha:(CGFloat *)a;
 
 // Return a grey-scale representation of the color
-- (UIColor *)colorByLuminanceMapping;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) UIColor *colorByLuminanceMapping;
 
 // Arithmetic operations on the color
 - (UIColor *)colorByMultiplyingByRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
@@ -48,18 +48,18 @@
 - (UIColor *)  colorByDarkeningToColor:(UIColor *)color;
 
 // Related colors
-- (UIColor *)contrastingColor;			// A good contrasting color: will be either black or white
-- (UIColor *)complementaryColor;		// A complementary color that should look good with this color
-- (NSArray*)triadicColors;				// Two colors that should look good with this color
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) UIColor *contrastingColor;			// A good contrasting color: will be either black or white
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) UIColor *complementaryColor;		// A complementary color that should look good with this color
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *triadicColors;				// Two colors that should look good with this color
 - (NSArray*)analogousColorsWithStepAngle:(CGFloat)stepAngle pairCount:(int)pairs;	// Multiple pairs of colors
 
 // String representations of the color
-- (NSString *)stringFromColor;
-- (NSString *)hexStringFromColor;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *stringFromColor;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *hexStringFromColor;
 
 // The named color that matches this one most closely
-- (NSString *)closestColorName;
-- (NSString *)closestCrayonName;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *closestColorName;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *closestCrayonName;
 
 // Color builders
 + (UIColor *)randomColor;

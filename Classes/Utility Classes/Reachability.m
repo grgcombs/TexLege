@@ -246,11 +246,9 @@ static void logReachabilityFlags_(const char *name, int line, SCNetworkReachabil
 
 @implementation Reachability
 
-@synthesize key = key_;
-@synthesize delegate = delegate_;
-
 // Preclude direct access to ivars.
-+ (BOOL) accessInstanceVariablesDirectly {
+
++ (BOOL)accessInstanceVariablesDirectly {
 	
 	return NO;
 
@@ -261,9 +259,9 @@ static void logReachabilityFlags_(const char *name, int line, SCNetworkReachabil
 	
 	[self stopNotifier];
 
-	if(reachabilityRef_) {
+	if (_reachabilityRef) {
 		
-		CFRelease(reachabilityRef_), reachabilityRef_ = NULL;
+		CFRelease(_reachabilityRef), _reachabilityRef = NULL;
 	}
 	self.key = nil;
 	self.delegate = nil;
@@ -275,10 +273,10 @@ static void logReachabilityFlags_(const char *name, int line, SCNetworkReachabil
 
 - (NSString *) description {
     
-	NSAssert(reachabilityRef_, @"-description called with NULL reachabilityRef");
+	NSAssert(_reachabilityRef, @"-description called with NULL reachabilityRef");
 	
     SCNetworkReachabilityFlags flags = 0;
-    SCNetworkReachabilityGetFlags(reachabilityRef_, &flags);
+    SCNetworkReachabilityGetFlags(_reachabilityRef, &flags);
     
     return [NSString stringWithFormat: @"Host: %@; Status: %@; Flags: %@",
             self.key,
@@ -294,12 +292,12 @@ static void logReachabilityFlags_(const char *name, int line, SCNetworkReachabil
 
 - (BOOL) isReachable {
 	
-	NSAssert(reachabilityRef_, @"isReachable called with NULL reachabilityRef");
+	NSAssert(_reachabilityRef, @"isReachable called with NULL reachabilityRef");
 	
 	SCNetworkReachabilityFlags flags = 0;
 	NetworkStatus status = kNotReachable;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef_, &flags)) {
+	if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {
 		
 		logReachabilityFlags(flags);
 		
@@ -316,12 +314,12 @@ static void logReachabilityFlags_(const char *name, int line, SCNetworkReachabil
 
 - (BOOL) isReachableViaWWAN {
 	
-	NSAssert(reachabilityRef_, @"isReachableViaWWAN called with NULL reachabilityRef");
+	NSAssert(_reachabilityRef, @"isReachableViaWWAN called with NULL reachabilityRef");
 	
 	SCNetworkReachabilityFlags flags = 0;
 	NetworkStatus status = kNotReachable;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef_, &flags)) {
+	if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {
 		
 		logReachabilityFlags(flags);
 		
@@ -336,12 +334,12 @@ static void logReachabilityFlags_(const char *name, int line, SCNetworkReachabil
 
 - (BOOL) isReachableViaWiFi {
 	
-	NSAssert(reachabilityRef_, @"isReachableViaWiFi called with NULL reachabilityRef");
+	NSAssert(_reachabilityRef, @"isReachableViaWiFi called with NULL reachabilityRef");
 	
 	SCNetworkReachabilityFlags flags = 0;
 	NetworkStatus status = kNotReachable;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef_, &flags)) {
+	if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {
 		
 		logReachabilityFlags(flags);
 		
@@ -354,13 +352,13 @@ static void logReachabilityFlags_(const char *name, int line, SCNetworkReachabil
 } // -isReachableViaWiFi
 
 
-- (BOOL) isConnectionRequired {
+- (BOOL)isConnectionRequired {
 	
-	NSAssert(reachabilityRef_, @"isConnectionRequired called with NULL reachabilityRef");
+	NSAssert(_reachabilityRef, @"isConnectionRequired called with NULL reachabilityRef");
 	
-	SCNetworkReachabilityFlags flags;
+	SCNetworkReachabilityFlags flags = 0;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef_, &flags)) {
+	if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {
 		
 		logReachabilityFlags(flags);
 		
@@ -380,11 +378,11 @@ static const SCNetworkReachabilityFlags kOnDemandConnection = kSCNetworkReachabi
 
 - (BOOL) isConnectionOnDemand {
 	
-	NSAssert(reachabilityRef_, @"isConnectionIsOnDemand called with NULL reachabilityRef");
+	NSAssert(_reachabilityRef, @"isConnectionIsOnDemand called with NULL reachabilityRef");
 	
 	SCNetworkReachabilityFlags flags;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef_, &flags)) {
+	if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {
 		
 		logReachabilityFlags(flags);
 		
@@ -398,11 +396,11 @@ static const SCNetworkReachabilityFlags kOnDemandConnection = kSCNetworkReachabi
 
 - (BOOL) isInterventionRequired {
 	
-	NSAssert(reachabilityRef_, @"isInterventionRequired called with NULL reachabilityRef");
+	NSAssert(_reachabilityRef, @"isInterventionRequired called with NULL reachabilityRef");
 	
 	SCNetworkReachabilityFlags flags;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef_, &flags)) {
+	if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {
 		
 		logReachabilityFlags(flags);
 		
@@ -424,7 +422,7 @@ static const SCNetworkReachabilityFlags kOnDemandConnection = kSCNetworkReachabi
 	
 	if (self) {
 		
-		reachabilityRef_ = ref;
+		_reachabilityRef = ref;
 	}
 	return self;
 	
@@ -484,9 +482,9 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 	
 	SCNetworkReachabilityContext	context = {0, self, NULL, NULL, NULL};
 	
-	if(SCNetworkReachabilitySetCallback(reachabilityRef_, ReachabilityCallback, &context)) {
+	if(SCNetworkReachabilitySetCallback(_reachabilityRef, ReachabilityCallback, &context)) {
 		
-		if(SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef_, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode)) {
+		if(SCNetworkReachabilityScheduleWithRunLoop(_reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode)) {
 
 			return YES;
 		}
@@ -498,9 +496,9 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 - (void) stopNotifier {
 	
-	if(reachabilityRef_) {
+	if(_reachabilityRef) {
 		
-		SCNetworkReachabilityUnscheduleFromRunLoop(reachabilityRef_, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+		SCNetworkReachabilityUnscheduleFromRunLoop(_reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 	}
 
 } // -stopNotifier
@@ -512,7 +510,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 + (Reachability *) reachabilityWithHostName: (NSString *) hostName {
 	
-	SCNetworkReachabilityRef ref = SCNetworkReachabilityCreateWithName(NULL, [hostName UTF8String]);
+	SCNetworkReachabilityRef ref = SCNetworkReachabilityCreateWithName(NULL, hostName.UTF8String);
 	
 	if (ref) {
 		
@@ -677,12 +675,12 @@ const SCNetworkReachabilityFlags kConnectionDown =  kSCNetworkReachabilityFlagsC
 
 - (NetworkStatus) currentReachabilityStatus {
 	
-	NSAssert(reachabilityRef_, @"currentReachabilityStatus called with NULL reachabilityRef");
+	NSAssert(_reachabilityRef, @"currentReachabilityStatus called with NULL reachabilityRef");
 	
 	SCNetworkReachabilityFlags flags = 0;
 	NetworkStatus status = kNotReachable;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef_, &flags)) {
+	if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {
 		
 //		logReachabilityFlags(flags);
 		
@@ -697,18 +695,18 @@ const SCNetworkReachabilityFlags kConnectionDown =  kSCNetworkReachabilityFlagsC
 
 - (BOOL) connectionRequired {
 	
-	return [self isConnectionRequired];
+	return self.connectionRequired;
 	
 } // -connectionRequired
 
 
 - (SCNetworkReachabilityFlags) reachabilityFlags {
 	
-	NSAssert(reachabilityRef_, @"reachabilityFlags called with NULL reachabilityRef");
+	NSAssert(_reachabilityRef, @"reachabilityFlags called with NULL reachabilityRef");
 	
 	SCNetworkReachabilityFlags flags = 0;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef_, &flags)) {
+	if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {
 		
 		logReachabilityFlags(flags);
 		
@@ -733,7 +731,7 @@ const SCNetworkReachabilityFlags kConnectionDown =  kSCNetworkReachabilityFlagsC
 	static const NSTimeInterval kURLTimeout = 60.0; // seconds.
 	
 	NSString     *touchPath    = [NSString stringWithFormat: @"http://%@%@", self.key, path];
-	NSURL        *touchURL     = [[NSURL URLWithString: touchPath] standardizedURL];
+	NSURL        *touchURL     = [NSURL URLWithString: touchPath].standardizedURL;
 	NSURLRequest *touchRequest = [NSURLRequest requestWithURL: touchURL 
 												  cachePolicy: NSURLRequestReloadIgnoringLocalCacheData 
 											  timeoutInterval: kURLTimeout];

@@ -36,7 +36,7 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style {
+- (instancetype)initWithStyle:(UITableViewStyle)style {
 	if ((self=[super initWithStyle:style])) {
 		loadingStatus = LOADING_IDLE;
 		categories_ = [[NSMutableDictionary alloc] init];
@@ -71,10 +71,10 @@
 	NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"TexLegeStrings" ofType:@"plist"];
 	NSDictionary *textDict = [NSDictionary dictionaryWithContentsOfFile:thePath];
 	NSString *myClass = NSStringFromClass([self class]);
-	NSDictionary *menuItem = [[textDict objectForKey:@"BillMenuItems"] findWhereKeyPath:@"class" equals:myClass];
+	NSDictionary *menuItem = [textDict[@"BillMenuItems"] findWhereKeyPath:@"class" equals:myClass];
 	
 	if (menuItem) {
-		self.title = [menuItem objectForKey:@"title"];
+		self.title = menuItem[@"title"];
 	}
 	
 	self.tableView.separatorColor = [TexLegeTheme separator];
@@ -108,9 +108,9 @@
 
 	NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
 	if (segPrefs) {
-		NSNumber *segIndex = [segPrefs objectForKey:NSStringFromClass([self class])];
+		NSNumber *segIndex = segPrefs[NSStringFromClass([self class])];
 		if (segIndex)
-			self.chamberControl.selectedSegmentIndex = [segIndex integerValue];
+			self.chamberControl.selectedSegmentIndex = segIndex.integerValue;
 	}
 }
 
@@ -119,7 +119,7 @@
 	if (segPrefs) {
 		NSString *segIndex = [NSString stringWithFormat:@"%ld",(long)self.chamberControl.selectedSegmentIndex];
 		NSMutableDictionary *newDict = [segPrefs mutableCopy];
-		[newDict setObject:segIndex forKey:NSStringFromClass([self class])];
+		newDict[NSStringFromClass([self class])] = segIndex;
 		[[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		[newDict release];
@@ -142,19 +142,17 @@
 
 - (void)configureCell:(TexLegeBadgeGroupCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-	if (!categories_ || IsEmpty([categories_ objectForKey:self.chamber]))
+	if (!categories_ || IsEmpty(categories_[self.chamber]))
 		return;
 
 	BOOL useDark = (indexPath.row % 2 == 0);
 	cell.backgroundColor = useDark ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
-	NSDictionary *category = [[categories_ objectForKey:self.chamber] objectAtIndex:indexPath.row];
+	NSDictionary *category = categories_[self.chamber][indexPath.row];
 	
-	BOOL clickable = [[category objectForKey:kBillCategoriesCountKey] integerValue] > 0;
-	NSDictionary *cellDict = [NSDictionary dictionaryWithObjectsAndKeys:
-							  [category objectForKey:kBillCategoriesCountKey], @"entryValue",
-							  [NSNumber numberWithBool:clickable], @"isClickable",
-							  [category objectForKey:kBillCategoriesTitleKey], @"title",
-							  nil];
+	BOOL clickable = [category[kBillCategoriesCountKey] integerValue] > 0;
+	NSDictionary *cellDict = @{@"entryValue": category[kBillCategoriesCountKey],
+							  @"isClickable": @(clickable),
+							  @"title": category[kBillCategoriesTitleKey]};
 	TableCellDataObject *cellInfo = [[TableCellDataObject alloc] initWithDictionary:cellDict];
 	cell.cellInfo = cellInfo;
 	[cellInfo release];
@@ -175,8 +173,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if (categories_ && !IsEmpty([categories_ objectForKey:self.chamber]))
-		return [[categories_ objectForKey:self.chamber] count];
+	if (categories_ && !IsEmpty(categories_[self.chamber]))
+		return [categories_[self.chamber] count];
 	else if (loadingStatus > LOADING_IDLE)
 		return 1;
 	else
@@ -211,18 +209,18 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-	if (!categories_ ||  ([[categories_ objectForKey:self.chamber] count] <= indexPath.row))
+	if (!categories_ ||  ([categories_[self.chamber] count] <= indexPath.row))
 		return;
 	
-	NSDictionary *item = [[categories_ objectForKey:self.chamber] objectAtIndex:indexPath.row];
-	if (item && [item objectForKey:kBillCategoriesTitleKey]) {
-		NSString *cat = [item objectForKey:kBillCategoriesTitleKey];
-		NSInteger count = [[item objectForKey:kBillCategoriesCountKey] integerValue];
+	NSDictionary *item = categories_[self.chamber][indexPath.row];
+	if (item && item[kBillCategoriesTitleKey]) {
+		NSString *cat = item[kBillCategoriesTitleKey];
+		NSInteger count = [item[kBillCategoriesCountKey] integerValue];
 		if (cat && count) {
 			BillsListViewController *catResultsView = [[[BillsListViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
 			BillSearchDataSource *dataSource = [catResultsView valueForKey:@"dataSource"];
 			catResultsView.title = cat;
-			[dataSource startSearchForSubject:cat chamber:[self.chamber integerValue]];
+			[dataSource startSearchForSubject:cat chamber:(self.chamber).integerValue];
 			
 			[self.navigationController pushViewController:catResultsView animated:YES];
 		}			
@@ -242,12 +240,12 @@
 		if (IsEmpty(meta.selectedState) || IsEmpty(meta.currentSession))
 			return;
 		
-		NSDictionary *queryParams = [NSDictionary dictionaryWithObject:SUNLIGHT_APIKEY forKey:@"apikey"];
+		NSDictionary *queryParams = @{@"apikey": SUNLIGHT_APIKEY};
 		NSMutableString *resourcePath = [NSMutableString stringWithFormat:@"/subject_counts/%@/%@/", meta.selectedState, meta.currentSession];
 		if (newChamber > BOTH_CHAMBERS)
 			[resourcePath appendFormat:@"%@/", stringForChamber(newChamber, TLReturnOpenStates)];
 			
-		[[api osApiClient] get:resourcePath queryParams:queryParams delegate:self];
+		[api.osApiClient get:resourcePath queryParams:queryParams delegate:self];
 	}
 	else {
 		loadingStatus = LOADING_NO_NET;
@@ -256,7 +254,7 @@
 
 - (NSMutableDictionary*)chamberCategories {
 	if (!categories_ || 
-		(!isFresh && ![categories_ objectForKey:self.chamber]) || 
+		(!isFresh && !categories_[self.chamber]) || 
 		!updated || 
 		([[NSDate date] timeIntervalSinceDate:updated] > 3600*24)) {	// if we're over a day old, let's refresh
 		isFresh = NO;
@@ -272,11 +270,9 @@
 #pragma mark Chamber Control
 
 - (void)createChamberControl {	
-	UISegmentedControl *ctl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:
-																		 stringForChamber(BOTH_CHAMBERS, TLReturnFull), 
+	UISegmentedControl *ctl = [[UISegmentedControl alloc] initWithItems:@[stringForChamber(BOTH_CHAMBERS, TLReturnFull), 
 																		stringForChamber(HOUSE, TLReturnFull), 
-																		 stringForChamber(SENATE, TLReturnFull), 
-																		 nil]];
+																		 stringForChamber(SENATE, TLReturnFull)]];
 	ctl.frame = CGRectMake(0.0, 0.0, 163.0, 30.0);
 	ctl.autoresizesSubviews = YES;
 	ctl.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -340,8 +336,8 @@
 			return;
 		
 		NSMutableArray *newArray = [[NSMutableArray alloc] init];
-		for (NSString *name in [newCats allKeys]) {
-			NSNumber *total = [newCats objectForKey:name];
+		for (NSString *name in newCats.allKeys) {
+			NSNumber *total = newCats[name];
 			NSMutableDictionary *newEntry = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
 											 name, kBillCategoriesTitleKey,
 											 total, kBillCategoriesCountKey,
@@ -350,27 +346,27 @@
 			[newEntry release];
 		}
 		NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:kBillCategoriesTitleKey ascending:YES];
-		[newArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
+		[newArray sortUsingDescriptors:@[desc]];
 		
 		NSInteger inChamber = BOTH_CHAMBERS;
-		if ([[request resourcePath] hasSubstring:@"/upper" caseInsensitive:NO])
+		if ([request.resourcePath hasSubstring:@"/upper" caseInsensitive:NO])
 			inChamber = SENATE;
-		else if ([[request resourcePath] hasSubstring:@"/lower" caseInsensitive:NO])
+		else if ([request.resourcePath hasSubstring:@"/lower" caseInsensitive:NO])
 			inChamber = HOUSE;
 
-		[categories_ setObject:newArray forKey:[NSString stringWithFormat:@"%ld", (long)inChamber]];
+		categories_[[NSString stringWithFormat:@"%ld", (long)inChamber]] = newArray;
 		[newArray release];
 		
 		if (inChamber < SENATE)
 			[self loadCategoriesForChamber:inChamber+1];	// let's load the next chamber too
 		
-		if ([[categories_ allKeys] count] == 3) { // once we have all three arrays ready to go, let's save it
+		if (categories_.allKeys.count == 3) { // once we have all three arrays ready to go, let's save it
 			NSString *thePath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kBillCategoriesCacheFile];
 			NSError *error = nil;
             NSData *json = [NSJSONSerialization dataWithJSONObject:categories_ options:NSJSONWritingPrettyPrinted error:&error];
 
 			if (![json writeToFile:thePath atomically:YES]) {
-				NSLog(@"BillCategories: Error writing categories cache to file: %@ = %@", [error localizedDescription], thePath);
+				NSLog(@"BillCategories: Error writing categories cache to file: %@ = %@", error.localizedDescription, thePath);
 			}
 		}
 		

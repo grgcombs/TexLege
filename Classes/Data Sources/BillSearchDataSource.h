@@ -29,8 +29,8 @@
 // This will tell the data source to produce a "loading" cell for the table whenever it's searching.
 @property (nonatomic) BOOL useLoadingDataCell;
 
-- (id)initWithSearchDisplayController:(UISearchDisplayController *)newController;
-- (id)initWithTableViewController:(UITableViewController *)newDelegate;
+- (instancetype)initWithSearchDisplayController:(UISearchDisplayController *)newController;
+- (instancetype)initWithTableViewController:(UITableViewController *)newDelegate;
 
 - (RKRequest*)startSearchWithQueryString:(NSString *)queryString params:(NSDictionary *)queryParams;
 

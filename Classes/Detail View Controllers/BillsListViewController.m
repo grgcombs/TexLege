@@ -29,7 +29,7 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style {
+- (instancetype)initWithStyle:(UITableViewStyle)style {
 	if ((self = [super initWithStyle:style])) {
 		dataSource = [[[BillSearchDataSource alloc] initWithTableViewController:self] retain];
 		
@@ -50,8 +50,8 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
 	if ([UtilityMethods isIPadDevice] && UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
-		if ([[[[TexLegeAppDelegate appDelegate] masterNavigationController] topViewController] isKindOfClass:[BillsListViewController class]])
-			if ([self.navigationController isEqual:[[TexLegeAppDelegate appDelegate] detailNavigationController]])
+		if ([[TexLegeAppDelegate appDelegate].masterNavigationController.topViewController isKindOfClass:[BillsListViewController class]])
+			if ([self.navigationController isEqual:[TexLegeAppDelegate appDelegate].detailNavigationController])
 				[self.navigationController popToRootViewControllerAnimated:YES];
 		
 	}	
@@ -115,7 +115,7 @@
 		[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
 	NSDictionary *bill = [dataSource dataObjectForIndexPath:indexPath];
-	if (bill && [bill objectForKey:@"bill_id"]) {
+	if (bill && bill[@"bill_id"]) {
 		if (bill) {
 						
 			BOOL changingViews = NO;
@@ -123,7 +123,7 @@
 			
 			BillsDetailViewController *detailView = nil;
 			if ([UtilityMethods isIPadDevice]) {
-				id aDetail = [[[TexLegeAppDelegate appDelegate] detailNavigationController] visibleViewController];
+				id aDetail = [TexLegeAppDelegate appDelegate].detailNavigationController.visibleViewController;
 				if ([aDetail isKindOfClass:[BillsDetailViewController class]])
 					detailView = aDetail;
 				else if ([aDetail isKindOfClass:[BillsListViewController class]]) {
@@ -136,16 +136,16 @@
 				changingViews = YES;
 			}
 			
-			[detailView setDataObject:bill];
-			[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:[bill objectForKey:@"bill_id"] 
-																			   session:[bill objectForKey:@"session"] 
+			detailView.dataObject = bill;
+			[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:bill[@"bill_id"] 
+																			   session:bill[@"session"] 
 																			  delegate:detailView];
 			
 			if (needsPushVC)
 				[self.navigationController pushViewController:detailView animated:YES];
 			else if (changingViews)
 				//[[[TexLegeAppDelegate appDelegate] detailNavigationController] pushViewController:detailView animated:YES];
-				[[[TexLegeAppDelegate appDelegate] detailNavigationController] setViewControllers:[NSArray arrayWithObject:detailView] animated:NO];
+				[[TexLegeAppDelegate appDelegate].detailNavigationController setViewControllers:@[detailView] animated:NO];
 		}			
 	}
 }

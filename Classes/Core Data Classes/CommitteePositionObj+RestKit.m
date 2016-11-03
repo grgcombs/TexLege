@@ -42,9 +42,9 @@
 #pragma mark Custom Accessors
 
 - (NSString*)positionString {
-	if ([[self position] integerValue] == POS_CHAIR) 
+	if (self.position.integerValue == POS_CHAIR) 
 		return NSLocalizedStringFromTable(@"Chair", @"DataTableUI", @"Abbreviation / title for a person who is the committee chairperson");
-	else if ([[self position] integerValue] == POS_VICE) 
+	else if (self.position.integerValue == POS_VICE) 
 		return NSLocalizedStringFromTable(@"Vice Chair", @"DataTableUI", @"Abbreviation / title for a person who is second to the committee chairperson");
 	else
 		return NSLocalizedStringFromTable(@"Member", @"DataTableUI", @"Title for a person who is a regular member of a committe (not chair/vice-chair)");
@@ -52,8 +52,8 @@
 
 - (NSComparisonResult)comparePositionAndCommittee:(CommitteePositionObj *)p
 {
-	NSInteger selfOrder = [[self position] integerValue];
-	NSInteger comparedToOrder = [[p position] integerValue];
+	NSInteger selfOrder = self.position.integerValue;
+	NSInteger comparedToOrder = p.position.integerValue;
 	NSComparisonResult result = NSOrderedSame;
 	
 	if (selfOrder < comparedToOrder) // reversed order, lower position id is higher
@@ -61,7 +61,7 @@
 	else if (selfOrder > comparedToOrder)
 		result = NSOrderedAscending;
 	else { // they're both the same position (i.e. just a regular committee member)
-		result = [[[self committee] committeeName] compare: [[p committee] committeeName]];
+		result = [self.committee.committeeName compare: p.committee.committeeName];
 	}
 	return result;	
 }

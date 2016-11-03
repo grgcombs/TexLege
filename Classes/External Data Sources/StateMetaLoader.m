@@ -18,7 +18,7 @@
 #import "NSDate+Helper.h"
 
 @interface StateMetaLoader (Private)
-- (NSMutableDictionary *)metadataFromCache;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSMutableDictionary *metadataFromCache;
 @end
 
 @implementation StateMetaLoader
@@ -41,14 +41,14 @@
 		NSDictionary *stateMeta = [[StateMetaLoader sharedStateMeta] stateMetadata];
 		if (NO == IsEmpty(stateMeta)) {
 			if (chamber == SENATE)
-				name = [stateMeta objectForKey:kMetaUpperChamberNameKey];
+				name = stateMeta[kMetaUpperChamberNameKey];
 			else {
-				name = [stateMeta objectForKey:kMetaLowerChamberNameKey];
+				name = stateMeta[kMetaLowerChamberNameKey];
 			}
 			if (NO == IsEmpty(name)) {
 				NSArray *words = [name componentsSeparatedByString:@" "];
-				if ([words count] > 1 && [[words objectAtIndex:0] length] > 4) { // just to make sure we have a decent, single name
-					name = [words objectAtIndex:0];
+				if (words.count > 1 && [words[0] length] > 4) { // just to make sure we have a decent, single name
+					name = words[0];
 				}
 			}
 		}
@@ -56,7 +56,7 @@
 	return name;
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self=[super init])) {
 		updated = nil;
 		isFresh = NO;
@@ -124,13 +124,12 @@
 	isFresh = NO;
 	[_loadingStates addObject:stateID];	// add it to our list of active loads
 	
-	RKClient *osApiClient = [[OpenLegislativeAPIs sharedOpenLegislativeAPIs] osApiClient];
+	RKClient *osApiClient = [OpenLegislativeAPIs sharedOpenLegislativeAPIs].osApiClient;
 	NSDictionary *queryParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:SUNLIGHT_APIKEY, @"apikey",nil];
 	NSString *method = [NSString stringWithFormat:@"/metadata/%@", stateID];
 	request = [osApiClient get:method queryParams:queryParams delegate:self];	
 	if (request) {
-		request.userData = [NSDictionary dictionaryWithObjectsAndKeys:
-							stateID, kMetaSelectedStateKey, nil];
+		request.userData = @{kMetaSelectedStateKey: stateID};
 	}
 	else {
 		[self request:nil didFailLoadWithError:nil];
@@ -164,29 +163,29 @@
 - (NSString *)currentSession {
 	if (NO == IsEmpty(_currentSession))
 		return _currentSession;
-	NSDictionary *stateMeta = [_metadata objectForKey:_selectedState];
+	NSDictionary *stateMeta = _metadata[_selectedState];
 	
-	NSMutableArray *terms = [[NSMutableArray alloc] initWithArray:[stateMeta objectForKey:kMetaSessionsAltKey]];
+	NSMutableArray *terms = [[NSMutableArray alloc] initWithArray:stateMeta[kMetaSessionsAltKey]];
 	NSSortDescriptor *sortDesc = [NSSortDescriptor sortDescriptorWithKey:@"start_year" ascending:NO];
-	[terms sortUsingDescriptors:[NSArray arrayWithObject:sortDesc]];
+	[terms sortUsingDescriptors:@[sortDesc]];
 			
 	NSInteger maxyear = -1;
 	NSString *foundSession = nil;
 	
 	for (NSDictionary *term in terms) {
-		NSNumber *startYear = [term objectForKey:@"start_year"];
+		NSNumber *startYear = term[@"start_year"];
 		//NSNumber *endYear = [term objectForKey:@"end_year"];
 		NSInteger thisYear = [[NSDate date] year];
 		if (startYear) {
-			NSInteger startInt = [startYear integerValue];
+			NSInteger startInt = startYear.integerValue;
 			if (startInt > thisYear) {
 				continue;
 			}
 			else if (startInt > maxyear) {
 				maxyear = startInt;
-				NSArray *sessions = [term objectForKey:@"sessions"];
+				NSArray *sessions = term[@"sessions"];
 				if (!IsEmpty(sessions)) {
-					id latest = [sessions lastObject]; 
+					id latest = sessions.lastObject; 
 					if ([latest isKindOfClass:[NSString class]])
 						foundSession = latest;
 					else if ([latest isKindOfClass:[NSNumber class]])
@@ -238,13 +237,13 @@
 		
 		NSString *wantedStateID = nil;
 		if (request.userData) {	// try getting our new state id from our initial query info
-			wantedStateID = [request.userData objectForKey:kMetaSelectedStateKey];
+			wantedStateID = (request.userData)[kMetaSelectedStateKey];
 			if (!IsEmpty(wantedStateID) && [_loadingStates containsObject:wantedStateID]) {
 				[_loadingStates removeObject:wantedStateID];
 			}			
 		}
 		
-		NSString *gotStateID = [stateMeta objectForKey:kMetaStateAbbrevKey];
+		NSString *gotStateID = stateMeta[kMetaStateAbbrevKey];
 				
 		if (IsEmpty(wantedStateID) || IsEmpty(gotStateID) || NO == [wantedStateID isEqualToString:gotStateID]) {
 			NSLog(@"StateMetaDataLoader: requested metadata for %@, but incoming data is for %@", wantedStateID, gotStateID);
@@ -255,7 +254,7 @@
 		updated = [[NSDate date] retain];
 		
 		if (NO == IsEmpty(gotStateID)) {
-			[_metadata setObject:stateMeta forKey:gotStateID];
+			_metadata[gotStateID] = stateMeta;
 		
 			if ([_loadingStates containsObject:gotStateID]) {
 				[_loadingStates removeObject:gotStateID];

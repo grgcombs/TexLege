@@ -31,7 +31,7 @@
 { return NSLocalizedStringFromTable(@"Capitol Maps", @"StandardUI", @"The short title for buttons and tabs related to maps of the building"); }
 
 - (NSString *)navigationBarName 
-{ return [self name]; }
+{ return self.name; }
 
 - (UIImage *)tabBarImage 
 { return [UIImage imageNamed:@"103-map-inv.png"]; }
@@ -50,7 +50,7 @@
 	return UITableViewStylePlain;
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self = [super init])) {
 		
 		self.sectionList = [[[NSMutableArray alloc] init] autorelease];
@@ -73,7 +73,7 @@
 
         for (NSArray * section in mapSectionsPlist)
         {
-            NSMutableArray *tempSection = [[NSMutableArray alloc] initWithCapacity:[section count]];
+            NSMutableArray *tempSection = [[NSMutableArray alloc] initWithCapacity:section.count];
 
             for (NSDictionary * mapEntry in section)
             {
@@ -95,9 +95,9 @@
 - (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
     if (self.sectionList.count <= indexPath.section)
         return nil;
-	NSArray *thisSection = [self.sectionList objectAtIndex:indexPath.section];
+	NSArray *thisSection = (self.sectionList)[indexPath.section];
 	if (thisSection && thisSection.count > indexPath.row)
-		return [thisSection objectAtIndex:indexPath.row];
+		return thisSection[indexPath.row];
 	
 	return nil;
 }
@@ -110,7 +110,7 @@
 		section = [[dataObject valueForKey:@"type"] integerValue];
         if (self.sectionList.count <= section)
             return nil;
-		NSArray *thisSection = [self.sectionList objectAtIndex:section];
+		NSArray *thisSection = (self.sectionList)[section];
 		if (thisSection) {
 			row = [thisSection indexOfObject:dataObject];
 			if (row == NSNotFound)
@@ -149,7 +149,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 	// Three sections
-	return [self.sectionList count];
+	return (self.sectionList).count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section 
@@ -157,7 +157,7 @@
     NSArray *sections = self.sectionList;
     if (sections.count <= section)
         return 0;
-	return [[sections objectAtIndex:section] count];
+	return [sections[section] count];
 }
 
  - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {	

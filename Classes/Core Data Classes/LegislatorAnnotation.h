@@ -11,5 +11,5 @@
 @class LegislatorObj;
 
 @protocol LegislatorAnnotation <NSObject>
-- (LegislatorObj *)legislator;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) LegislatorObj *legislator;
 @end

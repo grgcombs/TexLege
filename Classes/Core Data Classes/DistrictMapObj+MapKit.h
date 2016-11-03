@@ -16,12 +16,12 @@
 {
 }
 
-- (MKCoordinateRegion)region;
-- (MKCoordinateSpan)span;
+@property (NS_NONATOMIC_IOSONLY, readonly) MKCoordinateRegion region;
+@property (NS_NONATOMIC_IOSONLY, readonly) MKCoordinateSpan span;
 
-- (UIImage *)image;
-- (MKPolyline *)polyline;
-- (MKPolygon *)polygon;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) UIImage *image;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) MKPolyline *polyline;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) MKPolygon *polygon;
 - (BOOL) districtContainsCoordinate:(CLLocationCoordinate2D)aCoordinate;
 @end
 

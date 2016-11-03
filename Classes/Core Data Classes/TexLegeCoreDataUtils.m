@@ -59,18 +59,18 @@
 	// setup request
 	NSFetchRequest *request = [modelClass fetchRequest];	
 	// need to use dictionary to access values
-	[request setResultType:NSDictionaryResultType];
+	request.resultType = NSDictionaryResultType;
 	// build expression (must do this for each value you want to retrieve)
 	NSExpression *attributeToFetch = [NSExpression expressionForKeyPath:prop];
 	NSExpression *functionToPerformOnAttribute = [NSExpression expressionForFunction:calc 
-																		   arguments:[NSArray arrayWithObject:attributeToFetch]];
+																		   arguments:@[attributeToFetch]];
 	
 	NSExpressionDescription *propertyToFetch = [[NSExpressionDescription alloc] init];
-	[propertyToFetch setName:@"myFetchedValue"]; // name used to access value in dictionary
-	[propertyToFetch setExpression:functionToPerformOnAttribute];
-	[propertyToFetch setExpressionResultType:retType];
+	propertyToFetch.name = @"myFetchedValue"; // name used to access value in dictionary
+	propertyToFetch.expression = functionToPerformOnAttribute;
+	propertyToFetch.expressionResultType = retType;
 	// modify request to fetch only the attribute
-	[request setPropertiesToFetch:[NSArray arrayWithObject:propertyToFetch]];
+	request.propertiesToFetch = @[propertyToFetch];
 	[propertyToFetch release];
 	
 	// execute fetch
@@ -79,7 +79,7 @@
 	// get value
 	id fetchedVal = nil;
 	if (!IsEmpty(results))
-		fetchedVal = [[results objectAtIndex:0] valueForKey:@"myFetchedValue"];
+		fetchedVal = [results[0] valueForKey:@"myFetchedValue"];
 	else
 		NSLog(@"CoreData Error while fetching calc (%@) of property (%@) on entity (%@).", calc, prop, entityName);
 	
@@ -112,22 +112,22 @@
 		predicateString = [NSString stringWithFormat:@"legtype == %ld", (long)chamber];
 	
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateString]; 
-	[fetchRequest setPredicate:predicate];
+	fetchRequest.predicate = predicate;
 
 	NSMutableArray *results = [[NSMutableArray alloc] initWithArray:[LegislatorObj objectsWithFetchRequest:fetchRequest]];
 	BOOL ascending = (party != REPUBLICAN);
 	
 	if (ascending) {
 		[results sortUsingComparator:^(LegislatorObj *item1, LegislatorObj *item2) {
-			NSNumber *latestWnomFloat1 = [NSNumber numberWithFloat:item1.latestWnomFloat];
-			NSNumber *latestWnomFloat2 = [NSNumber numberWithFloat:item2.latestWnomFloat];
+			NSNumber *latestWnomFloat1 = @(item1.latestWnomFloat);
+			NSNumber *latestWnomFloat2 = @(item2.latestWnomFloat);
 			return [latestWnomFloat1 compare:latestWnomFloat2];
 		}];
 	}
 	else {
 		[results sortUsingComparator:^(LegislatorObj *item1, LegislatorObj *item2) {
-			NSNumber *latestWnomFloat1 = [NSNumber numberWithFloat:item1.latestWnomFloat];
-			NSNumber *latestWnomFloat2 = [NSNumber numberWithFloat:item2.latestWnomFloat];
+			NSNumber *latestWnomFloat1 = @(item1.latestWnomFloat);
+			NSNumber *latestWnomFloat2 = @(item2.latestWnomFloat);
 			return [latestWnomFloat2 compare:latestWnomFloat1];
 		}];
 	}
@@ -139,7 +139,7 @@
 		return nil;
 
 	NSFetchRequest *request = [NSClassFromString(entityName) fetchRequest];
-	[request setPredicate:predicate];
+	request.predicate = predicate;
 	
 	return [NSClassFromString(entityName) objectWithFetchRequest:request];
 }
@@ -148,7 +148,7 @@
 	if (entityName && NSClassFromString(entityName))
 	{	
 		NSFetchRequest *request = [NSClassFromString(entityName) fetchRequest];
-		[request setResultType:NSManagedObjectIDResultType];	// only return object IDs
+		request.resultType = NSManagedObjectIDResultType;	// only return object IDs
 		return [NSClassFromString(entityName) objectsWithFetchRequest:request];	
 	}
 	return nil;
@@ -161,8 +161,8 @@
 		NSFetchRequest *request = [entityClass fetchRequest];
 		
 		// only return primary key IDs
-		[request setResultType:NSDictionaryResultType];	
-		[request setPropertiesToFetch:[NSArray arrayWithObject:[entityClass primaryKeyProperty]]];
+		request.resultType = NSDictionaryResultType;	
+		request.propertiesToFetch = @[[entityClass primaryKeyProperty]];
 		
 		return [[entityClass objectsWithFetchRequest:request] valueForKeyPath:[entityClass primaryKeyProperty]];
 	}
@@ -179,19 +179,19 @@
 
 + (NSArray *)allDistrictMapIDsWithBoundingBoxesContaining:(CLLocationCoordinate2D)coordinate
 {		
-	NSNumber *lat = [NSNumber numberWithDouble:coordinate.latitude];
-	NSNumber *lon = [NSNumber numberWithDouble:coordinate.longitude];
+	NSNumber *lat = @(coordinate.latitude);
+	NSNumber *lon = @(coordinate.longitude);
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"maxLat >= %@ AND minLat <= %@ AND maxLon >=%@ AND minLon <= %@", lat, lat, lon, lon];
 	
 	NSFetchRequest * request = [DistrictMapObj fetchRequest];
-	[request setPropertiesToFetch:[NSArray arrayWithObject:@"districtMapID"]];
-	[request setResultType:NSDictionaryResultType];	// only return object IDs
-	[request setPredicate:predicate];
+	request.propertiesToFetch = @[@"districtMapID"];
+	request.resultType = NSDictionaryResultType;	// only return object IDs
+	request.predicate = predicate;
 	NSArray *results = [DistrictMapObj objectsWithFetchRequest:request];
-	if (results && [results count]) {
-		NSMutableArray *list = [NSMutableArray arrayWithCapacity:[results count]];
+	if (results && results.count) {
+		NSMutableArray *list = [NSMutableArray arrayWithCapacity:results.count];
 		for (NSDictionary *result in results) {
-			[list addObject:[result objectForKey:@"districtMapID"]];
+			[list addObject:result[@"districtMapID"]];
 		}
 		return list;
 	}
@@ -253,12 +253,12 @@
 	
 	// Update date format so that we can parse twitter dates properly
 	// Wed Sep 29 15:31:08 +0000 2010
-	NSMutableArray* dateFormats = [[[mapper dateFormats] mutableCopy] autorelease];
+	NSMutableArray* dateFormats = [[mapper.dateFormats mutableCopy] autorelease];
 	[dateFormats addObject:@"E MMM d HH:mm:ss Z y"];
 	[dateFormats addObject:[NSDate dateFormatString]];
 	[dateFormats addObject:[NSDate timeFormatString]];
 	[dateFormats addObject:[NSDate timestampFormatString]];
-	[mapper setDateFormats:dateFormats];
+	mapper.dateFormats = dateFormats;
 		
 	// Database seeding is configured as a copied target of the main application. There are only two differences
     // between the main application target and the 'Generate Seed Database' target:
@@ -312,26 +312,26 @@
 
 + (NSString *)applicationCacheDirectory {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+    NSString *basePath = (paths.count > 0) ? paths[0] : nil;
     return basePath;
 }
 
 + (NSArray *)registeredDataModels {
-	return [[[[[RKObjectManager sharedManager] objectStore] managedObjectModel] entitiesByName] allKeys];
+	return [RKObjectManager sharedManager].objectStore.managedObjectModel.entitiesByName.allKeys;
 }
 
 + (void) resetSavedDatabase:(id)sender {
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"DATABASE_RESET"];
-	[[[RKObjectManager sharedManager] objectStore] deletePersistantStoreUsingSeedDatabaseName:SEED_DB_NAME];
+	[[RKObjectManager sharedManager].objectStore deletePersistantStoreUsingSeedDatabaseName:SEED_DB_NAME];
 	
 	//exit(0);
 
 	for (DistrictMapObj *map in [DistrictMapObj allObjects])
 		[map resetRelationship:self];
-	[[[RKObjectManager sharedManager] objectStore] save];
+	[[RKObjectManager sharedManager].objectStore save];
 
 	for (NSString *className in [TexLegeCoreDataUtils registeredDataModels]) {
-		NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", [className uppercaseString]];
+		NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", className.uppercaseString];
 		[[NSNotificationCenter defaultCenter] postNotificationName:notification object:nil];
 	}
 }
@@ -355,13 +355,13 @@
 
 - (void)managedObjectStore:(RKManagedObjectStore *)objectStore didFailToSaveContext:(NSManagedObjectContext *)context error:(NSError *)error exception:(NSException *)exception
 {
-    NSDictionary *userInfo = [[error userInfo] copy];
+    NSDictionary *userInfo = [error.userInfo copy];
     if (userInfo &&
         userInfo[NSValidationObjectErrorKey] &&
         [userInfo[NSValidationObjectErrorKey] isKindOfClass:[LegislatorObj class]])
     {
         LegislatorObj *legislator = userInfo[NSValidationObjectErrorKey];
-        NSSet *wnoms = [legislator wnomScores];
+        NSSet *wnoms = legislator.wnomScores;
 
         for (WnomObj *wnom in wnoms)
         {

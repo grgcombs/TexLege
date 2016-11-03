@@ -35,7 +35,7 @@ enum _menuOrder {
 { return NSLocalizedStringFromTable(@"Bills", @"StandardUI", @"Short name for bills (legislative documents, pre-law) tab"); }
 
 - (NSString *)navigationBarName 
-{ return [self name]; }
+{ return self.name; }
 
 - (UIImage *)tabBarImage 
 { return [UIImage imageNamed:@"gavel-inv.png"]; }
@@ -54,7 +54,7 @@ enum _menuOrder {
 	return UITableViewStylePlain;
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self = [super init])) {
 	}
 	return self;
@@ -73,7 +73,7 @@ enum _menuOrder {
 			
 		NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"TexLegeStrings" ofType:@"plist"];
 		NSDictionary *textDict = [NSDictionary dictionaryWithContentsOfFile:thePath];
-		_menuItems = [[textDict objectForKey:@"BillMenuItems"] retain];
+		_menuItems = [textDict[@"BillMenuItems"] retain];
 		
 		if (!_menuItems)
 			_menuItems = [[NSArray alloc] init];
@@ -86,7 +86,7 @@ enum _menuOrder {
 - (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
     if (self.menuItems.count <= indexPath.row)
         return nil;
-	return [self.menuItems objectAtIndex:indexPath.row];
+	return (self.menuItems)[indexPath.row];
 }
 
 - (NSIndexPath *)indexPathForDataObject:(id)dataObject {	
@@ -95,13 +95,13 @@ enum _menuOrder {
 	if (dataObject) {
 		NSString *theClass = nil;
 		if ([dataObject isKindOfClass:[NSDictionary class]])
-			theClass = [dataObject objectForKey:@"class"];
+			theClass = dataObject[@"class"];
 		else if ([dataObject isKindOfClass:[NSString class]])
 			theClass = dataObject;
 		
 		NSInteger row = 0;
 		for (NSDictionary *object in self.menuItems) {
-			if ([theClass isEqualToString:[object objectForKey:@"class"]])
+			if ([theClass isEqualToString:object[@"class"]])
 				path = [NSIndexPath indexPathForRow:row inSection:0];
 			row++;
 		}		
@@ -132,8 +132,8 @@ enum _menuOrder {
 	NSDictionary *dataObject = [self dataObjectForIndexPath:indexPath];
     if (dataObject)
     {
-        cell.textLabel.text = [dataObject objectForKey:@"title"];
-        cell.imageView.image = [UIImage imageNamed:[dataObject objectForKey:@"icon"]];
+        cell.textLabel.text = dataObject[@"title"];
+        cell.imageView.image = [UIImage imageNamed:dataObject[@"icon"]];
     }
 	return cell;
 }
@@ -144,7 +144,7 @@ enum _menuOrder {
 
 - (NSInteger)tableView:(UITableView *)tableView  numberOfRowsInSection:(NSInteger)section 
 {		
-	return [self.menuItems count];
+	return (self.menuItems).count;
 }
 
 @end

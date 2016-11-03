@@ -67,11 +67,9 @@
 	
 	self.searchDisplayController.searchBar.tintColor = [TexLegeTheme accent];	
 	
-	self.searchDisplayController.searchBar.scopeButtonTitles = [NSArray arrayWithObjects:
-																stringForChamber(BOTH_CHAMBERS, TLReturnFull),
+	self.searchDisplayController.searchBar.scopeButtonTitles = @[stringForChamber(BOTH_CHAMBERS, TLReturnFull),
 																stringForChamber(HOUSE, TLReturnFull),
-																stringForChamber(SENATE, TLReturnFull),
-																nil];
+																stringForChamber(SENATE, TLReturnFull)];
 
 #if 0
 	if ([UtilityMethods isIPadDevice]) {
@@ -105,8 +103,8 @@
 }
 
 - (void)didReceiveMemoryWarning {
-	UINavigationController *nav = [self navigationController];
-	if (nav && [nav.viewControllers count]>3) {
+	UINavigationController *nav = self.navigationController;
+	if (nav && (nav.viewControllers).count>3) {
 		[nav popToRootViewControllerAnimated:YES];
 	}
 	
@@ -172,8 +170,8 @@
 			if ([self.detailViewController respondsToSelector:@selector(setDataObject:)])
 				[self.detailViewController performSelector:@selector(setDataObject:) withObject:dataObject];
 			
-			[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:[dataObject objectForKey:@"bill_id"] 
-																			   session:[dataObject objectForKey:@"session"] 
+			[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:dataObject[@"bill_id"] 
+																			   session:dataObject[@"session"] 
 																			  delegate:self.detailViewController];			
 			if (isSplitViewDetail == NO) {
 				// push the detail view controller onto the navigation stack to display it				
@@ -181,7 +179,7 @@
 				self.detailViewController = nil;
 			}
 			else if (changingDetails)
-				[[[TexLegeAppDelegate appDelegate] detailNavigationController] setViewControllers:[NSArray arrayWithObject:self.detailViewController] animated:NO];
+				[[TexLegeAppDelegate appDelegate].detailNavigationController setViewControllers:@[self.detailViewController] animated:NO];
 		}			
 	}
 //	WE'RE CLICKING ON ONE OF OUR STANDARD MENU ITEMS
@@ -194,7 +192,7 @@
 		if (!dataObject || ![dataObject isKindOfClass:[NSDictionary class]])
 			return;
 
-		NSString *theClass = [dataObject objectForKey:@"class"];
+		NSString *theClass = dataObject[@"class"];
 		if (!theClass || !NSClassFromString(theClass))
 			return;
 		
@@ -222,9 +220,9 @@
 #if LIVE_SEARCHING == 1
 	nice_release(_searchString);
 
-	if (searchString && [searchString length]) {
+	if (searchString && searchString.length) {
 		_searchString = [searchString copy];
-		if (_searchString && [_searchString length] >= 3) {
+		if (_searchString && _searchString.length >= 3) {
 			[self.billSearchDS startSearchForText:_searchString chamber:self.searchDisplayController.searchBar.selectedScopeButtonIndex];
 		}		
 	}
@@ -233,7 +231,7 @@
 }
 
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
-	if (!controller || !controller.searchBar || !controller.searchBar.text || ![controller.searchBar.text length]) 
+	if (!controller || !controller.searchBar || !controller.searchBar.text || !(controller.searchBar.text).length) 
 		return NO;
 	
 	nice_release(_searchString);

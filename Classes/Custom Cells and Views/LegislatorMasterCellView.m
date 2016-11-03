@@ -27,7 +27,7 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 @synthesize useDarkBackground;
 @synthesize highlighted, questionImage;
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
 	if (self) {
@@ -44,7 +44,7 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)coder
+- (instancetype)initWithCoder:(NSCoder *)coder
 {
 	self = [super initWithCoder:coder];
 	if (self) {
@@ -153,11 +153,11 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 		
 	PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
     if (indexStats.hasData) {
-        CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:[value.legtype integerValue]];
-        CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:[value.legtype integerValue]];
+        CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:(value.legtype).integerValue];
+        CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:(value.legtype).integerValue];
         self.sliderMax = maxSlider;
         self.sliderMin = minSlider;
-        [self setSliderValue:self.partisan_index];
+        self.sliderValue = self.partisan_index;
     }
     
 	[self setNeedsDisplay];	
@@ -166,7 +166,7 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 - (void)drawRect:(CGRect)dirtyRect
 {
 	CGRect imageBounds = CGRectMake(0.0f, 0.0f, kLegislatorMasterCellViewWidth, kLegislatorMasterCellViewHeight);
-	CGRect bounds = [self bounds];
+	CGRect bounds = self.bounds;
 
 	CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
 	CGContextRef context = UIGraphicsGetCurrentContext();
@@ -201,13 +201,13 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 
         CGRect titleRect = CGRectMake(8.5f, 0.0f, 240.0f, 18.0f);
         [titleColor set];
-        [[self title] drawInRect:[self scaleRect:titleRect forResolution:resolution] withFont:[TexLegeTheme boldTwelve]];
+        [self.title drawInRect:[self scaleRect:titleRect forResolution:resolution] withFont:[TexLegeTheme boldTwelve]];
 
         // Name
 
         CGRect nameRect = CGRectMake(8.5f, 17.0f, 240.0f, 21.0f);
         [nameColor set];
-        [[self name] drawInRect:[self scaleRect:nameRect forResolution:resolution] withFont:[TexLegeTheme boldFifteen]];
+        [self.name drawInRect:[self scaleRect:nameRect forResolution:resolution] withFont:[TexLegeTheme boldFifteen]];
 
         // GradientBar
 
@@ -219,9 +219,9 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
         CGPathAddRect(path, NULL, drawRect);
 
         CGFloat locations[3];
-        NSArray *colors = [NSArray arrayWithObjects:(id)[[TexLegeTheme texasBlue] CGColor],
-                                                    (id)[[UIColor whiteColor] CGColor],
-                                                    (id)[[TexLegeTheme texasRed] CGColor],nil];
+        NSArray *colors = @[(id)[TexLegeTheme texasBlue].CGColor,
+                                                    (id)[UIColor whiteColor].CGColor,
+                                                    (id)[TexLegeTheme texasRed].CGColor];
         locations[0] = 0.0f;
         locations[1] = 0.499f;
         locations[2] = 1.0f;
@@ -331,7 +331,7 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
                 CGPathCloseSubpath(path);
 
                 color = [UIColor colorWithRed:0.9f green:0.9f blue:0.9f alpha:1.0f];
-                colors = [NSArray arrayWithObjects:(id)[color CGColor], (id)[color CGColor], nil];
+                colors = @[(id)color.CGColor, (id)color.CGColor];
                 locations[0] = 0.0f;
                 locations[1] = 1.0f;
                 gradient = CGGradientCreateWithColors(space, (CFArrayRef)colors, locations);
@@ -373,7 +373,7 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
         drawRect = [self scaleRect:tenureRect forResolution:resolution];
         
         [tenureColor set];
-        [[self tenure] drawInRect:drawRect withFont:[TexLegeTheme boldTen] lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
+        [self.tenure drawInRect:drawRect withFont:[TexLegeTheme boldTen] lineBreakMode:NSLineBreakByTruncatingTail alignment:NSTextAlignmentRight];
         
     }
 	CGContextRestoreGState(context);

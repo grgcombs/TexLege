@@ -98,7 +98,7 @@
                             [_foundIDs addObject:distID];
                             success = YES;
                         }
-                        [[map managedObjectContext] refreshObject:map mergeChanges:NO];
+                        [map.managedObjectContext refreshObject:map mergeChanges:NO];
                     }
                     else
                     {
@@ -107,7 +107,7 @@
                     }
                 }
                 // this frees up memory and re-faults the unneeded objects
-                [[map managedObjectContext] refreshObject:map mergeChanges:NO];
+                [map.managedObjectContext refreshObject:map mergeChanges:NO];
             }
         }
         @catch (NSException * e)

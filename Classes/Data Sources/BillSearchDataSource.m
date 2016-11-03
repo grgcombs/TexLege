@@ -27,7 +27,7 @@
 @synthesize searchDisplayController, delegateTVC;
 @synthesize useLoadingDataCell;
 
-- (id)init {
+- (instancetype)init {
 	if ((self=[super init])) {
 		loadingStatus = LOADING_IDLE;
 		useLoadingDataCell = NO;
@@ -42,7 +42,7 @@
 	return self;
 }
 
-- (id)initWithSearchDisplayController:(UISearchDisplayController *)newController {
+- (instancetype)initWithSearchDisplayController:(UISearchDisplayController *)newController {
 	if ((self=[self init])) {
 		if (newController) {
 			searchDisplayController = [newController retain];
@@ -52,7 +52,7 @@
 	return self;
 }
 
-- (id)initWithTableViewController:(UITableViewController *)newDelegate {
+- (instancetype)initWithTableViewController:(UITableViewController *)newDelegate {
 	if ((self=[self init])) {		
 		if (newDelegate) {
 			delegateTVC = [newDelegate retain];
@@ -74,12 +74,12 @@
 
 // This is just a short cut, we wind up using this array several times.  Perhaps we should remember it instead of recreating?
 - (NSArray *) billTypes {
-	return [[_sections allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];	
+	return [_sections.allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];	
 }
 
 // return the map at the index in the array
 - (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
-    NSString *key = [[self billTypes] objectAtIndex:indexPath.section];
+    NSString *key = [self billTypes][indexPath.section];
     NSArray *billSection = [_sections valueForKey:key];
     if (![billSection respondsToSelector:@selector(objectAtIndex:)] ||
         ![billSection respondsToSelector:@selector(count)])
@@ -93,10 +93,10 @@
 }
 
 - (NSIndexPath *)indexPathForDataObject:(id)dataObject {
-	if (dataObject && [dataObject isKindOfClass:[NSDictionary class]] && [dataObject objectForKey:@"bill_id"]) {
-		NSString *typeString = billTypeStringFromBillID([dataObject objectForKey:@"bill_id"]);
+	if (dataObject && [dataObject isKindOfClass:[NSDictionary class]] && dataObject[@"bill_id"]) {
+		NSString *typeString = billTypeStringFromBillID(dataObject[@"bill_id"]);
 		if (!IsEmpty(typeString)) {
-			NSMutableArray *sectionRow = [_sections objectForKey:typeString];
+			NSMutableArray *sectionRow = _sections[typeString];
 			if (!IsEmpty(sectionRow)) {
 				NSArray *sortedSections = [self billTypes];
 				NSInteger section = [sortedSections indexOfObject:typeString];
@@ -115,10 +115,10 @@
     // Loop through the bills and create our keys
     for (NSDictionary *bill in _rows)
     {				
-		NSString *c = billTypeStringFromBillID([bill objectForKey:@"bill_id"]);
+		NSString *c = billTypeStringFromBillID(bill[@"bill_id"]);
 	
         found = NO;
-        for (NSString *str in [_sections allKeys])
+        for (NSString *str in _sections.allKeys)
         {
             if ([str isEqualToString:c])
             {
@@ -134,17 +134,17 @@
 	// Loop again and sort the bills into their respective keys
     for (NSDictionary *bill in _rows)
     {
-		NSString *typeString = billTypeStringFromBillID([bill objectForKey:@"bill_id"]);
+		NSString *typeString = billTypeStringFromBillID(bill[@"bill_id"]);
 		if (!IsEmpty(typeString))
-			[[_sections objectForKey:typeString] addObject:bill];
+			[_sections[typeString] addObject:bill];
     }
 	
 	// Sort each section array
-    for (NSString *key in [_sections allKeys])
+    for (NSString *key in _sections.allKeys)
     {
-		[[_sections objectForKey:key] sortUsingComparator:^(NSDictionary *item1, NSDictionary *item2) {
-			NSString *bill_id1 = [item1 objectForKey:@"bill_id"];
-			NSString *bill_id2 = [item2 objectForKey:@"bill_id"];
+		[_sections[key] sortUsingComparator:^(NSDictionary *item1, NSDictionary *item2) {
+			NSString *bill_id1 = item1[@"bill_id"];
+			NSString *bill_id2 = item2[@"bill_id"];
 			return [bill_id1 compare:bill_id2 options:NSNumericSearch];
 		}];		
     }
@@ -155,7 +155,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 	if (IsEmpty(_sections))
 		return 1;
-	return [[_sections allKeys] count];
+	return _sections.allKeys.count;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -165,10 +165,10 @@
     NSArray *sections = [self billTypes];
     if (sections.count <= section)
         return @"";
-	NSString *billType = [sections objectAtIndex:section];
-	return [[[[[BillMetadataLoader sharedBillMetadataLoader] metadata] objectForKey:@"types"] 
+	NSString *billType = sections[section];
+	return [[BillMetadataLoader sharedBillMetadataLoader].metadata[@"types"] 
 							findWhereKeyPath:@"title" 
-							equals:billType] objectForKey:@"titleLong"];
+							equals:billType][@"titleLong"];
 }
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
@@ -183,7 +183,7 @@
     if (sectionKeys.count <= section)
         return 0;
 	if (NO == IsEmpty(_sections))
-		return [[_sections valueForKey:[sectionKeys objectAtIndex:section]] count];
+		return [[_sections valueForKey:sectionKeys[section]] count];
 	else if (useLoadingDataCell && loadingStatus > LOADING_IDLE)
 		return 1;
 	else
@@ -201,13 +201,13 @@
 	if (!bill || [[NSNull null] isEqual:bill])
 		return;  // ?????
 	
-	NSString *bill_id = [bill objectForKey:@"bill_id"];
-	NSString *bill_title = [bill objectForKey:@"title"];
+	NSString *bill_id = bill[@"bill_id"];
+	NSString *bill_title = bill[@"title"];
 	
 	bill_title = [bill_title chopPrefix:@"Relating to " capitalizingFirst:YES];
 	
 	cell.textLabel.text = [NSString stringWithFormat:@"(%@) %@", 
-						   [bill objectForKey:@"session"],
+						   bill[@"session"],
 						   bill_id];
 	cell.detailTextLabel.text = bill_title;
 }
@@ -261,7 +261,7 @@
 			loadingStatus = LOADING_ACTIVE;
 		
 		OpenLegislativeAPIs *api = [OpenLegislativeAPIs sharedOpenLegislativeAPIs];
-		request = [[api osApiClient] get:queryString queryParams:queryParams delegate:self];
+		request = [api.osApiClient get:queryString queryParams:queryParams delegate:self];
 	}
 	else if (useLoadingDataCell) {
 		loadingStatus = LOADING_NO_NET;
@@ -272,7 +272,7 @@
 
 - (void)startSearchForText:(NSString *)searchString chamber:(NSInteger)chamber
 {
-	searchString = [searchString uppercaseString];
+	searchString = searchString.uppercaseString;
 	NSMutableString *queryString = [NSMutableString stringWithString:@"/bills"];
 	
 	BOOL isBillID = NO;
@@ -280,18 +280,18 @@
 	if (IsEmpty(meta.selectedState) || IsEmpty(meta.currentSession))
 		return;
 	
-	for (NSDictionary *type in [[[BillMetadataLoader sharedBillMetadataLoader] metadata] objectForKey:kBillMetadataTypesKey]) {
-		NSString *billType = [type objectForKey:kBillMetadataTitleKey];
+	for (NSDictionary *type in [BillMetadataLoader sharedBillMetadataLoader].metadata[kBillMetadataTypesKey]) {
+		NSString *billType = type[kBillMetadataTitleKey];
 	 
 		if (billType && [searchString hasPrefix:billType]) {
-			NSString *tail = [searchString substringFromIndex:[billType length]];
+			NSString *tail = [searchString substringFromIndex:billType.length];
 			if (tail) {
 				tail = [tail stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 				
-				if ([tail integerValue] > 0) {
+				if (tail.integerValue > 0) {
 					isBillID = YES;
 
-					NSNumber *billNumber = [NSNumber numberWithInteger:[tail integerValue]];		// we specifically convolute this to ensure we're grabbing only the numerical of the string
+					NSNumber *billNumber = @(tail.integerValue);		// we specifically convolute this to ensure we're grabbing only the numerical of the string
 					[queryString appendFormat:@"/%@/%@/%@%%20%@", meta.selectedState, meta.currentSession, billType, billNumber];
 					
 					break;
@@ -308,13 +308,13 @@
 	
 	NSString *chamberString = stringForChamber(chamber, TLReturnOpenStates);
 	if (!IsEmpty(chamberString)) {
-		[queryParams setObject:chamberString forKey:@"chamber"];
+		queryParams[@"chamber"] = chamberString;
 	}
 	if (IsEmpty(searchString))
 		searchString = @"";
 	
 	if (!isBillID){
-		[queryParams setObject:searchString forKey:@"q"];
+		queryParams[@"q"] = searchString;
 	}
 	
 	[self startSearchWithQueryString:queryString params:queryParams];
@@ -334,15 +334,15 @@
 	
 	NSString *chamberString = stringForChamber(chamber, TLReturnOpenStates);
 	if (!IsEmpty(chamberString)) {
-		[queryParams setObject:chamberString forKey:@"chamber"];
+		queryParams[@"chamber"] = chamberString;
 	}
 	if (IsEmpty(searchSubject))
 		searchSubject = @"";
 	else {
-		NSDictionary *tagSubject = [NSDictionary dictionaryWithObject:searchSubject forKey:@"subject"];
+		NSDictionary *tagSubject = @{@"subject": searchSubject};
 		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"BILL_SUBJECTS" attributes:tagSubject];	
 	}
-	[queryParams setObject:searchSubject forKey:@"subject"];
+	queryParams[@"subject"] = searchSubject;
 				
 	[self startSearchWithQueryString:@"/bills" params:queryParams];
 }
@@ -353,19 +353,16 @@
 		if (IsEmpty(meta.selectedState))
 			return;
 		
-		NSDictionary *queryParams = [NSDictionary dictionaryWithObjectsAndKeys:
-									 searchSponsorID, @"sponsor_id",
-									 meta.selectedState, @"state",
-									 @"session", @"search_window",
-									 SUNLIGHT_APIKEY, @"apikey",
+		NSDictionary *queryParams = @{@"sponsor_id": searchSponsorID,
+									 @"state": meta.selectedState,
+									 @"search_window": @"session",
+									 @"apikey": SUNLIGHT_APIKEY,
 									 // now for the fun part
-									 @"sponsors,bill_id,title,session,state,type,update_at,subjects", @"fields",
-									 nil];
+									 @"fields": @"sponsors,bill_id,title,session,state,type,update_at,subjects"};
 
 		RKRequest *request = [self startSearchWithQueryString:@"/bills" params:queryParams];
 		if (request) {
-			request.userData = [NSDictionary dictionaryWithObjectsAndKeys:
-								searchSponsorID, @"sponsor_id", nil];
+			request.userData = @{@"sponsor_id": searchSponsorID};
 		}
 		
 	}
@@ -454,14 +451,14 @@
 
 		// if we wanted blocks, we'd do this instead:
 		[_rows sortUsingComparator:^(NSMutableDictionary *item1, NSMutableDictionary *item2) {
-			NSString *bill_id1 = [item1 objectForKey:@"bill_id"];
-			NSString *bill_id2 = [item2 objectForKey:@"bill_id"];
+			NSString *bill_id1 = item1[@"bill_id"];
+			NSString *bill_id2 = item2[@"bill_id"];
 			return [bill_id1 compare:bill_id2 options:NSNumericSearch];
 		}];
 		
 		if (request.userData) {
 		
-			NSString *sponsorID = [request.userData objectForKey:@"sponsor_id"];
+			NSString *sponsorID = (request.userData)[@"sponsor_id"];
 			if (NO == IsEmpty(sponsorID)) {
 				// We must be requesting specific bills for a given sponsors			
 				[self pruneBillsForAuthor:sponsorID];

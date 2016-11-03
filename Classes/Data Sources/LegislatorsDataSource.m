@@ -35,7 +35,7 @@
 	return [LegislatorObj class];
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self = [super init])) {
 	
 		self.filterChamber = 0;
@@ -54,9 +54,9 @@
 - (void)resetCoreData:(NSNotification *)notification
 {
     // You've got to delete the cache, or disable caching before you modify the predicate...
-    [NSFetchedResultsController deleteCacheWithName:[self.fetchedResultsController cacheName]];
-    [self.fetchedResultsController.fetchRequest setPredicate:[self getFilterPredicate]];
-    [self.fetchedResultsController.fetchRequest setSortDescriptors:[self sortDescriptors]];
+    [NSFetchedResultsController deleteCacheWithName:(self.fetchedResultsController).cacheName];
+    (self.fetchedResultsController.fetchRequest).predicate = [self getFilterPredicate];
+    (self.fetchedResultsController.fetchRequest).sortDescriptors = [self sortDescriptors];
 
     NSError *error = nil;
     if (![self.fetchedResultsController performFetch:&error]) {
@@ -179,12 +179,12 @@
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {	
-	return [[self.fetchedResultsController sections] count];		
+	return (self.fetchedResultsController).sections.count;		
 }
 
 // This is for the little index along the right side of the table ... use nil if you don't want it.
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
-	return  hideTableIndex ? nil : [self.fetchedResultsController sectionIndexTitles] ;
+	return  hideTableIndex ? nil : (self.fetchedResultsController).sectionIndexTitles ;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
@@ -194,17 +194,17 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // eventually (soon) we'll need to create a new fetchedResultsController to filter for chamber selection
-    NSInteger count = [tableView numberOfSections];
+    NSInteger count = tableView.numberOfSections;
     NSArray *sections = self.fetchedResultsController.sections;
     if (sections.count <= section ||
         count == 0)
     {
         return 0;
     }
-    id <NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+    id <NSFetchedResultsSectionInfo> sectionInfo = sections[section];
     if (!sectionInfo)
         return 0;
-    return [sectionInfo numberOfObjects];
+    return sectionInfo.numberOfObjects;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -213,16 +213,16 @@
 	// return the letter that represents the requested section
 	
 	NSString *headerTitle = nil;
-	NSInteger count = [tableView numberOfSections];
-    NSArray *sections = [self.fetchedResultsController sections];
+	NSInteger count = tableView.numberOfSections;
+    NSArray *sections = (self.fetchedResultsController).sections;
     if (count > 0 &&
         sections.count > section)
     {
-		id <NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+		id <NSFetchedResultsSectionInfo> sectionInfo = sections[section];
         if (sectionInfo) {
-            headerTitle = [sectionInfo indexTitle];
+            headerTitle = sectionInfo.indexTitle;
             if (!headerTitle)
-                headerTitle = [sectionInfo name];
+                headerTitle = sectionInfo.name;
         }
 	}
 	if (!headerTitle)
@@ -260,7 +260,7 @@
     NSMutableString * predString = [NSMutableString stringWithString:@""];
 
     if (self.filterChamber > 0)	// do some chamber filtering
-        [predString appendFormat:@"(legtype = %@)", [NSNumber numberWithInteger:self.filterChamber]];
+        [predString appendFormat:@"(legtype = %@)", @(self.filterChamber)];
     if (self.filterString.length > 0) {		// do some string filtering
         if (predString.length > 0)	// we already have some predicate action, insert "AND"
             [predString appendString:@" AND "];
@@ -311,7 +311,7 @@
 {
     NSSortDescriptor *last = [[[NSSortDescriptor alloc] initWithKey:@"lastname" ascending:YES] autorelease];
     NSSortDescriptor *first = [[[NSSortDescriptor alloc] initWithKey:@"firstname"ascending:YES] autorelease];
-    return [NSArray arrayWithObjects:last, first, nil];
+    return @[last, first];
 }
 
 /*
@@ -326,7 +326,7 @@
 	// Create the fetch request for the entity.
 	NSFetchRequest *fetchRequest = [LegislatorObj fetchRequest];
 	
-    [fetchRequest setSortDescriptors:[self sortDescriptors]];
+    fetchRequest.sortDescriptors = [self sortDescriptors];
 	
 	
 	NSString * sectionString = nil;

@@ -30,7 +30,7 @@
 @property (nonatomic) BOOL isFresh;
 
 + (PartisanIndexStats *)sharedPartisanIndexStats;
-- (BOOL)hasData;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL hasData;
 - (void)loadPartisanIndex:(id)sender;
 
 - (CGFloat) minPartisanIndexUsingChamber:(NSInteger)chamber;

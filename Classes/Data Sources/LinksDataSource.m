@@ -57,7 +57,7 @@ enum Sections {
 	return [LinkObj class];
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self = [super init])) {
 	
 		//NSError *error = nil;
@@ -75,7 +75,7 @@ enum Sections {
 }
 
 - (void)resetCoreData:(NSNotification *)notification {
-	[NSFetchedResultsController deleteCacheWithName:[self.fetchedResultsController cacheName]];
+	[NSFetchedResultsController deleteCacheWithName:(self.fetchedResultsController).cacheName];
 	self.fetchedResultsController = nil;
 	NSError *error = nil;
 	[self.fetchedResultsController performFetch:&error];
@@ -99,23 +99,23 @@ enum Sections {
 #pragma mark -
 #pragma mark UITableViewDataSource methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	return [self.fetchedResultsController.sections count];
+	return (self.fetchedResultsController.sections).count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // eventually (soon) we'll need to create a new fetchedResultsController to filter for chamber selection
-    NSInteger count = [tableView numberOfSections];
+    NSInteger count = tableView.numberOfSections;
     NSArray *sections = self.fetchedResultsController.sections;
     if (sections.count <= section ||
         count == 0)
     {
         return 0;
     }
-    id <NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+    id <NSFetchedResultsSectionInfo> sectionInfo = sections[section];
     if (!sectionInfo)
         return 0;
-    return [sectionInfo numberOfObjects];
+    return sectionInfo.numberOfObjects;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -205,7 +205,7 @@ enum Sections {
 	NSSortDescriptor *sortSection = [[NSSortDescriptor alloc] initWithKey:@"section" ascending:YES];
 	NSSortDescriptor *sortOrder = [[NSSortDescriptor alloc] initWithKey:@"sortOrder" ascending:YES];
 	NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortSection, sortOrder, nil];  
-	[fetchRequest setSortDescriptors:sortDescriptors];
+	fetchRequest.sortDescriptors = sortDescriptors;
 	
 	fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest 
 																   managedObjectContext:[LinkObj managedObjectContext]

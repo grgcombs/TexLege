@@ -25,13 +25,13 @@
 @property (nonatomic,retain)		  id selectObjectOnAppear;
 @property (nonatomic,retain) NSNumber *controllerEnabled;
 
-- (NSString *)reachabilityStatusKey;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *reachabilityStatusKey;
 
 - (void)configure;
 - (void)runLoadView;
-- (Class)dataSourceClass;
+@property (NS_NONATOMIC_IOSONLY, readonly, assign) Class dataSourceClass;
 - (IBAction)selectDefaultObject:(id)sender;
-- (id)firstDataObject;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) id firstDataObject;
 - (void)reapplyFiltersAndSort;
 - (void)beginUpdates:(NSNotification *)aNotification;
 - (void)endUpdates:(NSNotification *)aNotification;

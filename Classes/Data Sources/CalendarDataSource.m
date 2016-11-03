@@ -45,7 +45,7 @@
 	return UITableViewStylePlain;
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self = [super init])) {
 		
 		[self loadChamberCalendars];
@@ -75,8 +75,8 @@
 
         NSMutableDictionary *calendarDict = [[NSMutableDictionary alloc] initWithCapacity:10];
         ChamberCalendarObj *calendar = nil;
-        [calendarDict setObject:localizedString forKey:@"title"];
-        [calendarDict setObject:[NSNumber numberWithInteger:chamberIndex] forKey:@"chamber"];
+        calendarDict[@"title"] = localizedString;
+        calendarDict[@"chamber"] = @(chamberIndex);
         calendar = [[ChamberCalendarObj alloc] initWithDictionary:calendarDict];
         [self.calendarList addObject:calendar];
         [calendar release];
@@ -86,8 +86,8 @@
             chamberName = stringForChamber(chamberIndex, TLReturnFull);
             localizedString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Upcoming %@ Meetings", @"DataTableUI", @"Menu item to display upcoming calendar events in a legislative chamber"),
                                chamberName];
-            [calendarDict setObject:localizedString forKey:@"title"];
-            [calendarDict setObject:[NSNumber numberWithInteger:chamberIndex] forKey:@"chamber"];
+            calendarDict[@"title"] = localizedString;
+            calendarDict[@"chamber"] = @(chamberIndex);
             calendar = [[ChamberCalendarObj alloc] initWithDictionary:calendarDict];
             [self.calendarList addObject:calendar];
             [calendar release];
@@ -100,7 +100,7 @@
 - (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
     if (self.calendarList.count <= indexPath.row)
         return nil;
-	return [self.calendarList objectAtIndex:indexPath.row];
+	return (self.calendarList)[indexPath.row];
 }
 
 - (NSIndexPath *)indexPathForDataObject:(id)dataObject {
@@ -160,7 +160,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView  numberOfRowsInSection:(NSInteger)section 
 {		
-	return [self.calendarList count];
+	return (self.calendarList).count;
 }
 
 

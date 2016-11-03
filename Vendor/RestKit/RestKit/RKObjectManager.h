@@ -15,11 +15,11 @@
 extern NSString* const RKDidEnterOfflineModeNotification;
 extern NSString* const RKDidEnterOnlineModeNotification;
 
-typedef enum {
+typedef NS_ENUM(unsigned int, RKObjectManagerOnlineState) {
 	RKObjectManagerOnlineStateUndetermined,
 	RKObjectManagerOnlineStateDisconnected,
 	RKObjectManagerOnlineStateConnected
-} RKObjectManagerOnlineState;
+};
 
 @class RKManagedObjectStore;
 
@@ -57,12 +57,12 @@ typedef enum {
 /**
  * Initialize a new model manager instance
  */
-- (id)initWithBaseURL:(NSString*)baseURL;
+- (instancetype)initWithBaseURL:(NSString*)baseURL;
 
 /**
  * Initialize a new model manager instance
  */
-- (id)initWithBaseURL:(NSString*)baseURL objectMapper:(RKObjectMapper*)mapper router:(NSObject<RKRouter>*)router;
+- (instancetype)initWithBaseURL:(NSString*)baseURL objectMapper:(RKObjectMapper*)mapper router:(NSObject<RKRouter>*)router;
 
 /**
  * The wire format to use for communications. Either RKMappingFormatXML or RKMappingFormatJSON.
@@ -80,7 +80,7 @@ typedef enum {
 /**
  * True when we are in online mode
  */
-- (BOOL)isOnline;
+@property (NS_NONATOMIC_IOSONLY, getter=isOnline, readonly) BOOL online;
 
 /**
  * Register a resource mapping from a domain model class to a JSON/XML element name

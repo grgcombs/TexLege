@@ -149,7 +149,7 @@ NSString* RKPathAppendQueryParams(NSString* resourcePath, NSDictionary* queryPar
  * @see RKReachabilityObserver
  * @return YES if the remote host is accessible
  */
-- (BOOL)isNetworkAvailable;
+@property (NS_NONATOMIC_IOSONLY, getter=isNetworkAvailable, readonly) BOOL networkAvailable;
 
 /**
  * Adds an HTTP header to each request dispatched through the client

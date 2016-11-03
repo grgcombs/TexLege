@@ -19,13 +19,14 @@
 #import "LegislatorObj+RestKit.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
-@interface BillVotesDataSource (Private)
+@interface BillVotesDataSource ()
 - (void) loadVotesAndVoters;
 @end
 
 @implementation BillVotesViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
 	[super viewDidLoad];
 	self.tableView.rowHeight = 73.0f;
 	self.tableView.separatorColor = [TexLegeTheme separator];
@@ -34,37 +35,45 @@
 	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];	
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
 	[super viewWillAppear:animated];
 	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];	
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
 	return YES;
 }
+
 @end
 
 @implementation BillVotesDataSource
 
-@synthesize billVotes = billVotes_, voters = voters_, voteID, viewController;
-
-- (Class)dataClass {
+- (Class)dataClass
+{
 	return nil;
 }
 
-- (id)initWithBillVotes:(NSMutableDictionary *)newVotes {
-	if ((self = [super init])) {
-		voters_ = nil;
-		if (newVotes) {
-			billVotes_ = [newVotes retain];
-			voteID = [[newVotes objectForKey:@"vote_id"] retain];
+- (instancetype)initWithBillVotes:(NSDictionary *)newVotes
+{
+	if ((self = [super init]))
+    {
+		_voters = nil;
+		if (newVotes)
+        {
+			_billVotes = [[newVotes mutableCopy] retain];
+            id voteID = newVotes[@"vote_id"];
+            if (voteID)
+                _voteID = [voteID retain];
 			[self loadVotesAndVoters];
 		}
 	}
 	return self;
 }
 
-- (void)dealloc {	
+- (void)dealloc
+{
 	self.voteID = nil;
 	self.voters = nil;	
 	self.billVotes = nil;	
@@ -76,31 +85,35 @@
 
 // legislator name is displayed in a plain style tableview
 
-- (UITableViewStyle)tableViewStyle {
+- (UITableViewStyle)tableViewStyle
+{
 	return UITableViewStylePlain;
 };
 
 
 // return the legislator at the index in the sorted by symbol array
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
-	if (!IsEmpty(voters_) && [voters_ count] > indexPath.row)
-		return [voters_ objectAtIndex:indexPath.row];
+- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath
+{
+	if (!IsEmpty(self.voters) && _voters.count > indexPath.row)
+		return _voters[indexPath.row];
 	return nil;	
 }
 
-- (NSIndexPath *)indexPathForDataObject:(id)dataObject {
-	if (!IsEmpty(voters_))
-		return [NSIndexPath indexPathForRow:[voters_ indexOfObject:dataObject] inSection:0];
+- (NSIndexPath *)indexPathForDataObject:(id)dataObject
+{
+	if (!IsEmpty(self.voters))
+		return [NSIndexPath indexPathForRow:[_voters indexOfObject:dataObject] inSection:0];
 	return nil;
 }
 
-- (void)resetCoreData:(NSNotification *)notification {
+- (void)resetCoreData:(NSNotification *)notification
+{
 	[self loadVotesAndVoters];
 }
 
 #pragma mark - UITableViewDataSource methods
-- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath {
-	
+- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath
+{
 	// deselect the new row using animation
 	[aTableView deselectRowAtIndexPath:newIndexPath animated:YES];	
 	
@@ -108,7 +121,7 @@
     if (!voter)
         return;
 
-	LegislatorObj *legislator = [LegislatorObj objectWithPrimaryKeyValue:[voter objectForKey:@"legislatorID"]];
+	LegislatorObj *legislator = [LegislatorObj objectWithPrimaryKeyValue:voter[@"legislatorID"]];
 	if (!legislator)
         return;
 
@@ -127,16 +140,18 @@
 
 	TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:leg_cell_ID];
 	
-	if (cell == nil) {
+	if (cell == nil)
+    {
 		cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:leg_cell_ID] autorelease];
 		cell.accessoryView = [[[UIImageView alloc] initWithFrame:CGRectMake(0.f, 0.f, 50.f, 50.f)] autorelease];
 		cell.detailTextLabel.font = [TexLegeTheme boldFifteen];
-		cell.textLabel.font =		[TexLegeTheme boldTwelve];
+		cell.textLabel.font = [TexLegeTheme boldTwelve];
 	}
-	NSInteger voteCode = [[dataObj objectForKey:@"vote"] integerValue];
+	NSInteger voteCode = [dataObj[@"vote"] integerValue];
 	UIImageView *imageView = (UIImageView *)cell.accessoryView;
 	
-	switch (voteCode) {
+	switch (voteCode)
+    {
 		case BillVotesTypeYea:
 			imageView.image = [UIImage imageNamed:@"VoteYea"];
 			break;
@@ -150,9 +165,9 @@
 	}
     if (dataObj)
     {
-        cell.textLabel.text = [dataObj objectForKey:@"subtitle"];
-        cell.detailTextLabel.text = [dataObj objectForKey:@"name"];
-        [cell.imageView setImageWithURL:[NSURL URLWithString:[dataObj objectForKey:@"photo_url"]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+        cell.textLabel.text = dataObj[@"subtitle"];
+        cell.detailTextLabel.text = dataObj[@"name"];
+        [cell.imageView setImageWithURL:[NSURL URLWithString:dataObj[@"photo_url"]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
     }
 
 	cell.backgroundColor = (indexPath.row % 2 == 0) ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
@@ -168,8 +183,9 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView  numberOfRowsInSection:(NSInteger)section {
-	if (!IsEmpty(voters_)) {
-		return [voters_ count];
+	if (!IsEmpty(self.voters))
+    {
+		return _voters.count;
 	}
 	return 0;	
 }
@@ -177,39 +193,45 @@
 #pragma mark -
 #pragma mark Data Methods
 
-- (void) loadVotesAndVoters {
-	if (!billVotes_)
+- (void) loadVotesAndVoters
+{
+	if (!self.billVotes)
 		return;
-	
-	nice_release(voters_);
-	voters_ = [[NSMutableArray alloc] init];
-	
+
+    self.voters = nil;
+    NSMutableArray *voters = [@[] mutableCopy];
+    self.voters = voters;
+    [voters release], voters = nil;
+
     @autoreleasepool {
 
-        NSInteger chamber = chamberFromOpenStatesString([billVotes_ objectForKey:@"chamber"]);
+        NSInteger chamber = chamberFromOpenStatesString(_billVotes[@"chamber"]);
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.legtype == %d", chamber];
 
         NSArray *allMembers = [LegislatorObj objectsWithPredicate:predicate];
         NSDictionary *memberLookup = [allMembers indexKeyedDictionaryWithKey:@"openstatesID"];
 
-        NSArray *voteTypes = [NSArray arrayWithObjects:@"other", @"no", @"yes", nil];
+        NSArray *voteTypes = @[@"other", @"no", @"yes"];
 
         NSInteger codeIndex = BillVotesTypePNV;
         for (NSString *type in voteTypes) {
             NSString *countString = [type stringByAppendingString:@"_count"];
             NSString *votesString = [type stringByAppendingString:@"_votes"];
-            NSNumber *voteCode = [NSNumber numberWithInteger:codeIndex];
+            NSNumber *voteCode = @(codeIndex);
 
-            if ([billVotes_ objectForKey:countString] && [[billVotes_ objectForKey:countString] integerValue]) {
-                for (NSMutableDictionary *voter in [billVotes_ objectForKey:votesString]) {
+            if (_billVotes[countString] && [_billVotes[countString] integerValue])
+            {
+                for (NSMutableDictionary *voter in _billVotes[votesString])
+                {
                     /* We sometimes (all the time?) have to hard code in the Speaker ... let's just hope
                      they don't get rid of Joe Straus any time soon. */
-                    if ((![voter objectForKey:@"leg_id"] || [[voter objectForKey:@"leg_id"] isEqual:[NSNull null]]) &&
-                        ([[voter objectForKey:@"name"] hasSubstring:@"Speaker" caseInsensitive:NO]))
-                        [voter setObject:@"TXL000347" forKey:@"leg_id"];
+                    if ((!voter[@"leg_id"] || [voter[@"leg_id"] isEqual:[NSNull null]]) &&
+                        ([voter[@"name"] hasSubstring:@"Speaker" caseInsensitive:NO]))
+                        voter[@"leg_id"] = @"TXL000347";
 
-                    LegislatorObj *member = [memberLookup objectForKey:[voter objectForKey:@"leg_id"]];
-                    if (member) {
+                    LegislatorObj *member = memberLookup[voter[@"leg_id"]];
+                    if (member)
+                    {
                         NSMutableDictionary *voter = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                                                       [member shortNameForButtons], @"name",
                                                       [member fullNameLastFirst], @"nameReverse",
@@ -219,7 +241,7 @@
                                                       [member labelSubText], @"subtitle",
                                                       member.photo_url, @"photo_url",
                                                       nil];
-                        [voters_ addObject:voter];
+                        [self.voters addObject:voter];
                         [voter release];
                     }
                 }
@@ -227,16 +249,15 @@
             codeIndex++;
         }
         
-        [voters_ sortUsingDescriptors:[NSArray arrayWithObject:
-                                       [NSSortDescriptor sortDescriptorWithKey:@"nameReverse" ascending:YES]]];
-
+        [self.voters sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"nameReverse" ascending:YES]]];
     }
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"BILLVOTES_LOADED" object:self];
 	
 }
 
-- (NSFetchedResultsController *)fetchedResultsController {
+- (NSFetchedResultsController *)fetchedResultsController
+{
     return nil;		// in case someone wants this from our [super]
 }    
 

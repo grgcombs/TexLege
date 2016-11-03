@@ -32,7 +32,7 @@
 	return [CommitteeObj class];
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self = [super init])) {
 		self.filterChamber = 0;
 		self.filterString = [NSMutableString stringWithString:@""];
@@ -50,9 +50,9 @@
 - (void)resetCoreData:(NSNotification *)notification
 {
     // You've got to delete the cache, or disable caching before you modify the predicate...
-    [NSFetchedResultsController deleteCacheWithName:[self.fetchedResultsController cacheName]];
-    [self.fetchedResultsController.fetchRequest setPredicate:[self getFilterPredicate]];
-    [self.fetchedResultsController.fetchRequest setSortDescriptors:[self sortDescriptors]];
+    [NSFetchedResultsController deleteCacheWithName:(self.fetchedResultsController).cacheName];
+    (self.fetchedResultsController.fetchRequest).predicate = [self getFilterPredicate];
+    (self.fetchedResultsController.fetchRequest).sortDescriptors = [self sortDescriptors];
 
     NSError *error = nil;
     if (![self.fetchedResultsController performFetch:&error]) {
@@ -198,12 +198,12 @@
 #pragma mark Indexing / Sections
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {	
-	return [[self.fetchedResultsController sections] count];		
+	return (self.fetchedResultsController).sections.count;		
 }
 
     // This is for the little index along the right side of the table ... use nil if you don't want it.
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
-	return  hideTableIndex ? nil : [self.fetchedResultsController sectionIndexTitles] ;
+	return  hideTableIndex ? nil : (self.fetchedResultsController).sectionIndexTitles ;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
@@ -213,27 +213,27 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // eventually (soon) we'll need to create a new fetchedResultsController to filter for chamber selection
-    NSInteger count = [tableView numberOfSections];
+    NSInteger count = tableView.numberOfSections;
     NSArray *sections = self.fetchedResultsController.sections;
     if (sections.count <= section ||
         count == 0)
     {
         return 0;
     }
-    id <NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
+    id <NSFetchedResultsSectionInfo> sectionInfo = sections[section];
     if (!sectionInfo)
         return 0;
-    return [sectionInfo numberOfObjects];
+    return sectionInfo.numberOfObjects;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-	NSInteger count = [tableView numberOfSections];
-    NSArray *sections = [fetchedResultsController sections];
+	NSInteger count = tableView.numberOfSections;
+    NSArray *sections = fetchedResultsController.sections;
 	if (count > 0 &&
         sections.count > section)
     {
-		id <NSFetchedResultsSectionInfo> sectionInfo = [sections objectAtIndex:section];
-		return [sectionInfo indexTitle]; // or [sectionInfo name];
+		id <NSFetchedResultsSectionInfo> sectionInfo = sections[section];
+		return sectionInfo.indexTitle; // or [sectionInfo name];
 	}
 	return @"";
 }
@@ -271,7 +271,7 @@
     if (self.filterChamber > 0) {		// do some chamber filtering
         if (predString.length > 0)	// we already have some predicate action, insert "AND"
             [predString appendString:@" AND "];
-        [predString appendFormat:@"((committeeType == %@) OR (committeeType == 3))", [NSNumber numberWithInteger:self.filterChamber]];
+        [predString appendFormat:@"((committeeType == %@) OR (committeeType == 3))", @(self.filterChamber)];
 
     }
 
@@ -317,7 +317,7 @@
 - (NSArray *)sortDescriptors
 {
     NSSortDescriptor *sort = [[[NSSortDescriptor alloc] initWithKey:@"committeeName" ascending:YES] autorelease];
-    return [NSArray arrayWithObject:sort];
+    return @[sort];
 }
 /*
  Set up the fetched results controller.
@@ -332,7 +332,7 @@
 	NSFetchRequest *fetchRequest = [CommitteeObj fetchRequest];
 			
 	// Sort by committeeName.
-	[fetchRequest setSortDescriptors:[self sortDescriptors]];
+	fetchRequest.sortDescriptors = [self sortDescriptors];
 	
 	NSString * sectionString;
 	// we don't want sections when searching, change to hasFilter if you don't want it for toolbarAction either...

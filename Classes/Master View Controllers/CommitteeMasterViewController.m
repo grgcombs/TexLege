@@ -84,16 +84,16 @@
 		
 	NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
 	if (segPrefs) {
-		NSNumber *segIndex = [segPrefs objectForKey:NSStringFromClass([self class])];
+		NSNumber *segIndex = segPrefs[NSStringFromClass([self class])];
 		if (segIndex)
-			self.chamberControl.selectedSegmentIndex = [segIndex integerValue];
+			self.chamberControl.selectedSegmentIndex = segIndex.integerValue;
 	}
 			
 	//// ALL OF THE FOLLOWING MUST *NOT* RUN ON IPHONE (I.E. WHEN THERE'S NO SPLITVIEWCONTROLLER
 	if ([UtilityMethods isIPadDevice] && self.selectObjectOnAppear == nil) {
 		id detailObject = self.detailViewController ? [self.detailViewController valueForKey:@"committee"] : nil;
 		if (!detailObject) {
-			NSIndexPath *currentIndexPath = [self.tableView indexPathForSelectedRow];
+			NSIndexPath *currentIndexPath = (self.tableView).indexPathForSelectedRow;
 			if (!currentIndexPath) {			
 				NSUInteger ints[2] = {0,0};	// just pick the first one then
 				currentIndexPath = [NSIndexPath indexPathWithIndexes:ints length:2];
@@ -142,7 +142,7 @@
 	
 	CommitteeObj *committee = dataObject;
 	if (committee) {
-		[(CommitteeDetailViewController*)self.detailViewController setCommittee:committee];
+		((CommitteeDetailViewController*)self.detailViewController).committee = committee;
 		if (aTableView == self.searchDisplayController.searchResultsTableView) { // we've clicked in a search table
 			[self searchBarCancelButtonClicked:nil];
 		}
@@ -181,7 +181,7 @@
 	 Update the filtered array based on the search text and scope.
 	 */
 	if ([self.dataSource respondsToSelector:@selector(setFilterChamber:)])
-		[self.dataSource setFilterChamber:scope];
+		(self.dataSource).filterChamber = scope;
 	
 	// start filtering names...
 	if (searchText.length > 0) {
@@ -202,9 +202,9 @@
 
     NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
     if (segPrefs) {
-        NSNumber *segIndex = [NSNumber numberWithInteger:self.chamberControl.selectedSegmentIndex];
+        NSNumber *segIndex = @(self.chamberControl.selectedSegmentIndex);
         NSMutableDictionary *newDict = [segPrefs mutableCopy];
-        [newDict setObject:segIndex forKey:NSStringFromClass([self class])];
+        newDict[NSStringFromClass([self class])] = segIndex;
         [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [newDict release];

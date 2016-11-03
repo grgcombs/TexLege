@@ -45,7 +45,7 @@
 #pragma mark Custom Accessors
 
 - (NSNumber *) year {
-	return [NSNumber numberWithInteger:1847+(2*[self.session integerValue])];
+	return @(1847+(2*(self.session).integerValue));
 }
 
 @end

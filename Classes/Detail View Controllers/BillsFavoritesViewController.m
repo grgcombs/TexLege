@@ -29,7 +29,7 @@
 
 #pragma mark -
 #pragma mark View lifecycle
-- (id)initWithStyle:(UITableViewStyle)style {
+- (instancetype)initWithStyle:(UITableViewStyle)style {
 	if ((self=[super initWithStyle:style])) {
 		_cachedBills = [[NSMutableDictionary alloc] init];
 	}
@@ -69,8 +69,8 @@
 	NSDictionary *menuItem = [menuArray findWhereKeyPath:@"class" equals:myClass];
 	
 	if (menuItem)
-		self.title = [menuItem objectForKey:@"title"];
-	[[self navigationItem] setRightBarButtonItem:[self editButtonItem] animated:YES];
+		self.title = menuItem[@"title"];
+	[self.navigationItem setRightBarButtonItem:self.editButtonItem animated:YES];
 	
 	self.tableView.separatorColor = [TexLegeTheme separator];
 	self.tableView.backgroundColor = [TexLegeTheme tableBackground];
@@ -99,10 +99,10 @@
 	}
 	
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-	[_watchList sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+	[_watchList sortUsingDescriptors:@[sortDescriptor]];
 	[sortDescriptor release];	
 	
-	if (![_watchList count]) {
+	if (!_watchList.count) {
 		UIAlertView *noWatchedBills = [[ UIAlertView alloc ] 
 										 initWithTitle:NSLocalizedStringFromTable(@"No Watched Bills, Yet", @"AppAlerts", @"Alert box title")
 										 message:NSLocalizedStringFromTable(@"To add a bill to this watch list, first search for one, open it, and then tap the star button in it's header.", @"AppAlerts", @"") 
@@ -153,7 +153,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 	if (!IsEmpty(_watchList))
-		return [_watchList count];
+		return _watchList.count;
 	else
 		return 0;
 }
@@ -163,10 +163,10 @@
 	BOOL useDark = (indexPath.row % 2 == 0);
 	cell.backgroundColor = useDark ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
 	
-	NSString *bill_title = [[_watchList objectAtIndex:indexPath.row] objectForKey:@"title"];
+	NSString *bill_title = _watchList[indexPath.row][@"title"];
 	bill_title = [bill_title chopPrefix:@"Relating to " capitalizingFirst:YES];
 
-	cell.textLabel.text = [[_watchList objectAtIndex:indexPath.row] objectForKey:@"bill_id"];
+	cell.textLabel.text = _watchList[indexPath.row][@"bill_id"];
 	cell.detailTextLabel.text = bill_title;		
 }
 
@@ -198,7 +198,7 @@
 //			cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 	
-	if (_watchList && [_watchList count])
+	if (_watchList && _watchList.count)
 		[self configureCell:cell atIndexPath:indexPath];		
 	
 	return cell;
@@ -208,15 +208,15 @@
 {
 	if (editingStyle == UITableViewCellEditingStyleDelete)
 	{
-		NSDictionary *toRemove = [_watchList objectAtIndex:indexPath.row];
+		NSDictionary *toRemove = _watchList[indexPath.row];
 		if (toRemove && _cachedBills) {
-			NSString *watchID = [toRemove objectForKey:@"watchID"];
-			if (watchID && [[_cachedBills allKeys] containsObject:watchID])
+			NSString *watchID = toRemove[@"watchID"];
+			if (watchID && [_cachedBills.allKeys containsObject:watchID])
 				[_cachedBills removeObjectForKey:watchID];
 		}
 		[_watchList removeObjectAtIndex:indexPath.row];
 		[self save:nil];		
-		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
+		[self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:YES];
 	}   
 }
 
@@ -231,14 +231,14 @@
 	if (!_watchList)
 		return;
 	
-	NSDictionary *item = [[_watchList objectAtIndex:sourceIndexPath.row] retain];	
+	NSDictionary *item = [_watchList[sourceIndexPath.row] retain];	
 	[_watchList removeObject:item];
-	[_watchList insertObject:item atIndex:[destinationIndexPath row]];	
+	[_watchList insertObject:item atIndex:destinationIndexPath.row];	
 	[item release];
 	
 	int i = 0;
 	for (NSMutableDictionary *anItem in _watchList)
-		[anItem setValue:[NSNumber numberWithInt:i++] forKey:@"displayOrder"];
+		[anItem setValue:@(i++) forKey:@"displayOrder"];
 	
 	[self save:nil];
 }
@@ -250,15 +250,15 @@
 	if (!_watchList)
 		return;
 	
-	NSDictionary *item = [_watchList objectAtIndex:indexPath.row];
-	if (item && [item objectForKey:@"watchID"]) {		
+	NSDictionary *item = _watchList[indexPath.row];
+	if (item && item[@"watchID"]) {		
 		
 		//NSMutableDictionary *bill = [_cachedBills objectForKey:[item objectForKey:@"watchID"]];
 		BOOL changingViews = NO;
 		
 		BillsDetailViewController *detailView = nil;
 		if ([UtilityMethods isIPadDevice]) {
-			id aDetail = [[[TexLegeAppDelegate appDelegate] detailNavigationController] visibleViewController];
+			id aDetail = [TexLegeAppDelegate appDelegate].detailNavigationController.visibleViewController;
 			if ([aDetail isKindOfClass:[BillsDetailViewController class]])
 				detailView = aDetail;
 		}
@@ -267,15 +267,15 @@
 												  initWithNibName:@"BillsDetailViewController" bundle:nil] autorelease];
 			changingViews = YES;
 		}
-		[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:[item objectForKey:@"bill_id"] 
-																		   session:[item objectForKey:@"session"] 
+		[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:item[@"bill_id"] 
+																		   session:item[@"session"] 
 																		  delegate:detailView];
 		
-		[detailView setDataObject:item];
+		detailView.dataObject = item;
 		if (![UtilityMethods isIPadDevice])
 			[self.navigationController pushViewController:detailView animated:YES];
 		else if (changingViews)
-			[[[TexLegeAppDelegate appDelegate] detailNavigationController] setViewControllers:[NSArray arrayWithObject:detailView] animated:NO];
+			[[TexLegeAppDelegate appDelegate].detailNavigationController setViewControllers:@[detailView] animated:NO];
 		
 	}			
 }
@@ -299,12 +299,12 @@
 
 		if (object && _cachedBills) {
 			NSString *watchID = watchIDForBill(object);
-			[_cachedBills setObject:object forKey:watchID];
+			_cachedBills[watchID] = object;
 			
 			NSInteger row = 0;
 			NSInteger index = 0;
 			for (NSDictionary *search in _watchList) {
-				if ([[search objectForKey:@"watchID"] isEqualToString:watchID]) {
+				if ([search[@"watchID"] isEqualToString:watchID]) {
 					row = index;
 					break;
 				}
@@ -312,10 +312,10 @@
 			}
 			NSIndexPath *rowPath = [NSIndexPath indexPathForRow:row inSection:0];
 			//[self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:rowPath] withRowAnimation:UITableViewRowAnimationMiddle];
-			if (row+1 > [_watchList count])
+			if (row+1 > _watchList.count)
 				[self.tableView reloadData];
 			else
-				[self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:rowPath] withRowAnimation:UITableViewRowAnimationNone];
+				[self.tableView reloadRowsAtIndexPaths:@[rowPath] withRowAnimation:UITableViewRowAnimationNone];
 		}
 	}
 }

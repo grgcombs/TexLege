@@ -81,7 +81,7 @@
 	if ([annotation respondsToSelector:@selector(pinColorIndex)]) {
 		NSNumber *pinNumber = [annotation performSelector:@selector(pinColorIndex)];
 		if (pinNumber)
-			pinColor = [pinNumber integerValue];
+			pinColor = pinNumber.integerValue;
 	}
 	
 	image = [TexLegeMapPins imageForPinColorIndex:pinColor status:status];

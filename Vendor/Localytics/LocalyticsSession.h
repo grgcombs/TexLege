@@ -115,7 +115,7 @@
  the app is opted out, all localytics calls will return immediately.
  @result true if the user is opted in, false otherwise.
  */
-- (BOOL)isOptedIn;
+@property (NS_NONATOMIC_IOSONLY, getter=isOptedIn, readonly) BOOL optedIn;
 
 /*!
  @method open

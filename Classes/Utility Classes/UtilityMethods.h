@@ -59,14 +59,14 @@ BOOL IsEmpty(id thing);
 @end
 
 @interface NSString (FlattenHtml)
-- (NSString *)flattenHTML;
-- (NSString *)convertFromUTF8;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *flattenHTML;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *convertFromUTF8;
 
 @end
 
 @interface NSString  (MoreStringUtils)
 - (BOOL) hasSubstring:(NSString*)substring caseInsensitive:(BOOL)insensitive;
-- (NSString*)firstLetterCaptialized;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *firstLetterCaptialized;
 - (NSString *)chopPrefix:(NSString *)prefix capitalizingFirst:(BOOL)capitalize;
 @end
 

@@ -26,7 +26,7 @@
 @implementation PartisanIndexStats
 @synthesize isFresh;
 
-+ (id)sharedPartisanIndexStats
++ (PartisanIndexStats*)sharedPartisanIndexStats
 {
 	static dispatch_once_t pred;
 	static PartisanIndexStats *foo = nil;
@@ -35,7 +35,7 @@
 	return foo;
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self = [super init])) {
 		updated = nil;
 		isFresh = NO;
@@ -71,7 +71,8 @@
     [super dealloc];
 }
 
-- (void)resetData:(NSNotification *)notification {
+- (void)resetData:(NSNotification *)notification
+{
 	nice_release(m_partisanIndexAggregates);
 	[self partisanIndexAggregates];
 }
@@ -87,18 +88,18 @@
 		for (chamber = HOUSE; chamber <= SENATE; chamber++) {
 			for (party = kUnknownParty; party <= REPUBLICAN; party++) {
 				NSArray *aggregatesArray = [self aggregatePartisanIndexForChamber:chamber andPartyID:party];
-				if (aggregatesArray && [aggregatesArray count]) {
-					NSNumber *avgIndex = [aggregatesArray objectAtIndex:0];
+				if (aggregatesArray && aggregatesArray.count) {
+					NSNumber *avgIndex = aggregatesArray[0];
 					if (avgIndex)
-						[tempAggregates setObject:avgIndex forKey:[NSString stringWithFormat:@"AvgC%ld+P%ld", (long)chamber, (long)party]];
+						tempAggregates[[NSString stringWithFormat:@"AvgC%ld+P%ld", (long)chamber, (long)party]] = avgIndex;
 					
-					NSNumber *maxIndex = [aggregatesArray objectAtIndex:1];
+					NSNumber *maxIndex = aggregatesArray[1];
 					if (maxIndex)
-						[tempAggregates setObject:maxIndex forKey:[NSString stringWithFormat:@"MaxC%ld+P%ld", (long)chamber, (long)party]];
+						tempAggregates[[NSString stringWithFormat:@"MaxC%ld+P%ld", (long)chamber, (long)party]] = maxIndex;
 					
-					NSNumber *minIndex = [aggregatesArray objectAtIndex:2];
+					NSNumber *minIndex = aggregatesArray[2];
 					if (minIndex)
-						[tempAggregates setObject:minIndex forKey:[NSString stringWithFormat:@"MinC%ld+P%ld", (long)chamber, (long)party]];
+						tempAggregates[[NSString stringWithFormat:@"MinC%ld+P%ld", (long)chamber, (long)party]] = minIndex;
 				}
 				else
 					NSLog(@"PartisanIndexStates: Error pulling aggregate dictionary.");
@@ -112,29 +113,25 @@
 
 - (BOOL)hasData
 {
-    return [[self partisanIndexAggregates] count] > 0;
+    return self.partisanIndexAggregates.count > 0;
 }
 
 /* These are convenience methods for accessing our aggregate calculations from cache */
 - (CGFloat) minPartisanIndexUsingChamber:(NSInteger)chamber {
-	return [[self.partisanIndexAggregates objectForKey:
-			[NSString stringWithFormat:@"MinC%ld+P0", (long)chamber]] floatValue];
+	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"MinC%ld+P0", (long)chamber]] floatValue];
 };
 
 - (CGFloat) maxPartisanIndexUsingChamber:(NSInteger)chamber {
-	return [[self.partisanIndexAggregates objectForKey:
-			[NSString stringWithFormat:@"MaxC%ld+P0", (long)chamber]] floatValue];
+	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"MaxC%ld+P0", (long)chamber]] floatValue];
 };
 
 - (CGFloat) overallPartisanIndexUsingChamber:(NSInteger)chamber {
-	return [[self.partisanIndexAggregates objectForKey:
-			[NSString stringWithFormat:@"AvgC%ld+P0", (long)chamber]] floatValue];
+	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"AvgC%ld+P0", (long)chamber]] floatValue];
 };
 
 
 - (CGFloat) partyPartisanIndexUsingChamber:(NSInteger)chamber andPartyID:(NSInteger)party {
-	return [[self.partisanIndexAggregates objectForKey:
-			[NSString stringWithFormat:@"AvgC%ld+P%ld", (long)chamber, (long)party]] floatValue];
+	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"AvgC%ld+P%ld", (long)chamber, (long)party]] floatValue];
 };
 
 
@@ -155,7 +152,7 @@
 	NSNumber *tempNum = [self maxWnomSession];
 	NSInteger maxWnomSession = WNOM_DEFAULT_LATEST_SESSION;
 	if (tempNum)
-		maxWnomSession = [tempNum integerValue];
+		maxWnomSession = tempNum.integerValue;
 	
 	NSMutableString *predicateString = [NSMutableString stringWithFormat:@"self.legislator.legtype == %ld AND self.session == %ld", (long)chamber, (long)maxWnomSession];
 	
@@ -169,32 +166,32 @@
 	/*_____________________*/
 	
 	NSExpression *ex = [NSExpression expressionForFunction:@"average:" arguments:
-						[NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"wnomAdj"]]];
+						@[[NSExpression expressionForKeyPath:@"wnomAdj"]]];
 	NSExpressionDescription *edAvg = [[NSExpressionDescription alloc] init];
-	[edAvg setName:@"averagePartisanIndex"];
-	[edAvg setExpression:ex];
-	[edAvg setExpressionResultType:NSFloatAttributeType];
+	edAvg.name = @"averagePartisanIndex";
+	edAvg.expression = ex;
+	edAvg.expressionResultType = NSFloatAttributeType;
 	
 	ex = [NSExpression expressionForFunction:@"max:" arguments:
-		  [NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"wnomAdj"]]];
+		  @[[NSExpression expressionForKeyPath:@"wnomAdj"]]];
 	NSExpressionDescription *edMax = [[NSExpressionDescription alloc] init];
-	[edMax setName:@"maxPartisanIndex"];
-	[edMax setExpression:ex];
-	[edMax setExpressionResultType:NSFloatAttributeType];
+	edMax.name = @"maxPartisanIndex";
+	edMax.expression = ex;
+	edMax.expressionResultType = NSFloatAttributeType;
 	
 	ex = [NSExpression expressionForFunction:@"min:" arguments:
-		  [NSArray arrayWithObject:[NSExpression expressionForKeyPath:@"wnomAdj"]]];
+		  @[[NSExpression expressionForKeyPath:@"wnomAdj"]]];
 	NSExpressionDescription *edMin = [[NSExpressionDescription alloc] init];
-	[edMin setName:@"minPartisanIndex"];
-	[edMin setExpression:ex];
-	[edMin setExpressionResultType:NSFloatAttributeType];
+	edMin.name = @"minPartisanIndex";
+	edMin.expression = ex;
+	edMin.expressionResultType = NSFloatAttributeType;
 	
 	/*_____________________*/
 	
 	NSFetchRequest *request = [WnomObj fetchRequest];
-	[request setPredicate:predicate];
-	[request setPropertiesToFetch:[NSArray arrayWithObjects:edAvg, edMax, edMin, nil]];
-	[request setResultType:NSDictionaryResultType];
+	request.predicate = predicate;
+	request.propertiesToFetch = @[edAvg, edMax, edMin];
+	request.resultType = NSDictionaryResultType;
 
     NSArray *allResults = nil;
 	NSArray *objects = [WnomObj objectsWithFetchRequest:request];
@@ -202,7 +199,7 @@
 		debug_NSLog(@"PartisanIndexStats Error while fetching Legislators");
 	}
 	else {
-        NSDictionary *first = [objects firstObject];
+        NSDictionary *first = objects.firstObject;
 		NSNumber *avgPartisanIndex = [first valueForKey:@"averagePartisanIndex"];
 		NSNumber *maxPartisanIndex = [first valueForKey:@"maxPartisanIndex"];
 		NSNumber *minPartisanIndex = [first valueForKey:@"minPartisanIndex"];
@@ -210,7 +207,7 @@
 /*		debug_NSLog(@"Partisanship for Chamber (%d) Party (%d): min=%@ max=%@ avg=%@", 
 					chamber, party, minPartisanIndex, maxPartisanIndex, avgPartisanIndex);
 */
-		allResults = [NSArray arrayWithObjects:avgPartisanIndex, maxPartisanIndex, minPartisanIndex, nil];
+		allResults = @[avgPartisanIndex, maxPartisanIndex, minPartisanIndex];
 	}
 	
     [edAvg release], [edMax release], [edMin release];
@@ -259,13 +256,13 @@
 	
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"session" ascending:YES];
 	NSArray *descriptors = [[NSArray alloc] initWithObjects:sortDescriptor,nil];
-	NSArray *sortedScores = [[legislator.wnomScores allObjects] sortedArrayUsingDescriptors:descriptors];
+	NSArray *sortedScores = [(legislator.wnomScores).allObjects sortedArrayUsingDescriptors:descriptors];
 	[sortDescriptor release];
 	[descriptors release];
-	NSInteger countOfScores = [legislator.wnomScores count];
+	NSInteger countOfScores = (legislator.wnomScores).count;
 	
 	
-	NSInteger chamber = [legislator.legtype integerValue];
+	NSInteger chamber = (legislator.legtype).integerValue;
 	NSArray *democHistory = [self historyForParty:DEMOCRAT chamber:chamber];
 	NSArray *repubHistory = [self historyForParty:REPUBLICAN chamber:chamber];
 		
@@ -279,30 +276,30 @@
 	
 	for ( i = 0; i < countOfScores ; i++) {
 		
-		WnomObj *wnomObj = [sortedScores objectAtIndex:i];
-		NSDate *date = [NSDate dateFromString:[[wnomObj year] stringValue] withFormat:@"yyyy"];
-		NSNumber *democY = [[democHistory findWhereKeyPath:@"session" equals:wnomObj.session] objectForKey:@"wnom"];
-		NSNumber *repubY = [[repubHistory findWhereKeyPath:@"session" equals:wnomObj.session] objectForKey:@"wnom"];
+		WnomObj *wnomObj = sortedScores[i];
+		NSDate *date = [NSDate dateFromString:[wnomObj year].stringValue withFormat:@"yyyy"];
+		NSNumber *democY = [democHistory findWhereKeyPath:@"session" equals:wnomObj.session][@"wnom"];
+		NSNumber *repubY = [repubHistory findWhereKeyPath:@"session" equals:wnomObj.session][@"wnom"];
 		if (!democY)
-			democY = [NSNumber numberWithFloat:0.0f];
+			democY = @0.0f;
 		if (!repubY)
-			repubY = [NSNumber numberWithFloat:0.0f];
+			repubY = @0.0f;
 		
 		[repubScores addObject:repubY];
 		[demScores addObject:democY];
 		[dates addObject:date];
 
-		CGFloat legVal = [[wnomObj wnomAdj] floatValue];
+		CGFloat legVal = wnomObj.wnomAdj.floatValue;
 		if (legVal != 0.0f)
-			[memberScores addObject:[wnomObj wnomAdj]];
+			[memberScores addObject:wnomObj.wnomAdj];
 		else
-			[memberScores addObject:[NSNumber numberWithFloat:CGFLOAT_MIN]];
+			[memberScores addObject:@CGFLOAT_MIN];
 	}
 		
-	[results setObject:repubScores forKey:@"repub"];
-	[results setObject:demScores forKey:@"democ"];
-	[results setObject:memberScores forKey:@"member"];
-	[results setObject:dates forKey:@"time"];
+	results[@"repub"] = repubScores;
+	results[@"democ"] = demScores;
+	results[@"member"] = memberScores;
+	results[@"time"] = dates;
 	[repubScores release];
 	[demScores release];
 	[memberScores release];

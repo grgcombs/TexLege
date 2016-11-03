@@ -62,7 +62,7 @@ NSString * const kUserPinAnnotationAddressChangeKey = @"UserPinAnnotationAddress
                                      }
                              };
     
-    return [values description];
+    return values.description;
 }
 
 - (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate
@@ -134,7 +134,7 @@ NSString * const kUserPinAnnotationAddressChangeKey = @"UserPinAnnotationAddress
 
 - (NSString *)subtitle
 {
-    NSString *subtitle = [super subtitle];
+    NSString *subtitle = super.subtitle;
 	if (IsEmpty(subtitle))
     {
         return NSLocalizedStringFromTable(@"Tap & hold to move pin", @"StandardUI", @"Instructions for moving a location pin on the map");

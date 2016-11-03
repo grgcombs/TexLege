@@ -59,152 +59,152 @@
 /**
  * Initialize a new response object for a REST request
  */
-- (id)initWithRequest:(RKRequest*)request;
+- (instancetype)initWithRequest:(RKRequest*)request;
 
 /**
  * Initializes a response object from the results of a synchronous request
  */
-- (id)initWithSynchronousRequest:(RKRequest*)request URLResponse:(NSURLResponse*)URLResponse body:(NSData*)body error:(NSError*)error;
+- (instancetype)initWithSynchronousRequest:(RKRequest*)request URLResponse:(NSURLResponse*)URLResponse body:(NSData*)body error:(NSError*)error;
 
 /**
  * Return the localized human readable representation of the HTTP Status Code returned
  */
-- (NSString*)localizedStatusCodeString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *localizedStatusCodeString;
 
 /**
  * Return the response body as an NSString
  */
-- (NSString*)bodyAsString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *bodyAsString;
 
 /**
  * Return the response body parsed as JSON into an object
  */
-- (id)bodyAsJSON;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) id bodyAsJSON;
 
 /**
  * Will determine if there is an error object and use it's localized message
  */
-- (NSString*)failureErrorDescription;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *failureErrorDescription;
 
 /**
  * Indicates that the connection failed to reach the remote server. The details of the failure
  * are available on the failureError reader.
  */
-- (BOOL)isFailure;
+@property (NS_NONATOMIC_IOSONLY, getter=isFailure, readonly) BOOL failure;
 
 /**
  * Indicates an invalid HTTP response code less than 100 or greater than 600
  */
-- (BOOL)isInvalid;
+@property (NS_NONATOMIC_IOSONLY, getter=isInvalid, readonly) BOOL invalid;
 
 /**
  * Indicates an HTTP response code between 100 and 199
  */
-- (BOOL)isInformational;
+@property (NS_NONATOMIC_IOSONLY, getter=isInformational, readonly) BOOL informational;
 
 /**
  * Indicates an HTTP response code between 200 and 299
  */
-- (BOOL)isSuccessful;
+@property (NS_NONATOMIC_IOSONLY, getter=isSuccessful, readonly) BOOL successful;
 
 /**
  * Indicates an HTTP response code between 300 and 399
  */
-- (BOOL)isRedirection;
+@property (NS_NONATOMIC_IOSONLY, getter=isRedirection, readonly) BOOL redirection;
 
 /**
  * Indicates an HTTP response code between 400 and 499
  */
-- (BOOL)isClientError;
+@property (NS_NONATOMIC_IOSONLY, getter=isClientError, readonly) BOOL clientError;
 
 /**
  * Indicates an HTTP response code between 500 and 599
  */
-- (BOOL)isServerError;
+@property (NS_NONATOMIC_IOSONLY, getter=isServerError, readonly) BOOL serverError;
 
 /**
  * Indicates that the response is either a server or a client error
  */
-- (BOOL)isError;
+@property (NS_NONATOMIC_IOSONLY, getter=isError, readonly) BOOL error;
 
 /**
  * Indicates an HTTP response code of 200
  */
-- (BOOL)isOK;
+@property (NS_NONATOMIC_IOSONLY, getter=isOK, readonly) BOOL OK;
 
 /**
  * Indicates an HTTP response code of 201
  */
-- (BOOL)isCreated;
+@property (NS_NONATOMIC_IOSONLY, getter=isCreated, readonly) BOOL created;
 
 /**
  * Indicates an HTTP response code of 401
  */
-- (BOOL)isUnauthorized;
+@property (NS_NONATOMIC_IOSONLY, getter=isUnauthorized, readonly) BOOL unauthorized;
 
 /**
  * Indicates an HTTP response code of 403
  */
-- (BOOL)isForbidden;
+@property (NS_NONATOMIC_IOSONLY, getter=isForbidden, readonly) BOOL forbidden;
 
 /**
  * Indicates an HTTP response code of 404
  */
-- (BOOL)isNotFound;
+@property (NS_NONATOMIC_IOSONLY, getter=isNotFound, readonly) BOOL notFound;
 
 /**
  * Indicates an HTTP response code of 422
  */
-- (BOOL)isUnprocessableEntity;
+@property (NS_NONATOMIC_IOSONLY, getter=isUnprocessableEntity, readonly) BOOL unprocessableEntity;
 
 /**
  * Indicates an HTTP response code of 301, 302, 303 or 307
  */
-- (BOOL)isRedirect;
+@property (NS_NONATOMIC_IOSONLY, getter=isRedirect, readonly) BOOL redirect;
 
 /**
  * Indicates an empty HTTP response code of 201, 204, or 304
  */
-- (BOOL)isEmpty;
+@property (NS_NONATOMIC_IOSONLY, getter=isEmpty, readonly) BOOL empty;
 
 /**
  * Indicates an HTTP response code of 503
  */
-- (BOOL)isServiceUnavailable;
+@property (NS_NONATOMIC_IOSONLY, getter=isServiceUnavailable, readonly) BOOL serviceUnavailable;
 
 /**
  * Returns the value of 'Content-Type' HTTP header
  */
-- (NSString*)contentType;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *contentType;
 
 /**
  * Returns the value of the 'Content-Length' HTTP header
  */
-- (NSString*)contentLength;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *contentLength;
 
 /**
  * Returns the value of the 'Location' HTTP Header
  */
-- (NSString*)location;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *location;
 
 /**
  * True when the server turned an HTML response (MIME type is text/html)
  */
-- (BOOL)isHTML;
+@property (NS_NONATOMIC_IOSONLY, getter=isHTML, readonly) BOOL HTML;
 
 /**
  * True when the server turned an XHTML response (MIME type is application/xhtml+xml)
  */
-- (BOOL)isXHTML;
+@property (NS_NONATOMIC_IOSONLY, getter=isXHTML, readonly) BOOL XHTML;
 
 /**
  * True when the server turned an XML response (MIME type is application/xml)
  */
-- (BOOL)isXML;
+@property (NS_NONATOMIC_IOSONLY, getter=isXML, readonly) BOOL XML;
 
 /**
  * True when the server turned an XML response (MIME type is application/json)
  */
-- (BOOL)isJSON;
+@property (NS_NONATOMIC_IOSONLY, getter=isJSON, readonly) BOOL JSON;
 
 @end

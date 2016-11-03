@@ -23,11 +23,9 @@ typedef enum BillType {
 	BOOL texasCentricParser;
 }
 
-- (NSMutableDictionary *)parseStagesForBill:(NSMutableDictionary *)bill;
+- (NSDictionary *)parseStagesForBill:(NSDictionary *)bill;
 
 @end
-
-
 
 /*
  

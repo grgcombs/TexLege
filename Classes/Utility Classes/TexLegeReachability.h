@@ -27,17 +27,17 @@
 	Reachability* googleReach;
 
 }
-@property NetworkStatus remoteHostStatus;
-@property NetworkStatus internetConnectionStatus;
-@property NetworkStatus localWiFiConnectionStatus;
-@property NetworkStatus texlegeConnectionStatus;
-@property NetworkStatus openstatesConnectionStatus;
-@property NetworkStatus tloConnectionStatus;
-@property NetworkStatus googleConnectionStatus;
+@property ReachabilityStatus remoteHostStatus;
+@property ReachabilityStatus internetConnectionStatus;
+@property ReachabilityStatus localWiFiConnectionStatus;
+@property ReachabilityStatus texlegeConnectionStatus;
+@property ReachabilityStatus openstatesConnectionStatus;
+@property ReachabilityStatus tloConnectionStatus;
+@property ReachabilityStatus googleConnectionStatus;
 
 - (void) startCheckingReachability:(id)delegate;
-- (BOOL) isNetworkReachable;
-- (BOOL) isNetworkReachableViaWiFi;
+@property (NS_NONATOMIC_IOSONLY, getter=isNetworkReachable, readonly) BOOL networkReachable;
+@property (NS_NONATOMIC_IOSONLY, getter=isNetworkReachableViaWiFi, readonly) BOOL networkReachableViaWiFi;
 
 + (TexLegeReachability *)sharedTexLegeReachability;
 + (BOOL)texlegeReachable;

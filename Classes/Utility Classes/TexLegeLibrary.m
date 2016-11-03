@@ -46,9 +46,9 @@ NSString *stringForChamber(NSInteger chamber, TLStringReturnType type) {
 	NSString *chamberName = nil;
 	if (NO == IsEmpty(stateMeta)) {
 		if (chamber == SENATE)
-			chamberName = [stateMeta objectForKey:kMetaUpperChamberNameKey];
+			chamberName = stateMeta[kMetaUpperChamberNameKey];
 		else if (chamber == HOUSE) {
-			chamberName = [stateMeta objectForKey:kMetaLowerChamberNameKey];
+			chamberName = stateMeta[kMetaLowerChamberNameKey];
 		}
 		if (NO == IsEmpty(chamberName)) {	// shorten the thing if its a couple of sentences long
 			chamberName = abbreviateString(chamberName);	
@@ -92,9 +92,9 @@ NSString *stringForChamber(NSInteger chamber, TLStringReturnType type) {
 		if (chamber == HOUSE || chamber == SENATE) {
 			if (NO == IsEmpty(stateMeta)) {
 				if (chamber == HOUSE)
-					title = [stateMeta objectForKey:kMetaLowerChamberTitleKey];
+					title = stateMeta[kMetaLowerChamberTitleKey];
 				else if (chamber == SENATE)
-					title = [stateMeta objectForKey:kMetaUpperChamberTitleKey];
+					title = stateMeta[kMetaUpperChamberTitleKey];
 			}
 		}			
 		if (IsEmpty(title)) {
@@ -194,14 +194,14 @@ NSString *stringForParty(NSInteger party, TLStringReturnType type) {
 NSString *billTypeStringFromBillID(NSString *billID) {
 	NSArray *words = [billID componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 	if (!IsEmpty(words))
-		return [words objectAtIndex:0];
+		return words[0];
 	else
 		return nil;
 }
 
 NSString * watchIDForBill(NSDictionary *aBill) {
-	if (aBill && [aBill objectForKey:@"session"] && [aBill objectForKey:@"bill_id"])
-		return [NSString stringWithFormat:@"%@:%@", [aBill objectForKey:@"session"],[aBill objectForKey:@"bill_id"]]; 
+	if (aBill && aBill[@"session"] && aBill[@"bill_id"])
+		return [NSString stringWithFormat:@"%@:%@", aBill[@"session"],aBill[@"bill_id"]]; 
 	else
 		return @"";
 }

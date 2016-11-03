@@ -120,8 +120,8 @@
 
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
-	UINavigationController *nav = [self navigationController];
-	if (nav && [nav.viewControllers count]>3)
+	UINavigationController *nav = self.navigationController;
+	if (nav && (nav.viewControllers).count>3)
 		[nav popToRootViewControllerAnimated:YES];
 		
     [super didReceiveMemoryWarning];
@@ -153,12 +153,12 @@
 }
 
 - (void)setDataObject:(id)newObj {
-	[self setLegislator:newObj];
+	self.legislator = newObj;
 }
 
 - (NSString *)chamberPartyAbbrev {
 	LegislatorObj *member = self.legislator;
-	NSString *partyName = stringForParty([member.party_id integerValue], TLReturnAbbrevPlural);
+	NSString *partyName = stringForParty((member.party_id).integerValue, TLReturnAbbrevPlural);
 	
 	return [NSString stringWithFormat:@"%@ %@", [member chamberName], partyName];
 }
@@ -168,12 +168,12 @@
 	if (IsEmpty(member.wnomScores))
 		return @"";
 
-	NSArray *legislators = [TexLegeCoreDataUtils allLegislatorsSortedByPartisanshipFromChamber:[member.legtype integerValue] 
-																					andPartyID:[member.party_id integerValue]];
+	NSArray *legislators = [TexLegeCoreDataUtils allLegislatorsSortedByPartisanshipFromChamber:(member.legtype).integerValue 
+																					andPartyID:(member.party_id).integerValue];
 	if (legislators) {
 		NSInteger rankIndex = [legislators indexOfObject:member] + 1;
-		NSInteger count = [legislators count];
-		NSString *partyShortName = stringForParty([member.party_id integerValue], TLReturnAbbrevPlural);
+		NSInteger count = legislators.count;
+		NSString *partyShortName = stringForParty((member.party_id).integerValue, TLReturnAbbrevPlural);
 		
 		NSString *ordinalRank = [UtilityMethods ordinalNumberFormat:rankIndex];
 		return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ most partisan (out of %d %@)", @"DataTableUI", @"Partisan ranking, ie. 32nd most partisan out of 55 Democrats"), 
@@ -192,7 +192,7 @@
 	self.navigationItem.title = legName;
 
     [self.leg_photoView setImageWithURL:[NSURL URLWithString:member.photo_url] placeholderImage:[UIImage imageNamed:@"placeholder"]];
-	self.leg_partyLab.text = [member party_name];
+	self.leg_partyLab.text = member.party_name;
 	self.leg_districtLab.text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"District %@", @"DataTableUI", @"District number"), 
 								 member.district];
 	self.leg_tenureLab.text = [member tenureString];
@@ -206,7 +206,7 @@
 
 	if (self.leg_indexTitleLab)
 		self.leg_indexTitleLab.text = [NSString stringWithFormat:@"%@ %@", 
-									   [member legTypeShortName], [member lastname]];
+									   [member legTypeShortName], member.lastname];
 
 	if (self.leg_rankLab)
 		self.leg_rankLab.text = [self partisanRankStringForLegislator];
@@ -216,8 +216,8 @@
 		self.leg_chamberLab.text = [[member chamberName] stringByAppendingFormat:@" %@", NSLocalizedStringFromTable(@"Avg.", @"DataTableUI", @"Abbreviation for 'average'")];				
 	}
 	
-	CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:[member.legtype integerValue]];
-	CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:[member.legtype integerValue]];
+	CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:(member.legtype).integerValue];
+	CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:(member.legtype).integerValue];
 	
 	if (self.indivSlider) {
 		self.indivSlider.sliderMin = minSlider;
@@ -227,12 +227,12 @@
 	if (self.partySlider) {
 		self.partySlider.sliderMin = minSlider;
 		self.partySlider.sliderMax = maxSlider;
-		self.partySlider.sliderValue = [indexStats partyPartisanIndexUsingChamber:[member.legtype integerValue] andPartyID:[member.party_id integerValue]];
+		self.partySlider.sliderValue = [indexStats partyPartisanIndexUsingChamber:(member.legtype).integerValue andPartyID:(member.party_id).integerValue];
 	}	
 	if (self.allSlider) {
 		self.allSlider.sliderMin = minSlider;
 		self.allSlider.sliderMax = maxSlider;
-		self.allSlider.sliderValue = [indexStats overallPartisanIndexUsingChamber:[member.legtype integerValue]];
+		self.allSlider.sliderValue = [indexStats overallPartisanIndexUsingChamber:(member.legtype).integerValue];
 	}	
 	
 	BOOL hasScores = !IsEmpty(member.wnomScores);
@@ -273,19 +273,19 @@
 }
 
 - (void)setLegislator:(LegislatorObj *)anObject {
-	if (self.dataSource && anObject && self.dataObjectID && [[anObject legislatorID] isEqual:self.dataObjectID])
+	if (self.dataSource && anObject && self.dataObjectID && [anObject.legislatorID isEqual:self.dataObjectID])
 		return;
 	
 	self.dataSource = nil;
 	self.dataObjectID = nil;
 	
 	if (anObject) {
-		self.dataObjectID = [anObject legislatorID];
+		self.dataObjectID = anObject.legislatorID;
 
 		self.tableView.dataSource = self.dataSource;
 
 		[self setupHeader];
-		self.votingDataSource.legislatorID = [anObject legislatorID];
+		self.votingDataSource.legislatorID = anObject.legislatorID;
 
 		if (masterPopover != nil) {
 			[masterPopover dismissPopoverAnimated:YES];
@@ -320,7 +320,7 @@
 	BOOL portrait = (![UtilityMethods isLandscapeOrientation]);
 
 	if (portrait && ipad && !self.legislator)
-		self.legislator = [[[TexLegeAppDelegate appDelegate] legislatorMasterVC] selectObjectOnAppear];		
+		self.legislator = [TexLegeAppDelegate appDelegate].legislatorMasterVC.selectObjectOnAppear;		
 	
 	if (self.legislator)
 		[self setupHeader];
@@ -463,7 +463,7 @@
 			if ([cellInfo.entryValue isKindOfClass:[DistrictOfficeObj class]] || [cellInfo.entryValue isKindOfClass:[DistrictMapObj class]])
 			{		
 				MapMiniDetailViewController *mapViewController = [[MapMiniDetailViewController alloc] init];
-				[mapViewController view];
+				[mapViewController loadView];
 				
 				DistrictOfficeObj *districtOffice = nil;
 				if ([cellInfo.entryValue isKindOfClass:[DistrictOfficeObj class]])
@@ -485,7 +485,7 @@
 					isDistMap = YES;
 				}
 				if (theAnnotation) {
-					mapViewController.navigationItem.title = [theAnnotation title];
+					mapViewController.navigationItem.title = theAnnotation.title;
 				}
 
 				[self.navigationController pushViewController:mapViewController animated:YES];
@@ -504,10 +504,10 @@
 
 			if ([TexLegeReachability canReachHostWithURL:url]) { // do we have a good URL/connection?
 
-				if ([[url scheme] isEqualToString:@"twitter"])
+				if ([url.scheme isEqualToString:@"twitter"])
 					[[UIApplication sharedApplication] openURL:url];
 				else {
-					NSString *urlString = [url absoluteString];
+					NSString *urlString = url.absoluteString;
                     
                     UIViewController *webController = nil;
                     
@@ -551,7 +551,7 @@
 	}
 	else if ([cellInfo.entryValue isKindOfClass:[NSString class]]) {
 		NSString *tempStr = cellInfo.entryValue;
-		if (!tempStr || [tempStr length] <= 0) {
+		if (!tempStr || tempStr.length <= 0) {
 			height = 0.0f;
 		}
 	}

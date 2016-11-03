@@ -21,12 +21,12 @@
 /**
  * Returns a RestKit JSON serializable representation of object
  */
-+ (id)JSONSerializationWithObject:(NSObject*)object;
++ (instancetype)JSONSerializationWithObject:(NSObject*)object;
 
 /**
  * Initialize a serialization with an object
  */
-- (id)initWithObject:(NSObject*)object;
+- (instancetype)initWithObject:(NSObject*)object;
 
 @end
 

@@ -22,10 +22,10 @@
 @property (nonatomic, readonly) MKCoordinateRegion		region;
 @property (nonatomic, readonly) MKCoordinateSpan		span;
 
-- (NSString *)title;
-- (NSString *)subtitle;
-- (UIImage *)image;
-- (NSString *)cellAddress;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *title;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *subtitle;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) UIImage *image;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *cellAddress;
 @end
 
 

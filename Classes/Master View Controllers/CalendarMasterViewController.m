@@ -61,7 +61,7 @@
 		id detailObject = self.detailViewController ? [self.detailViewController valueForKey:@"chamberCalendar"] : nil;
 		
 		if (!detailObject) {
-			NSIndexPath *currentIndexPath = [self.tableView indexPathForSelectedRow];
+			NSIndexPath *currentIndexPath = (self.tableView).indexPathForSelectedRow;
 			if (!currentIndexPath) {			
 				NSUInteger ints[2] = {0,0};	// just pick the first one then
 				currentIndexPath = [NSIndexPath indexPathWithIndexes:ints length:2];

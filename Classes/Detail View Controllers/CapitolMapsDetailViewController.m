@@ -29,7 +29,7 @@
 	[super viewDidLoad];
 	self.hidesBottomBarWhenPushed = YES;
 	
-	[self.webView setBackgroundColor:[UIColor darkGrayColor]];
+	(self.webView).backgroundColor = [UIColor darkGrayColor];
 	[self.webView setOpaque:YES];
 	self.view.backgroundColor = [UIColor darkGrayColor];
 	
@@ -52,7 +52,7 @@
 	if ([UtilityMethods isIPadDevice] && !self.map && ![UtilityMethods isLandscapeOrientation])  {
 		TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
 		
-		self.map = [[appDelegate capitolMapsMasterVC] selectObjectOnAppear];		
+		self.map = appDelegate.capitolMapsMasterVC.selectObjectOnAppear;		
 
 	}	
 }
@@ -65,7 +65,7 @@
 }
 
 - (void)didReceiveMemoryWarning {
-	UINavigationController *nav = [self navigationController];
+	UINavigationController *nav = self.navigationController;
 	if (nav) {
 		[nav popToRootViewControllerAnimated:YES];
 	}
@@ -79,7 +79,7 @@
 }
 
 - (void)setDataObject:(id)newObj {
-	[self setMap:newObj];
+	self.map = newObj;
 }
 
 

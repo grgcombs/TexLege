@@ -16,11 +16,11 @@
 @interface CommitteeObj (RestKit)
 {
 }
-- (NSString *) typeString;
-- (NSString *) description;
-- (LegislatorObj *) chair;
-- (LegislatorObj *) vicechair;
-- (NSArray *) sortedMembers;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *typeString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *description;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) LegislatorObj *chair;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) LegislatorObj *vicechair;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *sortedMembers;
 
 @end
 

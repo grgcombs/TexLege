@@ -17,8 +17,8 @@
 BOOL IsEmpty(id thing) {
     return thing == nil
 	|| ([[NSNull null] isEqual:thing])
-	|| ([thing respondsToSelector:@selector(length)] && [(NSData *)thing length] == 0)
-	|| ([thing respondsToSelector:@selector(count)] && [(NSArray *)thing count] == 0);
+	|| ([thing respondsToSelector:@selector(length)] && ((NSData *)thing).length == 0)
+	|| ([thing respondsToSelector:@selector(count)] && ((NSArray *)thing).count == 0);
 }
 
 #pragma mark -
@@ -43,7 +43,7 @@ BOOL IsEmpty(id thing) {
 	
     theScanner = [NSScanner scannerWithString:html];
 	
-    while ([theScanner isAtEnd] == NO) {
+    while (theScanner.atEnd == NO) {
 		
         // find start of tag
         [theScanner scanUpToString:@"<" intoString:NULL] ; 
@@ -58,18 +58,18 @@ BOOL IsEmpty(id thing) {
 		//									   withString:@""];
 		
 		[html replaceOccurrencesOfString:[ NSString stringWithFormat:@"%@>", text] 
-							  withString:@"" options:0 range:NSMakeRange(0, [html length])];
+							  withString:@"" options:0 range:NSMakeRange(0, html.length)];
 
 		
     } // while //
     
 //	[html replaceOccurrencesOfString:@"\u00a0" withString:@"" options:NSWidthInsensitiveSearch range:NSMakeRange(0, [html length])];
-	[html replaceOccurrencesOfString:@"&amp;" withString:@"&" options:NSWidthInsensitiveSearch range:NSMakeRange(0, [html length])];
-	[html replaceOccurrencesOfString:@"&nbsp;" withString:@" " options:NSWidthInsensitiveSearch range:NSMakeRange(0, [html length])];
-	[html replaceOccurrencesOfString:@"\r\n " withString:@"\r\n" options:NSWidthInsensitiveSearch range:NSMakeRange(0, [html length])];
-	[html replaceOccurrencesOfString:@"\r\n\r\n\r\n" withString:@"\r\n" options:NSWidthInsensitiveSearch range:NSMakeRange(0, [html length])];
-	[html replaceOccurrencesOfString:@"\r\n\r\n\r\n" withString:@"\r\n" options:NSWidthInsensitiveSearch range:NSMakeRange(0, [html length])];
-	[html replaceOccurrencesOfString:@"\r\n\r\n" withString:@"\r\n" options:NSWidthInsensitiveSearch range:NSMakeRange(0, [html length])];
+	[html replaceOccurrencesOfString:@"&amp;" withString:@"&" options:NSWidthInsensitiveSearch range:NSMakeRange(0, html.length)];
+	[html replaceOccurrencesOfString:@"&nbsp;" withString:@" " options:NSWidthInsensitiveSearch range:NSMakeRange(0, html.length)];
+	[html replaceOccurrencesOfString:@"\r\n " withString:@"\r\n" options:NSWidthInsensitiveSearch range:NSMakeRange(0, html.length)];
+	[html replaceOccurrencesOfString:@"\r\n\r\n\r\n" withString:@"\r\n" options:NSWidthInsensitiveSearch range:NSMakeRange(0, html.length)];
+	[html replaceOccurrencesOfString:@"\r\n\r\n\r\n" withString:@"\r\n" options:NSWidthInsensitiveSearch range:NSMakeRange(0, html.length)];
+	[html replaceOccurrencesOfString:@"\r\n\r\n" withString:@"\r\n" options:NSWidthInsensitiveSearch range:NSMakeRange(0, html.length)];
     return html;
 }
 
@@ -83,8 +83,8 @@ BOOL IsEmpty(id thing) {
 	
 	NSString *temp = self;
 	if (insensitive) {
-		temp = [temp lowercaseString];
-		substring = [substring lowercaseString];
+		temp = temp.lowercaseString;
+		substring = substring.lowercaseString;
 	}
 	
 	if ([temp isEqualToString:substring])
@@ -97,7 +97,7 @@ BOOL IsEmpty(id thing) {
 - (NSString*)firstLetterCaptialized {
 //#ifdef __APPLE__
 	NSRange startRange = NSMakeRange(0, 1);
-	return [self stringByReplacingCharactersInRange:startRange withString:[[self substringWithRange:startRange] uppercaseString]];
+	return [self stringByReplacingCharactersInRange:startRange withString:[self substringWithRange:startRange].uppercaseString];
 /* #else		// I think this was a nasty hack to deal with a bug in Foundation classes.
 	NSString* firstCharCapital = [[self substringWithRange:NSMakeRange(0, 1)] uppercaseString];
 	NSString* lastPartOfString = [self substringWithRange:NSMakeRange(1, self.length-1)];
@@ -117,7 +117,7 @@ BOOL IsEmpty(id thing) {
 		strVal = [strVal stringByReplacingOccurrencesOfString:prefix 
 														   withString:@"" 
 															  options:(NSCaseInsensitiveSearch | NSAnchoredSearch) 
-																range:NSMakeRange(0, [prefix length])];
+																range:NSMakeRange(0, prefix.length)];
 		
 		if (capitalize)
 			strVal = [strVal firstLetterCaptialized];
@@ -171,7 +171,7 @@ BOOL IsEmpty(id thing) {
 }
 
 + (CGFloat)iOSVersion {
-	return [[[UIDevice currentDevice] systemVersion] floatValue];
+	return [UIDevice currentDevice].systemVersion.floatValue;
 }
 
 #pragma mark -
@@ -184,7 +184,7 @@ BOOL IsEmpty(id thing) {
 	UIViewController *root = [[[UIApplication sharedApplication] keyWindow] rootViewController];
 	return UIInterfaceOrientationIsLandscape(root.interfaceOrientation);
 #else
-	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+	UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
 	UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
 	if (UIDeviceOrientationIsValidInterfaceOrientation(orientation)
         && UIDeviceOrientationIsLandscape(orientation)
@@ -209,7 +209,7 @@ BOOL IsEmpty(id thing) {
 	{
 		if ([[UIDevice currentDevice] respondsToSelector:@selector(userInterfaceIdiom)])
 		{
-			if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+			if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
 			{
 				isRunningOniPad = YES;
 				hasCheckediPadStatus = YES;
@@ -231,14 +231,14 @@ BOOL IsEmpty(id thing) {
 {
 	
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+    NSString *basePath = (paths.count > 0) ? paths[0] : nil;
     return basePath;
 }
 
 + (NSString *)applicationCachesDirectory
 {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-	NSString *cachePath = [paths objectAtIndex:0];
+	NSString *cachePath = paths[0];
 	BOOL isDir = NO;
 	NSError *error;
 	if (! [[NSFileManager defaultManager] fileExistsAtPath:cachePath isDirectory:&isDir] && isDir == NO) {
@@ -252,18 +252,18 @@ BOOL IsEmpty(id thing) {
 
 + (NSURL *)urlToMainBundle
 {
-	return [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+	return [NSURL fileURLWithPath:[NSBundle mainBundle].bundlePath];
 }
 
 + (NSString *) titleFromURL:(NSURL *)url
 {
 	debug_NSLog(@"%@", [url absoluteString]);
-	NSArray *urlComponents = [[url absoluteString] componentsSeparatedByString:@"/"];
+	NSArray *urlComponents = [url.absoluteString componentsSeparatedByString:@"/"];
 	NSString * title = nil;
 	
-	if ( [urlComponents count] > 0 )
+	if ( urlComponents.count > 0 )
 	{
-		NSString *str = [urlComponents objectAtIndex:([urlComponents count]-1)];
+		NSString *str = urlComponents[(urlComponents.count-1)];
 		NSRange dot = [str rangeOfString:@"."];
 		if ( dot.length > 0 )
 			title = [str substringToIndex:dot.location];
@@ -322,7 +322,7 @@ BOOL IsEmpty(id thing) {
 		NSRange index = [queryString rangeOfString:@"?"];
 		if (index.location != NSNotFound
             && index.length > 0
-            && [queryString length] > index.location)
+            && queryString.length > index.location)
         {
 			queryString = [queryString substringFromIndex:index.location+1];
         }
@@ -385,7 +385,7 @@ BOOL IsEmpty(id thing) {
 	{
 		s_devName = [[[NSString alloc] initWithString:device.model] autorelease];
 		NSRange strRange;
-		strRange.length = ([s_devName length] < 6) ? [s_devName length] : 6;
+		strRange.length = (s_devName.length < 6) ? s_devName.length : 6;
 		strRange.location = 0;
 		s_iPhoneDevice = (NSOrderedSame == [s_devName compare:@"iPhone" options:NSLiteralSearch range:strRange]);
 	}
@@ -428,13 +428,13 @@ BOOL IsEmpty(id thing) {
 
 - (NSDictionary *)indexKeyedDictionaryWithKey:(NSString *)key
 {
-	if (![self count] || !key)
+	if (!self.count || !key)
 		return nil;
 	
 	id objectInstance = nil;
 	NSMutableDictionary *mutableDictionary = [[NSMutableDictionary alloc] init];
 	for (objectInstance in self) {
-		[mutableDictionary setObject:objectInstance forKey:[objectInstance valueForKey:key]];
+		mutableDictionary[[objectInstance valueForKey:key]] = objectInstance;
 	}
 	
 	return (NSDictionary *)[mutableDictionary autorelease];

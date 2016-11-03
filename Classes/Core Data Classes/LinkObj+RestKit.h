@@ -16,7 +16,7 @@
 {
 }
 
-- (NSURL *) actualURL;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSURL *actualURL;
 
 @end
 

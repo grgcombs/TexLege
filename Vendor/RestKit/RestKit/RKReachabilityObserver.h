@@ -14,12 +14,12 @@
  */
 extern NSString* const RKReachabilityStateChangedNotification;
 
-typedef enum {
+typedef NS_ENUM(unsigned int, RKReachabilityNetworkStatus) {
 	RKReachabilityIndeterminate,
 	RKReachabilityNotReachable,
 	RKReachabilityReachableViaWiFi,
 	RKReachabilityReachableViaWWAN
-} RKReachabilityNetworkStatus;
+};
 
 /**
  * Provides a notification based interface for monitoring changes
@@ -44,16 +44,16 @@ typedef enum {
 /**
  * Returns the current network status
  */
-- (RKReachabilityNetworkStatus)networkStatus;
+@property (NS_NONATOMIC_IOSONLY, readonly) RKReachabilityNetworkStatus networkStatus;
 
 /**
  * Returns YES when the Internet is reachable (via WiFi or WWAN)
  */
-- (BOOL)isNetworkReachable;
+@property (NS_NONATOMIC_IOSONLY, getter=isNetworkReachable, readonly) BOOL networkReachable;
 
 /**
  * Returns YES when WWAN may be available, but not active until a connection has been established.
  */
-- (BOOL)isConnectionRequired;
+@property (NS_NONATOMIC_IOSONLY, getter=isConnectionRequired, readonly) BOOL connectionRequired;
 
 @end

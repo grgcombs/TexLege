@@ -20,16 +20,16 @@
 
 - (NSString *)title
 {
-	NSString *chamberString = stringForChamber([self.chamber integerValue], TLReturnFull);
+	NSString *chamberString = stringForChamber((self.chamber).integerValue, TLReturnFull);
 	
     return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ District %@", @"DataTableUI", @"As in 'House District 32'"), 
 			chamberString, self.district];
 }
 
 - (UIImage *)image {
-	if (self.legislator && [self.legislator.party_id integerValue] == DEMOCRAT)
+	if (self.legislator && (self.legislator.party_id).integerValue == DEMOCRAT)
 		return [UIImage imageNamed:@"bluestar.png"];
-	else if (self.legislator && [self.legislator.party_id integerValue] == REPUBLICAN)
+	else if (self.legislator && (self.legislator.party_id).integerValue == REPUBLICAN)
 		return [UIImage imageNamed:@"redstar.png"];
 	else
 		return [UIImage imageNamed:@"silverstar.png"];
@@ -67,49 +67,49 @@
 }
 
 - (MKCoordinateSpan) span {
-	return MKCoordinateSpanMake([self.spanLat doubleValue], [self.spanLon doubleValue]);
+	return MKCoordinateSpanMake((self.spanLat).doubleValue, (self.spanLon).doubleValue);
 }
 
 - (MKPolyline *)polyline {
 	
-	MKPolyline *polyLine=[MKPolyline polylineWithCoordinates:(CLLocationCoordinate2D *)[self.coordinatesData bytes] 
-													   count:[self.numberOfCoords integerValue]];
-	polyLine.title = [self title];
-	polyLine.subtitle = [self subtitle];
+	MKPolyline *polyLine=[MKPolyline polylineWithCoordinates:(CLLocationCoordinate2D *)(self.coordinatesData).bytes 
+													   count:(self.numberOfCoords).integerValue];
+	polyLine.title = self.title;
+	polyLine.subtitle = self.subtitle;
 	return polyLine;
 }
 
 - (MKPolygon *)polygon {
 	MKPolygon *polyGon=nil;
 		
-	if (self.district && [self.district integerValue] == 83) {	// special case (until districts change)
+	if (self.district && (self.district).integerValue == 83) {	// special case (until districts change)
 		NSArray *interiorPolygons = nil;
 		
-		DistrictMapObj *interiorDistrict = [TexLegeCoreDataUtils districtMapForDistrict:[NSNumber numberWithInt:84] 
+		DistrictMapObj *interiorDistrict = [TexLegeCoreDataUtils districtMapForDistrict:@84
 																			 andChamber:self.chamber];
 		if (interiorDistrict) {
 			MKPolygon *interiorPolygon = [interiorDistrict polygon];
 			if (interiorPolygon)
-				interiorPolygons = [NSArray arrayWithObject:interiorPolygon];
+				interiorPolygons = @[interiorPolygon];
 		}
 									
-		polyGon = [MKPolygon polygonWithCoordinates:(CLLocationCoordinate2D *)[self.coordinatesData bytes] 
-											  count:[self.numberOfCoords integerValue] 
+		polyGon = [MKPolygon polygonWithCoordinates:(CLLocationCoordinate2D *)(self.coordinatesData).bytes 
+											  count:(self.numberOfCoords).integerValue 
 								   interiorPolygons:interiorPolygons];
 	}
 	else
-		polyGon = [MKPolygon polygonWithCoordinates:(CLLocationCoordinate2D *)[self.coordinatesData bytes] 
-													   count:[self.numberOfCoords integerValue]];
-	polyGon.title = [self title];
-	polyGon.subtitle = [self subtitle];
+		polyGon = [MKPolygon polygonWithCoordinates:(CLLocationCoordinate2D *)(self.coordinatesData).bytes 
+													   count:(self.numberOfCoords).integerValue];
+	polyGon.title = self.title;
+	polyGon.subtitle = self.subtitle;
 	return polyGon;
 }
 
 - (BOOL) boundingBoxContainsCoordinate:(CLLocationCoordinate2D)aCoordinate {
-	return (aCoordinate.latitude <= [self.maxLat doubleValue] &&
-			aCoordinate.latitude >= [self.minLat doubleValue] &&
-			aCoordinate.longitude <= [self.maxLon doubleValue] &&
-			aCoordinate.longitude >= [self.minLon doubleValue] );
+	return (aCoordinate.latitude <= (self.maxLat).doubleValue &&
+			aCoordinate.latitude >= (self.minLat).doubleValue &&
+			aCoordinate.longitude <= (self.maxLon).doubleValue &&
+			aCoordinate.longitude >= (self.minLon).doubleValue );
 }
 
 - (BOOL) districtContainsCoordinate:(CLLocationCoordinate2D)aCoordinate {

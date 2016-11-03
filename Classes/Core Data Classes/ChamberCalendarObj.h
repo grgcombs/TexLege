@@ -22,6 +22,6 @@
 
 - (NSDictionary *)eventForIndexPath:(NSIndexPath*)indexPath;
 - (NSArray *)filterEventsByString:(NSString *)filterString;
-- (id)initWithDictionary:(NSDictionary *)calendarDict;
+- (instancetype)initWithDictionary:(NSDictionary *)calendarDict;
 
 @end

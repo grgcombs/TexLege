@@ -100,7 +100,7 @@ extern NSString* const RKManagedObjectStoreDidFailSaveNotification;
 /**
  * Save the current contents of the managed object store
  */
-- (NSError*)save;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSError *save;
 
 /**
  * This deletes and recreates the managed object context and 

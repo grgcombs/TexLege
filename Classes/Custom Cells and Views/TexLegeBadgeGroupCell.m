@@ -33,15 +33,11 @@
 #pragma mark -
 #pragma mark DDBadgeView declaration
 
-@interface DDBadgeView : UIView {
-	
-@private
-	TexLegeBadgeGroupCell *cell_;
-}
+@interface DDBadgeView : UIView
 
 @property (nonatomic, assign) TexLegeBadgeGroupCell *cell;
 
-- (id)initWithFrame:(CGRect)frame cell:(TexLegeBadgeGroupCell *)newCell;
+- (instancetype)initWithFrame:(CGRect)frame cell:(TexLegeBadgeGroupCell *)newCell NS_DESIGNATED_INITIALIZER;
 @end
 
 #pragma mark -
@@ -49,15 +45,26 @@
 
 @implementation DDBadgeView 
 
-@synthesize cell = cell_;
-
 #pragma mark -
 #pragma mark init
 
-- (id)initWithFrame:(CGRect)frame cell:(TexLegeBadgeGroupCell *)newCell {
-	
-	if ((self = [super initWithFrame:frame])) {
-		cell_ = newCell;
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [self initWithFrame:frame cell:nil];
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [self initWithFrame:CGRectZero cell:nil];
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame cell:(TexLegeBadgeGroupCell *)newCell
+{	
+	if ((self = [super initWithFrame:frame]))
+    {
+		_cell = newCell;
 		
 		self.backgroundColor = [UIColor clearColor];
 		self.layer.masksToBounds = YES;
@@ -68,13 +75,17 @@
 #pragma mark -
 #pragma mark redraw
 
-- (void)drawRect:(CGRect)rect {	
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
     UIColor *currentSummaryColor = [TexLegeTheme textDark];
     //UIColor *currentDetailColor = [UIColor grayColor];
     UIColor *currentBadgeColor = self.cell.badgeColor;
-    if (!currentBadgeColor) {
+    if (!currentBadgeColor)
+    {
         currentBadgeColor = [TexLegeTheme accentGreener]; //[UIColor colorWithRed:0.53 green:0.6 blue:0.738 alpha:1.];
     }
     
@@ -82,18 +93,22 @@
         currentSummaryColor = [UIColor whiteColor];
         //currentDetailColor = [UIColor whiteColor];
 		currentBadgeColor = self.cell.badgeHighlightedColor;
-		if (!currentBadgeColor) {
+		if (!currentBadgeColor)
+        {
 			currentBadgeColor = [UIColor whiteColor];
 		}
 	} 
 	
-	if (self.cell && self.cell.isEditing) {
+	if (self.cell && self.cell.isEditing)
+    {
 		[currentSummaryColor set];
 		[self.cell.summary drawAtPoint:CGPointMake(10, 10) forWidth:rect.size.width withFont:[TexLegeTheme boldFifteen] lineBreakMode:NSLineBreakByTruncatingTail];
 		
 		//[currentDetailColor set];
 		//[self.cell.detail drawAtPoint:CGPointMake(10, 32) forWidth:rect.size.width withFont:[TexLegeTheme boldTwelve] lineBreakMode:NSLineBreakByTruncatingTail];		
-	} else {
+	}
+    else
+    {
 		CGSize badgeTextSize = [self.cell.badgeText sizeWithFont:[TexLegeTheme boldTwelve]];
 		CGRect badgeViewFrame = CGRectIntegral(CGRectMake(rect.size.width - badgeTextSize.width - 24, (rect.size.height - badgeTextSize.height - 4) / 2, badgeTextSize.width + 14, badgeTextSize.height + 4));
 		
@@ -133,25 +148,20 @@
 #pragma mark TexLegeBadgeGroupCell implementation
 
 @implementation TexLegeBadgeGroupCell
+@synthesize cellInfo = _cellInfo;
 
-@synthesize summary = summary_;
-//@synthesize detail = detail_;
-@synthesize badgeView = badgeView_;
-@synthesize badgeText = badgeText_;
-@synthesize badgeColor = badgeColor_;
-@synthesize badgeHighlightedColor = badgeHighlightedColor_;
-@synthesize cellInfo, isClickable;
-
-+ (NSString *)cellIdentifier {
++ (NSString *)cellIdentifier
+{
 	return @"TexLegeBadgeGroupCell";
 }
 
-+ (UITableViewCellStyle)cellStyle {
++ (UITableViewCellStyle)cellStyle
+{
 	return UITableViewCellStyleDefault;
 	//return UITableViewCellStyleSubtitle;
 }
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 	
     if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
 		// Initialization code
@@ -161,12 +171,12 @@
 		*/
 		
 		self.backgroundColor = [TexLegeTheme backgroundLight];
-		isClickable = YES;
-		badgeView_ = [[DDBadgeView alloc] initWithFrame:self.contentView.bounds cell:self];
-        badgeView_.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        badgeView_.contentMode = UIViewContentModeRedraw;
-		badgeView_.contentStretch = CGRectMake(1., 0., 0., 0.);
-        [self.contentView addSubview:badgeView_];
+		_clickable = YES;
+		_badgeView = [[DDBadgeView alloc] initWithFrame:self.contentView.bounds cell:self];
+        _badgeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _badgeView.contentMode = UIViewContentModeRedraw;
+		_badgeView.contentStretch = CGRectMake(1., 0., 0., 0.);
+        [self.contentView addSubview:_badgeView];
     }
     return self;
 }
@@ -174,61 +184,60 @@
 #pragma mark -
 #pragma mark init & dealloc
 
-- (void)dealloc {
+- (void)dealloc
+{
+	[_badgeView release], _badgeView = nil;
 	
-	[badgeView_ release], badgeView_ = nil;
-	
-    [summary_ release], summary_ = nil;
+    [_summary release], _summary = nil;
     //[detail_ release], detail_ = nil;
-	[badgeText_ release], badgeText_ = nil;
-	[badgeColor_ release], badgeColor_ = nil;
-	[badgeHighlightedColor_ release], badgeHighlightedColor_ = nil;
+	[_badgeText release], _badgeText = nil;
+	[_badgeColor release], _badgeColor = nil;
+	[_badgeHighlightedColor release], _badgeHighlightedColor = nil;
 	self.cellInfo = nil;
 
     [super dealloc];
 }
 
+- (void)setCellInfo:(TableCellDataObject *)newCellInfo
+{
+	if (_cellInfo)
+		[_cellInfo release], _cellInfo = nil;
+	if (!newCellInfo)
+        return;
 
-
-- (void)setCellInfo:(TableCellDataObject *)newCellInfo {	
-	if (cellInfo)
-		[cellInfo release], cellInfo = nil;
-	
-	if (newCellInfo) {
-		cellInfo = [newCellInfo retain];
+    _cellInfo = [newCellInfo retain];
 		
-		self.summary = cellInfo.title;
-		//self.detail = cellInfo.subtitle;
-		self.badgeText = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ Bills", @"DataTableUI", @"Lists the number of bills for a givensubject"), 
-						  cellInfo.entryValue];
-		isClickable = cellInfo.isClickable;
+    self.summary = newCellInfo.title;
+    //self.detail = newCellInfo.subtitle;
+    self.badgeText = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ Bills", @"DataTableUI", @"Lists the number of bills for a givensubject"),
+                      newCellInfo.entryValue];
+    _clickable = newCellInfo.isClickable;
 
-		if (!cellInfo.isClickable) {
-			self.selectionStyle = UITableViewCellSelectionStyleNone;
-		}
-	}
-		
+    if (!newCellInfo.isClickable)
+    {
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
 }
 
 #pragma mark -
 #pragma mark accessors
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-	
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+{
     [super setSelected:selected animated:animated];
 	
 	[self.badgeView setNeedsDisplay];
 }
 
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
-	
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
 	[super setHighlighted:highlighted animated:animated];
 	
 	[self.badgeView setNeedsDisplay];
 }
 
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
-	
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
 	[super setEditing:editing animated:animated];
 	
 	[self.badgeView setNeedsDisplay];

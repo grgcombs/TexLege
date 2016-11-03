@@ -21,7 +21,7 @@
 /**
  * The value of the Content-Type header for the HTTP Body representation of the serialization
  */
-- (NSString*)HTTPHeaderValueForContentType;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *HTTPHeaderValueForContentType;
 
 @optional
 
@@ -35,18 +35,18 @@
 /**
  * An NSData representing the HTTP Body serialization of the object implementing the protocol
  */
-- (NSData*)HTTPBody;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *HTTPBody;
 
 /**
  * Returns an input stream for reading the serialization as a stream. Used to provide support for
  * handling large HTTP payloads.
  */
-- (NSInputStream*)HTTPBodyStream;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) NSInputStream *HTTPBodyStream;
 
 /**
  * Returns the length of the HTTP Content-Length header
  */
-- (NSUInteger)HTTPHeaderValueForContentLength;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger HTTPHeaderValueForContentLength;
 
 /**
  * The value of the Content-Type header for the HTTP Body representation of the serialization

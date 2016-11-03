@@ -55,17 +55,17 @@
 /**
  * Initialize a new attachment with a given parameter name and a value
  */
-- (id)initWithName:(NSString*)name value:(id<NSObject>)value;
+- (instancetype)initWithName:(NSString*)name value:(id<NSObject>)value;
 
 /**
  * Initialize a new attachment with a given parameter name and the data stored in an NSData object
  */
-- (id)initWithName:(NSString*)name data:(NSData*)data;
+- (instancetype)initWithName:(NSString*)name data:(NSData*)data;
 
 /**
  * Initialize a new attachment with a given parameter name and the data stored on disk at the given file path
  */
-- (id)initWithName:(NSString*)name file:(NSString*)filePath;
+- (instancetype)initWithName:(NSString*)name file:(NSString*)filePath;
 
 /**
  * Open the attachment stream to begin reading. This will generate a MIME header and prepare the
@@ -76,7 +76,7 @@
 /**
  * The length of the entire attachment (including the MIME Header and the body)
  */
-- (NSUInteger)length;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger length;
 
 /**
  * Read the attachment body in a streaming fashion

@@ -23,7 +23,7 @@
 
 @synthesize mailComposerVC, isComposingMail, currentAlert, currentCommander;
 
-+ (id)sharedTexLegeEmailComposer
++ (TexLegeEmailComposer*)sharedTexLegeEmailComposer
 {
 	static dispatch_once_t pred;
 	static TexLegeEmailComposer *foo = nil;
@@ -32,7 +32,7 @@
 	return foo;
 }
 
-- (id) init
+- (instancetype) init
 {
     if ((self = [super init]))
     {
@@ -69,9 +69,9 @@
 		[mc release];
 		self.mailComposerVC.mailComposeDelegate = self;
 		[self.mailComposerVC setSubject:subject];
-		[self.mailComposerVC setToRecipients:[NSArray arrayWithObject:recipient]];
+		[self.mailComposerVC setToRecipients:@[recipient]];
 		[self.mailComposerVC setMessageBody:body isHTML:NO];
-		[[self.mailComposerVC navigationBar] setTintColor:[TexLegeTheme navbar]];
+		(self.mailComposerVC).navigationBar.tintColor = [TexLegeTheme navbar];
 		self.isComposingMail = YES;
 				
 		[self.currentCommander presentViewController:self.mailComposerVC animated:YES completion:nil];
@@ -79,9 +79,9 @@
 	}
 	else {   // Mail functions are unavailable
 		NSMutableString *message = [NSMutableString stringWithFormat:@"mailto:%@", recipient];
-		if (subject && [subject length])
+		if (subject && subject.length)
 			[message appendFormat:@"&subject=%@", subject];
-		if (body && [body length])
+		if (body && body.length)
 			[message appendFormat:@"&body=%@", body];
 		NSURL *mailto = [NSURL URLWithString:[message stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 		

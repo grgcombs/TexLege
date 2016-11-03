@@ -16,7 +16,7 @@
 {
 }
 
-- (NSString *) positionString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *positionString;
 - (NSComparisonResult) comparePositionAndCommittee:(CommitteePositionObj *)p;
 
 @end

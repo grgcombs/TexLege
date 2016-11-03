@@ -54,7 +54,8 @@ NSString* RKMakePathWithObject(NSString* path, id object) {
 	}
 	
 	NSMutableString* interpolatedPath = [[path mutableCopy] autorelease];
-	for (NSString* find in substitutions) {
+	for (NSString* find in substitutions)
+    {
 		NSString* replace = [substitutions valueForKey:find];
 		[interpolatedPath replaceOccurrencesOfString:find 
 										  withString:replace 													 

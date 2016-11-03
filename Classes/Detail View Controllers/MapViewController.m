@@ -118,7 +118,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 
     _clGeocoder = [[CLGeocoder alloc] init];
 
-	[self.view setBackgroundColor:[TexLegeTheme backgroundLight]];
+	(self.view).backgroundColor = [TexLegeTheme backgroundLight];
 	self.mapView.showsUserLocation = NO;
     self.mapView.showsBuildings = YES;
 	
@@ -181,12 +181,12 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 }
 
 - (void) clearAnnotationsAndOverlaysExcept:(id)keep {
-	NSMutableArray *annotes = [[NSMutableArray alloc] initWithCapacity:[self.mapView.annotations count]];
+	NSMutableArray *annotes = [[NSMutableArray alloc] initWithCapacity:(self.mapView.annotations).count];
 	for (id object in self.mapView.annotations) {
 		if (![object isEqual:keep])
 			[annotes addObject:object];
 	}
-	if (annotes && [annotes count]) {
+	if (annotes && annotes.count) {
 		[self.mapView removeOverlays:self.mapView.overlays];
 		[self.mapView removeAnnotations:annotes];
 	}
@@ -197,7 +197,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	NSMutableArray *toRemove = [[NSMutableArray alloc] init];
 	if (toRemove) {
 		[toRemove setArray:self.mapView.overlays];
-		if ([toRemove count]>2) {
+		if (toRemove.count>2) {
 			[toRemove removeLastObject];
 			[toRemove removeLastObject];
 			[self.mapView removeOverlays:toRemove];
@@ -674,7 +674,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 
 	NSString *message = [NSString stringWithFormat:
 						 NSLocalizedStringFromTable(@"Failed to determine your geographic location due to the following: %@", @"AppAlerts", @""), 
-						 [error localizedDescription]];
+						 error.localizedDescription];
 	
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"Geolocation Error", @"AppAlerts", @"Alert box title for an error")
 													message:message
@@ -697,7 +697,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
     if (!locations.count)
         return;
 
-    CLLocation *foundLocation = [locations firstObject];
+    CLLocation *foundLocation = locations.firstObject;
 
     [self.locationManager stopUpdatingLocation];
     [self.locationManager stopMonitoringSignificantLocationChanges];
@@ -801,7 +801,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id <MKOverlay>)overlay
 {
 	NSArray *colors = [[UIColor randomColor] triadicColors];
-	UIColor *myColor = [[colors objectAtIndex:colorIndex] colorByDarkeningTo:0.50f];
+	UIColor *myColor = [colors[colorIndex] colorByDarkeningTo:0.50f];
 	colorIndex++;
 	if (colorIndex > 1)
 		colorIndex = 0;
@@ -810,7 +810,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
     {		
 		BOOL senate = NO;
 		
-		NSString *ovTitle = [overlay title];
+		NSString *ovTitle = overlay.title;
 		if (ovTitle && [ovTitle hasSubstring:stringForChamber(HOUSE, TLReturnFull) caseInsensitive:NO]) {
 			if (self.mapView.mapType > MKMapTypeStandard)
 				myColor = [UIColor cyanColor];
@@ -860,7 +860,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	if (!annotation)
 		return;
 	
-	if (![aView isSelected])
+	if (!aView.selected)
 		return;
 	
 	[self.mapView setCenterCoordinate:annotation.coordinate animated:YES];
@@ -882,13 +882,13 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 		BOOL foundOne = NO;
 		for (id<MKOverlay>item in self.mapView.overlays)
         {
-            NSString *itemTitle = [item title];
+            NSString *itemTitle = item.title;
             if (itemTitle.length && districtTitle.length)
             {
                 if ([itemTitle isEqualToString:districtTitle])
                 {	// we clicked on an existing overlay
-                    if ([itemTitle isEqualToString:[self.senateDistrictView.polygon title]] ||
-                        [itemTitle isEqualToString:[self.houseDistrictView.polygon title]])
+                    if ([itemTitle isEqualToString:(self.senateDistrictView.polygon).title] ||
+                        [itemTitle isEqualToString:(self.houseDistrictView.polygon).title])
                     {
                         [toRemove removeObject:item];
                         foundOne = YES;
@@ -912,7 +912,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
                 [bself.mapView addOverlay:mapPoly];
             });
 
-			[[(DistrictMapObj*)annotation managedObjectContext] refreshObject:(DistrictMapObj*)annotation mergeChanges:NO];
+			[((DistrictMapObj*)annotation).managedObjectContext refreshObject:(DistrictMapObj*)annotation mergeChanges:NO];
 		}
 		[self.mapView setRegion:region animated:TRUE];
 	}			

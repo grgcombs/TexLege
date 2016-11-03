@@ -20,7 +20,7 @@
 	NSString *fileString = nil;
 	NSString *thePath = [[NSBundle mainBundle] pathForResource:@"CapitolMaps" ofType:@"plist"];
 	NSArray *mapSectionsPlist = [NSArray arrayWithContentsOfFile:thePath];	
-	NSArray *searchArray = [mapSectionsPlist objectAtIndex:0];
+	NSArray *searchArray = mapSectionsPlist[0];
 	CapitolMap *foundMap = nil;
 	
 	if ([office hasPrefix:@"4"])
@@ -39,7 +39,7 @@
 		fileString = @"Map.FloorE2.pdf";
 	else if ([office hasPrefix:@"SHB"]) {
 		fileString = @"Map.SamHoustonLoc.pdf";
-		searchArray = [mapSectionsPlist objectAtIndex:1];
+		searchArray = mapSectionsPlist[1];
 	}
 	
 	for (NSDictionary * mapEntry in searchArray)
@@ -64,21 +64,19 @@
 - (void)importFromDictionary:(NSDictionary *)dictionary
 {				
 	if (dictionary) {
-		self.name = [dictionary objectForKey:@"name"];
-		self.file = [dictionary objectForKey:@"file"];
-		self.type = [dictionary objectForKey:@"type"];
-		self.order = [dictionary objectForKey:@"order"];
+		self.name = dictionary[@"name"];
+		self.file = dictionary[@"file"];
+		self.type = dictionary[@"type"];
+		self.order = dictionary[@"order"];
 	}
 }
 
 
 - (NSDictionary *)exportToDictionary {
-	NSDictionary *tempDict = [NSDictionary dictionaryWithObjectsAndKeys:
-							  self.name, @"name",
-							  self.file, @"file",
-							  self.type, @"type",
-							  self.order, @"order",
-							  nil];
+	NSDictionary *tempDict = @{@"name": self.name,
+							  @"file": self.file,
+							  @"type": self.type,
+							  @"order": self.order};
 	return tempDict;
 }
 /*
@@ -89,8 +87,8 @@
 
 - (NSURL *)url
 {
-    return [[NSBundle mainBundle] URLForResource:[self.file stringByDeletingPathExtension]
-                                   withExtension:[self.file pathExtension]];
+    return [[NSBundle mainBundle] URLForResource:(self.file).stringByDeletingPathExtension
+                                   withExtension:(self.file).pathExtension];
 }
 
 @end

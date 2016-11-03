@@ -28,7 +28,7 @@
 	 }
 	 return [NSNumber numberWithInteger:TexLegePinAnnotationColorGreen];
 	 */
-	return [NSNumber numberWithInteger:TexLegePinAnnotationColorGreen];
+	return @(TexLegePinAnnotationColorGreen);
 }
 
 #pragma mark -
@@ -49,10 +49,10 @@
 - (UIImage *)image {
 	NSString *imageFile = @"silverstar.png";
 	if (self.legislator) {
-		if (DEMOCRAT == [self.legislator.party_id integerValue]) {
+		if (DEMOCRAT == (self.legislator.party_id).integerValue) {
 			imageFile = @"bluestar.png";
 		}
-		else if ([self.legislator.party_id integerValue] == REPUBLICAN) {
+		else if ((self.legislator.party_id).integerValue == REPUBLICAN) {
 			imageFile = @"redstar.png";
 		}
 	}
@@ -72,11 +72,11 @@
 }
 
 - (MKCoordinateSpan) span {
-	return MKCoordinateSpanMake([self.spanLat doubleValue], [self.spanLon doubleValue]);
+	return MKCoordinateSpanMake((self.spanLat).doubleValue, (self.spanLon).doubleValue);
 }
 
 - (MKCoordinateRegion)region {
-	return MKCoordinateRegionMake([self coordinate], [self span]);
+	return MKCoordinateRegionMake(self.coordinate, self.span);
 }
 
 - (NSString *)cellAddress {

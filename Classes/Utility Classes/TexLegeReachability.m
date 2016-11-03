@@ -24,10 +24,7 @@
 
 @implementation TexLegeReachability
 
-@synthesize remoteHostStatus, internetConnectionStatus, localWiFiConnectionStatus;
-@synthesize texlegeConnectionStatus, tloConnectionStatus, openstatesConnectionStatus, googleConnectionStatus;
-
-+ (id)sharedTexLegeReachability
++ (TexLegeReachability*)sharedTexLegeReachability
 {
 	static dispatch_once_t pred;
 	static TexLegeReachability *foo = nil;
@@ -100,19 +97,19 @@
 
 - (void)reachabilityChanged:(NSNotification *)note
 {
-	Reachability* curReach = [note object];
+	Reachability* curReach = note.object;
 	NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
 	[self updateStatusWithReachability: curReach];
 }
 
-- (void)updateStatusWithReachability:(Reachability*) curReach
+- (void)updateStatusWithReachability:(Reachability*)curReach
 {
 	NetworkStatus currentStatus = [curReach currentReachabilityStatus];
 	
-	if(curReach == hostReach)
+	if (curReach == hostReach)
 	{
-        self.remoteHostStatus = currentStatus;
-        BOOL connectionRequired= [curReach connectionRequired];
+        self.remoteHostStatus = (ReachabilityStatus)currentStatus;
+        BOOL connectionRequired= [curReach isConnectionRequired];
 		if (self.remoteHostStatus != ReachableViaWWAN) {
 			if(connectionRequired)
 				NSLog(@"Cellular data network is available.\n  Internet traffic will be routed through it after a connection is established.");
@@ -122,21 +119,21 @@
 	}
 	else if(curReach == internetReach)
 	{	
-		self.internetConnectionStatus = currentStatus;
+		self.internetConnectionStatus = (ReachabilityStatus)currentStatus;
 	}
 	else if(curReach == wifiReach)
 	{	
-		self.localWiFiConnectionStatus = currentStatus;
+		self.localWiFiConnectionStatus = (ReachabilityStatus)currentStatus;
 	}
 	else {
 		if(curReach == googleReach)
-			self.googleConnectionStatus = currentStatus;
+			self.googleConnectionStatus = (ReachabilityStatus)currentStatus;
 		if(curReach == texlegeReach)
-			self.texlegeConnectionStatus = currentStatus;
+			self.texlegeConnectionStatus = (ReachabilityStatus)currentStatus;
 		if(curReach == openstatesReach)
-			self.openstatesConnectionStatus = currentStatus;
+			self.openstatesConnectionStatus = (ReachabilityStatus)currentStatus;
 		if(curReach == tloReach)
-			self.tloConnectionStatus = currentStatus;
+			self.tloConnectionStatus = (ReachabilityStatus)currentStatus;
 
         if (appDelegate)
         {
@@ -149,11 +146,11 @@
 #pragma mark Alerts and Convenience Methods
 
 + (BOOL)texlegeReachable {
-	return [[TexLegeReachability sharedTexLegeReachability] texlegeConnectionStatus] > NotReachable;
+	return [TexLegeReachability sharedTexLegeReachability].texlegeConnectionStatus > NotReachable;
 }
 
 + (BOOL)openstatesReachable {
-	return [[TexLegeReachability sharedTexLegeReachability] openstatesConnectionStatus] > NotReachable;
+	return [TexLegeReachability sharedTexLegeReachability].openstatesConnectionStatus > NotReachable;
 }
 
 + (void)noInternetAlert {
@@ -167,7 +164,8 @@
 	[ noInternetAlert release ];
 }
 
-+ (void)noHostAlert {
++ (void)noHostAlert
+{
 	UIAlertView *alert = [[ UIAlertView alloc ] 
 			 initWithTitle:NSLocalizedStringFromTable(@"Host Unreachable", @"AppAlerts", @"Internet host is down")
 			 message:NSLocalizedStringFromTable(@"There was a problem contacting the specified host, the URL may have changed or may contain typographical errors. Perhaps try the connection again later.", @"AppAlerts", @"")
@@ -178,7 +176,8 @@
 	[ alert release ];
 }
 
-- (BOOL) isNetworkReachable {
+- (BOOL)isNetworkReachable
+{
 	BOOL reachable = YES;
 	
 	reachable = (self.internetConnectionStatus != NotReachable);
@@ -186,25 +185,29 @@
 	return reachable;
 }
 
-- (BOOL) isNetworkReachableViaWiFi {
+- (BOOL)isNetworkReachableViaWiFi
+{
 	BOOL reachable = (self.internetConnectionStatus == ReachableViaWiFi);
 
 	return reachable;
 }
 
-+ (BOOL) isHostReachable:(NSString *)host {
++ (BOOL) isHostReachable:(NSString *)host
+{
 	BOOL reachable = YES;
 	
 	if ([host isEqualToString:RESTKIT_HOST])
-		reachable = [[TexLegeReachability sharedTexLegeReachability] texlegeConnectionStatus] > NotReachable;
+		reachable = [TexLegeReachability sharedTexLegeReachability].texlegeConnectionStatus > NotReachable;
 	else if ([host isEqualToString:tloApiHost])
-		reachable = [[TexLegeReachability sharedTexLegeReachability] tloConnectionStatus] > NotReachable;
+		reachable = [TexLegeReachability sharedTexLegeReachability].tloConnectionStatus > NotReachable;
 	else if ([host isEqualToString:osApiHost])
-		reachable = [[TexLegeReachability sharedTexLegeReachability] openstatesConnectionStatus] > NotReachable;
-	else {
+		reachable = [TexLegeReachability sharedTexLegeReachability].openstatesConnectionStatus > NotReachable;
+	else
+    {
 #if ALLOW_SLOW_DNS_LOOKUPS
 		Reachability *curReach = [Reachability reachabilityWithHostName:host];
-		if (curReach) {
+		if (curReach)
+        {
 			NetworkStatus status = [curReach currentReachabilityStatus];
 			reachable = status > NotReachable;
 		}
@@ -215,29 +218,32 @@
 	return reachable;
 }
 
-+ (BOOL) canReachHostWithURL:(NSURL *)url alert:(BOOL)doAlert {
++ (BOOL) canReachHostWithURL:(NSURL *)url alert:(BOOL)doAlert
+{
 	BOOL reachableHost = NO;
-	if (!url) {
+	if (!url)
 		return NO;
-	}
-	if ([url isFileURL]) {
+
+    if (url.fileURL)
 		return YES;
-	}
-	if (![[TexLegeReachability sharedTexLegeReachability] isNetworkReachable]) {
-		if (doAlert) {
+
+    if (![[TexLegeReachability sharedTexLegeReachability] isNetworkReachable])
+    {
+		if (doAlert)
 			[TexLegeReachability noInternetAlert];
-		}
 	}
-	else if ([[url scheme] isEqualToString:@"twitter"] && 
-			 [[UIApplication sharedApplication] canOpenURL:url]) {
+	else if ([url.scheme isEqualToString:@"twitter"] && 
+			 [[UIApplication sharedApplication] canOpenURL:url])
+    {
 		reachableHost = YES;
 	}
-	else if (![TexLegeReachability isHostReachable:[url host]]) {
-		if (doAlert) {
+	else if (![TexLegeReachability isHostReachable:url.host])
+    {
+		if (doAlert)
 			[TexLegeReachability noHostAlert];
-		}
 	}
-	else {
+	else
+    {
 		reachableHost = YES;
 	}
 	
@@ -245,8 +251,8 @@
 }
 
 // throw up some appropriate errors while you're at it...
-+ (BOOL) canReachHostWithURL:(NSURL *)url {
-	
++ (BOOL) canReachHostWithURL:(NSURL *)url
+{
 	return [TexLegeReachability canReachHostWithURL:url alert:YES];
 }
 

@@ -74,7 +74,7 @@
 
 - (NSString *) lastnameInitial {
 	[self willAccessValueForKey:@"lastnameInitial"];
-	NSString * initial = [[self lastname] substringToIndex:1];
+	NSString * initial = [self.lastname substringToIndex:1];
 	[self didAccessValueForKey:@"lastnameInitial"];
 	return initial;
 }
@@ -84,7 +84,7 @@
 }
 
 - (NSString *)partyShortName {
-	return stringForParty([self.party_id integerValue], TLReturnInitial);
+	return stringForParty((self.party_id).integerValue, TLReturnInitial);
 }
 
 - (NSString *)legTypeShortName {
@@ -98,36 +98,36 @@
 
 - (NSString *)legProperName {
 	NSMutableString *name = [NSMutableString stringWithCapacity:128];
-	if ([self.firstname length] > 0)
+	if ((self.firstname).length > 0)
 		[name appendString:self.firstname];
-	else if ([self.middlename length] > 0)
+	else if ((self.middlename).length > 0)
 		[name appendString:self.firstname];
 	
 	[name appendFormat:@" %@", self.lastname];
 	
-	if ([self.suffix length] > 0)
+	if ((self.suffix).length > 0)
 		[name appendFormat:@", %@", self.suffix];
 
 	return name;
 }
 
 - (NSString *)districtPartyString {
-	NSString *string = [NSString stringWithFormat: @"(%@-%ld)", self.partyShortName, (long)[self.district integerValue]];
+	NSString *string = [NSString stringWithFormat: @"(%@-%ld)", self.partyShortName, (long)(self.district).integerValue];
 	return string;
 }
 
 - (NSString *)fullName {
 	NSMutableString *name = [NSMutableString stringWithCapacity:128];
 
-	if ([self.firstname length] > 0)
+	if ((self.firstname).length > 0)
 		[name appendString:self.firstname];
-	if ([self.middlename length] > 0)
+	if ((self.middlename).length > 0)
 		[name appendFormat:@" %@", self.middlename];
-	if ([self.nickname length] > 0)
+	if ((self.nickname).length > 0)
 		[name appendFormat:@" \"%@\"", self.nickname];
-	if ([self.lastname length] > 0)
+	if ((self.lastname).length > 0)
 		[name appendFormat:@" %@", self.lastname];
-	if ([self.suffix length] > 0)
+	if ((self.suffix).length > 0)
 		[name appendFormat:@", %@", self.suffix];
 
 	return name;
@@ -136,13 +136,13 @@
 - (NSString *)fullNameLastFirst {
 	NSMutableString *name = [NSMutableString stringWithCapacity:128];
 	
-	if ([self.lastname length] > 0)
+	if ((self.lastname).length > 0)
 		[name appendFormat:@"%@, ", self.lastname];
-	if ([self.firstname length] > 0)
+	if ((self.firstname).length > 0)
 		[name appendString:self.firstname];
-	if ([self.middlename length] > 0)
+	if ((self.middlename).length > 0)
 		[name appendFormat:@" %@", self.middlename];
-	if ([self.suffix length] > 0)
+	if ((self.suffix).length > 0)
 		[name appendFormat:@" %@", self.suffix];
 	
 	return name;
@@ -157,19 +157,19 @@
 - (NSString *)labelSubText {
 	NSString *string;
 	string = [NSString stringWithFormat: NSLocalizedStringFromTable(@"%@ - District %d", @"DataTableUI", @"The person and their district number"),
-			self.legtype_name, [self.district integerValue]];
+			self.legtype_name, (self.district).integerValue];
 	return string;
 }
 
 - (NSString *)website {
 	NSString *formatString = nil;
-	if ([self.legtype integerValue] == HOUSE)
+	if ((self.legtype).integerValue == HOUSE)
 		formatString = [UtilityMethods texLegeStringWithKeyPath:@"OfficialURLs.houseWeb"];	// contains format placeholders
 	else
 		formatString = [UtilityMethods texLegeStringWithKeyPath:@"OfficialURLs.senateWeb"];	// contains format placeholders
 	
 	if (formatString)
-		return [formatString stringByReplacingOccurrencesOfString:@"%@" withString:[self.district stringValue]];
+		return [formatString stringByReplacingOccurrencesOfString:@"%@" withString:(self.district).stringValue];
 	return nil;
 }
 
@@ -186,14 +186,14 @@
 	if (IsEmpty(self.districtOffices))
 		return 0;
 	else
-		return [self.districtOffices count];
+		return (self.districtOffices).count;
 }
 
 - (NSInteger)numberOfStaffers {
 	if (IsEmpty(self.staffers))
 		return 0;
 	else
-		return [self.staffers count];
+		return (self.staffers).count;
 }
 
 - (NSString *)tenureString {
@@ -218,19 +218,19 @@
 
 - (NSArray *)sortedCommitteePositions
 {
-	return [[self.committeePositions allObjects] 
+	return [(self.committeePositions).allObjects 
 							sortedArrayUsingSelector:@selector(comparePositionAndCommittee:)];
 }
 
 - (NSArray *)sortedStaffers {
 	NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES] autorelease];
-	return [[self.staffers allObjects] 
-			sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+	return [(self.staffers).allObjects 
+			sortedArrayUsingDescriptors:@[sortDescriptor]];
 }
 
 - (NSString *)districtMapURL
 {
-	NSString *chamber = stringForChamber([self.legtype integerValue], TLReturnFull);
+	NSString *chamber = stringForChamber((self.legtype).integerValue, TLReturnFull);
 	NSString *formatString = [UtilityMethods texLegeStringWithKeyPath:@"OfficialURLs.mapPdfUrl"];	// contains format placeholders
 	if (chamber && formatString && self.district)
 		return [NSString stringWithFormat:formatString, chamber, self.district];
@@ -238,15 +238,15 @@
 }
 
 - (NSString *)chamberName {	
-	return  stringForChamber([self.legtype integerValue], TLReturnFull);
+	return  stringForChamber((self.legtype).integerValue, TLReturnFull);
 }
 
 - (WnomObj *)latestWnomScore {
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"session"ascending:NO];
-	NSArray *wnoms = [[self.wnomScores allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+	NSArray *wnoms = [(self.wnomScores).allObjects sortedArrayUsingDescriptors:@[sortDescriptor]];
 	
 	if (!IsEmpty(wnoms))
-		return [wnoms objectAtIndex:0];
+		return wnoms[0];
 	return nil;
 }
 
@@ -254,7 +254,7 @@
 	CGFloat retVal = 0.0f;
 	WnomObj *latest = self.latestWnomScore;
 	if (latest)
-		retVal = [latest.wnomAdj floatValue];
+		retVal = (latest.wnomAdj).floatValue;
 	return retVal;
 }
 @end

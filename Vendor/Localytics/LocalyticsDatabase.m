@@ -13,7 +13,7 @@
 #define BUSY_TIMEOUT                30              // Maximum time SQlite will busy-wait for the database to unlock before returning SQLITE_BUSY
 
 @interface LocalyticsDatabase ()
-    - (int)schemaVersion;
+    @property (NS_NONATOMIC_IOSONLY, readonly) int schemaVersion;
     - (void)createSchema;
     - (void)upgradeToSchemaV2;
     - (void)moveDbToCaches;
@@ -26,7 +26,7 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
 
 + (NSString *)localyticsDirectoryPath {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);    
-    return  [[paths objectAtIndex:0] stringByAppendingPathComponent:LOCALYTICS_DIR];
+    return  [paths[0] stringByAppendingPathComponent:LOCALYTICS_DIR];
 }
 
 + (NSString *)localyticsDatabasePath {
@@ -64,12 +64,12 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
         // Attempt to open database. It will be created if it does not exist, already.
         [_dbLock lock];
         NSString *dbPath = [LocalyticsDatabase localyticsDatabasePath];
-        int code =  sqlite3_open([dbPath UTF8String], &_databaseConnection);
+        int code =  sqlite3_open(dbPath.UTF8String, &_databaseConnection);
 
         // If we were unable to open the database, it is likely corrupted. Clobber it and move on.
         if (code != SQLITE_OK) {
             [[NSFileManager defaultManager] removeItemAtPath:dbPath error:nil];
-            code =  sqlite3_open([dbPath UTF8String], &_databaseConnection);
+            code =  sqlite3_open(dbPath.UTF8String, &_databaseConnection);
         }
         [_dbLock unlock];
 
@@ -143,7 +143,7 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
     sqlite3_prepare_v2(_databaseConnection, "SELECT install_id FROM localytics_info", -1, &selectInstallId, NULL);
     int code = sqlite3_step(selectInstallId);
     if (code == SQLITE_ROW && sqlite3_column_text(selectInstallId, 0)) {                
-        installId = [NSString stringWithUTF8String:(char *)sqlite3_column_text(selectInstallId, 0)];
+        installId = @((char *)sqlite3_column_text(selectInstallId, 0));
     }
     sqlite3_finalize(selectInstallId);
     
@@ -155,9 +155,9 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
 // and into the /library/caches directory 
 - (void)moveDbToCaches {
     NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);    
-    NSString *localyticsDocumentsDirectory = [[documentPaths objectAtIndex:0] stringByAppendingPathComponent:LOCALYTICS_DIR];    
+    NSString *localyticsDocumentsDirectory = [documentPaths[0] stringByAppendingPathComponent:LOCALYTICS_DIR];    
     NSArray *cachesPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *localyticsCachesDirectory = [[cachesPaths objectAtIndex:0] stringByAppendingPathComponent:LOCALYTICS_DIR];
+    NSString *localyticsCachesDirectory = [cachesPaths[0] stringByAppendingPathComponent:LOCALYTICS_DIR];
     
     // If the old directory doesn't exist, there is nothing else to do here
     if([[NSFileManager defaultManager] fileExistsAtPath:localyticsDocumentsDirectory] == NO) 
@@ -319,7 +319,7 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
     NSDictionary *fileAttributes = [[NSFileManager defaultManager] 
                                     attributesOfItemAtPath:[LocalyticsDatabase localyticsDatabasePath]
                                     error:nil];
-    timestamp = [[fileAttributes fileCreationDate] timeIntervalSince1970];    
+    timestamp = [fileAttributes fileCreationDate].timeIntervalSince1970;    
     return timestamp;
 }
 
@@ -397,10 +397,10 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
     
     [_dbLock lock];
     sqlite3_stmt *selectCustomDim;
-    sqlite3_prepare_v2(_databaseConnection, [query UTF8String], -1, &selectCustomDim, NULL);
+    sqlite3_prepare_v2(_databaseConnection, query.UTF8String, -1, &selectCustomDim, NULL);
     int code = sqlite3_step(selectCustomDim);
     if (code == SQLITE_ROW && sqlite3_column_text(selectCustomDim, 0)) {
-        value = [NSString stringWithUTF8String:(char *)sqlite3_column_text(selectCustomDim, 0)];
+        value = @((char *)sqlite3_column_text(selectCustomDim, 0));
     }
     sqlite3_finalize(selectCustomDim);
     [_dbLock unlock];
@@ -418,7 +418,7 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
                          (value == nil) ? @"null" : [NSString stringWithFormat:@"\"%@\"", value]];
     
     [_dbLock lock];
-    int code = sqlite3_exec(_databaseConnection, [query UTF8String], NULL, NULL, NULL);
+    int code = sqlite3_exec(_databaseConnection, query.UTF8String, NULL, NULL, NULL);
     [_dbLock unlock];
 
     return code == SQLITE_OK;
@@ -508,7 +508,7 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
     int code = SQLITE_OK;
     sqlite3_stmt *insertEvent;
     sqlite3_prepare_v2(_databaseConnection, "INSERT INTO events (blob_string) VALUES (?)", -1, &insertEvent, NULL);
-    sqlite3_bind_text(insertEvent, 1, [blob UTF8String], -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(insertEvent, 1, blob.UTF8String, -1, SQLITE_TRANSIENT); 
     code = sqlite3_step(insertEvent);
     sqlite3_finalize(insertEvent);
 
@@ -595,7 +595,7 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
     sqlite3_stmt *insertHeader;
     sqlite3_prepare_v2(_databaseConnection, "INSERT INTO upload_headers (sequence_number, blob_string) VALUES (?, ?)", -1, &insertHeader, NULL);
     sqlite3_bind_int(insertHeader, 1, number);
-    sqlite3_bind_text(insertHeader, 2, [blob UTF8String], -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(insertHeader, 2, blob.UTF8String, -1, SQLITE_TRANSIENT); 
     int code = sqlite3_step(insertHeader);
     sqlite3_finalize(insertHeader);
     
@@ -631,7 +631,7 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
     // Associate all outstanding events with the given upload header ID.
     NSString *stageEvents = [NSString stringWithFormat:@"UPDATE events SET upload_header = ? WHERE upload_header IS NULL"];
     sqlite3_stmt *updateEvents;
-    sqlite3_prepare_v2(_databaseConnection, [stageEvents UTF8String], -1, &updateEvents, NULL);
+    sqlite3_prepare_v2(_databaseConnection, stageEvents.UTF8String, -1, &updateEvents, NULL);
     sqlite3_bind_int(updateEvents, 1, (int)headerId);
     int code = sqlite3_step(updateEvents);
     sqlite3_finalize(updateEvents);

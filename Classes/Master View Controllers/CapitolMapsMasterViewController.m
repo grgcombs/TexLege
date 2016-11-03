@@ -55,7 +55,7 @@
 		id detailObject = self.detailViewController ? [self.detailViewController valueForKey:@"map"] : nil;
 		
 		if (!detailObject) {
-			NSIndexPath *currentIndexPath = [self.tableView indexPathForSelectedRow];
+			NSIndexPath *currentIndexPath = (self.tableView).indexPathForSelectedRow;
 			if (!currentIndexPath) {			
 				NSUInteger ints[2] = {0,0};	// just pick the first one then
 				currentIndexPath = [NSIndexPath indexPathWithIndexes:ints length:2];
@@ -96,7 +96,7 @@
 	
 	CapitolMap *capitolMap = dataObject;
 	if (capitolMap) {
-		[(CapitolMapsDetailViewController*) self.detailViewController setMap:capitolMap];
+		((CapitolMapsDetailViewController*) self.detailViewController).map = capitolMap;
 		if (isSplitViewDetail == NO) {
 			// push the detail view controller onto the navigation stack to display it				
 			[self.navigationController pushViewController:self.detailViewController animated:YES];

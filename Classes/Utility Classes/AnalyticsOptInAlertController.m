@@ -17,7 +17,7 @@
 @implementation AnalyticsOptInAlertController
 @synthesize currentAlert;
 
-- (id)init {
+- (instancetype)init {
 	if ((self=[super init])) {
 	}
 	return self;
@@ -29,8 +29,8 @@
 	[[NSUserDefaults standardUserDefaults] synchronize];	
 	NSNumber *optInUserSetting = [[NSUserDefaults standardUserDefaults] objectForKey:kAnalyticsSettingsSwitch];
 	if (!optInUserSetting)	// we didn't find a switch setting in the bundle??? shouldn't happen...
-		optInUserSetting = [NSNumber numberWithBool:YES];
-	BOOL didOptIn = [optInUserSetting boolValue];
+		optInUserSetting = @YES;
+	BOOL didOptIn = optInUserSetting.boolValue;
 	[[LocalyticsSession sharedLocalyticsSession] setOptIn:didOptIn];	
 }
 

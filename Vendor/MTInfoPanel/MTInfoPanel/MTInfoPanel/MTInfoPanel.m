@@ -115,7 +115,7 @@
         // panel height when no subtitle set
     CGFloat panelHeight = 50.f;
     
-    [panel setPanelType:type];
+    panel.panelType = type;
     
         // set values of views
     panel.titleLabel.text = title;
@@ -166,7 +166,7 @@
     return panel;
 }
 
-- (id)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         [self setup];
     }
@@ -174,7 +174,7 @@
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
     if ((self = [super initWithCoder:aDecoder])) {
         [self setup];
     }
@@ -188,7 +188,7 @@
 ////////////////////////////////////////////////////////////////////////
 
 - (void)setFrame:(CGRect)frame {
-    [super setFrame:frame];
+    super.frame = frame;
     
     // update width of layers to allow rotation to landscape
     for (CALayer *layer in self.backgroundGradient.layer.sublayers) {
@@ -288,19 +288,19 @@
     UIColor *darkColor = [self changeColor:toColor withFactor:0.25];
     
     gradient.frame = self.backgroundGradient.bounds;
-    gradient.colors = [NSArray arrayWithObjects:(id)[fromColor CGColor], (id)[toColor CGColor], nil];
+    gradient.colors = @[(id)fromColor.CGColor, (id)toColor.CGColor];
     
     CAGradientLayer *darkTopLine = [CAGradientLayer layer];
     darkTopLine.frame = CGRectMake(0, 0, self.backgroundGradient.bounds.size.width, lineHeight);
-    darkTopLine.colors = [NSArray arrayWithObjects:(id)[darkColor CGColor], (id)[darkColor CGColor], nil];
+    darkTopLine.colors = @[(id)darkColor.CGColor, (id)darkColor.CGColor];
     
     CAGradientLayer *lightTopLine = [CAGradientLayer layer];
     lightTopLine.frame = CGRectMake(0, 1, self.backgroundGradient.bounds.size.width, lineHeight);
-    lightTopLine.colors = [NSArray arrayWithObjects:(id)[lightColor CGColor], (id)[lightColor CGColor], nil];
+    lightTopLine.colors = @[(id)lightColor.CGColor, (id)lightColor.CGColor];
     
     CAGradientLayer *darkEndLine = [CAGradientLayer layer];
     darkEndLine.frame = CGRectMake(0, self.backgroundGradient.bounds.size.height - lineHeight, self.backgroundGradient.bounds.size.width, lineHeight);
-    darkEndLine.colors = [NSArray arrayWithObjects:(id)[darkColor CGColor], (id)[darkColor CGColor], nil];
+    darkEndLine.colors = @[(id)darkColor.CGColor, (id)darkColor.CGColor];
     
     [self.backgroundGradient.layer insertSublayer:gradient atIndex:0];
     [self.backgroundGradient.layer insertSublayer:darkTopLine atIndex:1];
@@ -311,9 +311,9 @@
 - (UIColor *)changeColor:(UIColor *)sourceColor withFactor:(CGFloat)factor {
     // oldComponents is the array INSIDE the original color
     // changing these changes the original, so we copy it
-    CGFloat *oldComponents = (CGFloat *)CGColorGetComponents([sourceColor CGColor]);
+    CGFloat *oldComponents = (CGFloat *)CGColorGetComponents(sourceColor.CGColor);
     CGFloat newComponents[4];
-    size_t numComponents = CGColorGetNumberOfComponents([sourceColor CGColor]);
+    size_t numComponents = CGColorGetNumberOfComponents(sourceColor.CGColor);
     
     switch (numComponents) {
         case 2: {

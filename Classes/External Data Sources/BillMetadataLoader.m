@@ -18,7 +18,7 @@
 @implementation BillMetadataLoader
 @synthesize isFresh;
 
-+ (id)sharedBillMetadataLoader
++ (BillMetadataLoader*)sharedBillMetadataLoader
 {
 	static dispatch_once_t pred;
 	static BillMetadataLoader *foo = nil;
@@ -27,7 +27,7 @@
 	return foo;
 }
 
-- (id)init {
+- (instancetype)init {
 	if ((self=[super init])) {
 		isLoading = NO;
 		isFresh = NO;

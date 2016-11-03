@@ -12,41 +12,39 @@
 
 #import <UIKit/UIKit.h>
 
-enum {
-	DirectoryTypeNone = 0,
-	DirectoryTypeNotes,
-	DirectoryTypeIndex,
-	DirectoryTypeCommittee,
-	DirectoryTypeContributions,
-	DirectoryTypeBills,
-	// URL types go below here
-	kDirectoryTypeIsURLHandler,
-	DirectoryTypeOfficeMap,
-	DirectoryTypeWeb,
-	DirectoryTypeTwitter,
-	kDirectoryTypeIsExternalHandler,
-	DirectoryTypeMap,
-	DirectoryTypeMail,
-	DirectoryTypePhone,
-	DirectoryTypeSMS,
+typedef NS_ENUM(UInt32, DirectoryType) {
+    DirectoryTypeNone = 0,
+    DirectoryTypeNotes,
+    DirectoryTypeIndex,
+    DirectoryTypeCommittee,
+    DirectoryTypeContributions,
+    DirectoryTypeBills,
+
+    // URL types go below here
+    kDirectoryTypeIsURLHandler,
+    DirectoryTypeOfficeMap,
+    DirectoryTypeWeb,
+    DirectoryTypeTwitter,
+    kDirectoryTypeIsExternalHandler,
+    DirectoryTypeMap,
+    DirectoryTypeMail,
+    DirectoryTypePhone,
+    DirectoryTypeSMS,
 };
 
 
-@interface TableCellDataObject : NSObject {
-	
-}
-@property (nonatomic, retain)id entryValue;
-@property (nonatomic)BOOL isClickable;
-@property (nonatomic)NSInteger entryType;
+@interface TableCellDataObject : NSObject
+
+@property (nonatomic, retain) id entryValue;
+@property (nonatomic) BOOL isClickable;
+@property (nonatomic) NSInteger entryType;
 @property (nonatomic, retain) id action;
 @property (nonatomic, retain) id parameter;
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *subtitle;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSURL *generateURL;
 
-
-- (NSURL *)generateURL;
-
-- (id)initWithDictionary:(NSDictionary *)aDictionary;
+- (instancetype)initWithDictionary:(NSDictionary *)aDictionary;
 
 
 @end

@@ -38,9 +38,9 @@
 - (void)runOnEveryAppStart;
 - (void)runOnAppQuit;
 - (void)restoreArchivableSavedTableSelection;
-- (NSData *)archivableSavedTableSelection;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *archivableSavedTableSelection;
 - (void)resetSavedTableSelection:(id)sender;
-- (BOOL)isDatabaseResetNeeded;
+@property (NS_NONATOMIC_IOSONLY, getter=isDatabaseResetNeeded, readonly) BOOL databaseResetNeeded;
 @end
 
 // user default dictionary keys
@@ -68,10 +68,10 @@ NSInteger kNoSelection = -1;
 @synthesize billsMasterVC;
 
 + (TexLegeAppDelegate *)appDelegate {
-	return (TexLegeAppDelegate *)[[UIApplication sharedApplication] delegate];
+	return (TexLegeAppDelegate *)[UIApplication sharedApplication].delegate;
 }
 
-- init {
+- (instancetype) init {
 	if ((self = [super init])) {
 		// initialize  to nil
 		mainWindow = nil;
@@ -126,9 +126,9 @@ NSInteger kNoSelection = -1;
 
 - (UINavigationController *) masterNavigationController {
 	if ([UtilityMethods isIPadDevice]) {
-		UISplitViewController *split = [self splitViewController];
-		if (split && split.viewControllers && [split.viewControllers count])
-			return [split.viewControllers objectAtIndex:0];
+		UISplitViewController *split = self.splitViewController;
+		if (split && split.viewControllers && (split.viewControllers).count)
+			return (split.viewControllers)[0];
 	}
 	else {
 		if (![self.tabBarController.selectedViewController isKindOfClass:[UINavigationController class]]) {
@@ -143,12 +143,12 @@ NSInteger kNoSelection = -1;
 
 - (UINavigationController *) detailNavigationController {
 	if ([UtilityMethods isIPadDevice]) {
-		UISplitViewController *split = [self splitViewController];
-		if (split && split.viewControllers && [split.viewControllers count]>1)
-			return [split.viewControllers objectAtIndex:1];
+		UISplitViewController *split = self.splitViewController;
+		if (split && split.viewControllers && (split.viewControllers).count>1)
+			return (split.viewControllers)[1];
 	}
 	else
-		return [self masterNavigationController];
+		return self.masterNavigationController;
 	
 	return nil;
 }
@@ -170,9 +170,9 @@ NSInteger kNoSelection = -1;
 */
 
 - (UIViewController *) currentMasterViewController {
-	UINavigationController *nav = [self masterNavigationController];
-	if (nav && nav.viewControllers && [nav.viewControllers count])
-		return [nav.viewControllers objectAtIndex:0];
+	UINavigationController *nav = self.masterNavigationController;
+	if (nav && nav.viewControllers && (nav.viewControllers).count)
+		return (nav.viewControllers)[0];
 	return nil;
 }
 
@@ -183,8 +183,8 @@ NSInteger kNoSelection = -1;
 	if (/*![UtilityMethods isIPadDevice]*/1) {
 		if (![viewController isEqual:tbc.selectedViewController]) {
 			//debug_NSLog(@"About to switch tabs, popping to root view controller.");
-			UINavigationController *nav = [self detailNavigationController];
-			if (nav && [nav.viewControllers count]>1)
+			UINavigationController *nav = self.detailNavigationController;
+			if (nav && (nav.viewControllers).count>1)
 				[nav popToRootViewControllerAnimated:YES];
 		}
 	}
@@ -205,7 +205,7 @@ NSInteger kNoSelection = -1;
 		if (!vcTitle)
 			vcTitle = viewController.tabBarItem.title;
 		
-		NSDictionary *tabSelectionDict = [NSDictionary dictionaryWithObject:vcTitle forKey:@"Feature"];
+		NSDictionary *tabSelectionDict = @{@"Feature": vcTitle};
 		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"SELECTTAB" attributes:tabSelectionDict];		
 	}
 
@@ -219,7 +219,7 @@ NSInteger kNoSelection = -1;
     {
 		NSString *vcTitle = NSStringFromClass([viewController class]);
 		if (NO == [vcTitle hasPrefix:@"UIMore"]) {		
-			NSDictionary *tabSelectionDict = [NSDictionary dictionaryWithObject:vcTitle forKey:@"Feature"];
+			NSDictionary *tabSelectionDict = @{@"Feature": vcTitle};
 			[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"SELECTTAB" attributes:tabSelectionDict];
 		}
     }
@@ -230,18 +230,18 @@ NSInteger kNoSelection = -1;
 
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSArray *savedOrder = [defaults arrayForKey:kSavedTabOrderKey];
-	NSMutableArray *orderedTabs = [NSMutableArray arrayWithCapacity:[self.tabBarController.viewControllers count]];
+	NSMutableArray *orderedTabs = [NSMutableArray arrayWithCapacity:(self.tabBarController.viewControllers).count];
 	NSInteger foundVCs = 0;
-	if (savedOrder && [savedOrder count] > 0 ) {
-		for (NSInteger i = 0; i < [savedOrder count]; i++){
+	if (savedOrder && savedOrder.count > 0 ) {
+		for (NSInteger i = 0; i < savedOrder.count; i++){
 			for (UIViewController *aController in self.tabBarController.viewControllers) {
-				if ([aController.tabBarItem.title isEqualToString:[savedOrder objectAtIndex:i]]) {
+				if ([aController.tabBarItem.title isEqualToString:savedOrder[i]]) {
 					[orderedTabs addObject:aController];
 					foundVCs++;
 				}
 			}
 		}
-		if (foundVCs < [self.tabBarController.viewControllers count]) // we've got more now than we used to
+		if (foundVCs < (self.tabBarController.viewControllers).count) // we've got more now than we used to
 			[defaults removeObjectForKey:kSavedTabOrderKey];
 		else
 			tabBarController.viewControllers = orderedTabs;
@@ -264,7 +264,7 @@ NSInteger kNoSelection = -1;
 	NSArray *VCs = [[NSArray alloc] initWithObjects:self.legislatorMasterVC, self.committeeMasterVC, self.districtMapMasterVC,
 					self.calendarMasterVC, self.billsMasterVC, self.capitolMapsMasterVC, self.linksMasterVC, nil];
 	
-	NSString * tempVCKey = [self.savedTableSelection objectForKey:@"viewController"];
+	NSString * tempVCKey = (self.savedTableSelection)[@"viewController"];
 	NSInteger savedTabSelectionIndex = -1;
 	NSInteger loopIndex = 0;
 	for (GeneralTableViewController *masterVC in VCs) {
@@ -275,38 +275,38 @@ NSInteger kNoSelection = -1;
 			savedTabSelectionIndex = loopIndex;
 		loopIndex++;
 	}
-	if (savedTabSelectionIndex < 0 || savedTabSelectionIndex > [VCs count])
+	if (savedTabSelectionIndex < 0 || savedTabSelectionIndex > VCs.count)
 		savedTabSelectionIndex = 0;
 	
 	if ([UtilityMethods isIPadDevice]) {
-		NSMutableArray *splitViewControllers = [[NSMutableArray alloc] initWithCapacity:[VCs count]];
+		NSMutableArray *splitViewControllers = [[NSMutableArray alloc] initWithCapacity:VCs.count];
 		NSInteger index = 0;
 		for (GeneralTableViewController * controller in VCs) {
-			UISplitViewController * split = [controller splitViewController];
+			UISplitViewController * split = controller.splitViewController;
 			if (split) {
 				// THIS SETS UP THE TAB BAR ITEMS/IMAGES AND SET THE TAG FOR TABBAR_ITEM_TAGS
-				split.title = [[controller dataSource] name];
+				split.title = controller.dataSource.name;
 				split.tabBarItem = [[[UITabBarItem alloc] initWithTitle:
-									[[controller dataSource] name] image:[[controller dataSource] tabBarImage] tag:index] autorelease];
+									controller.dataSource.name image:controller.dataSource.tabBarImage tag:index] autorelease];
 				[splitViewControllers addObject:split];
 			}
 			index++;
 		}
-		[self.tabBarController setViewControllers:splitViewControllers];
+		(self.tabBarController).viewControllers = splitViewControllers;
 		[splitViewControllers release];
 	} 
 	
-	UIViewController * savedTabController = [self.tabBarController.viewControllers objectAtIndex:savedTabSelectionIndex];
+	UIViewController * savedTabController = (self.tabBarController.viewControllers)[savedTabSelectionIndex];
 	if (!savedTabController || !savedTabController.tabBarItem.enabled) {
 		debug_NSLog (@"Couldn't find a view/navigation controller at index: %ld", (long)savedTabSelectionIndex);
-		savedTabController = [self.tabBarController.viewControllers objectAtIndex:0];
+		savedTabController = (self.tabBarController.viewControllers)[0];
 	}
 	else if (self.tabBarController.moreNavigationController) {
 		self.tabBarController.moreNavigationController.navigationBar.tintColor = [TexLegeTheme navbar];
 	}
 	[self setTabOrderIfSaved];
 	
-	[self.tabBarController setSelectedViewController:savedTabController];
+	(self.tabBarController).selectedViewController = savedTabController;
 	self.mainWindow.rootViewController = self.tabBarController;
 	
 	nice_release(VCs);
@@ -337,7 +337,7 @@ NSInteger kNoSelection = -1;
 	
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 
-	NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+	NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
 	
 	[self restoreArchivableSavedTableSelection];
 	
@@ -346,16 +346,14 @@ NSInteger kNoSelection = -1;
 	[self.mainWindow makeKeyAndVisible];
 
 	// register our preference selection data to be archived
-	NSDictionary *savedPrefsDict = [NSDictionary dictionaryWithObjectsAndKeys: 
-									[self archivableSavedTableSelection],kRestoreSelectionKey,
-									[NSNumber numberWithBool:NO], kAnalyticsAskedForOptInKey,
-									[NSNumber numberWithBool:YES], kAnalyticsSettingsSwitch,
-									[NSNumber numberWithBool:NO], kShowedSplashScreenKey,
-									[NSDictionary dictionary], kSegmentControlPrefKey,
-									[NSNumber numberWithBool:NO], kResetSavedDatabaseKey,
-									@"support@texlege.com", kSupportEmailKey,
-									version, @"CFBundleVersion",
-									nil];
+	NSDictionary *savedPrefsDict = @{kRestoreSelectionKey: [self archivableSavedTableSelection],
+									kAnalyticsAskedForOptInKey: @NO,
+									kAnalyticsSettingsSwitch: @YES,
+									kShowedSplashScreenKey: @NO,
+									kSegmentControlPrefKey: @{},
+									kResetSavedDatabaseKey: @NO,
+									kSupportEmailKey: @"support@texlege.com",
+									@"CFBundleVersion": version};
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:savedPrefsDict];
 	
@@ -369,7 +367,7 @@ NSInteger kNoSelection = -1;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {		
-	NSLog(@"iOS Version: %@", [[UIDevice currentDevice] systemVersion]);
+	NSLog(@"iOS Version: %@", [UIDevice currentDevice].systemVersion);
 	
 	[[TexLegeReachability sharedTexLegeReachability] startCheckingReachability:self];
 	
@@ -377,7 +375,7 @@ NSInteger kNoSelection = -1;
 	[TexLegeCoreDataUtils initRestKitObjects:self];	
 	
     // Set up the mainWindow and content view
-	UIWindow *localMainWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+	UIWindow *localMainWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.mainWindow = localMainWindow;
 	[localMainWindow release];
 			
@@ -438,7 +436,7 @@ NSInteger kNoSelection = -1;
 		
 	if (self.tabBarController) {
 		// Smarten this up later for Core Data tab saving
-		NSMutableArray *savedOrder = [NSMutableArray arrayWithCapacity:[self.tabBarController.viewControllers count]];
+		NSMutableArray *savedOrder = [NSMutableArray arrayWithCapacity:(self.tabBarController.viewControllers).count];
 		NSArray *tabOrderToSave = self.tabBarController.viewControllers;
 		
 		for (UIViewController *aViewController in tabOrderToSave)
@@ -464,9 +462,9 @@ NSInteger kNoSelection = -1;
 - (id) savedTableSelectionForKey:(NSString *)vcKey {
 	id object = nil;
 	@try {
-		id savedVC = [self.savedTableSelection objectForKey:@"viewController"];
+		id savedVC = (self.savedTableSelection)[@"viewController"];
 		if (vcKey && savedVC && [vcKey isEqualToString:savedVC])
-			object = [self.savedTableSelection objectForKey:@"object"];
+			object = (self.savedTableSelection)[@"object"];
 		
 	}
 	@catch (NSException * e) {
@@ -481,9 +479,9 @@ NSInteger kNoSelection = -1;
 		[self.savedTableSelection removeAllObjects];
 		return;
 	}
-	[self.savedTableSelection setObject:vcKey forKey:@"viewController"];
+	(self.savedTableSelection)[@"viewController"] = vcKey;
 	if (object)
-		[self.savedTableSelection setObject:object forKey:@"object"];
+		(self.savedTableSelection)[@"object"] = object;
 	else
 		[self.savedTableSelection removeObjectForKey:@"object"];
 }

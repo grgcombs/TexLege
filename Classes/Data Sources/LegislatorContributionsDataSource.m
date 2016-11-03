@@ -34,7 +34,7 @@
 {
     NSString *title = nil;
 
-    switch ([self.queryType integerValue]) {
+    switch ((self.queryType).integerValue) {
         case kContributionQueryTop10Donors:
             title = NSLocalizedStringFromTable(@"Top Contributions", @"DataTableUI", @"Title for table listing top 10 campaign donors.");
             break;
@@ -81,7 +81,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (!IsEmpty(self.sectionList))
-        return [self.sectionList count];
+        return (self.sectionList).count;
     else
         return 0;
 }
@@ -104,7 +104,7 @@
     {
         NSArray *group = self.sectionList[section];
         if (group)
-            count = [group count];
+            count = group.count;
     }
     return count;
 }
@@ -113,7 +113,7 @@
 {
     NSString *title = NSLocalizedStringFromTable(@"Contributions",@"DataTableUI", @"Listing campaign contributions");
 
-    switch ([self.queryType integerValue])
+    switch ((self.queryType).integerValue)
     {
         case kContributionQueryRecipient:
             title = (section == 0) ?
@@ -162,9 +162,9 @@
     {
         UITableViewCellStyle style =  [TexLegeStandardGroupCell cellStyle];
 
-        if (([self.queryType integerValue] == kContributionQueryTop10Donors) ||
-            ([self.queryType integerValue] == kContributionQueryTop10Recipients) ||
-            ([self.queryType integerValue] == kContributionQueryTop10RecipientsIndiv))
+        if (((self.queryType).integerValue == kContributionQueryTop10Donors) ||
+            ((self.queryType).integerValue == kContributionQueryTop10Recipients) ||
+            ((self.queryType).integerValue == kContributionQueryTop10RecipientsIndiv))
             style = UITableViewCellStyleValue1;
 
         cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:style reuseIdentifier:cellIdentifier] autorelease];
@@ -194,7 +194,7 @@
 - (void)initiateQueryWithQueryID:(NSString *)aQuery type:(NSNumber *)type cycle:(NSString *)cycle parameter:(NSString *)parameter
 {
     if ([aQuery isKindOfClass:[NSNumber class]])
-        aQuery = [(NSNumber *)aQuery stringValue];
+        aQuery = ((NSNumber *)aQuery).stringValue;
     self.queryEntityID = aQuery;
     self.queryType = type;
     self.queryCycle = cycle;
@@ -227,7 +227,7 @@
         case kContributionQueryDonor:
         case kContributionQueryIndividual:
         default:
-            resourcePath = [NSString stringWithFormat:@"/entities/%@.json", aQuery];;
+            resourcePath = [NSString stringWithFormat:@"/entities/%@.json", aQuery];
             break;
     }
 
@@ -238,7 +238,7 @@
 
     if (!aQuery)
     {
-        if (parameter && [parameter isKindOfClass:[NSString class]] && [parameter length])
+        if (parameter && [parameter isKindOfClass:[NSString class]] && parameter.length)
         {
             resourcePath = [NSString stringWithFormat:@"/?%@&mode=json&APIKey=%@", parameter, FOLLOWTHEMONEY_APIKEY];
         }
@@ -260,7 +260,7 @@
                          } mutableCopy];
     }
 
-    switch ([self.queryType integerValue])
+    switch ((self.queryType).integerValue)
     {
         case kContributionQueryRecipient:
         default:
@@ -273,7 +273,7 @@
     }
 
     if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:followTheMoneyApiBaseURL] alert:YES])
-        apiClient = [[OpenLegislativeAPIs sharedOpenLegislativeAPIs] followTheMoneyApiClient];
+        apiClient = [OpenLegislativeAPIs sharedOpenLegislativeAPIs].followTheMoneyApiClient;
 #endif
 
     debug_NSLog(@"Contributions resource path: %@", resourcePath);
@@ -551,7 +551,7 @@
 
         NSMutableArray *thisSection = [[NSMutableArray alloc] init];
 
-        if (![records count])
+        if (!records.count)
         {	// no search results!
             NSString *name = [self.queryEntityID stringByReplacingOccurrencesOfString:@"+" withString:@" "];
 
@@ -559,7 +559,7 @@
             cellInfo.title = name;
             cellInfo.subtitle = NSLocalizedStringFromTable(@"Nothing for", @"DataTableUI", @"There is no information available for .... someone");
             cellInfo.entryValue = nil;
-            cellInfo.entryType = [self.queryType integerValue];
+            cellInfo.entryType = (self.queryType).integerValue;
             cellInfo.isClickable = NO;
             cellInfo.action = nil;
             cellInfo.parameter = nil;
@@ -710,8 +710,8 @@
 
     NSMutableArray *rows = [@[] mutableCopy];
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
-    [numberFormatter setMaximumFractionDigits:0];
+    numberFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
+    numberFormatter.maximumFractionDigits = 0;
 
     for (NSDictionary *record in records)
     {
@@ -722,7 +722,7 @@
         if (!electionYear || [electionYear isEqual:[NSNull null]])
             continue;
         if ([electionYear isKindOfClass:[NSNumber class]])
-            electionYear = [(NSNumber *)electionYear stringValue];
+            electionYear = ((NSNumber *)electionYear).stringValue;
 
         NSString *chamber = record[@"General_Office"][@"id"];
         if (!chamber || ![chamber isKindOfClass:[NSString class]])
@@ -736,7 +736,7 @@
         if (!amount)
             continue;
         if ([amount isKindOfClass:[NSString class]])
-            amount = @([(NSString *)amount doubleValue]);
+            amount = @(((NSString *)amount).doubleValue);
         if (![amount isKindOfClass:[NSNumber class]])
             continue;
 
@@ -752,7 +752,7 @@
         cellInfo.subtitle = electionYear;
         cellInfo.title = [numberFormatter stringFromNumber:amount];
         //cellInfo.entryValue = dataID;
-        cellInfo.entryType = [self.queryType integerValue];
+        cellInfo.entryType = (self.queryType).integerValue;
 
         if (!detailRequest)
         {
@@ -763,7 +763,7 @@
             cellInfo.isClickable = YES;
             cellInfo.parameter = detailRequest;
         }
-        cellInfo.action = [NSNumber numberWithInteger:kContributionQueryRecipient];
+        cellInfo.action = @(kContributionQueryRecipient);
 
         [rows addObject:cellInfo];
     }
@@ -786,8 +786,8 @@
     if (self.sectionList.count <= indexPath.section)
         return nil;
     NSArray *group = self.sectionList[indexPath.section];
-    if (group && [group count] > indexPath.row)
-        tempEntry = [group objectAtIndex:indexPath.row];
+    if (group && group.count > indexPath.row)
+        tempEntry = group[indexPath.row];
     return tempEntry;
 }
 

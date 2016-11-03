@@ -72,7 +72,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	if (![UtilityMethods isIPadDevice])
 		self.hidesBottomBarWhenPushed = YES;
 	
-	[self.view setBackgroundColor:[TexLegeTheme backgroundLight]];
+	(self.view).backgroundColor = [TexLegeTheme backgroundLight];
 	self.mapView.showsUserLocation = NO;
     self.mapView.delegate = self;
 	
@@ -134,7 +134,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	NSMutableArray *toRemove = [[NSMutableArray alloc] init];
 	if (toRemove) {
 		[toRemove setArray:self.mapView.overlays];
-		if ([toRemove count]>1) {
+		if (toRemove.count>1) {
 			[toRemove removeLastObject];
 			[self.mapView removeOverlays:toRemove];
 		}
@@ -302,7 +302,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay
 {
 	NSArray *colors = [[UIColor randomColor] triadicColors];
-	UIColor *myColor = [[colors objectAtIndex:_colorIndex] colorByDarkeningTo:0.50f];
+	UIColor *myColor = [colors[_colorIndex] colorByDarkeningTo:0.50f];
 	_colorIndex++;
 	if (_colorIndex > 1)
 		_colorIndex = 0;
@@ -311,7 +311,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
     {		
 		myColor = [TexLegeTheme texasOrange];
 
-		NSString *ovTitle = [overlay title];
+		NSString *ovTitle = overlay.title;
 		if (ovTitle && [ovTitle hasSubstring:stringForChamber(HOUSE, TLReturnFull) caseInsensitive:NO]) {
 			if (self.mapView.mapType > MKMapTypeStandard)
 				myColor = [UIColor cyanColor];
@@ -350,7 +350,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	if (!annotation)
 		return;
 	
-	if (![aView isSelected])
+	if (!aView.selected)
 		return;
 	
 	[self.mapView setCenterCoordinate:annotation.coordinate animated:YES];
@@ -363,8 +363,8 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 		BOOL foundOne = NO;
 		
 		for (id<MKOverlay>item in self.mapView.overlays) {
-			if ([[item title] isEqualToString:[annotation title]]) {	// we clicked on an existing overlay
-				if (self.districtView && [[item title] isEqualToString:[self.districtView.polygon title]]) { // it's the senate
+			if ([item.title isEqualToString:annotation.title]) {	// we clicked on an existing overlay
+				if (self.districtView && [item.title isEqualToString:(self.districtView.polygon).title]) { // it's the senate
 					foundOne = YES;
 					[toRemove removeObject:item];
 					break;
@@ -373,7 +373,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 		}
 		
 		//[self.mapView removeOverlays:self.mapView.overlays];
-		if (toRemove && [toRemove count])
+		if (toRemove && toRemove.count)
         {
             [self.mapView removeOverlays:toRemove];
         }

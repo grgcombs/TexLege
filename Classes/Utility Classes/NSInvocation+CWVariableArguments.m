@@ -33,9 +33,9 @@
 	if (retainArguments) {
 		[invocation retainArguments];
 	}
-	[invocation setTarget:target];
-	[invocation setSelector:aSelector];
-	for (int index = 2; index < [signature numberOfArguments]; index++) {
+	invocation.target = target;
+	invocation.selector = aSelector;
+	for (int index = 2; index < signature.numberOfArguments; index++) {
 		const char *type = [signature getArgumentTypeAtIndex:index];
 		NSUInteger size, align;
 		NSGetSizeAndAlignment(type, &size, &align);

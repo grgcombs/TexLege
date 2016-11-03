@@ -16,7 +16,7 @@
 
 @interface CapitolMapsDetailViewController : UIViewController <UISplitViewControllerDelegate, TXLDetailProtocol> {
 }
-@property (nonatomic,assign) id dataObject;
+@property (nonatomic,retain) id dataObject;
 
 @property (nonatomic,retain) CapitolMap *map;
 @property (nonatomic,retain) IBOutlet UIWebView *webView;

@@ -16,7 +16,7 @@
 @implementation TableCellDataObject
 @synthesize entryValue, isClickable, entryType, title, subtitle, action, parameter;
 
-- (id)initWithDictionary:(NSDictionary *)aDictionary {
+- (instancetype)initWithDictionary:(NSDictionary *)aDictionary {
 	if ((self = [super init])) {
 		
 		if (!IsEmpty([aDictionary valueForKey:@"entryValue"]))

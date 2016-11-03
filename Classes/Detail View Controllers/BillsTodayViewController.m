@@ -32,7 +32,7 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style {
+- (instancetype)initWithStyle:(UITableViewStyle)style {
 	if ((self = [super initWithStyle:style])) {
 		loadingStatus = LOADING_IDLE;
 		recentBills_ = [[NSMutableArray alloc] init];
@@ -63,10 +63,10 @@
 	NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"TexLegeStrings" ofType:@"plist"];
 	NSDictionary *textDict = [NSDictionary dictionaryWithContentsOfFile:thePath];
 	NSString *myClass = NSStringFromClass([self class]);
-	NSDictionary *menuItem = [[textDict objectForKey:@"BillMenuItems"] findWhereKeyPath:@"class" equals:myClass];
+	NSDictionary *menuItem = [textDict[@"BillMenuItems"] findWhereKeyPath:@"class" equals:myClass];
 	
 	if (menuItem)
-		self.title = [menuItem objectForKey:@"title"];
+		self.title = menuItem[@"title"];
 	
 	self.tableView.clipsToBounds = NO;
 	self.tableView.delegate = self;
@@ -108,16 +108,16 @@
 	
 	BOOL useDark = (indexPath.row % 2 == 0);
 	cell.backgroundColor = useDark ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
-	NSDictionary *bill = [recentBills_ objectAtIndex:indexPath.row];
+	NSDictionary *bill = recentBills_[indexPath.row];
 	if (bill) {
-		NSString *bill_title = [bill objectForKey:@"title"];
+		NSString *bill_title = bill[@"title"];
 		bill_title = [bill_title chopPrefix:@"Relating to " capitalizingFirst:YES];
 
 		cell.detailTextLabel.text = bill_title;	// (description/summary)
 		
 		cell.textLabel.text = [NSString stringWithFormat:@"(%@) %@", 
-							   [bill objectForKey:@"session"],
-							   [bill objectForKey:@"bill_id"]];
+							   bill[@"session"],
+							   bill[@"bill_id"]];
 		//cell.textLabel.text = [bill objectForKey:@"bill_id"];
 	}	
 }
@@ -157,7 +157,7 @@
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section
 {
 	if (!IsEmpty(recentBills_))
-		return [recentBills_ count];
+		return recentBills_.count;
 	else if (loadingStatus > LOADING_IDLE)
 		return 1;
 	else
@@ -169,17 +169,17 @@
 		[aTableView deselectRowAtIndexPath:indexPath animated:YES];
 	}
 	
-	if (IsEmpty(recentBills_) || [recentBills_ count] <= indexPath.row)
+	if (IsEmpty(recentBills_) || recentBills_.count <= indexPath.row)
 		return;
 	
-	NSDictionary *bill = [recentBills_ objectAtIndex:indexPath.row];
-	if (bill && [bill objectForKey:@"bill_id"]) {
+	NSDictionary *bill = recentBills_[indexPath.row];
+	if (bill && bill[@"bill_id"]) {
 			
 		BOOL changingViews = NO;
 		
 		BillsDetailViewController *detailView = nil;
 		if ([UtilityMethods isIPadDevice]) {
-			id aDetail = [[[TexLegeAppDelegate appDelegate] detailNavigationController] visibleViewController];
+			id aDetail = [TexLegeAppDelegate appDelegate].detailNavigationController.visibleViewController;
 			if ([aDetail isKindOfClass:[BillsDetailViewController class]])
 				detailView = aDetail;
 		}
@@ -189,16 +189,16 @@
 			changingViews = YES;
 		}
 		
-		[detailView setDataObject:bill];
-		[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:[bill objectForKey:@"bill_id"] 
-																		   session:[bill objectForKey:@"session"] // nil defaults to current session
+		detailView.dataObject = bill;
+		[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:bill[@"bill_id"] 
+																		   session:bill[@"session"] // nil defaults to current session
 																		  delegate:detailView];
 		
 		if (![UtilityMethods isIPadDevice])
 			[self.navigationController pushViewController:detailView animated:YES];
 		else if (changingViews)
 			//[[[TexLegeAppDelegate appDelegate] detailNavigationController] pushViewController:detailView animated:YES];
-			[[[TexLegeAppDelegate appDelegate] detailNavigationController] setViewControllers:[NSArray arrayWithObject:detailView] animated:NO];
+			[[TexLegeAppDelegate appDelegate].detailNavigationController setViewControllers:@[detailView] animated:NO];
 	}			
 }
 
@@ -208,7 +208,7 @@
 								 nil];
 	if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:tloApiBaseURL] alert:YES]) {
 		loadingStatus = LOADING_ACTIVE;
-		[[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] tloApiClient] get:@"/MyTLO/RSS/RSS.aspx" 
+		[[OpenLegislativeAPIs sharedOpenLegislativeAPIs].tloApiClient get:@"/MyTLO/RSS/RSS.aspx" 
 																queryParams:queryParams 
 																   delegate:self];
 	}
@@ -260,7 +260,7 @@
 				NSMutableDictionary *newBill = [[NSMutableDictionary alloc] init];
 				
 				if (!IsEmpty(billDesc))
-					[newBill setObject:billDesc forKey:@"title"];
+					newBill[@"title"] = billDesc;
 				
 				NSRegularExpression *regex = nil;
 				
@@ -269,7 +269,7 @@
 																	  options:NSRegularExpressionCaseInsensitive 
 																		error:&error];
 
-					NSTextCheckingResult *match = [regex firstMatchInString:billSession options:0 range:NSMakeRange(0, [billSession length])];
+					NSTextCheckingResult *match = [regex firstMatchInString:billSession options:0 range:NSMakeRange(0, billSession.length)];
 					if (match && !NSEqualRanges(match.range, NSMakeRange(NSNotFound, 0))) {
 						// Since we know that we found a match, get the substring from the parent string by using our NSRange object
 						NSRange newRange;
@@ -277,7 +277,7 @@
 						newRange.length = match.range.length-8;
 						NSString *session = [billSession substringWithRange:newRange];
 						if (!IsEmpty(session))
-							[newBill setObject:session forKey:@"session"];
+							newBill[@"session"] = session;
 					}
 				}
 				
@@ -285,20 +285,20 @@
 																					   options:NSRegularExpressionCaseInsensitive 
 																						 error:&error];
 
-				NSTextCheckingResult *match = [regex firstMatchInString:billNumber options:0 range:NSMakeRange(0, [billNumber length])];
+				NSTextCheckingResult *match = [regex firstMatchInString:billNumber options:0 range:NSMakeRange(0, billNumber.length)];
 				if (match && !NSEqualRanges(match.range, NSMakeRange(NSNotFound, 0))) {
 					// Since we know that we found a match, get the substring from the parent string by using our NSRange object
 					NSString *billID = [billNumber substringWithRange:match.range];
 					if (!IsEmpty(billID))
-						[newBill setObject:billID forKey:@"bill_id"];
+						newBill[@"bill_id"] = billID;
 				}
 				[recentBills_ addObject:newBill];
 				
 				[newBill release];
 			}
 			[recentBills_ sortUsingComparator:^(NSMutableDictionary *item1, NSMutableDictionary *item2) {
-				NSString *bill_id1 = [item1 objectForKey:@"bill_id"];
-				NSString *bill_id2 = [item2 objectForKey:@"bill_id"];
+				NSString *bill_id1 = item1[@"bill_id"];
+				NSString *bill_id2 = item2[@"bill_id"];
 				return [bill_id1 compare:bill_id2 options:NSNumericSearch];
 			}];		
 		}
@@ -319,7 +319,7 @@
 					}
 			}
 			@catch (NSException * eOther) {
-				error = [NSError errorWithDomain:@"com.texlege.texlege" code:-9999 userInfo:[NSDictionary dictionaryWithObject:e forKey:@"Exception"]];
+				error = [NSError errorWithDomain:@"com.texlege.texlege" code:-9999 userInfo:@{@"Exception": e}];
 			}
 			//NSString *json = [results JSONString];
 			//NSLog(@"%@", json);

@@ -52,24 +52,24 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 - (NSString *)blobHeaderStringWithSequenceNumber:(int)nextSequenceNumber;
 - (BOOL)createOptEvent:(BOOL)optState;
 - (void)logMessage:(NSString *)message;
-- (NSString *)getRandomUUID;
+@property (NS_NONATOMIC_IOSONLY, getter=getRandomUUID, readonly, copy) NSString *randomUUID;
 - (void)addFlowEventWithName:(NSString *)name type:(NSString *)eventType;
 - (void)addScreenWithName:(NSString *)name;
 - (BOOL)saveApplicationFlowAndRemoveOnResume:(BOOL)removeOnResume;
-- (NSString *)customDimensions;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *customDimensions;
 - (NSString *)hashString:(NSString *)input;
-- (NSString *)macAddress;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *macAddress;
 - (NSString *)formatAttributeWithName:(NSString *)paramName value:(NSString *)paramValue first:(BOOL)firstAttribute;
 - (NSString *)formatAttributeWithName:(NSString *)paramName value:(NSString *)paramValue;
 - (NSString *)escapeString:(NSString *)input;
-- (NSString *)uniqueDeviceIdentifier;
-- (NSString *) installationId;
-- (NSString *)getAppVersion;
-- (NSTimeInterval)getTimestamp;
-- (BOOL)isDeviceJailbroken;
-- (NSString *)getDeviceModel;
-- (NSString *)modelSizeString;
-- (double)availableMemory;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *uniqueDeviceIdentifier;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *installationId;
+@property (NS_NONATOMIC_IOSONLY, getter=getAppVersion, readonly, copy) NSString *appVersion;
+@property (NS_NONATOMIC_IOSONLY, getter=getTimestamp, readonly) NSTimeInterval timestamp;
+@property (NS_NONATOMIC_IOSONLY, getter=isDeviceJailbroken, readonly) BOOL deviceJailbroken;
+@property (NS_NONATOMIC_IOSONLY, getter=getDeviceModel, readonly, copy) NSString *deviceModel;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *modelSizeString;
+@property (NS_NONATOMIC_IOSONLY, readonly) double availableMemory;
 - (void)reopenPreviousSession;
 @end
 
@@ -187,7 +187,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
         BOOL success = [db beginTransaction:t];
 
         // Save session start time.
-        self.lastSessionStartTimestamp = [self.sessionResumeTime timeIntervalSince1970];
+        self.lastSessionStartTimestamp = (self.sessionResumeTime).timeIntervalSince1970;
         if (success) {
           success = [db setLastsessionStartTimestamp:self.lastSessionStartTimestamp];
         }
@@ -246,7 +246,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
   // conditions for resuming previous session
   if(self.sessionHasBeenOpen &&
      (!self.sessionCloseTime ||
-      [self.sessionCloseTime timeIntervalSinceNow]*-1 <= self.backgroundSessionTimeout)) {
+      (self.sessionCloseTime).timeIntervalSinceNow*-1 <= self.backgroundSessionTimeout)) {
          // Note that we allow the session to be resumed even if the database size exceeds the
          // maximum. This is because we don't want to create incomplete sessions. If the DB was large
          // enough that the previous session could not be opened, there will be nothing to resume. But 
@@ -276,7 +276,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
     // Update active session duration.
     self.sessionActiveDuration += [self.sessionCloseTime timeIntervalSinceDate:self.sessionResumeTime];
 
-    int sessionLength = (int)[[NSDate date] timeIntervalSince1970] - self.lastSessionStartTimestamp;
+    int sessionLength = (int)[NSDate date].timeIntervalSince1970 - self.lastSessionStartTimestamp;
     
     @try {
 		// Create the JSON representing the close blob
@@ -413,7 +413,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 		{
             // Open second level - attributes
             [eventString appendString:[NSString stringWithFormat:@",\"%@\":{", PARAM_ATTRIBUTES]];
-			for (id key in [attributes allKeys])
+			for (id key in attributes.allKeys)
             {
 				// Have to escape paramName and paramValue because they user-defined.
 				[eventString appendString:
@@ -432,7 +432,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
         if(reportAttributes != nil)
         {
             [eventString appendString:[NSString stringWithFormat:@",\"%@\":{", PARAM_REPORT_ATTRIBUTES]];
-            for(id key in [reportAttributes allKeys]) {
+            for(id key in reportAttributes.allKeys) {
                 [eventString appendString:
                  [self formatAttributeWithName:[self escapeString:[key description]] 
                                          value:[self escapeString:[[reportAttributes valueForKey:key] description]]
@@ -468,7 +468,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 
     // Tag screen with description to enforce string type and avoid retaining objects passed by clients in lieu of a
     // screen name.
-    NSString *screenName = [screen description];
+    NSString *screenName = screen.description;
     [self addFlowEventWithName:screenName type:@"s"]; // "s" for Screen.
 
     // Maintain a parallel list of only screen names. This is submitted in the session close event.
@@ -533,7 +533,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 
 - (void)upload {
 	@try {
-        if ([[UploaderThread sharedUploaderThread] isUploading]) {
+        if ([UploaderThread sharedUploaderThread].isUploading) {
             [self logMessage:@"An upload is already in progress. Aborting."];
             return;
         }
@@ -699,8 +699,8 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
     // >>  Device Information
 	[headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_UUID          value:device_uuid ]];
     [headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_UUID_HASHED   value:[self hashString:device_uuid] ]];
-	[headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_PLATFORM      value:[thisDevice model]            ]];
-	[headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_OS_VERSION    value:[thisDevice systemVersion]    ]];
+	[headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_PLATFORM      value:thisDevice.model            ]];
+	[headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_OS_VERSION    value:thisDevice.systemVersion    ]];
 	[headerString appendString:[self formatAttributeWithName:PARAM_DEVICE_MODEL         value:[self getDeviceModel]         ]];
 
 // MAC Address collection. Uncomment the following line to add Mac address to the mix of collected identifiers
@@ -746,7 +746,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 - (void)logMessage:(NSString *)message
 {
     if(DO_LOCALYTICS_LOGGING) {
-        NSLog(@"(localytics) %s\n", [message UTF8String]);
+        NSLog(@"(localytics) %s\n", message.UTF8String);
     }
 }
 
@@ -822,7 +822,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
     NSData *stringBytes = [input dataUsingEncoding: NSUTF8StringEncoding];
     unsigned char digest[CC_SHA1_DIGEST_LENGTH];
     
-    if (CC_SHA1([stringBytes bytes], (CC_LONG)[stringBytes length], digest)) {
+    if (CC_SHA1(stringBytes.bytes, (CC_LONG)stringBytes.length, digest)) {
         NSMutableString* hashedUUID = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
         for(int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++) {
             [hashedUUID appendFormat:@"%02x", digest[i]];
@@ -950,7 +950,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
  @return The application's version as a pretty string
  */
 - (NSString *)getAppVersion {
-	return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];	
+	return [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];	
 }
 
 /*!
@@ -959,7 +959,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
  @return an NSTimeInterval time.
  */
 - (NSTimeInterval)getTimestamp {
-    return [[NSDate date] timeIntervalSince1970];
+    return [NSDate date].timeIntervalSince1970;
 }
 
 /*!
@@ -982,8 +982,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 	char *buffer[256] = { 0 };
 	size_t size = sizeof(buffer);
     sysctlbyname("hw.machine", buffer, &size, NULL, 0);
-    NSString *platform = [NSString stringWithCString:(const char*)buffer
-											encoding:NSUTF8StringEncoding];
+    NSString *platform = @((const char*)buffer);
 	return platform;
 }	
 
@@ -996,13 +995,13 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 		
 	// User partition
 	NSArray *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSDictionary *stats = [[NSFileManager defaultManager] attributesOfFileSystemForPath:[path lastObject] error:nil];  
-	uint64_t user = [[stats objectForKey:NSFileSystemSize] longLongValue];
+    NSDictionary *stats = [[NSFileManager defaultManager] attributesOfFileSystemForPath:path.lastObject error:nil];  
+	uint64_t user = [stats[NSFileSystemSize] longLongValue];
 	
 	// System partition
 	path = NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSSystemDomainMask, YES);
-    stats = [[NSFileManager defaultManager] attributesOfFileSystemForPath:[path lastObject] error:nil];  
-	uint64_t system = [[stats objectForKey:NSFileSystemSize] longLongValue];
+    stats = [[NSFileManager defaultManager] attributesOfFileSystemForPath:path.lastObject error:nil];  
+	uint64_t system = [stats[NSFileSystemSize] longLongValue];
 	
 	// Add up and convert to gigabytes
 	// TODO: seem to be missing a system partiton or two...

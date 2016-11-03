@@ -20,7 +20,7 @@ const CGFloat kDisclosureQuartzViewHeight = 32.0f;
 @implementation DisclosureQuartzView
 
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
 	if (self) {
@@ -28,12 +28,12 @@ const CGFloat kDisclosureQuartzViewHeight = 32.0f;
 		
 		scaleMod = 1;
 		if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)])
-			scaleMod =  [[UIScreen mainScreen] scale];
+			scaleMod =  [UIScreen mainScreen].scale;
 	}
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)coder
+- (instancetype)initWithCoder:(NSCoder *)coder
 {
 	self = [super initWithCoder:coder];
 	if (self) {
@@ -50,7 +50,7 @@ const CGFloat kDisclosureQuartzViewHeight = 32.0f;
 - (void)drawRect:(CGRect)dirtyRect
 {
 	CGRect imageBounds = CGRectMake(0.0f, 0.0f, kDisclosureQuartzViewWidth, kDisclosureQuartzViewHeight);
-	CGRect bounds = [self bounds];
+	CGRect bounds = self.bounds;
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	size_t bytesPerRow;
 	CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();

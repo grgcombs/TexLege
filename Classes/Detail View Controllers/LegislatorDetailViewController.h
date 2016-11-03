@@ -23,7 +23,7 @@
 													UIPopoverControllerDelegate, TXLDetailProtocol>
 {	
 }
-@property (nonatomic,assign) id dataObject;
+@property (nonatomic,retain) id dataObject;
 @property (nonatomic,retain) NSNumber *dataObjectID;
 
 @property (nonatomic,retain) IBOutlet S7GraphView *chartView;
@@ -40,8 +40,8 @@
 
 @property (nonatomic,retain) UIPopoverController *notesPopover;
 @property (nonatomic,retain) UIPopoverController *masterPopover;
-@property (nonatomic, assign) LegislatorObj *legislator;
-@property (nonatomic, retain) LegislatorDetailDataSource *dataSource;
+@property (nonatomic,assign) LegislatorObj *legislator;
+@property (nonatomic,retain) LegislatorDetailDataSource *dataSource;
 
 - (IBAction)resetTableData:(id)sender;
 

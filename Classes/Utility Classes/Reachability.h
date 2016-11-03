@@ -118,17 +118,16 @@
 // Since NSAssert and NSCAssert are used in this code, 
 // I recommend you set NS_BLOCK_ASSERTIONS=1 in the release versions of your projects.
 
-enum {
+typedef NS_ENUM(uint32_t, NetworkStatus) {
 	
 	// DDG NetworkStatus Constant Names.
 	kNotReachable = 0, // Apple's code depends upon 'NotReachable' being the same value as 'NO'.
 	kReachableViaWWAN, // Switched order from Apple's enum. WWAN is active before WiFi.
 	kReachableViaWiFi
 };
-typedef	uint32_t NetworkStatus;
 
-enum {
-	
+typedef NS_ENUM(uint32_t, ReachabilityStatus) {
+
 	// Apple NetworkStatus Constant Names.
 	NotReachable     = kNotReachable,
 	ReachableViaWiFi = kReachableViaWiFi,
@@ -148,13 +147,10 @@ extern NSString *const kConnectionRequiredKey;
 extern NSString *const kConnectionOnDemandKey;
 extern NSString *const kInterventionRequiredKey;
 
-@interface Reachability: NSObject {
-	
+@interface Reachability: NSObject
+{
 @private
-	NSString *key_;
-	NSObject *delegate_;
-	
-	SCNetworkReachabilityRef reachabilityRef_;
+    SCNetworkReachabilityRef _reachabilityRef;
 }
 
 @property (copy)   NSString *key;
@@ -169,7 +165,7 @@ extern NSString *const kInterventionRequiredKey;
 
 // WWAN may be available, but not active until a connection has been established.
 // WiFi may require a connection for VPN on Demand.
-@property (readonly, getter=isConnectionRequired)   BOOL connectionRequired;
+@property (NS_NONATOMIC_IOSONLY, readonly, getter=isConnectionRequired)   BOOL connectionRequired;
 
 // Dynamic, on demand connection?
 @property (readonly, getter=isConnectionOnDemand)   BOOL connectionOnDemand;
@@ -197,15 +193,14 @@ extern NSString *const kInterventionRequiredKey;
 + (Reachability *) reachabilityForLocalWiFi;
 
 //Start listening for reachability notifications on the current run loop.
-- (BOOL) startNotifier;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL startNotifier;
 - (void)  stopNotifier;
 
 // These are the status tests in Apple's Reachability class. (Both v2.0 & v2.1)
-- (NetworkStatus) currentReachabilityStatus;
-- (BOOL) connectionRequired; // The Apple equivalent of -isConnectionRequired.
+@property (NS_NONATOMIC_IOSONLY, readonly) NetworkStatus currentReachabilityStatus;
 
 // To interpret these yourself.
-- (SCNetworkReachabilityFlags) reachabilityFlags;
+@property (NS_NONATOMIC_IOSONLY, readonly) SCNetworkReachabilityFlags reachabilityFlags;
 
 // Bring up the radios by touching the host.
 //

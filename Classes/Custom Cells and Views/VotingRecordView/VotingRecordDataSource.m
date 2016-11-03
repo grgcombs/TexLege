@@ -19,7 +19,7 @@
 @implementation VotingRecordDataSource
 @synthesize legislatorID, chartData;
 
-- (id)init {
+- (instancetype)init {
 	if ((self=[super init])) {
 		legislatorID = nil;
 		chartData = nil;
@@ -71,14 +71,14 @@
 	
 	aView.xUnit = NSLocalizedStringFromTable(@"Year", @"DataTableUI", @"The year for a given legislative session");
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    [numberFormatter setMinimumFractionDigits:1];
-    [numberFormatter setMaximumFractionDigits:1];
+    numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+    numberFormatter.minimumFractionDigits = 1;
+    numberFormatter.maximumFractionDigits = 1;
     
     aView.yValuesFormatter = numberFormatter;
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"''yy"];
+    dateFormatter.dateFormat = @"''yy";
     aView.xValuesFormatter = dateFormatter;
     
     [dateFormatter release];
@@ -93,23 +93,21 @@
 	
 	LegislatorObj *member = [LegislatorObj objectWithPrimaryKeyValue:self.legislatorID];
 	PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
-	CGFloat sliderMin = [indexStats minPartisanIndexUsingChamber:[member.legtype integerValue]];
-	CGFloat sliderMax = [indexStats maxPartisanIndexUsingChamber:[member.legtype integerValue]];
+	CGFloat sliderMin = [indexStats minPartisanIndexUsingChamber:(member.legtype).integerValue];
+	CGFloat sliderMax = [indexStats maxPartisanIndexUsingChamber:(member.legtype).integerValue];
 
 	if (sliderMax > (-sliderMin))
 		sliderMin = (-sliderMax);
 	else
 		sliderMax = (-sliderMin);
 	
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithFloat:sliderMin], @"minY",
-			[NSNumber numberWithFloat:sliderMax], @"maxY",
-			nil];
+	return @{@"minY": @(sliderMin),
+			@"maxY": @(sliderMax)};
 }
 
 - (NSUInteger)graphViewMaximumNumberOfXaxisValues:(S7GraphView *)graphView {
 	if (chartData)
-		return [[chartData objectForKey:@"member"] count]; 
+		return [chartData[@"member"] count]; 
     return 0;
 }
 
@@ -132,7 +130,7 @@
     /* An array of objects that will be further formatted to be displayed on the X-axis.
      The number of elements should be equal to the number of points you have for every plot. */
 	
-	return [chartData objectForKey:@"time"];
+	return chartData[@"time"];
 }
 
 - (NSArray *)graphView:(S7GraphView *)graphView yValuesForPlot:(NSUInteger)plotIndex {
@@ -145,14 +143,14 @@
 	
     switch (plotIndex) {
         case 0:
-			return 	[chartData objectForKey:@"repub"];
+			return 	chartData[@"repub"];
             break;
 		case 2:
-			return 	[chartData objectForKey:@"democ"];
+			return 	chartData[@"democ"];
             break;
         case 1:
         default:
-			return 	[chartData objectForKey:@"member"];
+			return 	chartData[@"member"];
             break;
     }
 }

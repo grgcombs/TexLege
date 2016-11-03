@@ -19,19 +19,19 @@
 @property (nonatomic, readonly) CGFloat latestWnomFloat;
 
 - (NSComparisonResult)compareMembersByName:(LegislatorObj *)p;
-- (NSString *) partyShortName;
-- (NSString *) legTypeShortName;
-- (NSString *) chamberName;
-- (NSString *) legProperName;
-- (NSString *) districtPartyString;
-- (NSString *) fullName;
-- (NSString *) fullNameLastFirst;
-- (NSString *) website;
-- (NSString *) shortNameForButtons;
-- (NSString *) labelSubText;
-- (NSInteger) numberOfDistrictOffices;
-- (NSInteger) numberOfStaffers;
-- (NSString *) tenureString;
-- (NSArray *) sortedCommitteePositions;
-- (NSArray *) sortedStaffers;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *partyShortName;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *legTypeShortName;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *chamberName;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *legProperName;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *districtPartyString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *fullName;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *fullNameLastFirst;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *website;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *shortNameForButtons;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *labelSubText;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSInteger numberOfDistrictOffices;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSInteger numberOfStaffers;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *tenureString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *sortedCommitteePositions;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *sortedStaffers;
 @end

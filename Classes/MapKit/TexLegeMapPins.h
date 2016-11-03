@@ -13,17 +13,16 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 
-enum {
+typedef NS_ENUM(NSUInteger, TexLegePinAnnotationColor) {
     TexLegePinAnnotationColorRed = 0,
     TexLegePinAnnotationColorGreen,
     TexLegePinAnnotationColorPurple,
 	// end compatibility with MKPinAnnotation colors
 	TexLegePinAnnotationColorBlue = 99
 };
-typedef NSUInteger TexLegePinAnnotationColor;
 
 
-enum {
+typedef NS_ENUM(NSUInteger, TexLegePinAnnotationStatus) {
     TexLegePinAnnotationStatusNormal = 0,
     TexLegePinAnnotationStatusDown1,
     TexLegePinAnnotationStatusDown2,
@@ -34,7 +33,6 @@ enum {
 	TexLegePinAnnotationStatusHead = 99
 	
 };
-typedef NSUInteger TexLegePinAnnotationStatus;
 
 
 
