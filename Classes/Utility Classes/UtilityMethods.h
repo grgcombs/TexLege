@@ -26,8 +26,7 @@ BOOL IsEmpty(id thing);
 + (id) texLegeStringWithKeyPath:(NSString *)keyPath;
 
 + (CGFloat) iOSVersion;
-+ (BOOL) iOSVersion4;
-	
+
 + (BOOL) supportsEventKit;
 
 + (BOOL) isLandscapeOrientation;

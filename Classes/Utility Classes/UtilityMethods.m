@@ -162,33 +162,34 @@ BOOL IsEmpty(id thing) {
 
 // Use it like this: [UtilityMethods texLegeStringWithKeyPath:@"Contributions.ThanksNIMSP"]
 //	Where "Contributions" is a dictionary within our plist, and "ThanksNIMSP" is the key for our string
-+ (id) texLegeStringWithKeyPath:(NSString *)keyPath {
+
++ (id)texLegeStringWithKeyPath:(NSString *)keyPath
+{
 	NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"TexLegeStrings" ofType:@"plist"];
 	NSDictionary *textDict = [NSDictionary dictionaryWithContentsOfFile:thePath];
 	return [textDict valueForKeyPath:keyPath];
 }
 
-+ (CGFloat) iOSVersion {
++ (CGFloat)iOSVersion {
 	return [[[UIDevice currentDevice] systemVersion] floatValue];
-}
-
-+ (BOOL) iOSVersion4 {
-	return ([UtilityMethods iOSVersion] >= 4.0f);
 }
 
 #pragma mark -
 #pragma mark Device Checks and Screen Methods
 
 
-+ (BOOL) isLandscapeOrientation {	
++ (BOOL)isLandscapeOrientation
+{
 #if 0 // If we start experiencing problems with device orientation again, we might try using this instead...
 	UIViewController *root = [[[UIApplication sharedApplication] keyWindow] rootViewController];
 	return UIInterfaceOrientationIsLandscape(root.interfaceOrientation);
 #else
-	//UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
 	UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
-	if (UIDeviceOrientationIsValidInterfaceOrientation(orientation) && UIDeviceOrientationIsLandscape(orientation) && !UIInterfaceOrientationIsLandscape(statusBarOrientation)) {
+	if (UIDeviceOrientationIsValidInterfaceOrientation(orientation)
+        && UIDeviceOrientationIsLandscape(orientation)
+        && !UIInterfaceOrientationIsLandscape(statusBarOrientation))
+    {
 /*		NSLog(@"ORIENTATION WAS WRONG ... WE'RE RESETTING ... IS THIS OKAY???");
 		[[UIApplication sharedApplication] setStatusBarOrientation:orientation animated:NO];
 */
@@ -222,24 +223,20 @@ BOOL IsEmpty(id thing) {
 
 #pragma mark -
 #pragma mark File Handling
-/*
-	// This is so short, just use the real one instead of dropping a convenience method here.
-- (BOOL)fileExistsAtPath:(NSString *)thePath {
-	return [[NSFileManager defaultManager] fileExistsAtPath:thePath];
-}
-*/
 
 /**
  Returns the path to the application's documents directory.
  */
-+ (NSString *)applicationDocumentsDirectory {
++ (NSString *)applicationDocumentsDirectory
+{
 	
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
     return basePath;
 }
 
-+ (NSString *)applicationCachesDirectory {
++ (NSString *)applicationCachesDirectory
+{
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
 	NSString *cachePath = [paths objectAtIndex:0];
 	BOOL isDir = NO;
@@ -252,11 +249,14 @@ BOOL IsEmpty(id thing) {
 
 #pragma mark -
 #pragma mark URL Handling
-+ (NSURL *)urlToMainBundle {
+
++ (NSURL *)urlToMainBundle
+{
 	return [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
 }
 
-+ (NSString *) titleFromURL:(NSURL *)url {
++ (NSString *) titleFromURL:(NSURL *)url
+{
 	debug_NSLog(@"%@", [url absoluteString]);
 	NSArray *urlComponents = [[url absoluteString] componentsSeparatedByString:@"/"];
 	NSString * title = nil;
@@ -276,13 +276,15 @@ BOOL IsEmpty(id thing) {
 	return title;
 }
 
-+ (NSURL *) safeWebUrlFromString:(NSString *)urlString {
++ (NSURL *) safeWebUrlFromString:(NSString *)urlString
+{
 	//NSString * tempString = [[NSString alloc] initWithString:urlString];
 	return [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 }
 
 // Determine if we have network access, if not then throw up an alert.
-+ (BOOL) openURLWithTrepidation:(NSURL *)url {
++ (BOOL) openURLWithTrepidation:(NSURL *)url
+{
 	BOOL canOpenURL = NO;
 	
 	if (![[TexLegeReachability sharedTexLegeReachability] isNetworkReachable]) {
@@ -302,7 +304,8 @@ BOOL IsEmpty(id thing) {
 + (BOOL) openURLWithoutTrepidation:(NSURL *)url {
 	BOOL canOpenURL = NO;
 	
-	if ([[UIApplication sharedApplication] canOpenURL:url]) {
+	if ([[UIApplication sharedApplication] canOpenURL:url])
+    {
 		[[UIApplication sharedApplication] openURL:url];
 		canOpenURL = YES;
 	}
@@ -314,10 +317,15 @@ BOOL IsEmpty(id thing) {
 
 + (NSDictionary *)parametersOfQuery:(NSString *)queryString
 {
-	if ([queryString hasSubstring:@"?" caseInsensitive:NO]) {
+	if ([queryString hasSubstring:@"?" caseInsensitive:NO])
+    {
 		NSRange index = [queryString rangeOfString:@"?"];
-		if (index.location != NSNotFound && index.length > 0 && [queryString length] > index.location)
+		if (index.location != NSNotFound
+            && index.length > 0
+            && [queryString length] > index.location)
+        {
 			queryString = [queryString substringFromIndex:index.location+1];
+        }
 	}
 	NSMutableDictionary *result = [NSMutableDictionary dictionary];
     
@@ -343,7 +351,8 @@ BOOL IsEmpty(id thing) {
 #pragma mark -
 #pragma mark Maps and Map Files
 
-+ (NSURL *) googleMapUrlFromStreetAddress:(NSString *)address {
++ (NSURL *)googleMapUrlFromStreetAddress:(NSString *)address
+{
 	// if you want driving directions, daddr is the destination, saddr is the origin
 	// @"http://maps.google.com/maps?daddr=San+Francisco,+CA&saddr=cupertino"
 	// [NSString stringWithFormat: @"http://maps.google.com/maps?q=%f,%f", loc.latitude, loc.longitude];
@@ -351,7 +360,6 @@ BOOL IsEmpty(id thing) {
 	NSString *temp1 =  [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@",address];
 	// We'll likely have carriage returns
 	NSString *temp2 = [temp1 stringByReplacingOccurrencesOfString:@"\n" withString:@", "];
-	
 	
 	return [UtilityMethods safeWebUrlFromString:temp2];
 }
@@ -363,7 +371,6 @@ BOOL IsEmpty(id thing) {
 	Class theClass = NSClassFromString(@"EKEventStore");
 	return (theClass != nil);
 }
-
 
 #pragma mark -
 #pragma mark Device Hardware Alerts and Reachability
@@ -397,14 +404,21 @@ BOOL IsEmpty(id thing) {
 	[ noPhoneAlert show ];		
 }
 
++ (NSString*)ordinalNumberFormat:(NSInteger)num
+{
+    static TTTOrdinalNumberFormatter *formatter = nil;
+    if (!formatter)
+    {
+        formatter = [[TTTOrdinalNumberFormatter alloc] init];
+        formatter.grammaticalGender = TTTOrdinalNumberFormatterMaleGender;
+    }
 
-+(NSString*)ordinalNumberFormat:(NSInteger)num{	
-	TTTOrdinalNumberFormatter *ordinalNumberFormatter = [[TTTOrdinalNumberFormatter alloc] init]; 
-	[ordinalNumberFormatter setLocale:[NSLocale currentLocale]];
-	[ordinalNumberFormatter setGrammaticalGender:TTTOrdinalNumberFormatterMaleGender];
-	NSNumber *number = [NSNumber numberWithInteger:num];
-	NSString *string = [ordinalNumberFormatter stringFromNumber:number];
-	[ordinalNumberFormatter release];
+    NSLocale *locale = [NSLocale autoupdatingCurrentLocale];
+    if (!formatter.locale || ![locale isEqual:formatter.locale])
+        formatter.locale = locale;
+
+	NSNumber *number = @(num);
+	NSString *string = [formatter stringFromNumber:number];
 	return string;
 }
 
@@ -412,7 +426,7 @@ BOOL IsEmpty(id thing) {
 
 @implementation NSArray (indexKeyedDictionaryExtension)
 
-- (NSDictionary *) indexKeyedDictionaryWithKey:(NSString *)key 
+- (NSDictionary *)indexKeyedDictionaryWithKey:(NSString *)key
 {
 	if (![self count] || !key)
 		return nil;
