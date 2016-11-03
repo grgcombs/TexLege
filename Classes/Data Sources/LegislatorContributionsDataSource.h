@@ -26,18 +26,17 @@ typedef NS_ENUM(uint16_t, ContributionQueryType) {
 #define kContributionsDataNotifyLoaded	@"ContributionsDataChangedKey"
 #define kContributionsDataNotifyError	@"ContributionsDataErrorKey"
 
-@interface LegislatorContributionsDataSource : NSObject <RKRequestDelegate, UITableViewDataSource> {
-
-}
-@property (nonatomic,copy) NSString *queryCycle;
-@property (nonatomic,copy) NSString *queryEntityID;
-@property (nonatomic,copy) NSNumber * queryType;
-@property (nonatomic,retain) NSMutableArray *sectionList;
+@interface LegislatorContributionsDataSource : NSObject <RKRequestDelegate, UITableViewDataSource>
 
 - (id) dataObjectForIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *) indexPathForDataObject:(id)dataObject;
 - (NSString *)title;
 
 - (void)initiateQueryWithQueryID:(NSString *)aQuery type:(NSNumber *)type cycle:(NSString *)cycle;
+- (void)initiateQueryWithQueryID:(NSString *)aQuery type:(NSNumber *)type cycle:(NSString *)cycleOrNil parameter:(NSString *)parameterOrNil;
 
 @end
+
+#define FOLLOW_THE_MONEY_API 1
+#define TRANSPARENCY_DATA_API 2
+#define CONTRIBUTIONS_API   FOLLOW_THE_MONEY_API

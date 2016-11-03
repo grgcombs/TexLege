@@ -419,12 +419,22 @@
 			[subDetailController release];
 		}
 		else if (cellInfo.entryType == DirectoryTypeContributions) {
-			if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:transApiBaseURL]]) { 
-				LegislatorContributionsViewController *subDetailController = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
-				[subDetailController setQueryEntityID:cellInfo.entryValue type:[NSNumber numberWithInteger:kContributionQueryRecipient] cycle:@"-1"];
-				[self.navigationController pushViewController:subDetailController animated:YES];
-				[subDetailController release];
-			}
+#if CONTRIBUTIONS_API == TRANSPARENCY_DATA_API
+            if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:transApiBaseURL]]) {
+                LegislatorContributionsViewController *subDetailController = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+                [subDetailController setQueryEntityID:cellInfo.entryValue type:@(kContributionQueryRecipient) cycle:@"-1"];
+                [self.navigationController pushViewController:subDetailController animated:YES];
+                [subDetailController release];
+            }
+
+#elif CONTRIBUTIONS_API == FOLLOW_THE_MONEY_API
+            if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:followTheMoneyApiBaseURL]]) {
+                LegislatorContributionsViewController *subDetailController = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+                [subDetailController setQueryEntityID:cellInfo.entryValue type:@(kContributionQueryRecipient) cycle:nil parameter:cellInfo.parameter];
+                [self.navigationController pushViewController:subDetailController animated:YES];
+                [subDetailController release];
+            }
+#endif
 		}
 		else if (cellInfo.entryType == DirectoryTypeBills) {
 			if ([TexLegeReachability openstatesReachable]) { 

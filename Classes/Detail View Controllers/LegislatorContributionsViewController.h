@@ -18,6 +18,7 @@
 }
 @property (nonatomic,retain) LegislatorContributionsDataSource *dataSource;
 
-- (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)newCycle;
+- (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)cycleOrNil;
+- (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)cycleOrNil parameter:(NSString *)parameterOrNil;
 
 @end

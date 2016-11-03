@@ -22,10 +22,10 @@ NSString * const transApiBaseURL =	@"http://transparencydata.com/api/1.0";
 NSString * const vsApiBaseURL =		@"http://api.votesmart.org";
 NSString * const tloApiHost =		@"www.legis.state.tx.us";
 NSString * const tloApiBaseURL =	@"http://www.legis.state.tx.us";
-
+NSString * const followTheMoneyApiHost = @"api.followthemoney.org";
+NSString * const followTheMoneyApiBaseURL = @"http://api.followthemoney.org";
 
 @implementation OpenLegislativeAPIs
-@synthesize osApiClient, transApiClient, vsApiClient, tloApiClient;
 
 + (id)sharedOpenLegislativeAPIs
 {
@@ -39,26 +39,49 @@ NSString * const tloApiBaseURL =	@"http://www.legis.state.tx.us";
 
 - (id)init {
 	if ((self=[super init])) {
-		osApiClient = [[RKClient clientWithBaseURL:osApiBaseURL] retain];
-		transApiClient = [[RKClient clientWithBaseURL:transApiBaseURL] retain];
-		vsApiClient = [[RKClient clientWithBaseURL:vsApiBaseURL] retain];
-		tloApiClient = [[RKClient clientWithBaseURL:tloApiBaseURL] retain];
+		_osApiClient = [[RKClient clientWithBaseURL:osApiBaseURL] retain];
+		_transApiClient = [[RKClient clientWithBaseURL:transApiBaseURL] retain];
+		_vsApiClient = [[RKClient clientWithBaseURL:vsApiBaseURL] retain];
+		_tloApiClient = [[RKClient clientWithBaseURL:tloApiBaseURL] retain];
+        _followTheMoneyApiClient = [[RKClient clientWithBaseURL:followTheMoneyApiBaseURL] retain];
 	}
 	return self;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
 
-	if (osApiClient)
-		[osApiClient release], osApiClient = nil;
-	if (transApiClient)
-		[transApiClient release], transApiClient = nil;
-	if (vsApiClient)
-		[vsApiClient release], vsApiClient = nil;
-	if (tloApiClient)
-		[tloApiClient release], tloApiClient = nil;
+	if (_osApiClient)
+    {
+        [_osApiClient release];
+        _osApiClient = nil;
+    }
 
+	if (_transApiClient)
+    {
+        [_transApiClient release];
+        _transApiClient = nil;
+    }
+
+	if (_vsApiClient)
+    {
+        [_vsApiClient release];
+        _vsApiClient = nil;
+    }
+
+	if (_tloApiClient)
+    {
+        [_tloApiClient release];
+        _tloApiClient = nil;
+    }
+
+    if (_followTheMoneyApiClient)
+    {
+        [_followTheMoneyApiClient release];
+        _followTheMoneyApiClient = nil;
+    }
+    
 	[super dealloc];
 }
 
@@ -69,11 +92,11 @@ NSString * const tloApiBaseURL =	@"http://www.legis.state.tx.us";
 		session = meta.currentSession;
 	}
 	
-	if (IsEmpty(billID) || IsEmpty(session) || !sender || !osApiClient)
+	if (IsEmpty(billID) || IsEmpty(session) || !sender || !self.osApiClient)
 		return;
 	NSDictionary *queryParams = [NSDictionary dictionaryWithObjectsAndKeys:SUNLIGHT_APIKEY, @"apikey",nil];
 	NSString *queryString = [NSString stringWithFormat:@"/bills/%@/%@/%@", meta.selectedState, session, [billID stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-	[osApiClient get:queryString queryParams:queryParams delegate:sender];	
+	[self.osApiClient get:queryString queryParams:queryParams delegate:sender];
 }
 
 @end

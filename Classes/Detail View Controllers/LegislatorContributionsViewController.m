@@ -21,7 +21,6 @@
 @end
 
 @implementation LegislatorContributionsViewController
-@synthesize dataSource;
 
 #pragma mark -
 #pragma mark Initialization
@@ -93,8 +92,14 @@
 #pragma mark -
 #pragma mark Data Objects
 
-- (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)newCycle {	
-	NSString *typeString = @"";
+- (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)newCycle
+{
+    [self setQueryEntityID:newObj type:newType cycle:newCycle parameter:nil];
+}
+
+- (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)cycleOrNil parameter:(NSString *)parameterOrNil
+{
+    NSString *typeString = @"";
 	switch ([newType integerValue]) {
 		case kContributionQueryDonor:
 			typeString = @"DonorSummaryQuery";
@@ -118,9 +123,8 @@
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"CONTRIBUTIONS_QUERY" attributes:logDict];
 	[logDict release];
 
-	[self.dataSource initiateQueryWithQueryID:newObj type:newType cycle:newCycle];
+	[self.dataSource initiateQueryWithQueryID:newObj type:newType cycle:cycleOrNil parameter:parameterOrNil];
 	self.navigationItem.title = [self.dataSource title];
-
 }
 
 
@@ -133,7 +137,11 @@
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
 	if (dataObject && dataObject.isClickable) {
-		if (!dataObject.entryValue || ![dataObject.entryValue length]) {
+        BOOL isValid = (([dataObject.parameter isKindOfClass:[NSString class]] && [dataObject.parameter length])
+                        || ([dataObject.entryValue isKindOfClass:[NSString class]] && [dataObject.entryValue length]));
+
+        if (!isValid)
+        {
 			NSString *queryName = @"";
 			if (dataObject.title)
 				queryName = dataObject.title;
@@ -152,11 +160,10 @@
 			
 			return;
 		}
-		
-		
+
 		LegislatorContributionsViewController *detail = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
 
-		[detail setQueryEntityID:dataObject.entryValue type:dataObject.action cycle:dataObject.parameter];		
+        [detail setQueryEntityID:dataObject.entryValue type:dataObject.action cycle:nil parameter:dataObject.parameter];
 		[self.navigationController pushViewController:detail animated:YES];
 		[detail release];
 		

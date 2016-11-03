@@ -15,20 +15,19 @@ extern NSString * const transApiBaseURL;
 extern NSString * const vsApiBaseURL;
 extern NSString * const tloApiHost;
 extern NSString * const tloApiBaseURL;
+extern NSString * const followTheMoneyApiHost;
+extern NSString * const followTheMoneyApiBaseURL;
 
-@interface OpenLegislativeAPIs : NSObject <RKRequestDelegate> {
-	RKClient *osApiClient;	
-	RKClient *transApiClient;
-	RKClient *vsApiClient;
-	RKClient *tloApiClient;
-}
+@interface OpenLegislativeAPIs : NSObject <RKRequestDelegate>
+
 + (OpenLegislativeAPIs *)sharedOpenLegislativeAPIs;
+
 @property (nonatomic, retain) RKClient *osApiClient;
 @property (nonatomic, retain) RKClient *transApiClient;
 @property (nonatomic, retain) RKClient *vsApiClient;
 @property (nonatomic, retain) RKClient *tloApiClient;
+@property (nonatomic, retain) RKClient *followTheMoneyApiClient;
 
 - (void)queryOpenStatesBillWithID:(NSString *)billID session:(NSString *)session delegate:(id)sender;
-
 
 @end
