@@ -80,10 +80,9 @@ NSString * const kUserPinAnnotationAddressChangeKey = @"UserPinAnnotationAddress
 
 - (void)dealloc
 {
-    nice_release(_imageName);
-    nice_release(_pinColorIndex);
-    nice_release(_placemark);
-
+    self.imageName = nil;
+    self.pinColorIndex = nil;
+    self.placemark = nil;
     self.coordinateChangedDelegate = nil;
 
 	[super dealloc];
@@ -100,10 +99,12 @@ NSString * const kUserPinAnnotationAddressChangeKey = @"UserPinAnnotationAddress
 		NSString *city = addressDict[(NSString*)kABPersonAddressCityKey];
 		NSString *state = addressDict[(NSString*)kABPersonAddressStateKey];
 		
-		if (NO == IsEmpty(street)) {
+		if (NO == IsEmpty(street))
+        {
 			[formattedAddress appendFormat:@"%@, ", street];
 		}
-		if (NO == IsEmpty(city) && NO == IsEmpty(state)) {
+		if (NO == IsEmpty(city) && NO == IsEmpty(state))
+        {
 			[formattedAddress appendFormat:@"%@, %@", city, state];
 		}		
 	}
@@ -115,8 +116,6 @@ NSString * const kUserPinAnnotationAddressChangeKey = @"UserPinAnnotationAddress
 	}
     
 	self.title = formattedAddress;
-    
-    nice_release(formattedAddress);
 }
 
 #pragma mark -

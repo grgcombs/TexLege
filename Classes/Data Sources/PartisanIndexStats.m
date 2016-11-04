@@ -19,12 +19,16 @@
 #import "DataModelUpdateManager.h"
 #import "TexLegeAppDelegate.h"
 
-@interface PartisanIndexStats (Private)
+@interface PartisanIndexStats ()
 - (NSArray *) aggregatePartisanIndexForChamber:(NSInteger)chamber andPartyID:(NSInteger)party;
+
+@property (NS_NONATOMIC_IOSONLY, copy) NSDictionary *partisanIndexAggregates;
+@property (NS_NONATOMIC_IOSONLY, copy) NSMutableArray *rawPartisanIndexAggregates;
+@property (NS_NONATOMIC_IOSONLY, copy) NSDate *updated;
+
 @end
 
 @implementation PartisanIndexStats
-@synthesize isFresh;
 
 + (PartisanIndexStats*)sharedPartisanIndexStats
 {
@@ -37,11 +41,11 @@
 
 - (instancetype)init {
 	if ((self = [super init])) {
-		updated = nil;
-		isFresh = NO;
-		isLoading = NO;
-		m_partisanIndexAggregates = nil;
-		m_rawPartisanIndexAggregates = nil;
+		_updated = nil;
+		_fresh = NO;
+		_loading = NO;
+		_partisanIndexAggregates = nil;
+		_rawPartisanIndexAggregates = nil;
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(resetData:) name:@"RESTKIT_LOADED_LEGISLATOROBJ" object:nil];
@@ -57,23 +61,22 @@
 	return self;
 }
 
-
-
-- (void)dealloc {	
+- (void)dealloc
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
-	if (updated)
-		[updated release], updated = nil;
+	if (_updated)
+		[_updated release], _updated = nil;
 		
-	if (m_rawPartisanIndexAggregates) [m_rawPartisanIndexAggregates release], m_rawPartisanIndexAggregates = nil;
-	if (m_partisanIndexAggregates) [m_partisanIndexAggregates release], m_partisanIndexAggregates = nil;
+	if (_rawPartisanIndexAggregates) [_rawPartisanIndexAggregates release], _rawPartisanIndexAggregates = nil;
+	if (_partisanIndexAggregates) [_partisanIndexAggregates release], _partisanIndexAggregates = nil;
 	
     [super dealloc];
 }
 
 - (void)resetData:(NSNotification *)notification
 {
-	nice_release(m_partisanIndexAggregates);
+    if (_partisanIndexAggregates) [_partisanIndexAggregates release], _partisanIndexAggregates = nil;
 	[self partisanIndexAggregates];
 }
 
@@ -81,14 +84,19 @@
 #pragma mark Statistics for Partisan Sliders
 
 /* This collects the calculations of partisanship across members in each chamber and party, then caches the results*/
-- (NSDictionary *)partisanIndexAggregates {
-	if (m_partisanIndexAggregates == nil) {
+- (NSDictionary *)partisanIndexAggregates
+{
+	if (_partisanIndexAggregates == nil)
+    {
 		NSMutableDictionary *tempAggregates = [NSMutableDictionary dictionaryWithCapacity:4];
 		NSInteger chamber, party;
-		for (chamber = HOUSE; chamber <= SENATE; chamber++) {
-			for (party = kUnknownParty; party <= REPUBLICAN; party++) {
+		for (chamber = HOUSE; chamber <= SENATE; chamber++)
+        {
+			for (party = kUnknownParty; party <= REPUBLICAN; party++)
+            {
 				NSArray *aggregatesArray = [self aggregatePartisanIndexForChamber:chamber andPartyID:party];
-				if (aggregatesArray && aggregatesArray.count) {
+				if (aggregatesArray && aggregatesArray.count)
+                {
 					NSNumber *avgIndex = aggregatesArray[0];
 					if (avgIndex)
 						tempAggregates[[NSString stringWithFormat:@"AvgC%ld+P%ld", (long)chamber, (long)party]] = avgIndex;
@@ -105,10 +113,10 @@
 					NSLog(@"PartisanIndexStates: Error pulling aggregate dictionary.");
 			}
 		}
-		m_partisanIndexAggregates = [[NSDictionary dictionaryWithDictionary:tempAggregates] retain];
+		_partisanIndexAggregates = [[NSDictionary dictionaryWithDictionary:tempAggregates] retain];
 	}
 	
-	return m_partisanIndexAggregates;
+	return _partisanIndexAggregates;
 }
 
 - (BOOL)hasData
@@ -117,15 +125,18 @@
 }
 
 /* These are convenience methods for accessing our aggregate calculations from cache */
-- (CGFloat) minPartisanIndexUsingChamber:(NSInteger)chamber {
+- (CGFloat) minPartisanIndexUsingChamber:(NSInteger)chamber
+{
 	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"MinC%ld+P0", (long)chamber]] floatValue];
 };
 
-- (CGFloat) maxPartisanIndexUsingChamber:(NSInteger)chamber {
+- (CGFloat) maxPartisanIndexUsingChamber:(NSInteger)chamber
+{
 	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"MaxC%ld+P0", (long)chamber]] floatValue];
 };
 
-- (CGFloat) overallPartisanIndexUsingChamber:(NSInteger)chamber {
+- (CGFloat) overallPartisanIndexUsingChamber:(NSInteger)chamber
+{
 	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"AvgC%ld+P0", (long)chamber]] floatValue];
 };
 
@@ -135,7 +146,8 @@
 };
 
 
-- (NSNumber *) maxWnomSession {
+- (NSNumber *)maxWnomSession
+{
 	return [TexLegeCoreDataUtils fetchCalculation:@"max:" 
 									   ofProperty:@"session" 
 										 withType:NSInteger32AttributeType 
@@ -143,8 +155,10 @@
 }
 
 /* This queries the partisan index from each legislator and calculates aggregate statistics */
-- (NSArray *) aggregatePartisanIndexForChamber:(NSInteger)chamber andPartyID:(NSInteger)party {
-	if (chamber == BOTH_CHAMBERS) {
+- (NSArray *) aggregatePartisanIndexForChamber:(NSInteger)chamber andPartyID:(NSInteger)party
+{
+	if (chamber == BOTH_CHAMBERS)
+    {
 		debug_NSLog(@"aggregatePartisanIndexForChamber: ... cannot be BOTH chambers");
 		return nil;
 	}
@@ -163,8 +177,7 @@
 		[predicateString appendString:@" AND self.legislator.legislatorID != 50000 AND self.legislator.legislatorID != 49745 AND self.legislator.legislatorID != 25363"];
 	
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateString]; 
-	/*_____________________*/
-	
+
 	NSExpression *ex = [NSExpression expressionForFunction:@"average:" arguments:
 						@[[NSExpression expressionForKeyPath:@"wnomAdj"]]];
 	NSExpressionDescription *edAvg = [[NSExpressionDescription alloc] init];
@@ -222,18 +235,20 @@
 
 /* This gathers our pre-calculated overall aggregate scores for parties and chambers, from JSON		
 	We use this for our red/blue lines in our historical partisanship chart.*/
-- (NSArray *) historyForParty:(NSInteger)party chamber:(NSInteger)chamber {
-	if (IsEmpty(m_rawPartisanIndexAggregates) || !isFresh || !updated || 
-		([[NSDate date] timeIntervalSinceDate:updated] > (3600*24*2)))
+- (NSArray *) historyForParty:(NSInteger)party chamber:(NSInteger)chamber
+{
+	if (IsEmpty(_rawPartisanIndexAggregates) || !self.isFresh || !_updated ||
+		([[NSDate date] timeIntervalSinceDate:_updated] > (3600*24*2)))
 	{	// if we're over 2 days old, let's refresh
-		if (!isLoading) {
+		if (!self.isLoading)
+        {
 			[self loadPartisanIndex:nil];
 		}
 	}
 	
-	if (!IsEmpty(m_rawPartisanIndexAggregates))
+	if (!IsEmpty(_rawPartisanIndexAggregates))
 	{
-		NSArray *chamberArray = [m_rawPartisanIndexAggregates findAllWhereKeyPath:@"chamber" equals:@(chamber)];
+		NSArray *chamberArray = [_rawPartisanIndexAggregates findAllWhereKeyPath:@"chamber" equals:@(chamber)];
 		if (chamberArray) {
 			NSArray *partyArray = [chamberArray findAllWhereKeyPath:@"party" equals:@(party)];
 			return partyArray;
@@ -246,7 +261,8 @@
 #pragma mark -
 #pragma mark Chart Generation
 
-- (NSDictionary *)partisanshipDataForLegislatorID:(NSNumber*)legislatorID {
+- (NSDictionary *)partisanshipDataForLegislatorID:(NSNumber*)legislatorID
+{
 	if (!legislatorID)
 		return nil;
 	
@@ -266,7 +282,7 @@
 	NSArray *democHistory = [self historyForParty:DEMOCRAT chamber:chamber];
 	NSArray *repubHistory = [self historyForParty:REPUBLICAN chamber:chamber];
 		
-	NSUInteger i;
+	NSUInteger i = 0;
 	
 	NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:3];
 	NSMutableArray *repubScores = [[NSMutableArray alloc] init];
@@ -274,8 +290,8 @@
 	NSMutableArray *memberScores = [[NSMutableArray alloc] init];
 	NSMutableArray *dates = [[NSMutableArray alloc] init];
 	
-	for ( i = 0; i < countOfScores ; i++) {
-		
+	for ( i = 0; i < countOfScores ; i++)
+    {
 		WnomObj *wnomObj = sortedScores[i];
 		NSDate *date = [NSDate dateFromString:[wnomObj year].stringValue withFormat:@"yyyy"];
 		NSNumber *democY = [democHistory findWhereKeyPath:@"session" equals:wnomObj.session][@"wnom"];
@@ -306,20 +322,22 @@
 	[dates release];
 	
 	return results;
-	
 }
 
-- (void)loadPartisanIndexFromCache:(id)sender {
+- (void)loadPartisanIndexFromCache:(id)sender
+{
 	// We had trouble loading the metadata online, so pull it up from the one in the documents folder (or the app bundle)
 	NSError *newError = nil;
 	NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kPartisanIndexFile];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
-	if (![fileManager fileExistsAtPath:localPath]) {
+	if (![fileManager fileExistsAtPath:localPath])
+    {
 		NSString *defaultPath = [[NSBundle mainBundle] pathForResource:kPartisanIndexPath ofType:@"json"];
 		[fileManager copyItemAtPath:defaultPath toPath:localPath error:&newError];
 		debug_NSLog(@"PartisanIndex: copied metadata from the app bundle's original.");
 	}
-	else {
+	else
+    {
 		debug_NSLog(@"PartisanIndex: using cached metadata in the documents folder.");
 	}
 	
@@ -334,10 +352,10 @@
     }
     else
     {
-        if (m_rawPartisanIndexAggregates)
+        if (_rawPartisanIndexAggregates)
         {
-            [m_rawPartisanIndexAggregates release];
-            m_rawPartisanIndexAggregates = nil;
+            [_rawPartisanIndexAggregates release];
+            _rawPartisanIndexAggregates = nil;
         }
 
         @try {
@@ -351,30 +369,34 @@
                 && [aggregates isKindOfClass:[NSArray class]]
                 && aggregates.count)
             {
-                m_rawPartisanIndexAggregates = [aggregates mutableCopy];
+                _rawPartisanIndexAggregates = [aggregates mutableCopy];
             }
         } @catch (NSException *exception) {
             NSLog(@"Exception while attempting to parse and consume aggregate partisan scores from the bundled JSON: %@", exception);
         }
     }
 
-	if (m_rawPartisanIndexAggregates)
+	if (_rawPartisanIndexAggregates)
     {
 		[self resetData:nil];
 		[[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyLoaded object:nil];
 	}
 }
 
-- (void)loadPartisanIndex:(id)sender {	
-	if ([TexLegeReachability texlegeReachable]) {
-		if (IsEmpty(m_rawPartisanIndexAggregates)) {
+- (void)loadPartisanIndex:(id)sender
+{
+	if ([TexLegeReachability texlegeReachable])
+    {
+		if (IsEmpty(_rawPartisanIndexAggregates))
+        {
 			[self loadPartisanIndexFromCache:nil];		// we do this automatically if we're not reachable
 		}
 		
-		isLoading = YES;
+		_loading = YES;
 		[[RKClient sharedClient] get:[NSString stringWithFormat:@"/rest.php/%@", kPartisanIndexPath] delegate:self];  	
 	}
-	else {
+	else
+    {
 		[self request:nil didFailLoadWithError:nil];
 	}
 }
@@ -382,10 +404,12 @@
 #pragma mark -
 #pragma mark RestKit:RKObjectLoaderDelegate
 
-- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error {
-	isLoading = NO;
+- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
+{
+	_loading = NO;
 	
-	if (error && request) {
+	if (error && request)
+    {
 		debug_NSLog(@"Error loading partisan index from %@: %@", [request description], [error localizedDescription]);
 		[[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyError object:nil];
 	}
@@ -393,51 +417,49 @@
 	[self loadPartisanIndexFromCache:nil];
 }
 
-- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response {  
-	isLoading = NO;
-	
-	if ([request isGET] && [response isOK]) {  
-		// Success! Let's take a look at the data  
-		if (m_rawPartisanIndexAggregates)
-        {
-			[m_rawPartisanIndexAggregates release];
-            m_rawPartisanIndexAggregates = nil;
-        }
+- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response
+{
+	_loading = NO;
 
-        NSError *error = nil;
+    if (!request || ![request isGET] || ![response isOK])
+        return;
 
-        NSMutableArray *aggregates = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:&error];
-        if (error)
-        {
-            debug_NSLog(@"Error while attempting to parse aggregate partisan scores from the bundled JSON: %@", error);
-        }
+    // Success! Let's take a look at the data
+    if (_rawPartisanIndexAggregates)
+    {
+        [_rawPartisanIndexAggregates release];
+        _rawPartisanIndexAggregates = nil;
+    }
 
-        if (aggregates
-            && [aggregates isKindOfClass:[NSArray class]]
-            && aggregates.count)
-        {
-            m_rawPartisanIndexAggregates = [aggregates mutableCopy];
+    NSError *error = nil;
 
-            if (updated)
-				[updated release];
-			updated = [[NSDate date] retain];
-			NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kPartisanIndexFile];
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:m_rawPartisanIndexAggregates options:NSJSONWritingPrettyPrinted error:&error];
-			if (![jsonData writeToFile:localPath atomically:YES])
-            {
-				NSLog(@"PartisanIndex: error writing cache to file: %@", localPath);
-            }
-            isFresh = YES;
-			[self resetData:nil];
-			[[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyLoaded object:nil];
-			debug_NSLog(@"PartisanIndex network download successful, archiving for others.");
-		}		
-		else {
-			[self request:request didFailLoadWithError:nil];
-			return;
-		}
-	}
-}		
+    NSMutableArray *aggregates = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:&error];
+    if (error)
+    {
+        debug_NSLog(@"Error while attempting to parse aggregate partisan scores from the bundled JSON: %@", error);
+    }
 
+    if (!aggregates || ![aggregates isKindOfClass:[NSArray class]] || !aggregates.count)
+    {
+        [self request:request didFailLoadWithError:nil];
+        return;
+    }
+
+    _rawPartisanIndexAggregates = [aggregates mutableCopy];
+    if (_updated)
+        [_updated release];
+    _updated = [[NSDate date] retain];
+    
+    NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kPartisanIndexFile];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_rawPartisanIndexAggregates options:NSJSONWritingPrettyPrinted error:&error];
+    if (![jsonData writeToFile:localPath atomically:YES])
+    {
+        NSLog(@"PartisanIndex: error writing cache to file: %@", localPath);
+    }
+    _fresh = YES;
+    [self resetData:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyLoaded object:nil];
+    debug_NSLog(@"PartisanIndex network download successful, archiving for others.");
+}
 
 @end

@@ -16,9 +16,8 @@ extern const CGFloat kCommitteeMemberCellViewWidth;
 extern const CGFloat kCommitteeMemberCellViewHeight;
 
 @class LegislatorObj;
+
 @interface CommitteeMemberCellView : UIView
-{
-}
 
 @property (copy, nonatomic) NSString *title;
 @property (copy, nonatomic) NSString *name;
@@ -35,7 +34,7 @@ extern const CGFloat kCommitteeMemberCellViewHeight;
 @property (nonatomic) CGFloat sliderMax;
 
 @property (retain, nonatomic) UIImage *questionImage;
-@property (nonatomic) BOOL highlighted;
+@property (nonatomic,getter=isHighlighted,assign) BOOL highlighted;
 
 - (void)setLegislator:(LegislatorObj *)value;
 

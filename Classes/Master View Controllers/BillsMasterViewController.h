@@ -15,10 +15,9 @@
 #import "GeneralTableViewController.h"
 @class BillSearchDataSource;
 
-@interface BillsMasterViewController : GeneralTableViewController <UISearchDisplayDelegate, UISearchBarDelegate> {
-	IBOutlet BillSearchDataSource *billSearchDS;
-	NSString *_searchString;
-}
-@property (nonatomic,retain) BillSearchDataSource *billSearchDS;
+@interface BillsMasterViewController : GeneralTableViewController <UISearchDisplayDelegate, UISearchBarDelegate>
+
+@property (nonatomic,retain) IBOutlet BillSearchDataSource *billSearchDS;
+@property (nonatomic,copy) NSString *searchString;
 
 @end

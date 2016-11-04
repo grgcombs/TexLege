@@ -23,49 +23,61 @@
 #import "LoadingCell.h"
 #import "StateMetaLoader.h"
 
-@implementation BillSearchDataSource
-@synthesize searchDisplayController, delegateTVC;
-@synthesize useLoadingDataCell;
+@interface BillSearchDataSource ()
+@property (NS_NONATOMIC_IOSONLY, retain) NSMutableArray *rows;
+@property (NS_NONATOMIC_IOSONLY, retain) NSMutableDictionary *sections;
+@property (NS_NONATOMIC_IOSONLY, assign) NSInteger loadingStatus;
+@property (NS_NONATOMIC_IOSONLY, retain) IBOutlet UISearchDisplayController *searchDisplayController;
+@property (NS_NONATOMIC_IOSONLY, retain) IBOutlet UITableViewController *delegateTVC;
+@end
 
-- (instancetype)init {
-	if ((self=[super init])) {
-		loadingStatus = LOADING_IDLE;
-		useLoadingDataCell = NO;
+@implementation BillSearchDataSource
+
+- (instancetype)init
+{
+    self = [super init];
+	if (self)
+    {
+		_loadingStatus = LOADING_IDLE;
+		_useLoadingDataCell = NO;
+        _rows = [[NSMutableArray alloc] init];
+        _sections = [[NSMutableDictionary alloc] init];
 
 		[OpenLegislativeAPIs sharedOpenLegislativeAPIs];
-		
-		_rows = [[NSMutableArray alloc] init];
-		_sections = [[NSMutableDictionary alloc] init];
-		delegateTVC = nil;
-		searchDisplayController = nil;
 	}
 	return self;
 }
 
-- (instancetype)initWithSearchDisplayController:(UISearchDisplayController *)newController {
-	if ((self=[self init])) {
-		if (newController) {
-			searchDisplayController = [newController retain];
-			searchDisplayController.searchResultsDataSource = self;
-		}
+- (instancetype)initWithSearchDisplayController:(UISearchDisplayController *)newController
+{
+    self = [super init];
+    if (self)
+    {
+        if ([newController isKindOfClass:[UISearchDisplayController class]])
+        {
+            _searchDisplayController = [newController retain];
+            _searchDisplayController.searchResultsDataSource = self;
+        }
 	}
 	return self;
 }
 
-- (instancetype)initWithTableViewController:(UITableViewController *)newDelegate {
-	if ((self=[self init])) {		
-		if (newDelegate) {
-			delegateTVC = [newDelegate retain];
-		}
+- (instancetype)initWithTableViewController:(UITableViewController *)newDelegate
+{
+    self = [super init];
+    if (self)
+    {
+        _delegateTVC = [newDelegate retain];
 	}
 	return self;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
 	self.searchDisplayController = nil;
 	self.delegateTVC = nil;
-	nice_release(_rows);
-	nice_release(_sections);
+    self.rows = nil;
+    self.sections = nil;
 
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
 	
@@ -73,121 +85,153 @@
 }
 
 // This is just a short cut, we wind up using this array several times.  Perhaps we should remember it instead of recreating?
-- (NSArray *) billTypes {
-	return [_sections.allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];	
+- (NSArray *)billTypes
+{
+	return [self.sections.allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
 }
 
 // return the map at the index in the array
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
+- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath
+{
     NSString *key = [self billTypes][indexPath.section];
-    NSArray *billSection = [_sections valueForKey:key];
-    if (![billSection respondsToSelector:@selector(objectAtIndex:)] ||
-        ![billSection respondsToSelector:@selector(count)])
+    if (!key)
+        return nil;
+
+    NSArray *billSection = self.sections[key];
+    if (!billSection
+        || ![billSection respondsToSelector:@selector(objectAtIndex:)]
+        || ![billSection respondsToSelector:@selector(count)])
     {
         return nil;
     }
+
     if (billSection.count <= indexPath.row)
         return nil;
-    NSMutableDictionary *bill = billSection[indexPath.row];
+
+    NSDictionary *bill = billSection[indexPath.row];
 	return bill;
 }
 
-- (NSIndexPath *)indexPathForDataObject:(id)dataObject {
-	if (dataObject && [dataObject isKindOfClass:[NSDictionary class]] && dataObject[@"bill_id"]) {
-		NSString *typeString = billTypeStringFromBillID(dataObject[@"bill_id"]);
-		if (!IsEmpty(typeString)) {
-			NSMutableArray *sectionRow = _sections[typeString];
-			if (!IsEmpty(sectionRow)) {
-				NSArray *sortedSections = [self billTypes];
-				NSInteger section = [sortedSections indexOfObject:typeString];
-				NSInteger row = [sectionRow indexOfObject:dataObject];
-				return [NSIndexPath indexPathForRow:row inSection:section];
-			}
-		}
-	}
-	return nil;
+- (NSIndexPath *)indexPathForDataObject:(id)dataObject
+{
+    if (!dataObject || ![dataObject isKindOfClass:[NSDictionary class]])
+        return nil;
+
+    NSString *billID = dataObject[@"bill_id"];
+    if (!billID || ![billID isKindOfClass:[NSString class]])
+        return nil;
+
+    NSString *typeString = billTypeStringFromBillID(billID);
+    if (IsEmpty(typeString))
+        return nil;
+
+    NSArray *sectionRow = _sections[typeString];
+    if (IsEmpty(sectionRow))
+        return nil;
+
+    NSArray *sortedSections = [self billTypes];
+    if (IsEmpty(sortedSections))
+        return nil;
+
+    NSInteger section = [sortedSections indexOfObject:typeString];
+    NSInteger row = [sectionRow indexOfObject:dataObject];
+    if (section == NSNotFound || row == NSNotFound)
+        return nil;
+
+    return [NSIndexPath indexPathForRow:row inSection:section];
 }
 
-- (void) generateSections {
-	BOOL found = NO;
-	[_sections removeAllObjects];
-	
-    // Loop through the bills and create our keys
-    for (NSDictionary *bill in _rows)
-    {				
-		NSString *c = billTypeStringFromBillID(bill[@"bill_id"]);
-	
-        found = NO;
-        for (NSString *str in _sections.allKeys)
-        {
-            if ([str isEqualToString:c])
-            {
-                found = YES;
-            }
-        }
-        if (!found)
-        {
-            [_sections setValue:[NSMutableArray array] forKey:c];
-        }
-    }	
-	
-	// Loop again and sort the bills into their respective keys
-    for (NSDictionary *bill in _rows)
+- (void)generateSections
+{
+    if (_sections)
+        [_sections release];
+    _sections = [[NSMutableDictionary alloc] init];
+
+    [self.rows enumerateObjectsUsingBlock:^(NSDictionary *bill, NSUInteger idx, BOOL * stop)
     {
-		NSString *typeString = billTypeStringFromBillID(bill[@"bill_id"]);
-		if (!IsEmpty(typeString))
-			[_sections[typeString] addObject:bill];
-    }
-	
-	// Sort each section array
-    for (NSString *key in _sections.allKeys)
-    {
-		[_sections[key] sortUsingComparator:^(NSDictionary *item1, NSDictionary *item2) {
-			NSString *bill_id1 = item1[@"bill_id"];
-			NSString *bill_id2 = item2[@"bill_id"];
-			return [bill_id1 compare:bill_id2 options:NSNumericSearch];
-		}];		
-    }
+        if (![bill isKindOfClass:[NSDictionary class]])
+            return;
+
+        NSString *billType = billTypeStringFromBillID(bill[@"bill_id"]);
+        if (!billType || ![billType isKindOfClass:[NSString class]] || IsEmpty(billType))
+            return;
+
+        NSMutableArray *bills = self.sections[billType];
+        if (!bills)
+        {
+            bills = [NSMutableArray array];
+            self.sections[billType] = bills;
+        }
+
+        [bills addObject:bill];
+    }];
+
+	[self.sections enumerateKeysAndObjectsUsingBlock:^(NSString *billType, NSMutableArray *bills, BOOL * stop) {
+        [bills sortUsingComparator:^NSComparisonResult(NSDictionary *bill1, NSDictionary *bill2) {
+            NSString *bill_id1 = bill1[@"bill_id"];
+            NSString *bill_id2 = bill2[@"bill_id"];
+            return [bill_id1 compare:bill_id2 options:NSNumericSearch];
+        }];
+    }];
 }
 
 #pragma mark UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	if (IsEmpty(_sections))
+	if (IsEmpty(self.sections))
 		return 1;
-	return _sections.allKeys.count;
+	return self.sections.count;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{	
-	if (IsEmpty(_sections) || IsEmpty([self billTypes]))
-		return @"";
-    NSArray *sections = [self billTypes];
-    if (sections.count <= section)
-        return @"";
-	NSString *billType = sections[section];
-	return [[BillMetadataLoader sharedBillMetadataLoader].metadata[@"types"] 
-							findWhereKeyPath:@"title" 
-							equals:billType][@"titleLong"];
-}
-
-- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
-	if (IsEmpty(_sections) || IsEmpty([self billTypes]))
-		return nil;
-    return [self billTypes];
-}
-
-- (NSInteger)tableView:(UITableView *)tableView  numberOfRowsInSection:(NSInteger)section 
 {
-    NSArray *sectionKeys = [self billTypes];
-    if (sectionKeys.count <= section)
+    NSArray *sortedSectionTitles = [self billTypes];
+	if (IsEmpty(sortedSectionTitles))
+		return @"";
+    if (sortedSectionTitles.count <= section)
+        return @"";
+
+	NSString *billType = sortedSectionTitles[section];
+    if (![billType isKindOfClass:[NSString class]])
+        return @"";
+
+    NSArray *typesMetadata = [BillMetadataLoader sharedBillMetadataLoader].metadata[@"types"];
+    NSDictionary *metadata = [typesMetadata findWhereKeyPath:@"title" equals:billType];
+
+	NSString *title = metadata[@"titleLong"];
+    if (![title isKindOfClass:[NSString class]] || IsEmpty(title))
+        return @"";
+    return title;
+}
+
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    NSArray *sortedSectionTitles = [self billTypes];
+	if (IsEmpty(sortedSectionTitles))
+		return nil;
+    return sortedSectionTitles;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    NSArray *sortedSectionTitles = [self billTypes];
+    if (sortedSectionTitles.count <= section)
         return 0;
-	if (NO == IsEmpty(_sections))
-		return [[_sections valueForKey:sectionKeys[section]] count];
-	else if (useLoadingDataCell && loadingStatus > LOADING_IDLE)
-		return 1;
-	else
-		return 0;
+
+    NSString *sectionTitle = sortedSectionTitles[section];
+    if (![sectionTitle isKindOfClass:[NSString class]])
+        return 0;
+
+    NSArray *bills = self.sections[sectionTitle];
+    if (!bills || ![bills isKindOfClass:[NSArray class]])
+        return 0;
+    if (IsEmpty(bills))
+    {
+        if (self.useLoadingDataCell && self.loadingStatus > LOADING_IDLE)
+            return 1;
+        return 0;
+    }
+    return bills.count;
 }
 
 - (void)configureCell:(TexLegeStandardGroupCell *)cell atIndexPath:(NSIndexPath *)indexPath
@@ -212,10 +256,13 @@
 	cell.detailTextLabel.text = bill_title;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	if (useLoadingDataCell && loadingStatus > LOADING_IDLE) {
-		if (indexPath.row == 0) {
-			return [LoadingCell loadingCellWithStatus:loadingStatus tableView:tableView];
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if (self.useLoadingDataCell && self.loadingStatus > LOADING_IDLE)
+    {
+		if (indexPath.row == 0)
+        {
+			return [LoadingCell loadingCellWithStatus:self.loadingStatus tableView:tableView];
 		}
 		else {	// to make things work with our upcoming configureCell:, we need to trick this a little
 			indexPath = [NSIndexPath indexPathForRow:(indexPath.row-1) inSection:indexPath.section];
@@ -227,8 +274,7 @@
 	TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if (cell == nil)
 	{
-		cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle 
-									   reuseIdentifier:CellIdentifier] autorelease];
+		cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
 
 		cell.textLabel.textColor = [TexLegeTheme textDark];
 		cell.detailTextLabel.textColor = [TexLegeTheme indexText];
@@ -240,7 +286,7 @@
 			cell.accessoryType = UITableViewCellAccessoryNone;
 		}
     }
-	if (NO == IsEmpty(_rows))
+	if (NO == IsEmpty(self.rows))
 		[self configureCell:cell atIndexPath:indexPath];		
 
 	return cell;
@@ -249,7 +295,8 @@
 #pragma mark - Searching
 
 // This is the standard search method ... fill in the search parameters and it'll handle the rest.
-- (RKRequest *)startSearchWithQueryString:(NSString *)queryString params:(NSDictionary *)queryParams {
+- (RKRequest *)startSearchWithQueryString:(NSString *)queryString params:(NSDictionary *)queryParams
+{
 	if (IsEmpty(queryParams) || IsEmpty(queryString))
 		return nil;
 		
@@ -257,14 +304,14 @@
 	
 	if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:osApiBaseURL] alert:NO])
 	{		
-		if (useLoadingDataCell)
-			loadingStatus = LOADING_ACTIVE;
+		if (self.useLoadingDataCell)
+			self.loadingStatus = LOADING_ACTIVE;
 		
 		OpenLegislativeAPIs *api = [OpenLegislativeAPIs sharedOpenLegislativeAPIs];
 		request = [api.osApiClient get:queryString queryParams:queryParams delegate:self];
 	}
-	else if (useLoadingDataCell) {
-		loadingStatus = LOADING_NO_NET;
+	else if (self.useLoadingDataCell) {
+		self.loadingStatus = LOADING_NO_NET;
 	}
 	
 	return request;
@@ -279,16 +326,21 @@
 	StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
 	if (IsEmpty(meta.selectedState) || IsEmpty(meta.currentSession))
 		return;
-	
-	for (NSDictionary *type in [BillMetadataLoader sharedBillMetadataLoader].metadata[kBillMetadataTypesKey]) {
-		NSString *billType = type[kBillMetadataTitleKey];
+
+    NSArray *typesMetadata = [BillMetadataLoader sharedBillMetadataLoader].metadata[kBillMetadataTypesKey];
+	for (NSDictionary *typeMetadata in typesMetadata)
+    {
+		NSString *billType = typeMetadata[kBillMetadataTitleKey];
 	 
-		if (billType && [searchString hasPrefix:billType]) {
+		if (billType && [searchString hasPrefix:billType])
+        {
 			NSString *tail = [searchString substringFromIndex:billType.length];
-			if (tail) {
+			if (tail)
+            {
 				tail = [tail stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 				
-				if (tail.integerValue > 0) {
+				if (tail.integerValue > 0)
+                {
 					isBillID = YES;
 
 					NSNumber *billNumber = @(tail.integerValue);		// we specifically convolute this to ensure we're grabbing only the numerical of the string
@@ -307,7 +359,8 @@
 										nil];
 	
 	NSString *chamberString = stringForChamber(chamber, TLReturnOpenStates);
-	if (!IsEmpty(chamberString)) {
+	if (!IsEmpty(chamberString))
+    {
 		queryParams[@"chamber"] = chamberString;
 	}
 	if (IsEmpty(searchString))
@@ -321,7 +374,8 @@
 		
 }
 
-- (void)startSearchForSubject:(NSString *)searchSubject chamber:(NSInteger)chamber {
+- (void)startSearchForSubject:(NSString *)searchSubject chamber:(NSInteger)chamber
+{
 	StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
 	if (IsEmpty(meta.selectedState))
 		return;
@@ -347,8 +401,10 @@
 	[self startSearchWithQueryString:@"/bills" params:queryParams];
 }
 
-- (void)startSearchForBillsAuthoredBy:(NSString *)searchSponsorID {
-	if (NO == IsEmpty(searchSponsorID)) {
+- (void)startSearchForBillsAuthoredBy:(NSString *)searchSponsorID
+{
+	if (NO == IsEmpty(searchSponsorID))
+    {
 		StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
 		if (IsEmpty(meta.selectedState))
 			return;
@@ -361,44 +417,71 @@
 									 @"fields": @"sponsors,bill_id,title,session,state,type,update_at,subjects"};
 
 		RKRequest *request = [self startSearchWithQueryString:@"/bills" params:queryParams];
-		if (request) {
+		if (request)
+        {
 			request.userData = @{@"sponsor_id": searchSponsorID};
 		}
 		
 	}
 }
 
-- (void)pruneBillsForAuthor:(NSString *)sponsorID {
+- (BOOL)pruneBillsForAuthor:(NSString *)sponsorID
+{
 	// We must be requesting specific bills for a given sponsors
 
-	if (IsEmpty(_rows))
-		return;
+	if (IsEmpty(self.rows) || IsEmpty(sponsorID))
+		return NO;
 
 	debug_NSLog(@"Pruning the list of sought-after bills for a given sponsor...");
-	
-	NSArray *tempRows = [[NSArray alloc] initWithArray:_rows];
-	
-	for (NSDictionary *bill in tempRows) {
-		BOOL found = NO;
-		BOOL hasSponsors = NO;
-		
-		for (NSDictionary *sponsor in [bill valueForKey:@"sponsors"]) {
-			hasSponsors = YES;
-			
-			NSString *type = [sponsor valueForKey:@"type"];
-			NSString *sponID = [sponsor valueForKey:@"leg_id"];
-			if (NO == IsEmpty(type) && NO == IsEmpty(sponID)) {
-				if ([type isEqualToString:@"author"] && [sponID isEqualToString:sponsorID]) {
-					found = YES;
-				}
-			}
-		}
-		if (YES == hasSponsors && NO == found) {
-			//debug_NSLog(@"Pruning bill %@ for %@", [bill valueForKey:@"bill_id"], sponsorID);
-			[_rows removeObject:bill];
-		}
-	}
-	[tempRows release];
+
+    NSMutableArray *authoredRows = [[NSMutableArray alloc] init];
+
+    [self.rows enumerateObjectsWithOptions:0 usingBlock:^(NSDictionary *bill, NSUInteger billIndex, BOOL * billsStop) {
+        if (![bill isKindOfClass:[NSDictionary class]])
+            return;
+        NSArray *sponsors = bill[@"sponsors"];
+        if (!sponsors || ![sponsors isKindOfClass:[NSArray class]])
+            return;
+
+        __block BOOL didAuthor = NO;
+
+        [sponsors enumerateObjectsUsingBlock:^(NSDictionary *sponsor, NSUInteger sponsorIndex, BOOL * sponsorsStop) {
+            if (![sponsor isKindOfClass:[NSDictionary class]])
+                return;
+
+            NSString *billSponsorID = sponsor[@"leg_id"];
+            if (!billSponsorID || ![billSponsorID isKindOfClass:[NSString class]])
+                return;
+            if (![sponsorID isEqualToString:billSponsorID])
+                return;
+            NSString *sponsorshipType = sponsor[@"official_type"];
+            if (!sponsorshipType || ![sponsorshipType isKindOfClass:[NSString class]])
+            {
+                sponsorshipType = sponsor[@"type"];
+                if (!sponsorshipType || ![sponsorshipType isKindOfClass:[NSString class]])
+                    return;
+            }
+            if ([sponsorshipType caseInsensitiveCompare:@"author"] == NSOrderedSame)
+            {
+                [authoredRows addObject:bill];
+                didAuthor = YES;
+                *sponsorsStop = YES;
+                return;
+            }
+        }];
+
+//        if (!didAuthor)
+//        {
+//            [self.rows removeObjectAtIndex:billIndex];
+//        }
+    }];
+
+//    if (tempRows)
+//        [tempRows release];
+
+    self.rows = authoredRows;
+
+    return YES;
 }
 
 
@@ -410,12 +493,12 @@
 		debug_NSLog(@"Error loading search results from %@: %@", [request description], [error localizedDescription]);
 	}	
 	
-	if (useLoadingDataCell)
-		loadingStatus = LOADING_NO_NET;
+	if (self.useLoadingDataCell)
+		self.loadingStatus = LOADING_NO_NET;
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:kBillSearchNotifyDataError object:self];
 
-	if (!useLoadingDataCell) {	// if we don't have some visual cue (loading cell) already, send up an alert
+	if (!self.useLoadingDataCell) {	// if we don't have some visual cue (loading cell) already, send up an alert
 		UIAlertView *alert = [[ UIAlertView alloc ] 
 							   initWithTitle:NSLocalizedStringFromTable(@"Network Error", @"AppAlerts", @"Title for alert stating there's been an error when connecting to a server")
 							   message:NSLocalizedStringFromTable(@"There was an error while contacting the server for bill information.  Please check your network connectivity or try again.", @"AppAlerts", @"")
@@ -429,53 +512,57 @@
 }
 
 // Handling GET /BillMetadata.json  
-- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response {  
-	if (useLoadingDataCell)
-		loadingStatus = LOADING_NO_NET;
+- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response
+{
+	if (self.useLoadingDataCell)
+		self.loadingStatus = LOADING_NO_NET;
 
-	if ([request isGET] && [response isOK]) {  
+	if ([request isGET] && [response isOK])
+    {
 		// Success! Let's take a look at the data  
 		
-		if (useLoadingDataCell)
-			loadingStatus = LOADING_IDLE;
+		if (self.useLoadingDataCell)
+			self.loadingStatus = LOADING_IDLE;
 
-		[_rows removeAllObjects];	
+        if (_rows)
+            [_rows release];
+        _rows = [[NSMutableArray alloc] init];
 
         NSError *error = nil;
         id results= [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
 
-		if ([results isKindOfClass:[NSMutableArray class]])
+		if ([results isKindOfClass:[NSArray class]])
 			[_rows addObjectsFromArray:results];
-		else if ([results isKindOfClass:[NSMutableDictionary class]])
+		else if ([results isKindOfClass:[NSDictionary class]])
 			[_rows addObject:results];
 
 		// if we wanted blocks, we'd do this instead:
-		[_rows sortUsingComparator:^(NSMutableDictionary *item1, NSMutableDictionary *item2) {
+		[_rows sortUsingComparator:^(NSDictionary *item1, NSDictionary *item2) {
 			NSString *bill_id1 = item1[@"bill_id"];
 			NSString *bill_id2 = item2[@"bill_id"];
 			return [bill_id1 compare:bill_id2 options:NSNumericSearch];
 		}];
-		
-		if (request.userData) {
-		
+
+        [self generateSections];
+
+		if (request.userData)
+        {
 			NSString *sponsorID = (request.userData)[@"sponsor_id"];
-			if (NO == IsEmpty(sponsorID)) {
+			if (NO == IsEmpty(sponsorID))
+            {
 				// We must be requesting specific bills for a given sponsors			
-				[self pruneBillsForAuthor:sponsorID];
+				if ([self pruneBillsForAuthor:sponsorID])
+                    [self generateSections];
 			}
 		}
-				
-		[self generateSections];
-		
-		if (searchDisplayController)
+
+		if (self.searchDisplayController)
 			[self.searchDisplayController.searchResultsTableView reloadData];
-		else if (delegateTVC)
-			[delegateTVC.tableView reloadData];
+		else if (self.delegateTVC)
+			[self.delegateTVC.tableView reloadData];
 		
 		[[NSNotificationCenter defaultCenter] postNotificationName:kBillSearchNotifyDataLoaded object:self];
 	}
 }
 
 @end
-
-

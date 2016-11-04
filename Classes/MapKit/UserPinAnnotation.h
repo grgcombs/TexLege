@@ -22,9 +22,9 @@
 
 - (instancetype)initWithPlacemark:(CLPlacemark *)placemark;
 
-@property (nonatomic, copy)		NSNumber *pinColorIndex;
-@property (nonatomic, copy)		NSString *imageName;
-@property (nonatomic, copy)     CLPlacemark *placemark;
+@property (nonatomic, copy) NSNumber *pinColorIndex;
+@property (nonatomic, copy) NSString *imageName;
+@property (nonatomic, copy) CLPlacemark *placemark;
 @property (nonatomic, readonly) NSDictionary *addressDictionary;
 @property (nonatomic, unsafe_unretained) id <UserPinAnnotationDelegate>	coordinateChangedDelegate;
 

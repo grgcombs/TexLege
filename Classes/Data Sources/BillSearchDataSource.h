@@ -16,15 +16,7 @@
 #define kBillSearchNotifyDataError	@"BILLSEARCH_DATA_ERROR"
 #define kBillSearchNotifyDataLoaded	@"BILLSEARCH_DATA_LOADED"
 
-@interface BillSearchDataSource : NSObject <UITableViewDataSource, RKRequestDelegate> {
-	NSMutableArray* _rows;
-	NSMutableDictionary* _sections;
-	IBOutlet UISearchDisplayController *searchDisplayController;
-	IBOutlet UITableViewController *delegateTVC;
-	NSInteger loadingStatus;
-}
-@property (nonatomic, retain) IBOutlet UISearchDisplayController *searchDisplayController;
-@property (nonatomic, retain) IBOutlet UITableViewController *delegateTVC;
+@interface BillSearchDataSource : NSObject <UITableViewDataSource, RKRequestDelegate>
 
 // This will tell the data source to produce a "loading" cell for the table whenever it's searching.
 @property (nonatomic) BOOL useLoadingDataCell;

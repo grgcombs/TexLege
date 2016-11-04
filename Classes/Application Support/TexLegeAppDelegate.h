@@ -11,6 +11,7 @@
 //
 
 #import "TexLege.h"
+#import "TexLegeReachability.h"
 
 @class LegislatorMasterViewController;
 @class CommitteeMasterViewController;
@@ -22,48 +23,32 @@
 @class DataModelUpdateManager;
 @class AnalyticsOptInAlertController;
 
-@interface TexLegeAppDelegate : NSObject  <UIApplicationDelegate, UIAlertViewDelegate, UINavigationControllerDelegate> 
-{
-	DataModelUpdateManager *dataUpdater;
-	UIWindow			*mainWindow;
-	NSMutableDictionary	*savedTableSelection;
-	BOOL				appIsQuitting;
-	AnalyticsOptInAlertController *analyticsOptInController;
-	IBOutlet LinksMasterViewController *linksMasterVC;
-	IBOutlet CapitolMapsMasterViewController *capitolMapsMasterVC;
-	IBOutlet CommitteeMasterViewController *committeeMasterVC;
-	IBOutlet LegislatorMasterViewController *legislatorMasterVC;
-	IBOutlet CalendarMasterViewController *calendarMasterVC;
-	IBOutlet DistrictMapMasterViewController *districtMapMasterVC;
-	IBOutlet BillsMasterViewController *billsMasterVC;
-	IBOutlet UITabBarController *tabBarController;	
-}
-@property (nonatomic, retain) DataModelUpdateManager *dataUpdater;
-@property (nonatomic, retain) UIWindow			*mainWindow;
-@property (nonatomic, retain) NSMutableDictionary	*savedTableSelection;
-@property (nonatomic)		  BOOL				appIsQuitting;
+@interface TexLegeAppDelegate : NSObject  <UIApplicationDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, TexLegeReachabilityDelegate>
+
+@property (nonatomic, retain, readonly) DataModelUpdateManager *dataUpdater;
+@property (nonatomic, retain, readonly) UIWindow *mainWindow;
+@property (nonatomic, copy, readonly) NSDictionary *savedTableSelection;
+@property (nonatomic, getter=isAppQuitting,readonly) BOOL appQuitting;
 
 // For Functional View Controllers
-@property (nonatomic, assign) IBOutlet LinksMasterViewController *linksMasterVC;
-@property (nonatomic, assign) IBOutlet CapitolMapsMasterViewController *capitolMapsMasterVC;
-@property (nonatomic, assign) IBOutlet CommitteeMasterViewController *committeeMasterVC;
-@property (nonatomic, assign) IBOutlet LegislatorMasterViewController *legislatorMasterVC;
-@property (nonatomic, assign) IBOutlet CalendarMasterViewController *calendarMasterVC;
-@property (nonatomic, assign) IBOutlet DistrictMapMasterViewController *districtMapMasterVC;
-@property (nonatomic, assign) IBOutlet BillsMasterViewController *billsMasterVC;
+@property (nonatomic, retain) IBOutlet LinksMasterViewController *linksMasterVC;
+@property (nonatomic, retain) IBOutlet CapitolMapsMasterViewController *capitolMapsMasterVC;
+@property (nonatomic, retain) IBOutlet CommitteeMasterViewController *committeeMasterVC;
+@property (nonatomic, retain) IBOutlet LegislatorMasterViewController *legislatorMasterVC;
+@property (nonatomic, retain) IBOutlet CalendarMasterViewController *calendarMasterVC;
+@property (nonatomic, retain) IBOutlet DistrictMapMasterViewController *districtMapMasterVC;
+@property (nonatomic, retain) IBOutlet BillsMasterViewController *billsMasterVC;
 
 @property (nonatomic, retain) IBOutlet UITabBarController *tabBarController;
 
 // For iPad Interface
-@property (nonatomic, readonly)  UISplitViewController *splitViewController;
-@property (nonatomic, readonly)  UIViewController *currentMasterViewController;//, *currentDetailViewController;
-@property (nonatomic, readonly)  UINavigationController * masterNavigationController, *detailNavigationController;
-
-//- (void)setTabOrderIfSaved;
+@property (nonatomic, readonly) UISplitViewController *splitViewController;
+@property (nonatomic, readonly) UIViewController *currentMasterViewController;
+@property (nonatomic, readonly) UINavigationController * masterNavigationController;
+@property (nonatomic, readonly) UINavigationController *detailNavigationController;
 
 - (id) savedTableSelectionForKey:(NSString *)vcKey;
 - (void)setSavedTableSelection:(id)object forKey:(NSString *)vcKey;
-- (void)changingReachability:(id)sender;
 
 + (TexLegeAppDelegate *)appDelegate;
 

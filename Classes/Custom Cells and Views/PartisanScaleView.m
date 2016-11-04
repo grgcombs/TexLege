@@ -20,19 +20,16 @@ const CGFloat kPartisanScaleViewHeight = 32.0f;
 
 @implementation PartisanScaleView
 
-@synthesize  questionImage;
-@synthesize sliderValue, sliderMin, sliderMax;
-@synthesize highlighted, showUnknown;
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
-	if (self) {
-		sliderValue = 0.0f;
-		sliderMin = -1.5f;
-		sliderMax = 1.5f;
-		questionImage = nil;
-		showUnknown = NO;
+	if (self)
+    {
+		_sliderValue = 0.0f;
+		_sliderMin = -1.5f;
+		_sliderMax = 1.5f;
+		_questionImage = nil;
+		_showUnknown = NO;
 		
 		[self setOpaque:NO];
 	}
@@ -43,49 +40,43 @@ const CGFloat kPartisanScaleViewHeight = 32.0f;
 {
 	self = [super initWithCoder:coder];
 	if (self) {
-		sliderValue = 0.0f;
-		sliderMin = -1.5f;
-		sliderMax = 1.5f;
-		questionImage = nil;
-		showUnknown = NO;
+		_sliderValue = 0.0f;
+		_sliderMin = -1.5f;
+		_sliderMax = 1.5f;
+		_questionImage = nil;
+		_showUnknown = NO;
 		
 		[self setOpaque:NO];
 	}
 	return self;
 }
 
-- (void) awakeFromNib {
+- (void)awakeFromNib
+{
 	[super awakeFromNib];
 
-	sliderValue = 0.0f;
-	sliderMin = -1.5f;
-	sliderMax = 1.5f;
-	questionImage = nil;
-	showUnknown = NO;
-	
-}
-
-- (void)dealloc
-{
-	nice_release(questionImage);
-	[super dealloc];
+	_sliderValue = 0.0f;
+	_sliderMin = -1.5f;
+	_sliderMax = 1.5f;
+	_questionImage = nil;
+	_showUnknown = NO;
 }
 
 - (void)setSliderValue:(CGFloat)value
 {
-	sliderValue = value;
+	_sliderValue = value;
 	
-	if (sliderValue == 0.0f) {	// this gives us the center, in cases of no roll call scores
-		sliderValue = (sliderMin + sliderMin)/2;
+	if (_sliderValue == 0.0f) {	// this gives us the center, in cases of no roll call scores
+		_sliderValue = (_sliderMin + _sliderMin)/2;
 		self.showUnknown = YES;
 	}
 	else
 		self.showUnknown = NO;
 	
-	if (sliderMax > (-sliderMin))
-		sliderMin = (-sliderMax);
+	if (_sliderMax > (-_sliderMin))
+		_sliderMin = (-_sliderMax);
 	else
-		sliderMax = (-sliderMin);
+		_sliderMax = (-_sliderMin);
 		
 #define	kStarAtDemoc 0.5f
 #define kStarAtRepub 144.5f
@@ -98,10 +89,10 @@ const CGFloat kPartisanScaleViewHeight = 32.0f;
 	sliderMax = +1.5;
 #endif
 	
-	CGFloat magicNumber = (kStarMagnifierBase / (sliderMax - sliderMin));
+	CGFloat magicNumber = (kStarMagnifierBase / (_sliderMax - _sliderMin));
 	CGFloat offset = kStarAtHalf;
 		
-	sliderValue = sliderValue * magicNumber + offset;
+	_sliderValue = _sliderValue * magicNumber + offset;
 
 	[self setNeedsDisplay];
 }
@@ -112,22 +103,19 @@ const CGFloat kPartisanScaleViewHeight = 32.0f;
 	return CGSizeMake(kPartisanScaleViewWidth, kPartisanScaleViewHeight);
 }
 
-- (BOOL)highlighted{
-	return highlighted;
-}
-
 - (void)setHighlighted:(BOOL)flag
 {
-	if (highlighted == flag)
+	if (_highlighted == flag)
 		return;
 	
-	highlighted = flag;
+	_highlighted = flag;
 	[self setNeedsDisplay];
-	
 }
 
 - (void)drawRect:(CGRect)dirtyRect
 {
+    [super drawRect:dirtyRect];
+
 	CGRect imageBounds = CGRectMake(0.0f, 0.0f, kPartisanScaleViewWidth, kPartisanScaleViewHeight);
 	CGRect bounds = self.bounds;
 	CGContextRef context = UIGraphicsGetCurrentContext();

@@ -21,14 +21,14 @@ extern const CGFloat kLegislatorMasterCellViewHeight;
 @property (copy, nonatomic) NSString *title;
 @property (copy, nonatomic) NSString *name;
 @property (copy, nonatomic) NSString *tenure;
-@property (nonatomic) BOOL useDarkBackground;
-@property (nonatomic) BOOL highlighted;
+@property (nonatomic, assign) BOOL useDarkBackground;
+@property (nonatomic, getter=isHighlighted) BOOL highlighted;
 @property (nonatomic, retain) UIImage *questionImage;
 
-@property (nonatomic) CGFloat sliderValue;
-@property (nonatomic) CGFloat sliderMin;
-@property (nonatomic) CGFloat sliderMax;
-@property (nonatomic) CGFloat partisan_index;
+@property (nonatomic, assign) CGFloat sliderValue;
+@property (nonatomic, assign) CGFloat sliderMin;
+@property (nonatomic, assign) CGFloat sliderMax;
+@property (nonatomic, assign) CGFloat partisan_index;
 
 - (void)setLegislator:(LegislatorObj *)value;
 

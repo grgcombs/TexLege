@@ -17,20 +17,15 @@
 
 @class LegislatorObj;
 
-@interface PartisanIndexStats : NSObject <RKRequestDelegate> {	
-@private
-	NSDictionary *m_partisanIndexAggregates;	
-	NSMutableArray *m_rawPartisanIndexAggregates;	
-	BOOL isFresh;
-	BOOL isLoading;
-	NSDate *updated;
-}
+@interface PartisanIndexStats : NSObject <RKRequestDelegate>
 
-@property (nonatomic, readonly) NSDictionary *partisanIndexAggregates;
-@property (nonatomic) BOOL isFresh;
+@property (NS_NONATOMIC_IOSONLY, copy, readonly) NSDictionary *partisanIndexAggregates;
+@property (NS_NONATOMIC_IOSONLY, readonly, getter=isFresh) BOOL fresh;
+@property (NS_NONATOMIC_IOSONLY, readonly, getter=isLoading) BOOL loading;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL hasData;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSDate *updated;
 
 + (PartisanIndexStats *)sharedPartisanIndexStats;
-@property (NS_NONATOMIC_IOSONLY, readonly) BOOL hasData;
 - (void)loadPartisanIndex:(id)sender;
 
 - (CGFloat) minPartisanIndexUsingChamber:(NSInteger)chamber;

@@ -13,31 +13,26 @@
 #import <Foundation/Foundation.h>
 #import "Reachability.h"
 
+@class TexLegeReachability;
+
+@protocol TexLegeReachabilityDelegate <NSObject>
+- (void)reachabilityDidChange:(TexLegeReachability *)reachability;
+@end
 
 @interface TexLegeReachability : NSObject
-{
-	id appDelegate;
-	Reachability* hostReach;
-    Reachability* internetReach;
-    Reachability* wifiReach;	
-	
-	Reachability* openstatesReach;
-	Reachability* texlegeReach;
-	Reachability* tloReach;
-	Reachability* googleReach;
 
-}
-@property ReachabilityStatus remoteHostStatus;
-@property ReachabilityStatus internetConnectionStatus;
-@property ReachabilityStatus localWiFiConnectionStatus;
-@property ReachabilityStatus texlegeConnectionStatus;
-@property ReachabilityStatus openstatesConnectionStatus;
-@property ReachabilityStatus tloConnectionStatus;
-@property ReachabilityStatus googleConnectionStatus;
-
-- (void) startCheckingReachability:(id)delegate;
+@property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus remoteHostStatus;
+@property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus internetConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus localWiFiConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus texlegeConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus openstatesConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus tloConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus googleConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, assign) id<TexLegeReachabilityDelegate> delegate;
 @property (NS_NONATOMIC_IOSONLY, getter=isNetworkReachable, readonly) BOOL networkReachable;
 @property (NS_NONATOMIC_IOSONLY, getter=isNetworkReachableViaWiFi, readonly) BOOL networkReachableViaWiFi;
+
+- (void)startCheckingReachability:(id<TexLegeReachabilityDelegate>)delegate;
 
 + (TexLegeReachability *)sharedTexLegeReachability;
 + (BOOL)texlegeReachable;

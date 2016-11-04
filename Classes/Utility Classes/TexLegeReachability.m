@@ -18,19 +18,37 @@
 
 #define ALLOW_SLOW_DNS_LOOKUPS	0
 
-@interface TexLegeReachability (Private)
-- (void)updateStatusWithReachability:(Reachability*) curReach;
+@interface TexLegeReachability()
+
+@property (NS_NONATOMIC_IOSONLY, assign) ReachabilityStatus remoteHostStatus;
+@property (NS_NONATOMIC_IOSONLY, assign) ReachabilityStatus internetConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, assign) ReachabilityStatus localWiFiConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, assign) ReachabilityStatus texlegeConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, assign) ReachabilityStatus openstatesConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, assign) ReachabilityStatus tloConnectionStatus;
+@property (NS_NONATOMIC_IOSONLY, assign) ReachabilityStatus googleConnectionStatus;
+
+@property (NS_NONATOMIC_IOSONLY, retain) Reachability *hostReach;
+@property (NS_NONATOMIC_IOSONLY, retain) Reachability *internetReach;
+@property (NS_NONATOMIC_IOSONLY, retain) Reachability *wifiReach;
+@property (NS_NONATOMIC_IOSONLY, retain) Reachability *openstatesReach;
+@property (NS_NONATOMIC_IOSONLY, retain) Reachability *texlegeReach;
+@property (NS_NONATOMIC_IOSONLY, retain) Reachability *tloReach;
+@property (NS_NONATOMIC_IOSONLY, retain) Reachability *googleReach;
+
 @end
 
 @implementation TexLegeReachability
 
 + (TexLegeReachability*)sharedTexLegeReachability
 {
-	static dispatch_once_t pred;
-	static TexLegeReachability *foo = nil;
-	
-	dispatch_once(&pred, ^{ foo = [[self alloc] init]; });
-	return foo;
+    static TexLegeReachability *instance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        instance = [[self alloc] init];
+    });
+
+    return instance;
 }
 
 #pragma mark - 
@@ -47,52 +65,69 @@
  Not available | Available via WiFi
  */
 
-- (void)dealloc {
-	nice_release(hostReach);
-	nice_release(openstatesReach);
-	nice_release(texlegeReach);
-	nice_release(tloReach);
-	nice_release(googleReach);
-	nice_release(internetReach);
-	nice_release(wifiReach);
-	[super dealloc];
+- (void)dealloc
+{
+    self.delegate = nil;
+    self.hostReach = nil;
+    self.openstatesReach = nil;
+    self.texlegeReach = nil;
+    self.tloReach = nil;
+    self.googleReach = nil;
+    self.internetReach = nil;
+    self.wifiReach = nil;
+
+    [super dealloc];
 }
 
-- (void)startCheckingReachability:(id)delegate {
-	if (delegate)
-		appDelegate = delegate;
-	
+- (void)startCheckingReachability:(id<TexLegeReachabilityDelegate>)delegate
+{
+    self.delegate = delegate;
+
 	// Observe the kNetworkReachabilityChangedNotification. When that notification is posted, the
     // method "reachabilityChanged" will be called. 
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(reachabilityChanged:) name: kReachabilityChangedNotification object: nil];
+
+    if (_hostReach)
+        [_hostReach release];
+	_hostReach = [[Reachability reachabilityWithHostName: @"www.apple.com"] retain];
+	[_hostReach startNotifier];
+	[self updateStatusWithReachability: _hostReach];
 	
-	hostReach = [[Reachability reachabilityWithHostName: @"www.apple.com"] retain];
-	[hostReach startNotifier];
-	[self updateStatusWithReachability: hostReach];
+    if (_openstatesReach)
+        [_openstatesReach release];
+	_openstatesReach = [[Reachability reachabilityWithHostName:osApiHost] retain];
+	[_openstatesReach startNotifier];
+	[self updateStatusWithReachability: _openstatesReach];
+
+    if (_googleReach)
+        [_googleReach release];
+	_googleReach = [[Reachability reachabilityWithHostName:@"maps.google.com"] retain];
+	[_googleReach startNotifier];
+	[self updateStatusWithReachability: _googleReach];
 	
-	openstatesReach = [[Reachability reachabilityWithHostName:osApiHost] retain];
-	[openstatesReach startNotifier];
-	[self updateStatusWithReachability: openstatesReach];
+    if (_texlegeReach)
+        [_texlegeReach release];
+	_texlegeReach = [[Reachability reachabilityWithHostName:RESTKIT_HOST] retain];
+	[_texlegeReach startNotifier];
+	[self updateStatusWithReachability: _texlegeReach];
 	
-	googleReach = [[Reachability reachabilityWithHostName:@"maps.google.com"] retain];
-	[googleReach startNotifier];
-	[self updateStatusWithReachability: googleReach];
+    if (_tloReach)
+        [_tloReach release];
+	_tloReach = [[Reachability reachabilityWithHostName:tloApiHost] retain];
+	[_tloReach startNotifier];
+	[self updateStatusWithReachability: _tloReach];
 	
-	texlegeReach = [[Reachability reachabilityWithHostName:RESTKIT_HOST] retain];
-	[texlegeReach startNotifier];
-	[self updateStatusWithReachability: texlegeReach];
+    if (_internetReach)
+        [_internetReach release];
+	_internetReach = [[Reachability reachabilityForInternetConnection] retain];
+	[_internetReach startNotifier];
+	[self updateStatusWithReachability: _internetReach];
 	
-	tloReach = [[Reachability reachabilityWithHostName:tloApiHost] retain];
-	[tloReach startNotifier];
-	[self updateStatusWithReachability: tloReach];
-	
-	internetReach = [[Reachability reachabilityForInternetConnection] retain];
-	[internetReach startNotifier];
-	[self updateStatusWithReachability: internetReach];
-	
-    wifiReach = [[Reachability reachabilityForLocalWiFi] retain];
-	[wifiReach startNotifier];
-	[self updateStatusWithReachability: wifiReach];
+    if (_wifiReach)
+        [_wifiReach release];
+    _wifiReach = [[Reachability reachabilityForLocalWiFi] retain];
+	[_wifiReach startNotifier];
+	[self updateStatusWithReachability: _wifiReach];
 }
 
 - (void)reachabilityChanged:(NSNotification *)note
@@ -106,54 +141,61 @@
 {
 	NetworkStatus currentStatus = [curReach currentReachabilityStatus];
 	
-	if (curReach == hostReach)
+	if (curReach == self.hostReach)
 	{
         self.remoteHostStatus = (ReachabilityStatus)currentStatus;
-        BOOL connectionRequired= [curReach isConnectionRequired];
-		if (self.remoteHostStatus != ReachableViaWWAN) {
+        BOOL connectionRequired = [curReach isConnectionRequired];
+		if (self.remoteHostStatus != ReachableViaWWAN)
+        {
 			if(connectionRequired)
+            {
 				NSLog(@"Cellular data network is available.\n  Internet traffic will be routed through it after a connection is established.");
+            }
 			else
+            {
 				NSLog(@"Cellular data network is active.\n  Internet traffic will be routed through it.");
+            }
 		}
 	}
-	else if(curReach == internetReach)
+	else if (curReach == self.internetReach)
 	{	
 		self.internetConnectionStatus = (ReachabilityStatus)currentStatus;
 	}
-	else if(curReach == wifiReach)
+	else if (curReach == self.wifiReach)
 	{	
 		self.localWiFiConnectionStatus = (ReachabilityStatus)currentStatus;
 	}
-	else {
-		if(curReach == googleReach)
+	else
+    {
+		if (curReach == self.googleReach)
 			self.googleConnectionStatus = (ReachabilityStatus)currentStatus;
-		if(curReach == texlegeReach)
+		if (curReach == self.texlegeReach)
 			self.texlegeConnectionStatus = (ReachabilityStatus)currentStatus;
-		if(curReach == openstatesReach)
+		if (curReach == self.openstatesReach)
 			self.openstatesConnectionStatus = (ReachabilityStatus)currentStatus;
-		if(curReach == tloReach)
+		if (curReach == self.tloReach)
 			self.tloConnectionStatus = (ReachabilityStatus)currentStatus;
 
-        if (appDelegate)
-        {
-            [(TexLegeAppDelegate *)appDelegate changingReachability:curReach];
-        }
+        if (self.delegate)
+            [self.delegate reachabilityDidChange:self];
 	}
 }
 
 #pragma mark -
 #pragma mark Alerts and Convenience Methods
 
-+ (BOOL)texlegeReachable {
++ (BOOL)texlegeReachable
+{
 	return [TexLegeReachability sharedTexLegeReachability].texlegeConnectionStatus > NotReachable;
 }
 
-+ (BOOL)openstatesReachable {
++ (BOOL)openstatesReachable
+{
 	return [TexLegeReachability sharedTexLegeReachability].openstatesConnectionStatus > NotReachable;
 }
 
-+ (void)noInternetAlert {
++ (void)noInternetAlert
+{
 	UIAlertView *noInternetAlert = [[ UIAlertView alloc ] 
 									 initWithTitle:NSLocalizedStringFromTable(@"Internet Unavailable", @"AppAlerts", @"Alert title, network access is unavailable.")
 									 message:NSLocalizedStringFromTable(@"This feature requires an Internet connection, and a connection is unavailable.  Your device may be in 'Airplane' mode or is suffering poor network coverage.", @"AppAlerts", @"") 
@@ -192,7 +234,7 @@
 	return reachable;
 }
 
-+ (BOOL) isHostReachable:(NSString *)host
++ (BOOL)isHostReachable:(NSString *)host
 {
 	BOOL reachable = YES;
 	
@@ -218,7 +260,7 @@
 	return reachable;
 }
 
-+ (BOOL) canReachHostWithURL:(NSURL *)url alert:(BOOL)doAlert
++ (BOOL)canReachHostWithURL:(NSURL *)url alert:(BOOL)doAlert
 {
 	BOOL reachableHost = NO;
 	if (!url)
@@ -257,4 +299,3 @@
 }
 
 @end
-

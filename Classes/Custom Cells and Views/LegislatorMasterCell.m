@@ -21,17 +21,16 @@
 @end
 
 @implementation LegislatorMasterCell
-@synthesize cellView;
 
-
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
 	
 	if ((self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier])) {
 		CGFloat endX = self.contentView.bounds.size.width - 53.f;
 		CGRect tzvFrame = CGRectMake(53.f, 0.0, endX, self.contentView.bounds.size.height);
-		cellView = [[LegislatorMasterCellView alloc] initWithFrame:tzvFrame];
-		cellView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleRightMargin;
-		[self.contentView addSubview:cellView];
+		_cellView = [[LegislatorMasterCellView alloc] initWithFrame:tzvFrame];
+		_cellView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleRightMargin;
+		[self.contentView addSubview:_cellView];
 
 		_disclosure = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(-30.f, -30.f, 28.f, 28.f)];
         [self.contentView addSubview:_disclosure];
@@ -84,11 +83,12 @@
 }
 
 - (void)redisplay {
-	[cellView setNeedsDisplay];
+	[self.cellView setNeedsDisplay];
 }
 
-- (void)dealloc {
-	nice_release(cellView);
+- (void)dealloc
+{
+    self.cellView = nil;
     [super dealloc];
 }
 

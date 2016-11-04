@@ -20,24 +20,18 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 
 @implementation LegislatorMasterCellView
 
-@synthesize title;
-@synthesize name;
-@synthesize tenure;
-@synthesize sliderValue, sliderMin, sliderMax, partisan_index;
-@synthesize useDarkBackground;
-@synthesize highlighted, questionImage;
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
 	if (self) {
-		title = [@"Representative - (D-23)" retain];
-		name = [@"Rafael Anchía" retain];
-		tenure = [@"4 Years" retain];
-		sliderValue = 0.0, partisan_index = 0.0;
-		sliderMin = -1.5;
-		sliderMax = 1.5;
-		questionImage = nil;
+		_title = [@"Representative - (D-23)" retain];
+		_name = [@"Rafael Anchía" retain];
+		_tenure = [@"4 Years" retain];
+        _sliderValue = 0.0;
+        _partisan_index = 0.0;
+		_sliderMin = -1.5;
+		_sliderMax = 1.5;
+		_questionImage = nil;
 		
 		[self setOpaque:YES];
 	}
@@ -60,47 +54,47 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 
 - (void)configure
 {
-    sliderValue = 0;
-    partisan_index = 0;
-	sliderMin = -1.5;
-	sliderMax = 1.5;
+    _sliderValue = 0;
+    _partisan_index = 0;
+	_sliderMin = -1.5;
+	_sliderMax = 1.5;
 	[self setOpaque:YES];
 }
+
 - (void)dealloc
 {
-	nice_release(questionImage);
-	nice_release(title);
-	nice_release(name);
-	nice_release(tenure);
+    self.questionImage = nil;
+    self.title = nil;
+    self.name = nil;
+    self.tenure = nil;
 	[super dealloc];
 }
 
 - (void)setSliderValue:(CGFloat)value
 {
-	sliderValue = value;
+	_sliderValue = value;
 		
-	if (sliderValue == 0.0f) {	// this gives us the center, in cases of no roll call scores
-		sliderValue = (sliderMin + sliderMin)/2;
+	if (_sliderValue == 0.0f) {	// this gives us the center, in cases of no roll call scores
+		_sliderValue = (_sliderMin + _sliderMin)/2;
 	}
 	
-	if (sliderMax > (-sliderMin))
-		sliderMin = (-sliderMax);
+	if (_sliderMax > (-_sliderMin))
+		_sliderMin = (-_sliderMax);
 	else
-		sliderMax = (-sliderMin);
+		_sliderMax = (-_sliderMin);
 		
 #define	kStarAtDemoc 0.5
 #define kStarAtRepub 162.0
 #define	kStarAtHalf 81.5
 #define kStarMagnifierBase (kStarAtRepub - kStarAtDemoc)
 	
-	CGFloat magicNumber = (kStarMagnifierBase / (sliderMax - sliderMin));
+	CGFloat magicNumber = (kStarMagnifierBase / (_sliderMax - _sliderMin));
 	CGFloat offset = kStarAtHalf;
 		
-	sliderValue = sliderValue * magicNumber + offset;
+	_sliderValue = _sliderValue * magicNumber + offset;
 	
 	//[self setNeedsDisplay];
 }
-
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
@@ -112,22 +106,18 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 	if (self.highlighted)
 		return;
 	
-	useDarkBackground = flag;
+	_useDarkBackground = flag;
 	
-	UIColor *labelBGColor = (useDarkBackground) ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
+	UIColor *labelBGColor = (_useDarkBackground) ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
 	self.backgroundColor = labelBGColor;
 	[self setNeedsDisplay];
 }
 
-- (BOOL)highlighted{
-	return highlighted;
-}
-
 - (void)setHighlighted:(BOOL)flag
 {
-	if (highlighted == flag)
+	if (_highlighted == flag)
 		return;
-	highlighted = flag;
+	_highlighted = flag;
 	
 	[self setNeedsDisplay];
 }
@@ -152,7 +142,8 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 	self.tenure = [value tenureString];
 		
 	PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
-    if (indexStats.hasData) {
+    if (indexStats.hasData)
+    {
         CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:(value.legtype).integerValue];
         CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:(value.legtype).integerValue];
         self.sliderMax = maxSlider;
@@ -165,6 +156,8 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 
 - (void)drawRect:(CGRect)dirtyRect
 {
+    [super drawRect:dirtyRect];
+
 	CGRect imageBounds = CGRectMake(0.0f, 0.0f, kLegislatorMasterCellViewWidth, kLegislatorMasterCellViewHeight);
 	CGRect bounds = self.bounds;
 
@@ -178,10 +171,12 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 	UIColor *titleColor = nil;
 
 	// Choose font color based on highlighted state.
-	if (self.highlighted) {
+	if (self.isHighlighted)
+    {
 		nameColor = tenureColor = titleColor = [TexLegeTheme backgroundLight];
 	}
-	else {
+	else
+    {
 		nameColor = [TexLegeTheme textDark];
 		tenureColor = [TexLegeTheme textLight];
 		titleColor = [TexLegeTheme accent];

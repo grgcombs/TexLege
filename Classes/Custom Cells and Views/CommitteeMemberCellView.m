@@ -22,28 +22,30 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 
 @implementation CommitteeMemberCellView
 
-@synthesize title, name, tenure, party, party_id, rank, district, partisan_index;
-@synthesize highlighted, questionImage;
-@synthesize sliderValue, sliderMin, sliderMax;
-
+- (void)configure
+{
+    _title = [@"Rep." retain];
+    _name = [@"Warren Chisum" retain];
+    _tenure = [@"4 Years" retain];
+    _party = [@"Republican" retain];
+    _rank = [@"3rd most partisan (out of 76 Repubs)" retain];
+    _district = [@"District 21" retain];
+    _party_id = 2;
+    _sliderValue = 0.0f;
+    _partisan_index = 0.0f;
+    _sliderMin = -1.5f;
+    _sliderMax = 1.5f;
+    _questionImage = nil;
+    //		[self setOpaque:NO];
+    [self setOpaque:YES];
+    self.backgroundColor = [TexLegeTheme backgroundLight];
+}
 - (instancetype)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
-	if (self) {
-		title = [@"Rep." retain];
-		name = [@"Warren Chisum" retain];
-		tenure = [@"4 Years" retain];
-		party = [@"Republican" retain];
-		rank = [@"3rd most partisan (out of 76 Repubs)" retain];
-		district = [@"District 21" retain];
-		party_id = 2;
-		sliderValue = 0.0f, partisan_index = 0.0f;
-		sliderMin = -1.5f;
-		sliderMax = 1.5f;
-		questionImage = nil;
-//		[self setOpaque:NO];
-		[self setOpaque:YES];
-		self.backgroundColor = [TexLegeTheme backgroundLight];
+	if (self)
+    {
+        [self configure];
 	}
 	return self;
 }
@@ -51,72 +53,49 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
 	self = [super initWithCoder:coder];
-	if (self) {
-		title = [@"Rep." retain];
-		name = [@"Warren Chisum" retain];
-		tenure = [@"4 Years" retain];
-		party = [@"Republican" retain];
-		rank = [@"3rd most partisan (out of 76 Repubs)" retain];
-		district = [@"District 21" retain];
-		party_id = 2;
-		sliderValue = 0.0f, partisan_index = 0.0f;
-		sliderMin = -1.5f;
-		sliderMax = 1.5f;
-		questionImage = nil;
-//		[self setOpaque:NO];
-		[self setOpaque:YES];
-		self.backgroundColor = [TexLegeTheme backgroundLight];
+	if (self)
+    {
+        [self configure];
 	}
 	return self;
 }
 
-- (void) awakeFromNib {
+- (void) awakeFromNib
+{
 	[super awakeFromNib];
-	title = [@"Rep." retain];
-	name = [@"Warren Chisum" retain];
-	tenure = [@"4 Years" retain];
-	party = [@"Republican" retain];
-	rank = [@"3rd most partisan (out of 76 Repubs)" retain];
-	district = [@"District 21" retain];
-	party_id = 2;
-	sliderValue = 0.0f, partisan_index = 0.0f;
-	sliderMin = -1.5f;
-	sliderMax = 1.5f;
-	questionImage = nil;
-//	[self setOpaque:NO];
-	[self setOpaque:YES];
-	self.backgroundColor = [TexLegeTheme backgroundLight];
+    [self configure];
 }
 
 - (void)dealloc
 {
-	nice_release(title);
-	nice_release(name);
-	nice_release(tenure);
-	nice_release(party);
-	nice_release(rank);
-	nice_release(district);
-	
+    self.title = nil;
+    self.name = nil;
+    self.tenure = nil;
+    self.party = nil;
+    self.rank = nil;
+    self.district = nil;
+
 	[super dealloc];
 }
 
 - (void)setSliderValue:(CGFloat)value
 {	
-	sliderValue = value;
+	_sliderValue = value;
 	
-	if (sliderValue < sliderMin) // lets say -1.5
-		sliderValue = sliderMin;
-	if (sliderValue > sliderMax) // let's say +1.5
-		sliderValue = sliderMax;
+	if (_sliderValue < _sliderMin) // lets say -1.5
+		_sliderValue = _sliderMin;
+	if (_sliderValue > _sliderMax) // let's say +1.5
+		_sliderValue = _sliderMax;
 	
-	if (sliderValue == 0.0f) {	// this gives us the center, in cases of no roll call scores
-		sliderValue = (sliderMin + sliderMin)/2;
+	if (_sliderValue == 0.0f)
+    {	// this gives us the center, in cases of no roll call scores
+		_sliderValue = (_sliderMin + _sliderMin)/2;
 	}
 	
-	if (sliderMax > (-sliderMin))
-		sliderMin = (-sliderMax);
+	if (_sliderMax > (-_sliderMin))
+		_sliderMin = (-_sliderMax);
 	else
-		sliderMax = (-sliderMin);
+		_sliderMax = (-_sliderMin);
 		
 #define	kStarAtDemoc 270.5f
 #define kStarAtRepub 478.5f
@@ -124,19 +103,19 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 #define kStarMagnifierBase (kStarAtRepub - kStarAtDemoc)
 	
 #ifdef JUSTTESTINGHERE
-	sliderValue = [party_id integerValue] == DEMOCRAT ? 0 : +1.5;
-	sliderMin = -1.5;
-	sliderMax = +1.5;
+	_sliderValue = [party_id integerValue] == DEMOCRAT ? 0 : +1.5;
+	_sliderMin = -1.5;
+	_sliderMax = +1.5;
 #endif
 	
 	//the magnifier ... multiplies our -1.05 type score into the number of pixels to shift
-	CGFloat magicNumber = (kStarMagnifierBase / (sliderMax - sliderMin));	
+	CGFloat magicNumber = (kStarMagnifierBase / (_sliderMax - _sliderMin));
 	
 	// the static offset ... where the "center" of our gradient in the view,
 	//		it's not the REAL center of the gradient, because we're going off the left boundary of the star.
 	CGFloat offset = kStarAtHalf;										
 	
-	sliderValue = sliderValue * magicNumber + offset;
+	_sliderValue = _sliderValue * magicNumber + offset;
 	
 	//[self setNeedsDisplay];
 }
@@ -146,16 +125,12 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	return CGSizeMake(kCommitteeMemberCellViewWidth, kCommitteeMemberCellViewHeight);
 }
 
-- (BOOL)highlighted{
-	return highlighted;
-}
-
 - (void)setHighlighted:(BOOL)flag
 {
-	if (highlighted == flag)
+	if (_highlighted == flag)
 		return;
 	
-	highlighted = flag;
+	_highlighted = flag;
 	/*
 	 if (flag)
 	 self.backgroundColor = [TexLegeTheme accent];
@@ -166,13 +141,13 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	
 }
 
-- (NSString *) partisanRankStringForLegislator:(LegislatorObj *)value {
-	
+- (NSString *)partisanRankStringForLegislator:(LegislatorObj *)value
+{
 	//self.rank = @"3rd most partisan (out of 76 Repubs)";
 
-	NSArray *legislators = [TexLegeCoreDataUtils allLegislatorsSortedByPartisanshipFromChamber:(value.legtype).integerValue 
-																		   andPartyID:(value.party_id).integerValue];
-	if (legislators) {
+	NSArray *legislators = [TexLegeCoreDataUtils allLegislatorsSortedByPartisanshipFromChamber:(value.legtype).integerValue andPartyID:(value.party_id).integerValue];
+	if (legislators)
+    {
 		NSInteger rankIndex = [legislators indexOfObject:value] + 1;
 		NSInteger count = legislators.count;
 		NSString *partyShortName = stringForParty((value.party_id).integerValue, TLReturnAbbrevPlural);
@@ -186,8 +161,10 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 	}
 }
 
-- (void)setLegislator:(LegislatorObj *)value {	
-	if (value) {
+- (void)setLegislator:(LegislatorObj *)value
+{
+	if (value)
+    {
 		self.partisan_index = value.latestWnomFloat;
 		self.title = [value legTypeShortName];
 		self.district = [NSString stringWithFormat:NSLocalizedStringFromTable(@"District %@", @"DataTableUI", @"District number"),
@@ -212,6 +189,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 
 - (void)drawRect:(CGRect)dirtyRect
 {
+    [super drawRect:dirtyRect];
 	CGRect imageBounds = CGRectMake(0.0f, 0.0f, kCommitteeMemberCellViewWidth, kCommitteeMemberCellViewHeight);
 	CGRect bounds = self.bounds;
 	CGContextRef context = UIGraphicsGetCurrentContext();
@@ -245,7 +223,7 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 		nameColor = [TexLegeTheme textDark];
 		tenureColor = rankColor = districtColor = [TexLegeTheme textLight];
 		titleColor = [TexLegeTheme accent];
-		partyColor = party_id == REPUBLICAN ? [TexLegeTheme texasRed] : [TexLegeTheme texasBlue];
+		partyColor = self.party_id == REPUBLICAN ? [TexLegeTheme texasRed] : [TexLegeTheme texasBlue];
 	}
 	
 	CGContextSaveGState(context);

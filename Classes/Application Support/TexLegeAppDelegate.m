@@ -34,13 +34,20 @@
 
 #import "StateMetaLoader.h"
 
-@interface TexLegeAppDelegate (Private)
+@interface TexLegeAppDelegate ()
+
 - (void)runOnEveryAppStart;
 - (void)runOnAppQuit;
 - (void)restoreArchivableSavedTableSelection;
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *archivableSavedTableSelection;
 - (void)resetSavedTableSelection:(id)sender;
 @property (NS_NONATOMIC_IOSONLY, getter=isDatabaseResetNeeded, readonly) BOOL databaseResetNeeded;
+
+@property (nonatomic,retain) DataModelUpdateManager *dataUpdater;
+@property (nonatomic,copy) NSMutableDictionary *savedTableSelection;
+@property (nonatomic,getter=isAppQuitting,assign) BOOL appQuitting;
+@property (nonatomic,retain) AnalyticsOptInAlertController *analyticsOptInController;
+
 @end
 
 // user default dictionary keys
@@ -57,39 +64,38 @@ NSUInteger kNumMaxTabs = 11;
 NSInteger kNoSelection = -1;
 
 @implementation TexLegeAppDelegate
+@synthesize window = _window;
 
-@synthesize tabBarController;
-@synthesize savedTableSelection, appIsQuitting;
-
-@synthesize mainWindow;
-@synthesize dataUpdater;
-
-@synthesize legislatorMasterVC, committeeMasterVC, capitolMapsMasterVC, linksMasterVC, calendarMasterVC, districtMapMasterVC;
-@synthesize billsMasterVC;
-
-+ (TexLegeAppDelegate *)appDelegate {
++ (TexLegeAppDelegate *)appDelegate
+{
 	return (TexLegeAppDelegate *)[UIApplication sharedApplication].delegate;
 }
 
-- (instancetype) init {
-	if ((self = [super init])) {
+- (UIWindow *)mainWindow
+{
+    return self.window;
+}
+
+- (instancetype)init
+{
+	if ((self = [super init]))
+    {
 		// initialize  to nil
-		mainWindow = nil;
-		self.appIsQuitting = NO;
-		self.savedTableSelection = [NSMutableDictionary dictionary];
-		self.dataUpdater = [[[DataModelUpdateManager alloc] init] autorelease];
-		analyticsOptInController = nil;
-	}
+		_appQuitting = NO;
+		_savedTableSelection = [[NSMutableDictionary alloc] init];
+		_dataUpdater = [[DataModelUpdateManager alloc] init];
+		_analyticsOptInController = nil;
+    }
 	return self;
 }
 
-- (void)dealloc {
-	nice_release(analyticsOptInController);
+- (void)dealloc
+{
+    self.analyticsOptInController = nil;
 	
 	self.savedTableSelection = nil;
 	self.tabBarController = nil;
-	self.mainWindow = nil;    
-	
+
 	self.capitolMapsMasterVC = nil;
 	self.linksMasterVC = nil; 
 	self.calendarMasterVC = nil;
@@ -102,7 +108,8 @@ NSInteger kNoSelection = -1;
     [super dealloc];
 }
 
-- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
+{
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"LOW_MEMORY_WARNING"];
 }
 
@@ -110,11 +117,13 @@ NSInteger kNoSelection = -1;
 #pragma mark -
 #pragma mark Data Sources and Main View Controllers
 
-
 ////// IPAD ONLY
-- (UISplitViewController *) splitViewController {
-	if ([UtilityMethods isIPadDevice]) {
-		if (![self.tabBarController.selectedViewController isKindOfClass:[UISplitViewController class]]) {
+- (UISplitViewController *) splitViewController
+{
+	if ([UtilityMethods isIPadDevice])
+    {
+		if (![self.tabBarController.selectedViewController isKindOfClass:[UISplitViewController class]])
+        {
 			debug_NSLog(@"Unexpected navigation controller class in tab bar controller hierarchy, check nib.");
 			return nil;
 		}
@@ -124,14 +133,18 @@ NSInteger kNoSelection = -1;
 }
 
 
-- (UINavigationController *) masterNavigationController {
-	if ([UtilityMethods isIPadDevice]) {
+- (UINavigationController *) masterNavigationController
+{
+	if ([UtilityMethods isIPadDevice])
+    {
 		UISplitViewController *split = self.splitViewController;
 		if (split && split.viewControllers && (split.viewControllers).count)
 			return (split.viewControllers)[0];
 	}
-	else {
-		if (![self.tabBarController.selectedViewController isKindOfClass:[UINavigationController class]]) {
+	else
+    {
+		if (![self.tabBarController.selectedViewController isKindOfClass:[UINavigationController class]])
+        {
 			debug_NSLog(@"Unexpected view/navigation controller class in tab bar controller hierarchy, check nib.");
 		}
 		
@@ -141,8 +154,10 @@ NSInteger kNoSelection = -1;
 	return nil;
 }
 
-- (UINavigationController *) detailNavigationController {
-	if ([UtilityMethods isIPadDevice]) {
+- (UINavigationController *) detailNavigationController
+{
+	if ([UtilityMethods isIPadDevice])
+    {
 		UISplitViewController *split = self.splitViewController;
 		if (split && split.viewControllers && (split.viewControllers).count>1)
 			return (split.viewControllers)[1];
@@ -169,14 +184,16 @@ NSInteger kNoSelection = -1;
 }
 */
 
-- (UIViewController *) currentMasterViewController {
+- (UIViewController *)currentMasterViewController
+{
 	UINavigationController *nav = self.masterNavigationController;
 	if (nav && nav.viewControllers && (nav.viewControllers).count)
 		return (nav.viewControllers)[0];
 	return nil;
 }
 
-- (BOOL)tabBarController:(UITabBarController *)tbc shouldSelectViewController:(UIViewController *)viewController {
+- (BOOL)tabBarController:(UITabBarController *)tbc shouldSelectViewController:(UIViewController *)viewController
+{
 	if (!viewController.tabBarItem.enabled)
 		return NO;
 	
@@ -232,10 +249,14 @@ NSInteger kNoSelection = -1;
 	NSArray *savedOrder = [defaults arrayForKey:kSavedTabOrderKey];
 	NSMutableArray *orderedTabs = [NSMutableArray arrayWithCapacity:(self.tabBarController.viewControllers).count];
 	NSInteger foundVCs = 0;
-	if (savedOrder && savedOrder.count > 0 ) {
-		for (NSInteger i = 0; i < savedOrder.count; i++){
-			for (UIViewController *aController in self.tabBarController.viewControllers) {
-				if ([aController.tabBarItem.title isEqualToString:savedOrder[i]]) {
+	if (savedOrder && savedOrder.count > 0 )
+    {
+		for (NSInteger i = 0; i < savedOrder.count; i++)
+        {
+			for (UIViewController *aController in self.tabBarController.viewControllers)
+            {
+				if ([aController.tabBarItem.title isEqualToString:savedOrder[i]])
+                {
 					[orderedTabs addObject:aController];
 					foundVCs++;
 				}
@@ -244,19 +265,20 @@ NSInteger kNoSelection = -1;
 		if (foundVCs < (self.tabBarController.viewControllers).count) // we've got more now than we used to
 			[defaults removeObjectForKey:kSavedTabOrderKey];
 		else
-			tabBarController.viewControllers = orderedTabs;
+			self.tabBarController.viewControllers = orderedTabs;
 	}
 }
 
-- (void) setupViewControllerHierarchy {
-		
+- (void) setupViewControllerHierarchy
+{
 	NSArray *nibObjects = nil;
 	if ([UtilityMethods isIPadDevice]) 
 		nibObjects = [[NSBundle mainBundle] loadNibNamed:@"iPadTabBarController" owner:self options:nil];
 	else
 		nibObjects = [[NSBundle mainBundle] loadNibNamed:@"iPhoneTabBarController" owner:self options:nil];
 	
-	if (IsEmpty(nibObjects)) {
+	if (IsEmpty(nibObjects))
+    {
 		debug_NSLog(@"Error loading user interface NIB components! Can't find the nib file and can't continue this charade.");
 		exit(0);
 	}
@@ -267,7 +289,8 @@ NSInteger kNoSelection = -1;
 	NSString * tempVCKey = (self.savedTableSelection)[@"viewController"];
 	NSInteger savedTabSelectionIndex = -1;
 	NSInteger loopIndex = 0;
-	for (GeneralTableViewController *masterVC in VCs) {
+	for (GeneralTableViewController *masterVC in VCs)
+    {
 		[masterVC configure];
 		
 		// If we have a preferred VC and we've found it in our array, save it
@@ -278,10 +301,12 @@ NSInteger kNoSelection = -1;
 	if (savedTabSelectionIndex < 0 || savedTabSelectionIndex > VCs.count)
 		savedTabSelectionIndex = 0;
 	
-	if ([UtilityMethods isIPadDevice]) {
+	if ([UtilityMethods isIPadDevice])
+    {
 		NSMutableArray *splitViewControllers = [[NSMutableArray alloc] initWithCapacity:VCs.count];
 		NSInteger index = 0;
-		for (GeneralTableViewController * controller in VCs) {
+		for (GeneralTableViewController * controller in VCs)
+        {
 			UISplitViewController * split = controller.splitViewController;
 			if (split) {
 				// THIS SETS UP THE TAB BAR ITEMS/IMAGES AND SET THE TAG FOR TABBAR_ITEM_TAGS
@@ -293,8 +318,7 @@ NSInteger kNoSelection = -1;
 			index++;
 		}
 		(self.tabBarController).viewControllers = splitViewControllers;
-		[splitViewControllers release];
-	} 
+	}
 	
 	UIViewController * savedTabController = (self.tabBarController.viewControllers)[savedTabSelectionIndex];
 	if (!savedTabController || !savedTabController.tabBarItem.enabled) {
@@ -308,33 +332,26 @@ NSInteger kNoSelection = -1;
 	
 	(self.tabBarController).selectedViewController = savedTabController;
 	self.mainWindow.rootViewController = self.tabBarController;
-	
-	nice_release(VCs);
 }
 
-- (void)changingReachability:(id)sender {
-	if (self.tabBarController) {
-		TexLegeReachability *myReach = [TexLegeReachability sharedTexLegeReachability];
-		
-		for (UITabBarItem *item in [self.tabBarController valueForKeyPath:@"viewControllers.tabBarItem"]) {
-			if (item.tag == TAB_BILL || item.tag == TAB_CALENDAR)
-				item.enabled = myReach.openstatesConnectionStatus > NotReachable;
-			else if (item.tag == TAB_DISTRICTMAP)
-				item.enabled = myReach.googleConnectionStatus > NotReachable;
-		}
+- (void)reachabilityDidChange:(TexLegeReachability *)reachability
+{
+	if (!self.tabBarController)
+        return;
+    if (!reachability)
+        reachability = [TexLegeReachability sharedTexLegeReachability];
+
+    for (UITabBarItem *item in [self.tabBarController valueForKeyPath:@"viewControllers.tabBarItem"])
+    {
+        if (item.tag == TAB_BILL || item.tag == TAB_CALENDAR)
+            item.enabled = reachability.openstatesConnectionStatus > NotReachable;
+        else if (item.tag == TAB_DISTRICTMAP)
+            item.enabled = reachability.googleConnectionStatus > NotReachable;
 	}
 }
 
-- (void)runOnInitialAppStart:(id)sender {	
-	
-	if(
-	   getenv("NSZombieEnabled") || getenv("NSAutoreleaseFreedObjectCheckEnabled")
-	   ) {
-		for (int loop=0;loop < 15;loop++) {
-			NSLog(@"**************** NSZombieEnabled/NSAutoreleaseFreedObjectCheckEnabled enabled!*************");
-		}
-	}
-	
+- (void)runOnInitialAppStart:(id)sender
+{	
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 
 	NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
@@ -375,53 +392,59 @@ NSInteger kNoSelection = -1;
 	[TexLegeCoreDataUtils initRestKitObjects:self];	
 	
     // Set up the mainWindow and content view
-	UIWindow *localMainWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.mainWindow = localMainWindow;
-	[localMainWindow release];
-			
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+
 	[self runOnInitialAppStart:nil];
 		
 	return YES;
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application {
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
 
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application {
+- (void)applicationWillResignActive:(UIApplication *)application
+{
 
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application {
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
 	[self runOnEveryAppStart];	
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
 	[self runOnAppQuit];
 }
 
-- (void)applicationWillTerminate:(UIApplication *)application {	
+- (void)applicationWillTerminate:(UIApplication *)application
+{
 	[[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 
 	[self runOnAppQuit];
 }
 
-- (void)runOnEveryAppStart {
-	self.appIsQuitting = NO;
+- (void)runOnEveryAppStart
+{
+	self.appQuitting = NO;
 	
 	[[StateMetaLoader sharedStateMeta] setSelectedState:@"tx"];
 	[PartisanIndexStats sharedPartisanIndexStats];
 	[[BillMetadataLoader sharedBillMetadataLoader] loadMetadata:self];
 	//[[CalendarEventsLoader sharedCalendarEventsLoader] loadEvents:self];
 	
-	if (![self isDatabaseResetNeeded]) {
-		analyticsOptInController = [[AnalyticsOptInAlertController alloc] init];
-		if (![analyticsOptInController presentAnalyticsOptInAlertIfNecessary])
-			[analyticsOptInController updateOptInFromSettings];
+	if (![self isDatabaseResetNeeded])
+    {
+		self.analyticsOptInController = [[AnalyticsOptInAlertController alloc] init];
+		if (![_analyticsOptInController presentAnalyticsOptInAlertIfNecessary])
+			[_analyticsOptInController updateOptInFromSettings];
 		
-		if (self.dataUpdater) {
-			[self.dataUpdater performSelector:@selector(performDataUpdatesIfAvailable:) withObject:self afterDelay:5.f];
-		}
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (self.dataUpdater)
+                [self.dataUpdater performDataUpdatesIfAvailable:nil];
+        });
 	}
 	[[LocalyticsSession sharedLocalyticsSession] resume];
  	[[LocalyticsSession sharedLocalyticsSession] upload];
@@ -430,11 +453,12 @@ NSInteger kNoSelection = -1;
 - (void)runOnAppQuit {
 	//[[CalendarEventsLoader sharedCalendarEventsLoader] addAllEventsToiCal:self];		//testing
 	
-	if (self.appIsQuitting)
+	if (self.isAppQuitting)
 		return;
-	self.appIsQuitting = YES;
+	self.appQuitting = YES;
 		
-	if (self.tabBarController) {
+	if (self.tabBarController)
+    {
 		// Smarten this up later for Core Data tab saving
 		NSMutableArray *savedOrder = [NSMutableArray arrayWithCapacity:(self.tabBarController.viewControllers).count];
 		NSArray *tabOrderToSave = self.tabBarController.viewControllers;
@@ -445,7 +469,7 @@ NSInteger kNoSelection = -1;
 		[[NSUserDefaults standardUserDefaults] setObject:savedOrder forKey:kSavedTabOrderKey];
 	}
 	
-	nice_release(analyticsOptInController);
+    self.analyticsOptInController = nil;
 
 	// save the drill-down hierarchy of selections to preferences
 	[[NSUserDefaults standardUserDefaults] setObject:[self archivableSavedTableSelection] forKey:kRestoreSelectionKey];
@@ -459,7 +483,8 @@ NSInteger kNoSelection = -1;
 #pragma mark -
 #pragma mark Saving
 
-- (id) savedTableSelectionForKey:(NSString *)vcKey {
+- (id)savedTableSelectionForKey:(NSString *)vcKey
+{
 	id object = nil;
 	@try {
 		id savedVC = (self.savedTableSelection)[@"viewController"];
@@ -474,48 +499,70 @@ NSInteger kNoSelection = -1;
 	return object;
 }
 
-- (void)setSavedTableSelection:(id)object forKey:(NSString *)vcKey {
-	if (!vcKey) {
-		[self.savedTableSelection removeAllObjects];
+- (void)setSavedTableSelection:(id)object forKey:(NSString *)vcKey
+{
+    if (![_savedTableSelection isKindOfClass:[NSMutableDictionary class]])
+    {
+        if ([_savedTableSelection isKindOfClass:[NSDictionary class]])
+        {
+            NSMutableDictionary *copy = [_savedTableSelection mutableCopy];
+            if (_savedTableSelection)
+                [_savedTableSelection release];
+            _savedTableSelection = copy;
+        }
+        else
+        {
+            _savedTableSelection = [[NSMutableDictionary alloc] init];
+        }
+    }
+	if (!vcKey)
+    {
+		[_savedTableSelection removeAllObjects];
 		return;
 	}
-	(self.savedTableSelection)[@"viewController"] = vcKey;
+	(_savedTableSelection)[@"viewController"] = vcKey;
 	if (object)
-		(self.savedTableSelection)[@"object"] = object;
+		(_savedTableSelection)[@"object"] = object;
 	else
-		[self.savedTableSelection removeObjectForKey:@"object"];
+		[_savedTableSelection removeObjectForKey:@"object"];
 }
 
-- (void)resetSavedTableSelection:(id)sender {
+- (void)resetSavedTableSelection:(id)sender
+{
 	self.savedTableSelection = [NSMutableDictionary dictionary];
 	[[NSUserDefaults standardUserDefaults] removeObjectForKey:kRestoreSelectionKey];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)restoreArchivableSavedTableSelection {
-	@try {
+- (void)restoreArchivableSavedTableSelection
+{
+	@try
+    {
 		NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:kRestoreSelectionKey];
-		if (data) {
-			NSMutableDictionary *tempDict = [[NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];	
-			if (tempDict) {
-				self.savedTableSelection = tempDict;
-				[tempDict release];
-			}	
+		if (data)
+        {
+			NSDictionary *tempDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+			if (tempDict)
+            {
+				self.savedTableSelection = [tempDict mutableCopy];
+			}
 		}		
 	}
-	@catch (NSException * e) {
+	@catch (NSException * e)
+    {
 		[self resetSavedTableSelection:nil];
 	}
 
 }
 
-- (NSData *)archivableSavedTableSelection {
+- (NSData *)archivableSavedTableSelection
+{
 	NSData *data = nil;
 	
 	@try {
-		NSMutableDictionary *tempDict = [self.savedTableSelection mutableCopy];
-		data = [NSKeyedArchiver archivedDataWithRootObject:tempDict];
-		[tempDict release];		
+		NSDictionary *tempDict = self.savedTableSelection;
+        if (tempDict)
+            data = [NSKeyedArchiver archivedDataWithRootObject:[tempDict mutableCopy]];
 	}
 	@catch (NSException * e) {
 		[self resetSavedTableSelection:nil];
@@ -523,11 +570,13 @@ NSInteger kNoSelection = -1;
 	return data;
 }
 
-- (BOOL) isDatabaseResetNeeded {
+- (BOOL) isDatabaseResetNeeded
+{
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	BOOL needsReset = [[NSUserDefaults standardUserDefaults] boolForKey:kResetSavedDatabaseKey];
 		
-	if (needsReset) {
+	if (needsReset)
+    {
 		UIAlertView *resetDB = [[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"Settings: Reset Data to Factory?", @"AppAlerts", @"Confirmation to delete and reset the app's database.")
 														  message:NSLocalizedStringFromTable(@"Are you sure you want to restore the factory database?  NOTE: The application may quit after this reset.  Data updates will be applied automatically via the Internet during the next app launch.", @"AppAlerts",@"") 
 														 delegate:self cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel",@"StandardUI",@"Cancelling some activity")
@@ -539,7 +588,8 @@ NSInteger kNoSelection = -1;
 	return needsReset;
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
 	if (alertView.tag != 23452)
         return;
 

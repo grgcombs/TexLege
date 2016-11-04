@@ -34,7 +34,6 @@
 @end
 
 @implementation BillsMasterViewController
-@synthesize billSearchDS;
 
 // Set this to non-nil whenever you want to automatically enable/disable the view controller based on network/host reachability
 - (NSString *)reachabilityStatusKey {
@@ -63,7 +62,7 @@
 		self.billSearchDS = [[[BillSearchDataSource alloc] initWithSearchDisplayController:self.searchDisplayController] autorelease];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(reloadData:) name:kBillSearchNotifyDataLoaded object:billSearchDS];	
+											 selector:@selector(reloadData:) name:kBillSearchNotifyDataLoaded object:self.billSearchDS];
 	
 	self.searchDisplayController.searchBar.tintColor = [TexLegeTheme accent];	
 	
@@ -102,7 +101,8 @@
 	[super viewDidUnload];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
 	UINavigationController *nav = self.navigationController;
 	if (nav && (nav.viewControllers).count>3) {
 		[nav popToRootViewControllerAnimated:YES];
@@ -111,7 +111,8 @@
 	[super didReceiveMemoryWarning];
 }
 
-- (void)reloadData:(NSNotification *)notification {
+- (void)reloadData:(NSNotification *)notification
+{
 	[self.tableView reloadData];
 	if (self.searchDisplayController.searchResultsTableView)
 		[self.searchDisplayController.searchResultsTableView reloadData];
@@ -157,7 +158,8 @@
 	BOOL changingDetails = NO;
 
 //	IF WE'RE CLICKING ON SOME SEARCH RESULTS ... PULL UP THE BILL DETAIL VIEW CONTROLLER
-	if (aTableView == self.searchDisplayController.searchResultsTableView) { // we've clicked in a search table
+	if (aTableView == self.searchDisplayController.searchResultsTableView)
+    {
 		dataObject = [self.billSearchDS dataObjectForIndexPath:newIndexPath];
 		//[self searchBarCancelButtonClicked:nil];
 		
@@ -199,8 +201,9 @@
 		UITableViewController *tempVC = nil;
 		tempVC = [[[NSClassFromString(theClass) alloc] initWithStyle:UITableViewStylePlain] autorelease];	// we don't want a nib for this one
 		
-		if (aTableView == self.searchDisplayController.searchResultsTableView) { // we've clicked in a search table
-			[self searchBarCancelButtonClicked:nil];
+		if (aTableView == self.searchDisplayController.searchResultsTableView)
+        {
+            [self searchBarCancelButtonClicked:nil];
 		}
 		
 		NSDictionary *tagMenu = [[NSDictionary alloc] initWithObjectsAndKeys:theClass, @"FEATURE", nil];
@@ -218,11 +221,12 @@
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
 #if LIVE_SEARCHING == 1
-	nice_release(_searchString);
+    self.searchString = nil;
 
 	if (searchString && searchString.length) {
 		_searchString = [searchString copy];
-		if (_searchString && _searchString.length >= 3) {
+		if (_searchString && _searchString.length >= 3)
+        {
 			[self.billSearchDS startSearchForText:_searchString chamber:self.searchDisplayController.searchBar.selectedScopeButtonIndex];
 		}		
 	}
@@ -230,22 +234,19 @@
 	return NO;
 }
 
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
+{
 	if (!controller || !controller.searchBar || !controller.searchBar.text || !(controller.searchBar.text).length) 
 		return NO;
 	
-	nice_release(_searchString);
-
-	_searchString = [controller.searchBar.text copy];
+    self.searchString = [controller.searchBar.text copy];
 	[self.billSearchDS startSearchForText:_searchString chamber:searchOption];
 	return NO;
 }
 
-- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar {
-	nice_release(_searchString);
-
-	_searchString = [[NSString alloc] initWithString:@""];
-
+- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar
+{
+    self.searchString = [[NSString alloc] initWithString:@""];
 	self.searchDisplayController.searchBar.text = _searchString;
 	[self.searchDisplayController setActive:NO animated:YES];
 }
@@ -265,17 +266,20 @@
 #endif
 }
 
-- (void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller {
+- (void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller
+{
 	////////self.dataSource.hideTableIndex = YES;
 	// for some reason, these get zeroed out after we restart searching.
-	if (self.tableView && self.searchDisplayController.searchResultsTableView) {
+	if (self.tableView && self.searchDisplayController.searchResultsTableView)
+    {
 		self.searchDisplayController.searchResultsTableView.rowHeight = self.tableView.rowHeight;
 		self.searchDisplayController.searchResultsTableView.backgroundColor = self.tableView.backgroundColor;
 		self.searchDisplayController.searchResultsTableView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
 	}
 }
 
-- (void)searchDisplayControllerWillEndSearch:(UISearchDisplayController *)controller {
+- (void)searchDisplayControllerWillEndSearch:(UISearchDisplayController *)controller
+{
 	////////self.dataSource.hideTableIndex = NO;
 }
 @end
