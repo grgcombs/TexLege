@@ -83,33 +83,37 @@
 	
     UIColor *currentSummaryColor = [TexLegeTheme textDark];
     //UIColor *currentDetailColor = [UIColor grayColor];
-    UIColor *currentBadgeColor = self.cell.badgeColor;
+    TexLegeBadgeGroupCell *cell = self.cell;
+    UIColor *currentBadgeColor = cell.badgeColor;
     if (!currentBadgeColor)
     {
         currentBadgeColor = [TexLegeTheme accentGreener]; //[UIColor colorWithRed:0.53 green:0.6 blue:0.738 alpha:1.];
     }
     
-	if (self.cell && self.cell.isClickable && (self.cell.isHighlighted || self.cell.isSelected)) {
+	if (cell
+        && cell.isClickable
+        && (cell.isHighlighted || cell.isSelected))
+    {
         currentSummaryColor = [UIColor whiteColor];
         //currentDetailColor = [UIColor whiteColor];
-		currentBadgeColor = self.cell.badgeHighlightedColor;
+		currentBadgeColor = cell.badgeHighlightedColor;
 		if (!currentBadgeColor)
         {
 			currentBadgeColor = [UIColor whiteColor];
 		}
 	} 
 	
-	if (self.cell && self.cell.isEditing)
+	if (cell && cell.isEditing)
     {
 		[currentSummaryColor set];
-		[self.cell.summary drawAtPoint:CGPointMake(10, 10) forWidth:rect.size.width withFont:[TexLegeTheme boldFifteen] lineBreakMode:NSLineBreakByTruncatingTail];
+		[cell.summary drawAtPoint:CGPointMake(10, 10) forWidth:rect.size.width withFont:[TexLegeTheme boldFifteen] lineBreakMode:NSLineBreakByTruncatingTail];
 		
 		//[currentDetailColor set];
 		//[self.cell.detail drawAtPoint:CGPointMake(10, 32) forWidth:rect.size.width withFont:[TexLegeTheme boldTwelve] lineBreakMode:NSLineBreakByTruncatingTail];		
 	}
     else
     {
-		CGSize badgeTextSize = [self.cell.badgeText sizeWithFont:[TexLegeTheme boldTwelve]];
+		CGSize badgeTextSize = [cell.badgeText sizeWithFont:[TexLegeTheme boldTwelve]];
 		CGRect badgeViewFrame = CGRectIntegral(CGRectMake(rect.size.width - badgeTextSize.width - 24, (rect.size.height - badgeTextSize.height - 4) / 2, badgeTextSize.width + 14, badgeTextSize.height + 4));
 		
 		CGContextSaveGState(context);	
@@ -124,11 +128,11 @@
 		
 		CGContextSaveGState(context);	
 		CGContextSetBlendMode(context, kCGBlendModeClear);
-		[self.cell.badgeText drawInRect:CGRectInset(badgeViewFrame, 7, 2) withFont:[TexLegeTheme boldTwelve]];
+		[cell.badgeText drawInRect:CGRectInset(badgeViewFrame, 7, 2) withFont:[TexLegeTheme boldTwelve]];
 		CGContextRestoreGState(context);
 		
 		[currentSummaryColor set];
-		[self.cell.summary drawAtPoint:CGPointMake(10, 10) forWidth:(rect.size.width - badgeViewFrame.size.width - 24) withFont:[TexLegeTheme boldFifteen] lineBreakMode:NSLineBreakByTruncatingTail];
+		[cell.summary drawAtPoint:CGPointMake(10, 10) forWidth:(rect.size.width - badgeViewFrame.size.width - 24) withFont:[TexLegeTheme boldFifteen] lineBreakMode:NSLineBreakByTruncatingTail];
 		
 		//[currentDetailColor set];
 		//[self.cell.detail drawAtPoint:CGPointMake(10, 32) forWidth:(rect.size.width - badgeViewFrame.size.width - 24) withFont:[TexLegeTheme boldTwelve] lineBreakMode:NSLineBreakByTruncatingTail];		

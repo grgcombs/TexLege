@@ -62,7 +62,7 @@
     {
         photoURL = [NSURL URLWithString:value.photo_url];
     }
-    [self.imageView setImageWithURL:photoURL placeholderImage:[UIImage imageNamed:@"placeholder"]];
+    [self.imageView sd_setImageWithURL:photoURL placeholderImage:[UIImage imageNamed:@"placeholder"]];
 	[self.cellView setLegislator:value];
 }
 

@@ -13,9 +13,8 @@
 #import <UIKit/UIKit.h>
 
 @class BillSearchDataSource;
-@interface BillsListViewController : UITableViewController <UITableViewDelegate> {
-	IBOutlet BillSearchDataSource *dataSource;
-}
+@interface BillsListViewController : UITableViewController <UITableViewDelegate>
+
 @property (nonatomic,strong) BillSearchDataSource *dataSource;
 
 @end

@@ -161,7 +161,7 @@
     {
         cell.textLabel.text = dataObj[@"subtitle"];
         cell.detailTextLabel.text = dataObj[@"name"];
-        [cell.imageView setImageWithURL:[NSURL URLWithString:dataObj[@"photo_url"]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+        [cell.imageView sd_setImageWithURL:[NSURL URLWithString:dataObj[@"photo_url"]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
     }
 
 	cell.backgroundColor = (indexPath.row % 2 == 0) ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];

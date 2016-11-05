@@ -46,9 +46,6 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 
 - (NSMutableDictionary *)objectWithData:(NSData *)data
 {
-    self.dictionaryStack = nil;
-    self.textInProgress = nil;
-
     _dictionaryStack = [[NSMutableArray alloc] init];
     _textInProgress = [[NSMutableString alloc] init];
     
@@ -61,9 +58,9 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     BOOL success = [parser parse];
     
     // Return the stack's root dictionary on success
-    if (success)
+    if (success && _dictionaryStack.count)
     {
-        NSMutableDictionary *resultDict = self.dictionaryStack[0];
+        NSMutableDictionary *resultDict = _dictionaryStack[0];
         return resultDict;
     }
     
@@ -120,22 +117,28 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     NSMutableDictionary *dictInProgress = self.dictionaryStack.lastObject;
     
     // Set the text property
-    if (self.textInProgress.length > 0)
+    if (_textInProgress.length)
     {
-        dictInProgress[kXMLReaderTextNodeKey] = self.textInProgress;
+        dictInProgress[kXMLReaderTextNodeKey] = [_textInProgress copy];
 
         // Reset the text
 
-        self.textInProgress = [NSMutableString string];
+        _textInProgress = [[NSMutableString alloc] init];
     }
     
     // Pop the current dict
     [self.dictionaryStack removeLastObject];
 }
 
+- (void)setTextInProgress:(NSMutableString *)textInProgress
+{
+    if (!textInProgress || ![textInProgress isKindOfClass:[NSString class]])
+        textInProgress = nil;
+    _textInProgress = [textInProgress mutableCopy];
+}
+
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
 {
-    // Build the text value
     [self.textInProgress appendString:string];
 }
 

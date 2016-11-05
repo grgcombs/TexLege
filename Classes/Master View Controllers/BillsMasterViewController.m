@@ -55,16 +55,17 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-		
+
+    UISearchDisplayController *searchController = self.searchDisplayController;
 	if (!self.billSearchDS)
-		self.billSearchDS = [[BillSearchDataSource alloc] initWithSearchDisplayController:self.searchDisplayController];
+		self.billSearchDS = [[BillSearchDataSource alloc] initWithSearchDisplayController:searchController];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(reloadData:) name:kBillSearchNotifyDataLoaded object:self.billSearchDS];
 	
-	self.searchDisplayController.searchBar.tintColor = [TexLegeTheme accent];	
+	searchController.searchBar.tintColor = [TexLegeTheme accent];
 	
-	self.searchDisplayController.searchBar.scopeButtonTitles = @[stringForChamber(BOTH_CHAMBERS, TLReturnFull),
+	searchController.searchBar.scopeButtonTitles = @[stringForChamber(BOTH_CHAMBERS, TLReturnFull),
 																stringForChamber(HOUSE, TLReturnFull),
 																stringForChamber(SENATE, TLReturnFull)];
 
@@ -73,9 +74,9 @@
 		self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
 
 		/* This "avoids" a bug on iPads where the scope bar get's crammed into the top line in landscape. */
-		if ([self.searchDisplayController.searchBar respondsToSelector:@selector(setCombinesLandscapeBars:)]) 
+		if ([searchController.searchBar respondsToSelector:@selector(setCombinesLandscapeBars:)]) 
 		{ 
-			objc_msgSend(self.searchDisplayController.searchBar, @selector(setCombinesLandscapeBars:), NO );
+			objc_msgSend(searchController.searchBar, @selector(setCombinesLandscapeBars:), NO );
 		}
 	}
 #endif
@@ -112,8 +113,10 @@
 - (void)reloadData:(NSNotification *)notification
 {
 	[self.tableView reloadData];
-	if (self.searchDisplayController.searchResultsTableView)
-		[self.searchDisplayController.searchResultsTableView reloadData];
+
+    UISearchDisplayController *searchController = self.searchDisplayController;
+	if (searchController.searchResultsTableView)
+		[searchController.searchResultsTableView reloadData];
 }
 
 - (Class)dataSourceClass {
@@ -123,14 +126,16 @@
 - (void)viewWillAppear:(BOOL)animated
 {	
 	[super viewWillAppear:animated];
-	
+
+    UISearchDisplayController *searchController = self.searchDisplayController;
+
 	// this has to be here because GeneralTVC will overwrite it once anyone calls self.dataSource,
 	//		if we remove this, it will wind up setting our searchResultsDataSource to the BillsMenuDataSource
-	self.searchDisplayController.searchResultsDataSource = self.billSearchDS;	
-	[self.searchDisplayController.searchBar setHidden:NO];
+	searchController.searchResultsDataSource = self.billSearchDS;
+	[searchController.searchBar setHidden:NO];
 
 #if LIVE_SEARCHING == 0
-	self.searchDisplayController.searchBar.delegate = self;
+	searchController.searchBar.delegate = self;
 #endif
 	
 	if ([UtilityMethods isIPadDevice])
@@ -141,7 +146,8 @@
 #pragma UITableViewDelegate
 
 // the user selected a row in the table.
-- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath withAnimation:(BOOL)animated {
+- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath withAnimation:(BOOL)animated
+{
 	TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
 	
 	if (![UtilityMethods isIPadDevice])
@@ -155,15 +161,18 @@
 	id dataObject = nil;
 	BOOL changingDetails = NO;
 
+    UISearchDisplayController *searchController = self.searchDisplayController;
+
 //	IF WE'RE CLICKING ON SOME SEARCH RESULTS ... PULL UP THE BILL DETAIL VIEW CONTROLLER
-	if (aTableView == self.searchDisplayController.searchResultsTableView)
+	if (aTableView == searchController.searchResultsTableView)
     {
 		dataObject = [self.billSearchDS dataObjectForIndexPath:newIndexPath];
 		//[self searchBarCancelButtonClicked:nil];
 		
 		if (dataObject) {
 
-			if (!self.detailViewController || ![self.detailViewController isKindOfClass:[BillsDetailViewController class]]) {
+			if (!self.detailViewController || ![self.detailViewController isKindOfClass:[BillsDetailViewController class]])
+            {
 				self.detailViewController = [[BillsDetailViewController alloc] initWithNibName:@"BillsDetailViewController" bundle:nil];
 				changingDetails = YES;
 			}
@@ -173,7 +182,8 @@
 			[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:dataObject[@"bill_id"] 
 																			   session:dataObject[@"session"] 
 																			  delegate:self.detailViewController];			
-			if (isSplitViewDetail == NO) {
+			if (isSplitViewDetail == NO)
+            {
 				// push the detail view controller onto the navigation stack to display it				
 				[self.navigationController pushViewController:self.detailViewController animated:YES];
 				self.detailViewController = nil;
@@ -196,10 +206,9 @@
 		if (!theClass || !NSClassFromString(theClass))
 			return;
 		
-		UITableViewController *tempVC = nil;
-		tempVC = [[NSClassFromString(theClass) alloc] initWithStyle:UITableViewStylePlain];	// we don't want a nib for this one
+		UITableViewController *tempVC = [[NSClassFromString(theClass) alloc] initWithStyle:UITableViewStylePlain];	// we don't want a nib for this one
 		
-		if (aTableView == self.searchDisplayController.searchResultsTableView)
+		if (aTableView == searchController.searchResultsTableView)
         {
             [self searchBarCancelButtonClicked:nil];
 		}
@@ -268,11 +277,13 @@
 {
 	////////self.dataSource.hideTableIndex = YES;
 	// for some reason, these get zeroed out after we restart searching.
-	if (self.tableView && controller.searchResultsTableView)
+    UITableView *tableView = self.tableView;
+    UITableView *searchTableView = controller.searchResultsTableView;
+	if (tableView && searchTableView)
     {
-		controller.searchResultsTableView.rowHeight = self.tableView.rowHeight;
-		controller.searchResultsTableView.backgroundColor = self.tableView.backgroundColor;
-		controller.searchResultsTableView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
+		searchTableView.rowHeight = tableView.rowHeight;
+		searchTableView.backgroundColor = tableView.backgroundColor;
+		searchTableView.sectionIndexMinimumDisplayRowCount = tableView.sectionIndexMinimumDisplayRowCount;
 	}
 }
 

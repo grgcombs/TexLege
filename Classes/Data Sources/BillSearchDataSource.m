@@ -85,7 +85,7 @@
 }
 
 // return the map at the index in the array
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath
+- (id)dataObjectForIndexPath:(NSIndexPath *)indexPath
 {
     NSString *key = [self billTypes][indexPath.section];
     if (!key)
@@ -278,7 +278,7 @@
 			cell.accessoryType = UITableViewCellAccessoryNone;
 		}
     }
-	if (_rows.count < indexPath.row)
+	if (_rows.count > indexPath.row)
 		[self configureCell:cell atIndexPath:indexPath];		
 
 	return cell;

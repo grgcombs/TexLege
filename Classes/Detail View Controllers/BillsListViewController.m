@@ -24,32 +24,38 @@
 @end
 
 @implementation BillsListViewController
-@synthesize dataSource;
 
 #pragma mark -
 #pragma mark View lifecycle
 
-- (instancetype)initWithStyle:(UITableViewStyle)style {
-	if ((self = [super initWithStyle:style])) {
-		dataSource = [[BillSearchDataSource alloc] initWithTableViewController:self];
+- (instancetype)initWithStyle:(UITableViewStyle)style
+{
+	if ((self = [super initWithStyle:style]))
+    {
+		self.dataSource = [[BillSearchDataSource alloc] initWithTableViewController:self];
 		
 		// This will tell the data source to produce a "loading" cell for the table whenever it's searching.
-		dataSource.useLoadingDataCell = YES;
+		self.dataSource.useLoadingDataCell = YES;
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(reloadData:) name:kBillSearchNotifyDataError object:dataSource];	
+												 selector:@selector(reloadData:) name:kBillSearchNotifyDataError object:self.dataSource];
 		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(reloadData:) name:kBillSearchNotifyDataLoaded object:dataSource];	
+												 selector:@selector(reloadData:) name:kBillSearchNotifyDataLoaded object:self.dataSource];
 	}
 	return self;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return YES;
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-	if ([UtilityMethods isIPadDevice] && UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+	if ([UtilityMethods isIPadDevice] && UIInterfaceOrientationIsLandscape(toInterfaceOrientation))
+    {
 		if ([[TexLegeAppDelegate appDelegate].masterNavigationController.topViewController isKindOfClass:[BillsListViewController class]])
 			if ([self.navigationController isEqual:[TexLegeAppDelegate appDelegate].detailNavigationController])
 				[self.navigationController popToRootViewControllerAnimated:YES];
@@ -57,19 +63,21 @@
 	}	
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     // Release any cached data, images, etc that aren't in use.
 }
 
 
-- (void)dealloc {	
+- (void)dealloc
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
 	[super viewDidLoad];
 	
 	self.tableView.delegate = self;
@@ -80,22 +88,19 @@
 	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];	
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
 	[super viewWillAppear:animated];
 	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];
-
 }
 
-/*- (void)viewWillDisappear:(BOOL)animated {
- //	[self save:nil];
- [super viewWillDisappear:animated];
- }*/
-
-- (void)viewDidUnload {
+- (void)viewDidUnload
+{
 	[super viewDidUnload];
 }
 
-- (void)reloadData:(NSNotification *)notification {
+- (void)reloadData:(NSNotification *)notification
+{
 	[self.tableView reloadData];
 }
 
@@ -113,7 +118,7 @@
 	if (![UtilityMethods isIPadDevice])
 		[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-	NSDictionary *bill = [dataSource dataObjectForIndexPath:indexPath];
+	NSDictionary *bill = [self.dataSource dataObjectForIndexPath:indexPath];
 	if (!bill)
         return;
     NSString *billID = bill[@"bill_id"];
@@ -152,6 +157,3 @@
 }
 
 @end
-
-
-

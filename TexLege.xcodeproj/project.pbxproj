@@ -12,8 +12,7 @@
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		3701B64019AD34F500A9F631 /* libSDWebImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA1116A227CC005C7CCE /* libSDWebImage.a */; };
-		3701B64119AD34F500A9F631 /* libSDWebImage+MKAnnotation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA1316A227CC005C7CCE /* libSDWebImage+MKAnnotation.a */; };
+		3701B64019AD34F500A9F631 /* libSDWebImage iOS static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA1116A227CC005C7CCE /* libSDWebImage iOS static.a */; };
 		370298CE11F97C7A00D65FCB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 370298CD11F97C7A00D65FCB /* MapKit.framework */; };
 		3704F4D6122437AC00DC486F /* AnalyticsOptInAlertController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3704F4D5122437AC00DC486F /* AnalyticsOptInAlertController.m */; };
 		370813E6122C537800D8CA69 /* DisclosureQuartzView.m in Sources */ = {isa = PBXBuildFile; fileRef = 370813E5122C536B00D8CA69 /* DisclosureQuartzView.m */; };
@@ -395,6 +394,7 @@
 		37B614F4139D1863003B85B4 /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
 		37B614F5139D1863003B85B4 /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
 		37B64234120FE9FF0076B196 /* LegislatorMasterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B64233120FE9FF0076B196 /* LegislatorMasterCell.m */; };
+		37B8A0DC1DCE62220073BFB0 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374915301DCBAB4B00C3B765 /* SDWebImage.framework */; };
 		37BA166813B2FCFA0088057B /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
 		37BA166913B2FCFB0088057B /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
 		37BF251211D64B5400B71688 /* LegislatorDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */; };
@@ -462,7 +462,6 @@
 		37E635FE139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E635FA139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m */; };
 		37E9848A12217C8600950298 /* silverstar.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9848812217C8600950298 /* silverstar.png */; };
 		37E9848B12217C8600950298 /* silverstar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9848912217C8600950298 /* silverstar@2x.png */; };
-		37E9CA2616A22924005C7CCE /* libSDWebImage+MKAnnotation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA1316A227CC005C7CCE /* libSDWebImage+MKAnnotation.a */; };
 		37E9CA2816A22959005C7CCE /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA2716A22959005C7CCE /* ImageIO.framework */; };
 		37E9CA2D16A22D17005C7CCE /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9CA2B16A22D17005C7CCE /* placeholder.png */; };
 		37E9CA2E16A22D17005C7CCE /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9CA2B16A22D17005C7CCE /* placeholder.png */; };
@@ -589,19 +588,33 @@
 			remoteGlobalIDString = 37678E221AFEC2060016B8E5;
 			remoteInfo = RestKit;
 		};
+		37B8A0D61DCE5EFD0073BFB0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4314D1991D0E0E3B004B36C9;
+			remoteInfo = "SDWebImage watchOS static";
+		};
+		37B8A0D81DCE5EFD0073BFB0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 431BB7031D06D2C1006A3455;
+			remoteInfo = "SDWebImage watchOS";
+		};
+		37B8A0DA1DCE5EFD0073BFB0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4397D2F21D0DDD8C00BB2784;
+			remoteInfo = "SDWebImage OSX";
+		};
 		37E9CA1016A227CC005C7CCE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 53761325155AD0D5005750A4;
 			remoteInfo = SDWebImage;
-		};
-		37E9CA1216A227CC005C7CCE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 531041E0157EAFA400BBABC3;
-			remoteInfo = "SDWebImage+MKAnnotation";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1161,9 +1174,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37B8A0DC1DCE62220073BFB0 /* SDWebImage.framework in Frameworks */,
 				37678E8A1AFEC2DC0016B8E5 /* libRestKit.a in Frameworks */,
 				37E9CA2816A22959005C7CCE /* ImageIO.framework in Frameworks */,
-				37E9CA2616A22924005C7CCE /* libSDWebImage+MKAnnotation.a in Frameworks */,
 				37C7845F14D30A98006BBEDE /* libz.dylib in Frameworks */,
 				3709AF0D101FBF5100C1061B /* SystemConfiguration.framework in Frameworks */,
 				37C7845C14D304B2006BBEDE /* libsqlite3.dylib in Frameworks */,
@@ -1189,8 +1202,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37A9D31A1D7F33A900403A59 /* libRestKit.a in Frameworks */,
-				3701B64019AD34F500A9F631 /* libSDWebImage.a in Frameworks */,
-				3701B64119AD34F500A9F631 /* libSDWebImage+MKAnnotation.a in Frameworks */,
+				3701B64019AD34F500A9F631 /* libSDWebImage iOS static.a in Frameworks */,
 				37C7846014D30AA3006BBEDE /* libz.dylib in Frameworks */,
 				37C7845D14D304DF006BBEDE /* libsqlite3.dylib in Frameworks */,
 				37735BFA1323104A0033F343 /* SystemConfiguration.framework in Frameworks */,
@@ -2132,11 +2144,12 @@
 		37E9C9FE16A227CC005C7CCE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				37E9CA1116A227CC005C7CCE /* libSDWebImage.a */,
-				3749152E1DCBAB4B00C3B765 /* libSDWebImage+WebP.a */,
-				37E9CA1316A227CC005C7CCE /* libSDWebImage+MKAnnotation.a */,
-				374915301DCBAB4B00C3B765 /* WebImage.framework */,
-				374915321DCBAB4B00C3B765 /* WebImage.framework */,
+				37E9CA1116A227CC005C7CCE /* libSDWebImage iOS static.a */,
+				37B8A0D71DCE5EFD0073BFB0 /* libSDWebImage watchOS static.a */,
+				374915301DCBAB4B00C3B765 /* SDWebImage.framework */,
+				374915321DCBAB4B00C3B765 /* SDWebImage.framework */,
+				37B8A0D91DCE5EFD0073BFB0 /* SDWebImage.framework */,
+				37B8A0DB1DCE5EFD0073BFB0 /* SDWebImage.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2250,7 +2263,6 @@
 			);
 			dependencies = (
 				37678E891AFEC2C80016B8E5 /* PBXTargetDependency */,
-				37093E6616A36B1200399644 /* PBXTargetDependency */,
 			);
 			name = TexLege;
 			productName = foo;
@@ -2270,7 +2282,6 @@
 			);
 			dependencies = (
 				3701B63819AD34E400A9F631 /* PBXTargetDependency */,
-				3701B63A19AD34E400A9F631 /* PBXTargetDependency */,
 			);
 			name = "TexLege (Seeding DB)";
 			productName = foo;
@@ -2321,24 +2332,17 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		3749152E1DCBAB4B00C3B765 /* libSDWebImage+WebP.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libSDWebImage+WebP.a";
-			remoteRef = 3749152D1DCBAB4B00C3B765 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		374915301DCBAB4B00C3B765 /* WebImage.framework */ = {
+		374915301DCBAB4B00C3B765 /* SDWebImage.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = WebImage.framework;
+			path = SDWebImage.framework;
 			remoteRef = 3749152F1DCBAB4B00C3B765 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		374915321DCBAB4B00C3B765 /* WebImage.framework */ = {
+		374915321DCBAB4B00C3B765 /* SDWebImage.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = WebImage.framework;
+			path = SDWebImage.framework;
 			remoteRef = 374915311DCBAB4B00C3B765 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2356,18 +2360,32 @@
 			remoteRef = 37678E861AFEC2C20016B8E5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		37E9CA1116A227CC005C7CCE /* libSDWebImage.a */ = {
+		37B8A0D71DCE5EFD0073BFB0 /* libSDWebImage watchOS static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libSDWebImage.a;
-			remoteRef = 37E9CA1016A227CC005C7CCE /* PBXContainerItemProxy */;
+			path = "libSDWebImage watchOS static.a";
+			remoteRef = 37B8A0D61DCE5EFD0073BFB0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		37E9CA1316A227CC005C7CCE /* libSDWebImage+MKAnnotation.a */ = {
+		37B8A0D91DCE5EFD0073BFB0 /* SDWebImage.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SDWebImage.framework;
+			remoteRef = 37B8A0D81DCE5EFD0073BFB0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		37B8A0DB1DCE5EFD0073BFB0 /* SDWebImage.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SDWebImage.framework;
+			remoteRef = 37B8A0DA1DCE5EFD0073BFB0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		37E9CA1116A227CC005C7CCE /* libSDWebImage iOS static.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libSDWebImage+MKAnnotation.a";
-			remoteRef = 37E9CA1216A227CC005C7CCE /* PBXContainerItemProxy */;
+			path = "libSDWebImage iOS static.a";
+			remoteRef = 37E9CA1016A227CC005C7CCE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2918,16 +2936,6 @@
 			name = SDWebImage;
 			targetProxy = 3701B63719AD34E400A9F631 /* PBXContainerItemProxy */;
 		};
-		3701B63A19AD34E400A9F631 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SDWebImage+MKAnnotation";
-			targetProxy = 3701B63919AD34E400A9F631 /* PBXContainerItemProxy */;
-		};
-		37093E6616A36B1200399644 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SDWebImage+MKAnnotation";
-			targetProxy = 37093E6516A36B1200399644 /* PBXContainerItemProxy */;
-		};
 		37678E891AFEC2C80016B8E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = RestKit;
@@ -3104,6 +3112,7 @@
 		377629C9102A0A45004700EC /* iTunes Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3182,6 +3191,7 @@
 		37B2D28410224AC900B493C8 /* AdHoc Distribution */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3261,6 +3271,7 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3314,6 +3325,7 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;

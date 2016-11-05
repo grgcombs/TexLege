@@ -145,17 +145,23 @@
 
 - (void)configureCell:(TexLegeBadgeGroupCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-	if (IsEmpty(self.categories[self.chamber]))
+    NSString *chamber = self.chamber;
+	if (!chamber)
 		return;
+    NSArray *categoryRows = self.categories[chamber];
+    if (categoryRows.count <= indexPath.row)
+        return;
+    NSDictionary *categoryRow = categoryRows[indexPath.row];
+    if (![categoryRow isKindOfClass:[NSDictionary class]])
+        return;
 
 	BOOL useDark = (indexPath.row % 2 == 0);
 	cell.backgroundColor = useDark ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
-	NSDictionary *category = self.categories[self.chamber][indexPath.row];
-	
-	BOOL clickable = [category[kBillCategoriesCountKey] integerValue] > 0;
-	NSDictionary *cellDict = @{@"entryValue": category[kBillCategoriesCountKey],
+
+	BOOL clickable = [categoryRow[kBillCategoriesCountKey] integerValue] > 0;
+	NSDictionary *cellDict = @{@"entryValue": categoryRow[kBillCategoriesCountKey],
 							  @"isClickable": @(clickable),
-							  @"title": category[kBillCategoriesTitleKey]};
+							  @"title": categoryRow[kBillCategoriesTitleKey]};
 	TableCellDataObject *cellInfo = [[TableCellDataObject alloc] initWithDictionary:cellDict];
 	cell.cellInfo = cellInfo;
 }
@@ -208,16 +214,20 @@
 }
 
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-	
-	if (!self.categories ||  ([self.categories[self.chamber] count] <= indexPath.row))
-		return;
-	
-	NSDictionary *item = self.categories[self.chamber][indexPath.row];
-	if (item && item[kBillCategoriesTitleKey]) {
-		NSString *cat = item[kBillCategoriesTitleKey];
-		NSInteger count = [item[kBillCategoriesCountKey] integerValue];
+
+    NSDictionary *categories = self.categories;
+    if (!categories)
+        return;
+    NSArray *chamberCategories = categories[self.chamber];
+    if (chamberCategories.count <= indexPath.row)
+        return;
+    NSDictionary *category = chamberCategories[indexPath.row];
+	if (category && category[kBillCategoriesTitleKey]) {
+		NSString *cat = category[kBillCategoriesTitleKey];
+		NSInteger count = [category[kBillCategoriesCountKey] integerValue];
 		if (cat && count) {
 			BillsListViewController *catResultsView = [[BillsListViewController alloc] initWithStyle:UITableViewStylePlain];
 			BillSearchDataSource *dataSource = [catResultsView valueForKey:@"dataSource"];

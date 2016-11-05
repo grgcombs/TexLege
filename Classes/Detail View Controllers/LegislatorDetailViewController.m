@@ -181,7 +181,7 @@
 	self.leg_nameLab.text = legName;
 	self.navigationItem.title = legName;
 
-    [self.leg_photoView setImageWithURL:[NSURL URLWithString:member.photo_url] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+    [self.leg_photoView sd_setImageWithURL:[NSURL URLWithString:member.photo_url] placeholderImage:[UIImage imageNamed:@"placeholder"]];
 	self.leg_partyLab.text = member.party_name;
 	self.leg_districtLab.text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"District %@", @"DataTableUI", @"District number"), 
 								 member.district];

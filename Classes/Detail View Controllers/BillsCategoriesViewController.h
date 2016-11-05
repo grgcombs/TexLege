@@ -23,6 +23,6 @@
 
 @interface BillsCategoriesViewController : UITableViewController <RKRequestDelegate, UITableViewDelegate>
 
-@property (weak, nonatomic,readonly)	NSString *chamber;
+@property (nonatomic,readonly) NSString *chamber;
 
 @end

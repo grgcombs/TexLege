@@ -25,7 +25,7 @@
 
 - (instancetype)initWithStyle:(UITableViewStyle)style {
 	if ((self = [super initWithStyle:style])) {
-		dataSource.useLoadingDataCell = YES;
+		self.dataSource.useLoadingDataCell = YES;
 	}
 	return self;
 }
