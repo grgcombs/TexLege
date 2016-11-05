@@ -21,43 +21,36 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 	return [date compare:begin] != NSOrderedAscending && [date compare:end] != NSOrderedDescending;
 }
 
-@interface ChamberCalendarObj (Private)
-- (NSArray *)eventsFrom:(NSDate *)fromDate to:(NSDate *)toDate;
+@interface ChamberCalendarObj()
+@property (nonatomic,assign) BOOL hasPostedAlert;
+@property (nonatomic,copy) NSMutableArray *rows;
 @end
 
 @implementation ChamberCalendarObj
-
-@synthesize title, chamber;
 
 - (instancetype)initWithDictionary:(NSDictionary *)calendarDict
 {
 	if ((self = [super init])) {
 		self.title = [calendarDict valueForKey:@"title"];
 		self.chamber = [calendarDict valueForKey:@"chamber"];
-		rows = [[NSMutableArray alloc] init];
-		hasPostedAlert = NO;		
+		_rows = [[NSMutableArray alloc] init];
+		_hasPostedAlert = NO;
 	}
 	return self;
 }
 
-- (void)dealloc
+
+- (NSString *)description
 {
-	self.title = nil;
-	self.chamber = nil;
-	[rows release];
-
-    [super dealloc];
-}
-
-- (NSString *)description {
 	return [NSString stringWithFormat:@"title: %@ - chamber: %@", 
 			self.title, self.chamber];
 }
 
-- (NSDictionary *) eventForIndexPath:(NSIndexPath *)indexPath {
+- (NSDictionary *)eventForIndexPath:(NSIndexPath *)indexPath
+{
 	NSDictionary *event = nil;
 	@try {
-		event = rows[indexPath.row];
+		event = self.rows[indexPath.row];
 	}
 	@catch (NSException * e) {
 		event = nil;
@@ -70,8 +63,10 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	NSInteger loadingStatus = [CalendarEventsLoader sharedCalendarEventsLoader].loadingStatus;
-	if (loadingStatus > LOADING_IDLE) {
-		if (indexPath.row == 0) {
+	if (loadingStatus > LOADING_IDLE)
+    {
+		if (indexPath.row == 0)
+        {
 			return [LoadingCell loadingCellWithStatus:loadingStatus tableView:tableView];
 		}
 		else {	// to make things work with our upcoming configureCell:, we need to trick this a little
@@ -81,8 +76,9 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 	
 	static NSString *identifier = @"Cell";
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-	if (!cell) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier] autorelease];
+	if (!cell)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
 		cell.textLabel.numberOfLines = 3;
 		cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
 		cell.textLabel.font = [UIFont boldSystemFontOfSize:12];
@@ -107,10 +103,13 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 	BOOL isCancelled = ([event[kCalendarEventsCanceledKey] boolValue] == YES);		
 	BOOL isSearching = NO;
 	NSMutableString *cellText = [NSMutableString stringWithFormat:@"%@\n   ", committeeString];
-	
-	if (tableView.delegate && [tableView.delegate respondsToSelector:@selector(searchDisplayController)]) {
-		UISearchDisplayController *sdc = [tableView.delegate performSelector:@selector(searchDisplayController)];
-		if (sdc && sdc.searchResultsTableView && [tableView isEqual:sdc.searchResultsTableView]) {
+    id<UITableViewDelegate> delegate = tableView.delegate;
+
+	if (delegate && [delegate respondsToSelector:@selector(searchDisplayController)])
+    {
+		UISearchDisplayController *sdc = [delegate performSelector:@selector(searchDisplayController)];
+		if (sdc && sdc.searchResultsTableView && [tableView isEqual:sdc.searchResultsTableView])
+        {
 			isSearching = YES;			
 		}
 	}
@@ -132,8 +131,8 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 	NSInteger count = 0;
-	if (!IsEmpty(rows))
-		count = rows.count;
+	if (!IsEmpty(self.rows))
+		count = self.rows.count;
 	if ([CalendarEventsLoader sharedCalendarEventsLoader].loadingStatus > LOADING_IDLE)
 		count++;
 	return count;	
@@ -183,7 +182,8 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 	//if (!events || ![events count])
 	//	[self fetchEvents];
 	
-	if (delegate && [delegate respondsToSelector:@selector(loadedDataSource:)]) {
+	if (delegate && [delegate respondsToSelector:@selector(loadedDataSource:)])
+    {
 		[delegate loadedDataSource:self];
 	}
 	
@@ -200,42 +200,42 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 - (void)loadItemsFromDate:(NSDate *)fromDate toDate:(NSDate *)toDate
 {
 	NSArray *temp = [self eventsFrom:fromDate to:toDate];
-	if (!temp)
+	if (!temp || ![temp isKindOfClass:[NSArray class]])
 		temp = [NSArray array];
 	
-	[rows addObjectsFromArray:temp];
+	[self.rows addObjectsFromArray:temp];
 }
 
 - (void)removeAllItems
 {
-	[rows removeAllObjects];
+	[self.rows removeAllObjects];
 }
 
-- (NSArray *)filterEventsByString:(NSString *)filterString {
-	
+- (NSArray *)filterEventsByString:(NSString *)filterString
+{
 	if (!filterString)
 		filterString = @"";
-	
-	/*if ([filterString isEqualToString:@""]) {
-		[self fetchEvents];
-	}*/
-	
+
 	NSArray *newEvents = [[CalendarEventsLoader sharedCalendarEventsLoader] commiteeeMeetingsForChamber:(self.chamber).integerValue];
-	if (!IsEmpty(newEvents)){
-		[rows removeAllObjects];
+	if (!IsEmpty(newEvents))
+    {
+		[self.rows removeAllObjects];
 		
-		for (NSDictionary *event in newEvents) {
+		for (NSDictionary *event in newEvents)
+        {
 			NSRange committeeRange = [event[kCalendarEventsCommitteeNameKey] 
 									  rangeOfString:filterString options:(NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch)];
 			
 			NSRange locationRange = [event[kCalendarEventsLocationKey] 
 									 rangeOfString:filterString options:(NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch)];
 			
-			if (committeeRange.location != NSNotFound || locationRange.location != NSNotFound) {
-				[rows addObject:event];
+			if (committeeRange.location != NSNotFound || locationRange.location != NSNotFound)
+            {
+				[self.rows addObject:event];
 			}
 		}
 	}
-	return rows;
+	return self.rows;
 }
+
 @end

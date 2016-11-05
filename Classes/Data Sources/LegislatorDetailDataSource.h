@@ -19,8 +19,8 @@
 - (id) dataObjectForIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)indexPathForDataObject:(id)dataObject;
 	
-@property (nonatomic,retain) NSNumber *dataObjectID;
-@property (nonatomic,retain) LegislatorObj *legislator;
-@property (nonatomic,retain) NSMutableArray *sectionArray;
+@property (nonatomic,strong) NSNumber *dataObjectID;
+@property (nonatomic,strong) LegislatorObj *legislator;
+@property (nonatomic,strong) NSMutableArray *sectionArray;
 
 @end

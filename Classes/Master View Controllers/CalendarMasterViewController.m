@@ -39,8 +39,8 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	if (!self.selectObjectOnAppear && [UtilityMethods isIPadDevice])
-		self.selectObjectOnAppear = [self firstDataObject];
+	if (!self.initialObjectToSelect && [UtilityMethods isIPadDevice])
+		self.initialObjectToSelect = [self firstDataObject];
 }
 
 - (void)viewDidUnload {
@@ -57,7 +57,7 @@
 {	
 	[super viewWillAppear:animated];
 		
-	if ([UtilityMethods isIPadDevice] && self.selectObjectOnAppear == nil) {
+	if ([UtilityMethods isIPadDevice] && self.initialObjectToSelect == nil) {
 		id detailObject = self.detailViewController ? [self.detailViewController valueForKey:@"chamberCalendar"] : nil;
 		
 		if (!detailObject) {
@@ -68,7 +68,7 @@
 			}
 			detailObject = [self.dataSource dataObjectForIndexPath:currentIndexPath];			
 		}
-		self.selectObjectOnAppear = detailObject;
+		self.initialObjectToSelect = detailObject;
 	}	
 	if ([UtilityMethods isIPadDevice]) {
 		if (self.navigationController)
@@ -98,7 +98,6 @@
         temp.edgesForExtendedLayout = UIRectEdgeBottom;
 //        temp.extendedLayoutIncludesOpaqueBars = YES;
 		self.detailViewController = temp;
-		[temp release];
 	}
 	
 	if (!dataObject || ![dataObject isKindOfClass:[ChamberCalendarObj class]])

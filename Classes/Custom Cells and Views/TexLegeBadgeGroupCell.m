@@ -35,7 +35,7 @@
 
 @interface DDBadgeView : UIView
 
-@property (nonatomic, assign) TexLegeBadgeGroupCell *cell;
+@property (nonatomic, weak) TexLegeBadgeGroupCell *cell;
 
 - (instancetype)initWithFrame:(CGRect)frame cell:(TexLegeBadgeGroupCell *)newCell NS_DESIGNATED_INITIALIZER;
 @end
@@ -141,7 +141,7 @@
 #pragma mark TexLegeBadgeGroupCell private
 
 @interface TexLegeBadgeGroupCell ()
-@property (nonatomic, retain) DDBadgeView *	badgeView;
+@property (nonatomic, strong) DDBadgeView *	badgeView;
 @end
 
 #pragma mark -
@@ -186,26 +186,24 @@
 
 - (void)dealloc
 {
-	[_badgeView release], _badgeView = nil;
+	_badgeView = nil;
 	
-    [_summary release], _summary = nil;
+    _summary = nil;
     //[detail_ release], detail_ = nil;
-	[_badgeText release], _badgeText = nil;
-	[_badgeColor release], _badgeColor = nil;
-	[_badgeHighlightedColor release], _badgeHighlightedColor = nil;
-	self.cellInfo = nil;
+	_badgeText = nil;
+	_badgeColor = nil;
+	_badgeHighlightedColor = nil;
 
-    [super dealloc];
 }
 
 - (void)setCellInfo:(TableCellDataObject *)newCellInfo
 {
 	if (_cellInfo)
-		[_cellInfo release], _cellInfo = nil;
+		_cellInfo = nil;
 	if (!newCellInfo)
         return;
 
-    _cellInfo = [newCellInfo retain];
+    _cellInfo = newCellInfo;
 		
     self.summary = newCellInfo.title;
     //self.detail = newCellInfo.subtitle;

@@ -17,13 +17,15 @@
 #import "TexLegeLibrary.h"
 #import "NSDate+Helper.h"
 
-@interface StateMetaLoader (Private)
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSMutableDictionary *metadataFromCache;
+@interface StateMetaLoader ()
+
+@property (NS_NONATOMIC_IOSONLY,copy) NSMutableDictionary *metadata;
+@property (NS_NONATOMIC_IOSONLY,copy) NSDictionary *stateMetadata;
+@property (NS_NONATOMIC_IOSONLY,copy) NSMutableArray *loadingStates;
+
 @end
 
 @implementation StateMetaLoader
-@synthesize isFresh;
-@synthesize selectedState = _selectedState;
 
 + (id)sharedStateMeta
 {
@@ -34,10 +36,12 @@
 	return foo;
 }
 
-+ (NSString *)nameForChamber:(NSInteger)chamber {
++ (NSString *)nameForChamber:(NSInteger)chamber
+{
 	NSString *name = nil;
 	// prepare to make some assumptions
-	if (chamber == HOUSE || chamber == SENATE) {
+	if (chamber == HOUSE || chamber == SENATE)
+    {
 		NSDictionary *stateMeta = [[StateMetaLoader sharedStateMeta] stateMetadata];
 		if (NO == IsEmpty(stateMeta)) {
 			if (chamber == SENATE)
@@ -56,10 +60,12 @@
 	return name;
 }
 
-- (instancetype)init {
-	if ((self=[super init])) {
-		updated = nil;
-		isFresh = NO;
+- (instancetype)init
+{
+	if ((self=[super init]))
+    {
+		_updated = nil;
+		_fresh = NO;
 		_currentSession = nil;
 		_selectedState = nil;
 		_loadingStates = [[NSMutableArray alloc] init];
@@ -75,21 +81,19 @@
 	return self;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
-	nice_release(updated);
-	nice_release(_metadata);
-	nice_release(_currentSession);
-	nice_release(_selectedState);
-	nice_release(_loadingStates);
-	[super dealloc];
+    self.selectedState = nil;
 }
 
-- (void)setSelectedState:(NSString *)stateID {
-	nice_release(_selectedState);
-	nice_release(_currentSession);	// we reset this too, because chances are it's not applicable to this state
-	
-	if (NO == IsEmpty(stateID)) {
+- (void)setSelectedState:(NSString *)stateID
+{
+    self.currentSession = nil;
+    _selectedState = nil;
+
+	if (NO == IsEmpty(stateID))
+    {
 		_selectedState= [stateID copy];
 
 		[[NSUserDefaults standardUserDefaults] setObject:stateID forKey:kMetaSelectedStateKey];
@@ -99,29 +103,29 @@
 	}
 }
 
-- (NSMutableDictionary *)metadataFromCache {
-	
-	nice_release(_metadata);
-	
+- (NSDictionary *)metadataFromCache
+{
+    self.metadata = nil;
+
 	NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kStateMetaFile];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
-	if ([fileManager fileExistsAtPath:localPath]) {
-		NSData *jsonFile = [NSData dataWithContentsOfFile:localPath];
-        NSError *error = nil;
-        _metadata = [[NSJSONSerialization JSONObjectWithData:jsonFile options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error] retain];
-	} else {
-		_metadata = [[NSMutableDictionary alloc] init];
-	}		
+	if (![fileManager fileExistsAtPath:localPath])
+        return @{};
+
+    NSData *jsonFile = [NSData dataWithContentsOfFile:localPath];
+    NSError *error = nil;
+    self.metadata = [NSJSONSerialization JSONObjectWithData:jsonFile options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
 	return _metadata;
 }
 		
-- (void)loadMetadataForState:(NSString *)stateID {
+- (void)loadMetadataForState:(NSString *)stateID
+{
 	RKRequest *request = nil;
 	
 	if (IsEmpty(stateID) || [_loadingStates containsObject:stateID])	// we're already working on it
 		return;
 	
-	isFresh = NO;
+	self.fresh = NO;
 	[_loadingStates addObject:stateID];	// add it to our list of active loads
 	
 	RKClient *osApiClient = [OpenLegislativeAPIs sharedOpenLegislativeAPIs].osApiClient;
@@ -142,16 +146,17 @@
 
     if (IsEmpty(stateId))
         return nil;
-    NSDictionary *stateMeta = _metadata[stateId];
+
+    NSDictionary *stateMeta = self.metadata[stateId];
 
     if (!stateMeta ||
-        !isFresh ||
-        !updated ||
-        ([[NSDate date] timeIntervalSinceDate:updated] > (3600*24)))
+        !self.isFresh ||
+        !self.updated ||
+        ([[NSDate date] timeIntervalSinceDate:self.updated] > (3600*24)))
     {	// if we're over a day old, let's refresh
-        isFresh = NO;
+        self.fresh = NO;
 
-        if (!IsEmpty(stateId) && ![_loadingStates containsObject:stateId])
+        if (!IsEmpty(stateId) && ![self.loadingStates containsObject:stateId])
         {
             debug_NSLog(@"StateMetadata is stale, need to refresh");
             [self loadMetadataForState:stateId];
@@ -160,10 +165,11 @@
 	return stateMeta;
 }
 
-- (NSString *)currentSession {
-	if (NO == IsEmpty(_currentSession))
+- (NSString *)currentSession
+{
+	if (NO == IsEmpty(_currentSession) || !self.selectedState)
 		return _currentSession;
-	NSDictionary *stateMeta = _metadata[_selectedState];
+	NSDictionary *stateMeta = self.metadata[self.selectedState];
 	
 	NSMutableArray *terms = [[NSMutableArray alloc] initWithArray:stateMeta[kMetaSessionsAltKey]];
 	NSSortDescriptor *sortDesc = [NSSortDescriptor sortDescriptorWithKey:@"start_year" ascending:NO];
@@ -172,7 +178,8 @@
 	NSInteger maxyear = -1;
 	NSString *foundSession = nil;
 	
-	for (NSDictionary *term in terms) {
+	for (NSDictionary *term in terms)
+    {
 		NSNumber *startYear = term[@"start_year"];
 		//NSNumber *endYear = [term objectForKey:@"end_year"];
 		NSInteger thisYear = [[NSDate date] year];
@@ -198,7 +205,6 @@
 	if (!IsEmpty(foundSession)) {
 		_currentSession = [foundSession copy];	
 	}
-	nice_release(terms);
 
 	return _currentSession;	
 }
@@ -206,8 +212,9 @@
 #pragma mark -
 #pragma mark RestKit:RKObjectLoaderDelegate
 
-- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error {
-	isFresh = NO;
+- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
+{
+	self.fresh = NO;
 
 	if (error && request) {
 		debug_NSLog(@"Error loading state metadata from %@: %@", [request description], [error localizedDescription]);
@@ -221,14 +228,15 @@
 }
 
 - (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response {  
-	if ([request isGET] && [response isOK]) {  
+	if ([request isGET] && [response isOK])
+    {
 		// Success! Let's take a look at the data  
 
 		if (NO == [request.resourcePath hasPrefix:@"/metadata"]) 
 			return;
 
 		NSError *error = nil;
-        NSMutableDictionary *stateMeta = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
+        NSDictionary *stateMeta = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingAllowFragments error:&error];
 
 		if (IsEmpty(stateMeta)) {
 			[self request:request didFailLoadWithError:nil];
@@ -249,11 +257,15 @@
 			NSLog(@"StateMetaDataLoader: requested metadata for %@, but incoming data is for %@", wantedStateID, gotStateID);
 			[self request:request didFailLoadWithError:nil];
 		}
-		
-		nice_release(updated);
-		updated = [[NSDate date] retain];
-		
-		if (NO == IsEmpty(gotStateID)) {
+
+        self.updated = [NSDate date];
+
+		if (NO == IsEmpty(gotStateID))
+        {
+            if (!_metadata || ![_metadata isKindOfClass:[NSMutableDictionary class]])
+            {
+                _metadata = [[NSMutableDictionary alloc] init];
+            }
 			_metadata[gotStateID] = stateMeta;
 		
 			if ([_loadingStates containsObject:gotStateID]) {
@@ -262,10 +274,10 @@
 			
 			NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kStateMetaFile];
 
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_metadata options:NSJSONWritingPrettyPrinted error:&error];
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self.metadata options:NSJSONWritingPrettyPrinted error:&error];
 			if (![jsonData writeToFile:localPath atomically:YES])
 				NSLog(@"StateMetadataLoader: error writing cache to file: %@", localPath);
-			isFresh = YES;
+			self.fresh = YES;
 			[[NSNotificationCenter defaultCenter] postNotificationName:kStateMetaNotifyLoaded object:nil];
 			debug_NSLog(@"StateMetadata network download successful, archiving.");
 		}		

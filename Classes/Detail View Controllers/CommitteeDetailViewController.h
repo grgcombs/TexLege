@@ -17,11 +17,11 @@
 @class PartisanScaleView;
 @interface CommitteeDetailViewController : UITableViewController <UISplitViewControllerDelegate, TXLDetailProtocol>
 
-@property (nonatomic, retain) id dataObject;
-@property (nonatomic, retain) NSNumber *dataObjectID;
-@property (nonatomic, retain) CommitteeObj *committee;
-@property (nonatomic, retain) UIPopoverController *masterPopover;
-@property (nonatomic, retain) IBOutlet UILabel *membershipLab;
-@property (nonatomic, retain) IBOutlet PartisanScaleView *partisanSlider;
-@property (nonatomic, retain) NSMutableArray *infoSectionArray;
+@property (nonatomic, strong) id dataObject;
+@property (nonatomic, strong) NSNumber *dataObjectID;
+@property (nonatomic, strong) CommitteeObj *committee;
+@property (nonatomic, strong) UIPopoverController *masterPopover;
+@property (nonatomic, strong) IBOutlet UILabel *membershipLab;
+@property (nonatomic, strong) IBOutlet PartisanScaleView *partisanSlider;
+@property (nonatomic, strong) NSMutableArray *infoSectionArray;
 @end

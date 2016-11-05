@@ -38,13 +38,6 @@
 }
 
 
-- (void)dealloc {
-	self.entryValue = self.subtitle = self.title = nil;
-	self.parameter = nil;
-	self.action = nil;
-	
-    [super dealloc];
-}
 
 - (NSString *)description {
 	NSString *string = [NSString stringWithFormat:@"CellDataObject properties: \

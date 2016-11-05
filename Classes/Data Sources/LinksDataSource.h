@@ -15,7 +15,7 @@
 @interface LinksDataSource : NSObject <TableDataSource>  {
 }
 
-@property (nonatomic, retain) NSFetchedResultsController *fetchedResultsController;
+@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 
 @end
  

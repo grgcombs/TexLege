@@ -14,7 +14,6 @@
 #import "TableDataSourceProtocol.h"
 #import "GeneralTableViewController.h"
 
-@interface CalendarMasterViewController : GeneralTableViewController {
-}
+@interface CalendarMasterViewController : GeneralTableViewController
 
 @end

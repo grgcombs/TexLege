@@ -22,29 +22,28 @@
 #import "CalendarEventsLoader.h"
 #import <SafariServices/SFSafariViewController.h>
 
-@interface CalendarDetailViewController (Private) 
+@interface CalendarDetailViewController()
 	
 @end
 
 @implementation CalendarDetailViewController
-@synthesize chamberCalendar;
-@synthesize webView;
-@synthesize masterPopover;
-@synthesize selectedRowRect;
-@synthesize eventPopover;
+@synthesize masterPopover = _masterPopover;
 
-+ (NSString *)nibName {
++ (NSString *)nibName
+{
 	if ([UtilityMethods isIPadDevice])
 		return @"CalendarDetailViewController~ipad";
 	else
 		return @"CalendarDetailViewController~iphone";	
 }
 
-- (NSString *)nibName {
+- (NSString *)nibName
+{
 	return [CalendarDetailViewController nibName];	
 }
 
-- (void)finalizeUI {
+- (void)finalizeUI
+{
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(reloadEvents:) name:kCalendarEventsNotifyLoaded object:nil];	
 
@@ -56,65 +55,74 @@
 	
 	//self.navigationItem.title = @"Upcoming Committee Meetings";
 
-	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];
-	self.searchDisplayController.searchBar.tintColor = [TexLegeTheme navbar];
+    UISearchDisplayController *searchController = self.searchDisplayController;
+
+    UIColor *navBarColor = [TexLegeTheme navbar];
+	self.navigationController.navigationBar.tintColor = navBarColor;
+	searchController.searchBar.tintColor = navBarColor;
     if ([UtilityMethods isIPadDevice])
     {
-        self.navigationItem.titleView = self.searchDisplayController.searchBar;
+        self.navigationItem.titleView = searchController.searchBar;
     }
     else
     {
-        self.searchDisplayController.displaysSearchBarInNavigationBar = YES;
+        searchController.displaysSearchBarInNavigationBar = YES;
     }
 }
 
-- (void)awakeFromNib {
+- (void)awakeFromNib
+{
 	[super awakeFromNib];
-	if (!self.webView && [UtilityMethods isIPadDevice]) {
+	if (!self.webView && [UtilityMethods isIPadDevice])
+    {
 		[[NSBundle mainBundle] loadNibNamed:self.nibName owner:self options:nil];
 	}
 	
 	[self finalizeUI];
 }	
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
 	[super viewDidLoad];
 	
 	[self finalizeUI];
 }
 
-- (void)viewDidUnload {
+- (void)viewDidUnload
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[super viewDidUnload];
 }
 
-- (void)didReceiveMemoryWarning {	
+- (void)didReceiveMemoryWarning
+{
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     // Release any cached data, images, etc that aren't in use.
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
 	self.chamberCalendar = nil;
-	self.webView = nil;
-	self.masterPopover = nil;
-	self.eventPopover = nil;
-    [super dealloc];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
 	[super viewWillAppear:animated];
 	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];
 
 	[[CalendarEventsLoader sharedCalendarEventsLoader] events];
 	
-	if ([UtilityMethods isIPadDevice] && !self.chamberCalendar && ![UtilityMethods isLandscapeOrientation])  {
+	if ([UtilityMethods isIPadDevice]
+        && !self.chamberCalendar
+        && ![UtilityMethods isLandscapeOrientation])
+    {
 		TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
 		
-		self.chamberCalendar = appDelegate.calendarMasterVC.selectObjectOnAppear;		
+		self.chamberCalendar = appDelegate.calendarMasterVC.initialObjectToSelect;		
 	}
 	
 	if (self.chamberCalendar)
@@ -122,7 +130,8 @@
 }
 
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	if ([UtilityMethods isIPadDevice])
 		return YES;
 	else
@@ -132,7 +141,8 @@
 #pragma mark -
 #pragma mark Data Objects
 
-- (void)reloadEvents:(NSNotification*)notification {
+- (void)reloadEvents:(NSNotification*)notification
+{
 	[self reloadData];
 }
 
@@ -140,42 +150,49 @@
 	return self.chamberCalendar;
 }
 
-- (void)setDataObject:(id)newObj {
+- (void)setDataObject:(id)newObj
+{
 	self.chamberCalendar = newObj;
 }
 
-- (void)setChamberCalendar:(ChamberCalendarObj *)newObj {
+- (void)setChamberCalendar:(ChamberCalendarObj *)newObj
+{
     if (self.isViewLoaded)
     {
-        if (chamberCalendar && newObj && self.webView) {
-            if (![[chamberCalendar valueForKey:@"title"] isEqualToString:[newObj valueForKey:@"title"]])
+        if (_chamberCalendar
+            && newObj
+            && self.webView)
+        {
+            if (![[_chamberCalendar title] isEqualToString:[newObj title]])
                 [self.webView loadHTMLString:@"<html></html>" baseURL:nil];
         }
     }
 	
-	if (chamberCalendar) [chamberCalendar release], chamberCalendar = nil;
-	if (newObj) {
-		if (masterPopover)
-			[masterPopover dismissPopoverAnimated:YES];
-		
-		chamberCalendar = [newObj retain];
+    _chamberCalendar = newObj;
+	if (!newObj)
+        return;
 
-        if (!self.isViewLoaded)
-            [self loadView];
+    if (self.masterPopover)
+        [self.masterPopover dismissPopoverAnimated:YES];
+
+    if (!self.isViewLoaded)
+        [self loadView];
 		
-		self.delegate = self;
-		self.dataSource = chamberCalendar;
-		(self.searchDisplayController).searchResultsDataSource = chamberCalendar;
+    self.delegate = self;
+    self.dataSource = _chamberCalendar;
+    self.searchDisplayController.searchResultsDataSource = _chamberCalendar;
 				
-		[self showAndSelectDate:[NSDate date]];
-	}
+    [self showAndSelectDate:[NSDate date]];
 }
 
 #pragma mark -
 #pragma mark Popover Support
 
-
-- (void)splitViewController: (UISplitViewController*)svc willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem*)barButtonItem forPopoverController: (UIPopoverController*)pc {
+- (void)splitViewController:(UISplitViewController*)svc
+     willHideViewController:(UIViewController *)aViewController
+          withBarButtonItem:(UIBarButtonItem*)barButtonItem
+       forPopoverController:(UIPopoverController*)pc
+{
 	//debug_NSLog(@"Entering portrait, showing the button: %@", [aViewController class]);
     barButtonItem.title =  NSLocalizedStringFromTable(@"Meetings", @"StandardUI", @"The short title for buttons and tabs related to committee meetings (or calendar events)");
     [self.navigationItem setRightBarButtonItem:barButtonItem animated:YES];
@@ -184,16 +201,21 @@
 
 
 // Called when the view is shown again in the split view, invalidating the button and popover controller.
-- (void)splitViewController: (UISplitViewController*)svc willShowViewController:(UIViewController *)aViewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem {
+- (void)splitViewController:(UISplitViewController*)svc
+     willShowViewController:(UIViewController *)aViewController
+  invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
 	//debug_NSLog(@"Entering landscape, hiding the button: %@", [aViewController class]);
     [self.navigationItem setRightBarButtonItem:nil animated:YES];
     self.masterPopover = nil;
 }
 
-- (void) splitViewController:(UISplitViewController *)svc popoverController: (UIPopoverController *)pc
-   willPresentViewController: (UIViewController *)aViewController
+- (void)splitViewController:(UISplitViewController *)svc
+          popoverController:(UIPopoverController *)pc
+  willPresentViewController:(UIViewController *)aViewController
 {
-	if ([UtilityMethods isLandscapeOrientation]) {
+	if ([UtilityMethods isLandscapeOrientation])
+    {
 		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"ERR_POPOVER_IN_LANDSCAPE"];
 	}		 
 }	
@@ -201,46 +223,50 @@
 #pragma -
 #pragma UITableViewDelegate
 
-
-- (void)tableView:(UITableView *)tv accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tv accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
+{
 	NSDictionary *eventDict = [self.chamberCalendar eventForIndexPath:indexPath];
-	if (eventDict) {
-		
-		self.selectedRowRect = [tv rectForRowAtIndexPath:indexPath];
-		
-		[[CalendarEventsLoader sharedCalendarEventsLoader] addEventToiCal:eventDict delegate:self];	
-	}
+	if (!eventDict)
+        return;
+    self.selectedRowRect = [tv rectForRowAtIndexPath:indexPath];
+    [[CalendarEventsLoader sharedCalendarEventsLoader] addEventsToiCal:@[eventDict] delegate:self];
 }
 
-
-- (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
+- (void)tableView:(UITableView *)tv didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	[tv deselectRowAtIndexPath:indexPath animated:YES];
 	
 	self.selectedRowRect = [tv rectForRowAtIndexPath:indexPath];
 
 	NSDictionary *eventDict = [self.chamberCalendar eventForIndexPath:indexPath];
-	
-	if (tv == self.searchDisplayController.searchResultsTableView) {
-		[self.searchDisplayController setActive:NO animated:YES];
+    UISearchDisplayController *searchController = self.searchDisplayController;
+	if (tv == searchController.searchResultsTableView)
+    {
+		[searchController setActive:NO animated:YES];
 		[self showAndSelectDate:eventDict[kCalendarEventsLocalizedDateKey]];
 	}
 
-    if (IsEmpty(eventDict[kCalendarEventsAnnouncementURLKey])) {
+    if (IsEmpty(eventDict[kCalendarEventsAnnouncementURLKey]))
+    {
         return;
     }
+
 	NSURL *url = eventDict[kCalendarEventsAnnouncementURLKey];
 	
-	if ([TexLegeReachability canReachHostWithURL:url]) { // do we have a good URL/connection?
-		if ([UtilityMethods isIPadDevice]) {	
+	if ([TexLegeReachability canReachHostWithURL:url])
+    {
+        if ([UtilityMethods isIPadDevice])
+        {
 			NSURLRequest *urlReq = [NSURLRequest requestWithURL:url 
 													cachePolicy:NSURLRequestUseProtocolCachePolicy 
 												timeoutInterval:60.0];
-			if (urlReq) {
+			if (urlReq)
+            {
 				[self.webView loadRequest:urlReq];	
 			}
 		}
-		else {
+		else
+        {
 			NSString *urlString = url.absoluteString;
             NSURL *url = [NSURL URLWithString:urlString];
             if (!url)
@@ -255,7 +281,6 @@
 
 			webController.modalPresentationStyle = UIModalPresentationPageSheet;
             [self presentViewController:webController animated:YES completion:nil];
-			[webController release];
 		}		
 	}
 }
@@ -263,13 +288,15 @@
 #pragma mark -
 #pragma mark Search Results Delegate
 
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
+{
 	[self.chamberCalendar filterEventsByString:searchString];
 	
 	return YES; // or foundSomething?
 }
 
-- (void) presentEventEditorForEvent:(EKEvent *)event {
+- (void)presentEventEditorForEvent:(EKEvent *)event
+{
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"iCAL_EVENT"];
 	
 	EKEventViewController *controller = [[EKEventViewController alloc] init];			
@@ -277,13 +304,15 @@
 	controller.allowsEditing = YES;
     controller.delegate = self;
 	
-	if (NO == [UtilityMethods isIPadDevice]) {
+	if (NO == [UtilityMethods isIPadDevice])
+    {
 		//	Push eventViewController onto the navigation controller stack
 		//	If the underlying event gets deleted, detailViewController will remove itself from
 		//	the stack and clear its event property.
 		[self.navigationController pushViewController:controller animated:YES];
 	}
-	else  {	
+	else
+    {
 		/* This is a hacky way to do this, but since we aren't using a navigationController
 		 we create a popover, but first we have to wrap the content in a new navigationController
 		 in order to get the necessary button in a nav bar to edit the event.
@@ -291,7 +320,7 @@
 		
 		controller.modalInPopover = NO;
 		
-		UINavigationController *navC = [[UINavigationController alloc]initWithRootViewController:controller];
+		UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:controller];
 		navC.navigationBar.tintColor = [TexLegeTheme navbar];
 		UIPopoverController* aPopover = [[UIPopoverController alloc]
 										 initWithContentViewController:navC];
@@ -301,25 +330,27 @@
 												inView:self.calendarView.tableView
 							  permittedArrowDirections:UIPopoverArrowDirectionAny 
 											  animated:YES];
-		[navC release];
-		[aPopover release];				
 	}
-	[controller release];
 }
 
-- (void)eventViewController:(EKEventViewController *)controller didCompleteWithAction:(EKEventViewAction)action {
-    if (self.eventPopover) {
+- (void)eventViewController:(EKEventViewController *)controller didCompleteWithAction:(EKEventViewAction)action
+{
+    if (self.eventPopover)
+    {
         [self.eventPopover dismissPopoverAnimated:YES];
         self.eventPopover = nil;
     }
 }
 
-- (BOOL)popoverControllerShouldDismissPopover:(UIPopoverController *)newPop {
+- (BOOL)popoverControllerShouldDismissPopover:(UIPopoverController *)newPop
+{
 	return YES;
 }
 
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)newPop {
-	if ([newPop isEqual:self.eventPopover]) {
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)newPop
+{
+	if ([newPop isEqual:self.eventPopover])
+    {
 		self.eventPopover = nil;
 	}
 }

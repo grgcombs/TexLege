@@ -99,10 +99,6 @@
 #if NEEDS_TO_PARSE_KMLMAPS == 1
 	self.importer = nil;
 #endif
-	self.fetchedResultsController = nil;
-	self.filterString = nil;
-	self.searchDisplayController = nil;
-    [super dealloc];
 }
 
 #pragma mark -
@@ -176,7 +172,7 @@
 	
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Committees"];	// just steal the committees style?
 	if (cell == nil) {
-		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Committees"] autorelease];
+		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Committees"];
 		
 		cell.detailTextLabel.font = [TexLegeTheme boldFifteen];
 		cell.textLabel.font =		[TexLegeTheme boldTwelve];
@@ -192,7 +188,6 @@
 		DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
 		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
 		cell.accessoryView = qv;
-		[qv release];
 		//[iv release];
 	}
     
@@ -482,15 +477,11 @@
 		NSSortDescriptor *sort1 = [[NSSortDescriptor alloc] initWithKey:@"district" ascending:YES] ;
 		NSSortDescriptor *sort2 = [[NSSortDescriptor alloc] initWithKey:@"chamber" ascending:NO] ;
 		descriptors = @[sort1, sort2];
-		[sort1 release];
-		[sort2 release];
 	}
 	else {
 		NSSortDescriptor *sort1 = [[NSSortDescriptor alloc] initWithKey:@"legislator.lastname" ascending:YES] ;
 		NSSortDescriptor *sort2 = [[NSSortDescriptor alloc] initWithKey:@"legislator.firstname" ascending:YES] ;
 		descriptors = @[sort1, sort2];
-		[sort1 release];
-		[sort2 release];
 	}
 	return descriptors;
 }

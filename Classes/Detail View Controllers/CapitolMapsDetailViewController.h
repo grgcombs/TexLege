@@ -16,9 +16,9 @@
 
 @interface CapitolMapsDetailViewController : UIViewController <UISplitViewControllerDelegate, TXLDetailProtocol> {
 }
-@property (nonatomic,retain) id dataObject;
+@property (nonatomic,strong) id dataObject;
 
-@property (nonatomic,retain) CapitolMap *map;
-@property (nonatomic,retain) IBOutlet UIWebView *webView;
-@property (nonatomic,retain) UIPopoverController *masterPopover;
+@property (nonatomic,strong) CapitolMap *map;
+@property (nonatomic,strong) IBOutlet UIWebView *webView;
+@property (nonatomic,strong) UIPopoverController *masterPopover;
 @end

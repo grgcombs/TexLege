@@ -17,7 +17,7 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 
 @interface LegislatorMasterCell ()
-@property (nonatomic,retain) DisclosureQuartzView *disclosure;
+@property (nonatomic,strong) DisclosureQuartzView *disclosure;
 @end
 
 @implementation LegislatorMasterCell
@@ -86,10 +86,5 @@
 	[self.cellView setNeedsDisplay];
 }
 
-- (void)dealloc
-{
-    self.cellView = nil;
-    [super dealloc];
-}
 
 @end

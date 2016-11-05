@@ -51,6 +51,8 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 
 @implementation BillsDetailViewController
 
+@synthesize masterPopover = _masterPopover;
+
 - (NSString *)nibName
 {
 	if ([UtilityMethods isIPadDevice])
@@ -77,15 +79,7 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 {
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
     self.bill = nil;
-    self.statusView = nil;
-	self.lab_description = nil;
-	self.masterPopover = nil;
-	self.starButton = nil;
-	self.actionHeader = nil;
-    self.voteDataSource = nil;
-	self.headerView = self.descriptionView = nil;
-
-	[super dealloc];
+    //[super dealloc];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -119,7 +113,6 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
     {
 		NSArray *tempArray = [[NSArray alloc] init];
 		[tempArray writeToFile:thePath atomically:YES];
-		[tempArray release];
 	}	
 }
 
@@ -162,6 +155,8 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 
 - (void)setDataObject:(id)newObj
 {
+    if (!newObj || ![newObj isKindOfClass:[NSDictionary class]])
+        newObj = nil;
 	self.bill = newObj;
 }
 
@@ -177,7 +172,6 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
         {
             NSString *watchID = watchIDForBill(self.bill);
             foundItem = [watchList findWhereKeyPath:@"watchID" equals:watchID];
-            [watchList release];
         }
 	}
 
@@ -197,15 +191,15 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
         if (!watchID)
             return;
 
-        NSMutableDictionary *foundItem = [[watchList findWhereKeyPath:@"watchID" equals:watchID] retain];
+        NSMutableDictionary *foundItem = [watchList findWhereKeyPath:@"watchID" equals:watchID];
 		if (!foundItem && newValue == YES)
         {
-            foundItem = [[NSMutableDictionary dictionaryWithObjectsAndKeys:
+            foundItem = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                           watchID, @"watchID",
                           _bill[@"bill_id"], @"bill_id",
                           _bill[@"session"], @"session",
                           _bill[@"title"], @"title",
-                          nil] retain];
+                          nil];
 
 			if (newValue == YES)
             {
@@ -218,13 +212,10 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 			}
 		}
 		else if (foundItem && newValue == NO)
+        {
 			[watchList removeObject:foundItem];
-
+        }
 		[watchList writeToFile:thePath atomically:YES];
-
-		[foundItem release];
-		[watchList release];
-		
 	}
 }
 
@@ -239,14 +230,12 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 		LegislatorDetailViewController *legVC = [[LegislatorDetailViewController alloc] initWithNibName:@"LegislatorDetailViewController" bundle:nil];
 		legVC.legislator = legislator;	
 		[self.navigationController pushViewController:legVC animated:YES];
-		[legVC release];
 	}
 }
 
 - (void)setupHeader
 {
     NSDictionary *bill = self.bill;
-
 	if (!bill)
 		return;
 	
@@ -302,7 +291,6 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 
 	BillActionParser *parser = [[BillActionParser alloc] init];
 	NSArray *tempList = [parser parseStagesForBill:bill].allValues;
-	[parser release];
 	
 	if (NO == IsEmpty(tempList))
     {
@@ -317,13 +305,9 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 	if (self.starButton)
 		self.starButton.enabled = (bill != nil);
 
-    if (_bill)
-        [_bill release], _bill = nil;
-
+    _bill = bill;
     if (!bill)
         return;
-
-    _bill = [bill retain];
 
     self.tableView.dataSource = self;
 
@@ -497,118 +481,120 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 	BOOL isClickable = 	NO == ((billSection == BillDetailSectionActions) ||
 							   (billSection == BillDetailSectionVotes));
 	
-    NSString *CellIdentifier =[NSString stringWithFormat:@"%@-%d", [TexLegeStandardGroupCell cellIdentifier], isClickable];
+    NSString *cellIdentifier =[[TexLegeStandardGroupCell cellIdentifier] stringByAppendingFormat:@"-%d", isClickable];
     
-    TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil)
     {
-        cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
-		if (!isClickable) {
+        cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+		if (!isClickable)
+        {
 			cell.selectionStyle = UITableViewCellSelectionStyleNone;
 			cell.accessoryType = UITableViewCellAccessoryNone;
 			cell.accessoryView = nil;
 		}
     }
-    
-	if (self.bill) {
-		switch (billSection)
+
+    if (!self.bill)
+        return cell;
+
+    switch (billSection)
+    {
+        case BillDetailSectionSubjects:
         {
-			case BillDetailSectionSubjects:
-			{
-				NSString *subject = _bill[@"subjects"][indexPath.row];
-				//cell.textLabel.text = subject;
-				cell.detailTextLabel.text = subject;
-				cell.textLabel.text = @"";
-			}
-				break;
-			case BillDetailSectionSponsors:
-			{
-				NSDictionary *sponsor = _bill[@"sponsors"][indexPath.row];
-				cell.detailTextLabel.text = sponsor[@"name"];
-				cell.textLabel.text = [sponsor[@"type"] capitalizedString];
-			}
-				break;
-			case BillDetailSectionVersions:
-			{				
-				NSDictionary *version = _bill[@"versions"][indexPath.row];
-				NSString *textName = nil;
-				NSString *senateString = stringForChamber(SENATE, TLReturnFull);
-				NSString *houseString = stringForChamber(HOUSE, TLReturnFull);
-				NSString *comRep = NSLocalizedStringFromTable(@"%@ Committee Report", @"DataTableUI", @"Preceded by the legislative chamber");
-				
-				NSString *name = version[@"name"];
-				if ([name hasSuffix:@"I"])
-					textName = NSLocalizedStringFromTable(@"Introduced", @"DataTableUI", @"A bill activity stating the bill has been introduced");
-				else if ([name hasSuffix:@"E"])
-					textName = NSLocalizedStringFromTable(@"Engrossed", @"DataTableUI", @"A bill activity stating the bill has been engrossed (passed and sent to the other chamber)");
-				else if ([name hasSuffix:@"S"])
-					textName = [NSString stringWithFormat:comRep, senateString];
-				else if ([name hasSuffix:@"H"])
-					textName = [NSString stringWithFormat:comRep, houseString];
-				else if ([name hasSuffix:@"A"])
-					textName = NSLocalizedStringFromTable(@"Amendments Printing", @"DataTableUI", @"A bill activity saying that they legislature is printing amendments");
-				else if ([name hasSuffix:@"F"])
-					textName = NSLocalizedStringFromTable(@"Enrolled", @"DataTableUI", @"A bill activity stating that the bill has been enrolled (like a law)");
-				else
-					textName = name;
-				cell.textLabel.text = @"";
-				cell.detailTextLabel.text = textName;
-			}
-				break;
-			case BillDetailSectionVotes:
-			{				
-				NSDictionary *vote = _bill[@"votes"][indexPath.row];
-				NSDate *voteDate = [NSDate dateFromString:vote[@"date"]];
-				NSString *voteDateString = [NSDate stringForDisplayFromDate:voteDate];
-				
-				BOOL passed = [vote[@"passed"] boolValue];
-				NSString *passedString = passed ? NSLocalizedStringFromTable(@"Passed", @"DataTableUI", @"Whether a bill passed/failed") : NSLocalizedStringFromTable(@"Failed", @"DataTableUI", @"Whether a bill passed/failed");
-				NSInteger chamber = chamberFromOpenStatesString(vote[@"chamber"]);
-				NSString *chamberString = stringForChamber(chamber, TLReturnFull);
-				cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - %@ (%@)",
-											 [vote[@"motion"] capitalizedString],
-											 chamberString, voteDateString];
-				cell.textLabel.text = [NSString stringWithFormat:@"%@ (%@ - %@ - %@)", passedString,
-									   vote[@"yes_count"], vote[@"no_count"],
-									   vote[@"other_count"]];
-			}
-				break;
-			case BillDetailSectionActions:
-			{
-				NSDictionary *currentAction = _bill[@"actions"][indexPath.row];
-				if (!IsEmpty(currentAction[@"date"]))
+            NSString *subject = _bill[@"subjects"][indexPath.row];
+            //cell.textLabel.text = subject;
+            cell.detailTextLabel.text = subject;
+            cell.textLabel.text = @"";
+            break;
+        }
+        case BillDetailSectionSponsors:
+        {
+            NSDictionary *sponsor = _bill[@"sponsors"][indexPath.row];
+            cell.detailTextLabel.text = sponsor[@"name"];
+            cell.textLabel.text = [sponsor[@"type"] capitalizedString];
+            break;
+        }
+        case BillDetailSectionVersions:
+        {
+            NSDictionary *version = _bill[@"versions"][indexPath.row];
+            NSString *textName = nil;
+            NSString *senateString = stringForChamber(SENATE, TLReturnFull);
+            NSString *houseString = stringForChamber(HOUSE, TLReturnFull);
+            NSString *comRep = NSLocalizedStringFromTable(@"%@ Committee Report", @"DataTableUI", @"Preceded by the legislative chamber");
+
+            NSString *name = version[@"name"];
+            if ([name hasSuffix:@"I"])
+                textName = NSLocalizedStringFromTable(@"Introduced", @"DataTableUI", @"A bill activity stating the bill has been introduced");
+            else if ([name hasSuffix:@"E"])
+                textName = NSLocalizedStringFromTable(@"Engrossed", @"DataTableUI", @"A bill activity stating the bill has been engrossed (passed and sent to the other chamber)");
+            else if ([name hasSuffix:@"S"])
+                textName = [NSString stringWithFormat:comRep, senateString];
+            else if ([name hasSuffix:@"H"])
+                textName = [NSString stringWithFormat:comRep, houseString];
+            else if ([name hasSuffix:@"A"])
+                textName = NSLocalizedStringFromTable(@"Amendments Printing", @"DataTableUI", @"A bill activity saying that they legislature is printing amendments");
+            else if ([name hasSuffix:@"F"])
+                textName = NSLocalizedStringFromTable(@"Enrolled", @"DataTableUI", @"A bill activity stating that the bill has been enrolled (like a law)");
+            else
+                textName = name;
+            cell.textLabel.text = @"";
+            cell.detailTextLabel.text = textName;
+
+            break;
+        }
+        case BillDetailSectionVotes:
+        {
+            NSDictionary *vote = _bill[@"votes"][indexPath.row];
+            NSDate *voteDate = [NSDate dateFromString:vote[@"date"]];
+            NSString *voteDateString = [NSDate stringForDisplayFromDate:voteDate];
+
+            BOOL passed = [vote[@"passed"] boolValue];
+            NSString *passedString = passed ? NSLocalizedStringFromTable(@"Passed", @"DataTableUI", @"Whether a bill passed/failed") : NSLocalizedStringFromTable(@"Failed", @"DataTableUI", @"Whether a bill passed/failed");
+            NSInteger chamber = chamberFromOpenStatesString(vote[@"chamber"]);
+            NSString *chamberString = stringForChamber(chamber, TLReturnFull);
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - %@ (%@)",
+                                         [vote[@"motion"] capitalizedString],
+                                         chamberString, voteDateString];
+            cell.textLabel.text = [NSString stringWithFormat:@"%@ (%@ - %@ - %@)", passedString,
+                                   vote[@"yes_count"], vote[@"no_count"],
+                                   vote[@"other_count"]];
+            break;
+        }
+        case BillDetailSectionActions:
+        {
+            NSDictionary *currentAction = _bill[@"actions"][indexPath.row];
+            if (!IsEmpty(currentAction[@"date"]))
+            {
+                NSDate *currentActionDate = [NSDate dateFromString:currentAction[@"date"]];
+                NSString *actionDateString = [NSDate stringForDisplayFromDate:currentActionDate];
+                cell.textLabel.text = actionDateString;
+            }
+            if (!IsEmpty(currentAction[@"action"]))
+            {
+                NSString *desc = nil;
+                if (!IsEmpty(currentAction[@"actor"]))
                 {
-					NSDate *currentActionDate = [NSDate dateFromString:currentAction[@"date"]];
-					NSString *actionDateString = [NSDate stringForDisplayFromDate:currentActionDate];
-					cell.textLabel.text = actionDateString;
-				}
-				if (!IsEmpty(currentAction[@"action"]))
-                {
-					NSString *desc = nil;
-					if (!IsEmpty(currentAction[@"actor"]))
-                    {
-						NSInteger chamberCode = chamberFromOpenStatesString(currentAction[@"actor"]);
-						if (chamberCode == HOUSE || chamberCode == SENATE) {
-							desc = [NSString stringWithFormat:@"(%@) %@", 
-									stringForChamber(chamberCode, TLReturnFull), 
-									currentAction[@"action"]];
-						}
-					}
-					if (!desc)
-						desc = currentAction[@"action"];
-					cell.detailTextLabel.text = desc;
-				}
-			}
-				break;
-			default:
-				break;
-		}
+                    NSInteger chamberCode = chamberFromOpenStatesString(currentAction[@"actor"]);
+                    if (chamberCode == HOUSE || chamberCode == SENATE) {
+                        desc = [NSString stringWithFormat:@"(%@) %@", 
+                                stringForChamber(chamberCode, TLReturnFull), 
+                                currentAction[@"action"]];
+                    }
+                }
+                if (!desc)
+                    desc = currentAction[@"action"];
+                cell.detailTextLabel.text = desc;
+            }
+            break;
+        }
+        default:
+            break;
 	}
     
     return cell;
 }
 
-// the user selected a row in the table.
 - (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	// deselect the new row using animation
@@ -635,14 +621,16 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 
 			NSString *subject = subjects[indexPath.row];
 			BillsListViewController *catResultsView = nil;
+            UINavigationController *masterNavigation = [[TexLegeAppDelegate appDelegate] masterNavigationController];
+
 			BOOL preexisting = NO;
 			if ([UtilityMethods isIPadDevice]
                 && [UtilityMethods isLandscapeOrientation])
             {
-				id tempView = [TexLegeAppDelegate appDelegate].masterNavigationController.visibleViewController;
+				id tempView = masterNavigation.visibleViewController;
 				if ([tempView isKindOfClass:[BillsListViewController class]])
                 {
-					catResultsView = (BillsListViewController *)[tempView retain];
+					catResultsView = (BillsListViewController *)tempView;
 					preexisting = YES;
 				}
 			}
@@ -657,12 +645,11 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 				if ([UtilityMethods isIPadDevice]
                     && [UtilityMethods isLandscapeOrientation])
                 {
-					[[TexLegeAppDelegate appDelegate].masterNavigationController pushViewController:catResultsView animated:YES];
+					[masterNavigation pushViewController:catResultsView animated:YES];
                 }
 				else
 					[self.navigationController pushViewController:catResultsView animated:YES];
 			}
-			[catResultsView release];
             break;
 		}
 		case BillDetailSectionSponsors:
@@ -705,7 +692,6 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 
                 webController.modalPresentationStyle = UIModalPresentationPageSheet;
                 [self presentViewController:webController animated:YES completion:nil];
-                [webController release];
             }
             break;
 		}
@@ -719,24 +705,28 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
                 break;
             }
 
-			NSDictionary *vote = self.bill[@"votes"][indexPath.row];
+			NSDictionary *vote = votes[indexPath.row];
+            if (![vote isKindOfClass:[NSDictionary class]])
+            {
+                break;
+            }
 
             BillVotesDataSource *voteDS = self.voteDataSource;
-
             if (!voteDS || NO == [voteDS.voteID isEqualToString:vote[@"vote_id"]])
             {
-                if (voteDS)
-                    [voteDS release];
                 voteDS = [[BillVotesDataSource alloc] initWithBillVotes:vote];
             }
-            NSString *titleString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ %@ Vote", @"DataTableUI", @"As in HB 323 Final Passage Vote"), self.bill[@"bill_id"], [vote[@"motion"] capitalizedString]];
-				BillVotesViewController *voteViewController = [[BillVotesViewController alloc] initWithStyle:UITableViewStyleGrouped];
-				voteViewController.tableView.dataSource = voteDS;
-				voteViewController.tableView.delegate = voteDS;
-				voteDS.viewController = voteViewController;
-				[self.navigationController pushViewController:voteViewController animated:YES];
-				voteViewController.navigationItem.title = titleString;
-				[voteViewController release];
+
+            BillVotesViewController *voteViewController = [[BillVotesViewController alloc] initWithStyle:UITableViewStyleGrouped];
+            voteViewController.tableView.dataSource = voteDS;
+            voteViewController.tableView.delegate = voteDS;
+            voteDS.viewController = voteViewController;
+            [self.navigationController pushViewController:voteViewController animated:YES];
+
+            NSString *billID = self.bill[@"bill_id"];
+            NSString *motion = [vote[@"motion"] capitalizedString];
+
+            voteViewController.navigationItem.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ %@ Vote", @"DataTableUI", @"Example: HB-323 Final Passage Vote"), billID, motion];
 
             break;
 		}
@@ -747,23 +737,28 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 #pragma mark -
 #pragma mark RestKit:RKObjectLoaderDelegate
 
-- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error {
-	if (error && request) {
+- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
+{
+	if (error && request)
+    {
 		debug_NSLog(@"BillDetail - Error loading bill results from %@: %@", [request description], [error localizedDescription]);
 	}
-	
-	UIAlertView *alert = [[ UIAlertView alloc ] 
-						  initWithTitle:NSLocalizedStringFromTable(@"Network Error", @"AppAlerts", @"Title for alert stating there's been an error when connecting to a server")
-						  message:NSLocalizedStringFromTable(@"There was an error while contacting the server for bill information.  Please check your network connectivity or try again.", @"AppAlerts", @"")
-						  delegate:nil // we're static, so don't do "self"
-						  cancelButtonTitle: NSLocalizedStringFromTable(@"Cancel", @"StandardUI", @"Button cancelling some activity")
-						  otherButtonTitles:nil];
-	[ alert show ];	
-	[ alert release];
+
+    NSString *title = NSLocalizedStringFromTable(@"Network Error", @"AppAlerts", @"Title for alert stating there's been an error when connecting to a server");
+    NSString *message = NSLocalizedStringFromTable(@"There was an error while contacting the server for bill information.  Please check your network connectivity or try again.", @"AppAlerts", @"");
+
+    UIAlertController *controller = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:nil style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+
+    }];
+    [controller addAction:cancel];
+    controller.preferredAction = cancel;
+
+    [self showViewController:controller sender:self];
 }
 
-
-- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response {  
+- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response
+{
 	if ([request isGET] && [response isOK]) {  
 		// Success! Let's take a look at the data
         NSError *error = nil;
@@ -773,7 +768,6 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"BILL_SELECT" attributes:tagBill];
 	}
 }
-
 
 @end
 

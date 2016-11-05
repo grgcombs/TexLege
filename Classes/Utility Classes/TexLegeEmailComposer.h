@@ -17,9 +17,9 @@
 {
 
 }
-@property (nonatomic, retain) IBOutlet UIViewController *currentCommander;
-@property (nonatomic, retain) IBOutlet MFMailComposeViewController *mailComposerVC;
-@property (nonatomic, retain) IBOutlet UIAlertView *currentAlert;
+@property (nonatomic, strong) IBOutlet UIViewController *currentCommander;
+@property (nonatomic, strong) IBOutlet MFMailComposeViewController *mailComposerVC;
+@property (nonatomic, strong) IBOutlet UIAlertView *currentAlert;
 @property (nonatomic) BOOL isComposingMail;
 
 + (TexLegeEmailComposer *)sharedTexLegeEmailComposer;

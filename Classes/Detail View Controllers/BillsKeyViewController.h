@@ -14,10 +14,9 @@
 #import <RestKit/RestKit.h>
 
 @class BillSearchDataSource;
-@interface BillsKeyViewController : UITableViewController <RKRequestDelegate, UITableViewDelegate, UITableViewDataSource> {
-	NSMutableArray *keyBills_;
-	NSInteger loadingStatus;
-}
-@property (nonatomic,retain) NSMutableArray *keyBills;
+@interface BillsKeyViewController : UITableViewController <RKRequestDelegate, UITableViewDelegate, UITableViewDataSource>
+
+@property (nonatomic,copy,readonly) NSMutableArray *keyBills;
+@property (nonatomic,readonly) NSInteger loadingStatus;
 
 @end

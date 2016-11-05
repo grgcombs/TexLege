@@ -25,24 +25,16 @@
 #define kTLEventKitTLIDKey				@"TLEventTLID"
 #define kTLEventKitStoreKey				@"TLEventStore"
 
-@interface CalendarEventsLoader : NSObject <RKRequestDelegate> {
-	NSMutableArray *_events;
-	BOOL isFresh;
-	NSDate *updated;
-	
-	NSInteger loadingStatus;
-
-	EKEventStore *eventStore;
-}
-+ (CalendarEventsLoader *)sharedCalendarEventsLoader;
+@interface CalendarEventsLoader : NSObject <RKRequestDelegate>
++ (instancetype)sharedCalendarEventsLoader;
 - (void)loadEvents:(id)sender;
 - (NSArray *)commiteeeMeetingsForChamber:(NSInteger)chamber;
-- (void)addEventToiCal:(NSDictionary *)eventDict delegate:(id)delegate;
+- (void)addEventsToiCal:(NSArray *)eventDicts delegate:(id)delegate;
 - (void)addAllEventsToiCal:(id)sender;
 
-@property (nonatomic,readonly) NSArray *events;
-@property (nonatomic) BOOL isFresh;
-@property (nonatomic) NSInteger loadingStatus;
+@property (NS_NONATOMIC_IOSONLY,copy,readonly) NSArray *events;
+@property (NS_NONATOMIC_IOSONLY,getter=isFresh,readonly) BOOL fresh;
+@property (NS_NONATOMIC_IOSONLY,readonly) NSInteger loadingStatus;
 
 #define kCalendarEventsIDKey				@"id"
 #define kCalendarEventsWhenKey				@"when"			// In UTC ... so subtract for local time zone

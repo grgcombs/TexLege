@@ -20,12 +20,9 @@
 #import "TexLegeAppDelegate.h"
 
 @interface PartisanIndexStats ()
-- (NSArray *) aggregatePartisanIndexForChamber:(NSInteger)chamber andPartyID:(NSInteger)party;
-
 @property (NS_NONATOMIC_IOSONLY, copy) NSDictionary *partisanIndexAggregates;
 @property (NS_NONATOMIC_IOSONLY, copy) NSMutableArray *rawPartisanIndexAggregates;
 @property (NS_NONATOMIC_IOSONLY, copy) NSDate *updated;
-
 @end
 
 @implementation PartisanIndexStats
@@ -39,8 +36,10 @@
 	return foo;
 }
 
-- (instancetype)init {
-	if ((self = [super init])) {
+- (instancetype)init
+{
+	if ((self = [super init]))
+    {
 		_updated = nil;
 		_fresh = NO;
 		_loading = NO;
@@ -66,17 +65,16 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
 	if (_updated)
-		[_updated release], _updated = nil;
+		_updated = nil;
 		
-	if (_rawPartisanIndexAggregates) [_rawPartisanIndexAggregates release], _rawPartisanIndexAggregates = nil;
-	if (_partisanIndexAggregates) [_partisanIndexAggregates release], _partisanIndexAggregates = nil;
+	if (_rawPartisanIndexAggregates) _rawPartisanIndexAggregates = nil;
+	if (_partisanIndexAggregates) _partisanIndexAggregates = nil;
 	
-    [super dealloc];
 }
 
 - (void)resetData:(NSNotification *)notification
 {
-    if (_partisanIndexAggregates) [_partisanIndexAggregates release], _partisanIndexAggregates = nil;
+    if (_partisanIndexAggregates) _partisanIndexAggregates = nil;
 	[self partisanIndexAggregates];
 }
 
@@ -113,7 +111,7 @@
 					NSLog(@"PartisanIndexStates: Error pulling aggregate dictionary.");
 			}
 		}
-		_partisanIndexAggregates = [[NSDictionary dictionaryWithDictionary:tempAggregates] retain];
+		_partisanIndexAggregates = [NSDictionary dictionaryWithDictionary:tempAggregates];
 	}
 	
 	return _partisanIndexAggregates;
@@ -155,7 +153,7 @@
 }
 
 /* This queries the partisan index from each legislator and calculates aggregate statistics */
-- (NSArray *) aggregatePartisanIndexForChamber:(NSInteger)chamber andPartyID:(NSInteger)party
+- (NSArray *)aggregatePartisanIndexForChamber:(NSInteger)chamber andPartyID:(NSInteger)party
 {
 	if (chamber == BOTH_CHAMBERS)
     {
@@ -223,7 +221,6 @@
 		allResults = @[avgPartisanIndex, maxPartisanIndex, minPartisanIndex];
 	}
 	
-    [edAvg release], [edMax release], [edMin release];
 	return allResults;
 }
 
@@ -273,8 +270,6 @@
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"session" ascending:YES];
 	NSArray *descriptors = [[NSArray alloc] initWithObjects:sortDescriptor,nil];
 	NSArray *sortedScores = [(legislator.wnomScores).allObjects sortedArrayUsingDescriptors:descriptors];
-	[sortDescriptor release];
-	[descriptors release];
 	NSInteger countOfScores = (legislator.wnomScores).count;
 	
 	
@@ -316,10 +311,6 @@
 	results[@"democ"] = demScores;
 	results[@"member"] = memberScores;
 	results[@"time"] = dates;
-	[repubScores release];
-	[demScores release];
-	[memberScores release];
-	[dates release];
 	
 	return results;
 }
@@ -354,7 +345,6 @@
     {
         if (_rawPartisanIndexAggregates)
         {
-            [_rawPartisanIndexAggregates release];
             _rawPartisanIndexAggregates = nil;
         }
 
@@ -427,7 +417,6 @@
     // Success! Let's take a look at the data
     if (_rawPartisanIndexAggregates)
     {
-        [_rawPartisanIndexAggregates release];
         _rawPartisanIndexAggregates = nil;
     }
 
@@ -447,8 +436,8 @@
 
     _rawPartisanIndexAggregates = [aggregates mutableCopy];
     if (_updated)
-        [_updated release];
-    _updated = [[NSDate date] retain];
+        ;
+    _updated = [NSDate date];
     
     NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kPartisanIndexFile];
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_rawPartisanIndexAggregates options:NSJSONWritingPrettyPrinted error:&error];

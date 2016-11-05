@@ -24,12 +24,12 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
 
 - (void)configure
 {
-    _title = [@"Rep." retain];
-    _name = [@"Warren Chisum" retain];
-    _tenure = [@"4 Years" retain];
-    _party = [@"Republican" retain];
-    _rank = [@"3rd most partisan (out of 76 Repubs)" retain];
-    _district = [@"District 21" retain];
+    _title = @"Rep.";
+    _name = @"Warren Chisum";
+    _tenure = @"4 Years";
+    _party = @"Republican";
+    _rank = @"3rd most partisan (out of 76 Repubs)";
+    _district = @"District 21";
     _party_id = 2;
     _sliderValue = 0.0f;
     _partisan_index = 0.0f;
@@ -66,17 +66,6 @@ const CGFloat kCommitteeMemberCellViewHeight = 73.0f;
     [self configure];
 }
 
-- (void)dealloc
-{
-    self.title = nil;
-    self.name = nil;
-    self.tenure = nil;
-    self.party = nil;
-    self.rank = nil;
-    self.district = nil;
-
-	[super dealloc];
-}
 
 - (void)setSliderValue:(CGFloat)value
 {	

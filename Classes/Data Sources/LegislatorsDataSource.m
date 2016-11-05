@@ -68,11 +68,7 @@
 - (void)dealloc {	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
-	self.fetchedResultsController = nil;
-	self.searchDisplayController = nil;
-	self.filterString = nil;
 	
-    [super dealloc];
 }
 
 -(void)dataSourceReceivedMemoryWarning:(id)sender {
@@ -157,7 +153,7 @@
 	LegislatorMasterCell *cell = (LegislatorMasterCell *)[tableView dequeueReusableCellWithIdentifier:leg_cell_ID];
 	
 	if (cell == nil) {
-		cell = [[[LegislatorMasterCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:leg_cell_ID] autorelease];
+		cell = [[LegislatorMasterCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:leg_cell_ID];
 		//cell.frame = CGRectMake(0.0, 0.0, 320.0, 73.0);
 		cell.frame = CGRectMake(0.0, 0.0, 320.0, 73.0);
 	}
@@ -309,8 +305,8 @@
 
 - (NSArray *)sortDescriptors
 {
-    NSSortDescriptor *last = [[[NSSortDescriptor alloc] initWithKey:@"lastname" ascending:YES] autorelease];
-    NSSortDescriptor *first = [[[NSSortDescriptor alloc] initWithKey:@"firstname"ascending:YES] autorelease];
+    NSSortDescriptor *last = [[NSSortDescriptor alloc] initWithKey:@"lastname" ascending:YES];
+    NSSortDescriptor *first = [[NSSortDescriptor alloc] initWithKey:@"firstname"ascending:YES];
     return @[last, first];
 }
 

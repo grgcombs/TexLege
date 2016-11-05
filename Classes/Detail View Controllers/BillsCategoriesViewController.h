@@ -21,15 +21,8 @@
 #define kBillCategoriesTitleKey		@"title"
 #define kBillCategoriesCountKey		@"total"
 
-@interface BillsCategoriesViewController : UITableViewController <RKRequestDelegate, UITableViewDelegate> {
-	NSMutableDictionary *categories_;
-	IBOutlet UISegmentedControl *chamberControl;
-	BOOL isFresh;
-	NSDate *updated;
-	NSInteger loadingStatus;
-}
-@property (nonatomic,retain) IBOutlet	UISegmentedControl *chamberControl;
-@property (nonatomic,retain)	NSMutableDictionary *chamberCategories;
-@property (nonatomic,readonly)	NSString *chamber; 
+@interface BillsCategoriesViewController : UITableViewController <RKRequestDelegate, UITableViewDelegate>
+
+@property (weak, nonatomic,readonly)	NSString *chamber;
 
 @end

@@ -12,13 +12,10 @@
 
 #import "Kal.h"
 
-@interface ChamberCalendarObj : NSObject <KalDataSource> {	
-	NSMutableArray *rows;
-	BOOL hasPostedAlert;
-}
+@interface ChamberCalendarObj : NSObject <KalDataSource>
 
-@property (nonatomic,retain) NSString *title;
-@property (nonatomic,retain) NSNumber *chamber;
+@property (nonatomic,strong) NSString *title;
+@property (nonatomic,strong) NSNumber *chamber;
 
 - (NSDictionary *)eventForIndexPath:(NSIndexPath*)indexPath;
 - (NSArray *)filterEventsByString:(NSString *)filterString;

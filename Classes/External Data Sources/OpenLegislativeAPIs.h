@@ -22,11 +22,11 @@ extern NSString * const followTheMoneyApiBaseURL;
 
 + (OpenLegislativeAPIs *)sharedOpenLegislativeAPIs;
 
-@property (nonatomic, retain) RKClient *osApiClient;
-@property (nonatomic, retain) RKClient *transApiClient;
-@property (nonatomic, retain) RKClient *vsApiClient;
-@property (nonatomic, retain) RKClient *tloApiClient;
-@property (nonatomic, retain) RKClient *followTheMoneyApiClient;
+@property (nonatomic, strong) RKClient *osApiClient;
+@property (nonatomic, strong) RKClient *transApiClient;
+@property (nonatomic, strong) RKClient *vsApiClient;
+@property (nonatomic, strong) RKClient *tloApiClient;
+@property (nonatomic, strong) RKClient *followTheMoneyApiClient;
 
 - (void)queryOpenStatesBillWithID:(NSString *)billID session:(NSString *)session delegate:(id)sender;
 

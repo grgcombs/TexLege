@@ -30,9 +30,6 @@
 	return self;
 }
 
-- (void)dealloc {		
-	[super dealloc];
-}
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
@@ -61,7 +58,7 @@
 	NSDate *daysAgo = [[NSDate date] dateByAddingDays:-5];
 	if (!daysAgo) {
 		// we had issues calculating last week's date, so just do it by hand
-		daysAgo = [[[NSDate alloc] initWithTimeIntervalSinceNow:-(60*60*24*5)] autorelease];	
+		daysAgo = [[NSDate alloc] initWithTimeIntervalSinceNow:-(60*60*24*5)];	
 	}
 	NSString *dateString = [daysAgo stringWithFormat:[NSDate dateFormatString]];
 	

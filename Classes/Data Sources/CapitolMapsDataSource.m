@@ -53,16 +53,12 @@
 - (instancetype)init {
 	if ((self = [super init])) {
 		
-		self.sectionList = [[[NSMutableArray alloc] init] autorelease];
+		self.sectionList = [[NSMutableArray alloc] init];
 		[self createSectionList];
 	}
 	return self;
 }
 
-- (void)dealloc {
-	self.sectionList = nil;
-	[super dealloc];
-}
 
 
 /* Build a list of files */
@@ -80,13 +76,10 @@
                 CapitolMap *newMap = [[CapitolMap alloc] init];
                 [newMap importFromDictionary:mapEntry];
                 [tempSection addObject:newMap];
-                [newMap release];
             }
             [self.sectionList addObject:tempSection];
-            [tempSection release];
         }
         
-        [mapSectionsPlist release];
     }
 }
 
@@ -132,7 +125,7 @@
 	
 	/* Not found in queue, create a new cell object */
     if (cell == nil) {
-        cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		cell.textLabel.textColor =	[TexLegeTheme textDark];
 		cell.textLabel.font = [TexLegeTheme boldFifteen];
     }

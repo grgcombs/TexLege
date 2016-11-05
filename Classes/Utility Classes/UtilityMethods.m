@@ -32,7 +32,7 @@ BOOL IsEmpty(id thing) {
 	
 	NSData *asciiData = [self dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
 	
-	return [[[NSString alloc] initWithData:asciiData encoding:NSASCIIStringEncoding] autorelease];
+	return [[NSString alloc] initWithData:asciiData encoding:NSASCIIStringEncoding];
 }
 
 - (NSString *)flattenHTML {
@@ -383,7 +383,7 @@ BOOL IsEmpty(id thing) {
 	UIDevice *device = [UIDevice currentDevice];
 	if ( nil == s_devName )
 	{
-		s_devName = [[[NSString alloc] initWithString:device.model] autorelease];
+		s_devName = [[NSString alloc] initWithString:device.model];
 		NSRange strRange;
 		strRange.length = (s_devName.length < 6) ? s_devName.length : 6;
 		strRange.location = 0;
@@ -394,12 +394,12 @@ BOOL IsEmpty(id thing) {
 }
 
 + (void)alertNotAPhone {
-	UIAlertView *noPhoneAlert = [[[ UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"Not an iPhone", @"AppAlerts", @"iPhone features are unavailable on other devices.")
+	UIAlertView *noPhoneAlert = [[ UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"Not an iPhone", @"AppAlerts", @"iPhone features are unavailable on other devices.")
 								  message:NSLocalizedStringFromTable(@"You attempted to dial a phone number.  However, unfortunately you cannot make phone calls without an iPhone.",
 																	 @"AppAlerts", @"iPhone features are unavailable on other devices.")
 								  delegate:nil // we're static, so don't do "self"
 								  cancelButtonTitle: NSLocalizedStringFromTable(@"Cancel", @"StandardUI", @"Button to cancel some activity")
-								  otherButtonTitles:nil, nil] autorelease];
+								  otherButtonTitles:nil, nil];
 	
 	[ noPhoneAlert show ];		
 }
@@ -437,7 +437,7 @@ BOOL IsEmpty(id thing) {
 		mutableDictionary[[objectInstance valueForKey:key]] = objectInstance;
 	}
 	
-	return (NSDictionary *)[mutableDictionary autorelease];
+	return (NSDictionary *)mutableDictionary;
 }
 
 

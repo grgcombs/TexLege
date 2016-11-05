@@ -21,11 +21,11 @@
 	NSNumber *m_order;
 }
 
-@property (nonatomic,retain) NSString *name;
-@property (nonatomic,retain) NSString *file;
-@property (nonatomic,retain) NSNumber *type;
-@property (nonatomic,retain) NSNumber *order;
-@property (nonatomic,readonly) NSURL *url;
+@property (nonatomic,strong) NSString *name;
+@property (nonatomic,strong) NSString *file;
+@property (nonatomic,strong) NSNumber *type;
+@property (nonatomic,strong) NSNumber *order;
+@property (weak, nonatomic,readonly) NSURL *url;
 
 + (CapitolMap *)	mapFromOfficeString:(NSString *)office;
 - (void)			importFromDictionary:(NSDictionary *)dictionary;

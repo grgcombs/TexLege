@@ -15,8 +15,14 @@
 #import "TexLegeReachability.h"
 #import "OpenLegislativeAPIs.h"
 
+@interface BillMetadataLoader()
+@property (nonatomic,copy) NSDictionary *metadata;
+@property (nonatomic,copy) NSDate *updated;
+@property (nonatomic,getter=isFresh) BOOL fresh;
+@property (nonatomic,getter=isLoading) BOOL loading;
+@end
+
 @implementation BillMetadataLoader
-@synthesize isFresh;
 
 + (BillMetadataLoader*)sharedBillMetadataLoader
 {
@@ -27,36 +33,35 @@
 	return foo;
 }
 
-- (instancetype)init {
-	if ((self=[super init])) {
-		isLoading = NO;
-		isFresh = NO;
-		updated = nil;
+- (instancetype)init
+{
+	if ((self=[super init]))
+    {
+		_loading = NO;
+		_fresh = NO;
+		_updated = nil;
 		_metadata = nil;
 	}
 	return self;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
-
-	nice_release(updated);
-	nice_release(_metadata);
-	[super dealloc];
 }
 
 - (void)loadMetadata:(id)sender {
 
-	if (isLoading)	// we're already working on it
+	if (self.isLoading)	// we're already working on it
 		return;
 	
-	isFresh = NO;
+	self.fresh = NO;
 
 	debug_NSLog(@"BillMetaData is stale, refreshing");
 
 	if ([TexLegeReachability texlegeReachable]) {
 		
-		isLoading = YES;
+		self.loading = YES;
 		
 		[[RKClient sharedClient] get:[NSString stringWithFormat:@"/%@", kBillMetadataFile] delegate:self];  	
 	}
@@ -65,9 +70,11 @@
 	}
 }
 
-- (NSDictionary *)metadata {
-	if (!_metadata || !isFresh || !updated || ([[NSDate date] timeIntervalSinceDate:updated] > (3600*24))) {	// if we're over a day old, let's refresh
-		isFresh = NO;
+- (NSDictionary *)metadata
+{
+	if (!_metadata || !self.isFresh || !self.updated || ([[NSDate date] timeIntervalSinceDate:self.updated] > (3600*24)))
+    {	// if we're over a day old, let's refresh
+		self.fresh = NO;
 		
 		[self loadMetadata:nil];
 	}
@@ -78,9 +85,9 @@
 #pragma mark -
 #pragma mark RestKit:RKObjectLoaderDelegate
 
-- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error {
-	
-	isLoading = NO;
+- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
+{
+	self.loading = NO;
 	
 	if (error && request) {
 		debug_NSLog(@"Error loading bill metadata from %@: %@", [request description], [error localizedDescription]);
@@ -101,36 +108,32 @@
 	}
 
 	NSData *jsonFile = [NSData dataWithContentsOfFile:localPath];
-	if (_metadata)
-		[_metadata release];
-    _metadata = [[NSJSONSerialization JSONObjectWithData:jsonFile options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&newError] retain];
-	if (_metadata) {
+    self.metadata = [NSJSONSerialization JSONObjectWithData:jsonFile options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&newError];
+	if (self.metadata) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:kBillMetadataNotifyLoaded object:nil];
 	}
 }
 
 - (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response {  
 	
-	isLoading = NO;
+	self.loading = NO;
 
 	if ([request isGET] && [response isOK]) {  
-		// Success! Let's take a look at the data  
-		nice_release(_metadata);
+		// Success! Let's take a look at the data
+        self.metadata = nil;
 
         NSError *error = nil;
-        _metadata = [[NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error] retain];
+        self.metadata = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
 
-		if (_metadata) {
-			
-			nice_release(updated);
-			updated = [[NSDate date] retain];
+		if (self.metadata) {
+			self.updated = [NSDate date];
 			
 			NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kBillMetadataFile];
 
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_metadata options:NSJSONWritingPrettyPrinted error:&error];
 			if (![jsonData writeToFile:localPath atomically:YES])
 				NSLog(@"BillMetadataLoader: error writing cache to file: %@", localPath);
-			isFresh = YES;
+			self.fresh = YES;
 			[[NSNotificationCenter defaultCenter] postNotificationName:kBillMetadataNotifyLoaded object:nil];
 			debug_NSLog(@"BillMetadata network download successful, archiving for others.");
 		}		

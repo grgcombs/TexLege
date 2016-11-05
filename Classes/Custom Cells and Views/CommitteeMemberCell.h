@@ -15,5 +15,5 @@
 #import "LegislatorCellProtocol.h"
 
 @interface CommitteeMemberCell : UITableViewCell <LegislatorCellProtocol>
-@property (nonatomic,retain) IBOutlet CommitteeMemberCellView *cellView;
+@property (nonatomic,strong) IBOutlet CommitteeMemberCellView *cellView;
 @end

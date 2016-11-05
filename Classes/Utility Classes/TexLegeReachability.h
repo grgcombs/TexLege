@@ -28,7 +28,7 @@
 @property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus openstatesConnectionStatus;
 @property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus tloConnectionStatus;
 @property (NS_NONATOMIC_IOSONLY, readonly) ReachabilityStatus googleConnectionStatus;
-@property (NS_NONATOMIC_IOSONLY, assign) id<TexLegeReachabilityDelegate> delegate;
+@property (NS_NONATOMIC_IOSONLY, weak) id<TexLegeReachabilityDelegate> delegate;
 @property (NS_NONATOMIC_IOSONLY, getter=isNetworkReachable, readonly) BOOL networkReachable;
 @property (NS_NONATOMIC_IOSONLY, getter=isNetworkReachableViaWiFi, readonly) BOOL networkReachableViaWiFi;
 

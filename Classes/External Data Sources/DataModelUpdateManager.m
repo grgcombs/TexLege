@@ -43,8 +43,8 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 
 @interface DataModelUpdateManager()
 
-@property (nonatomic,readonly) UIView *appRootView;
-@property (nonatomic,retain) MTInfoPanel *infoPanel;
+@property (weak, nonatomic,readonly) UIView *appRootView;
+@property (nonatomic,strong) MTInfoPanel *infoPanel;
 
 - (NSString *)localDataTimestampForModel:(NSString *)classString;
 
@@ -87,10 +87,8 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 - (void) dealloc {
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
 	[_queue cancelRequestsWithDelegate:self];
-	[_queue release], _queue = nil;
-	[statusBlurbsAndModels release], statusBlurbsAndModels = nil;
-	self.activeUpdates = nil;
-	[super dealloc];
+	_queue = nil;
+	statusBlurbsAndModels = nil;
 }
 
 // Totally cheating my way through this right now.  But it'll pass the app store reviewers!!!
@@ -187,7 +185,6 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 	else {
 		NSLog(@"DataUpdateManager Error, unable to obtain RestKit request for %@", resourcePath);
 	}
-	[resourcePath release];
 }
 
 // This scans the core data entity looking for "stale" objects, ones that were deleted on the server database
@@ -388,7 +385,6 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 		request.sortDescriptors = @[desc];
 		request.resultType = NSDictionaryResultType;												// This is necessary to limit it to specific properties during the fetch
 		request.propertiesToFetch = @[TXLUPDMGR_UPDATEDPROP];						// We don't want to fetch everything, we'll get a huge ass memory hit otherwise.
-		[desc release];
 		
 		return [[NSClassFromString(classString) objectWithFetchRequest:request] valueForKey:TXLUPDMGR_UPDATEDPROP];	// this relies on objectWithFetchRequest returning the object at index 0
 	}

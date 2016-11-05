@@ -60,11 +60,6 @@ enum _menuOrder {
 	return self;
 }
 
-- (void)dealloc {
-	[_menuItems release];
-	//self.searchDisplayController = nil;
-	[super dealloc];
-}
 
 
 /* Build a list of files */
@@ -73,7 +68,7 @@ enum _menuOrder {
 			
 		NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"TexLegeStrings" ofType:@"plist"];
 		NSDictionary *textDict = [NSDictionary dictionaryWithContentsOfFile:thePath];
-		_menuItems = [textDict[@"BillMenuItems"] retain];
+		_menuItems = textDict[@"BillMenuItems"];
 		
 		if (!_menuItems)
 			_menuItems = [[NSArray alloc] init];
@@ -121,7 +116,7 @@ enum _menuOrder {
 	
 	/* Not found in queue, create a new cell object */
     if (cell == nil) {
-        cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		cell.textLabel.textColor =	[TexLegeTheme textDark];
 		cell.textLabel.font = [TexLegeTheme boldFifteen];				
     }

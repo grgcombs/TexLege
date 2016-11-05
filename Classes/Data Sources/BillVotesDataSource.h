@@ -21,10 +21,10 @@ typedef NS_ENUM(int16_t, BillVotesTypes) {
 
 @interface BillVotesDataSource : LegislatorsDataSource <UITableViewDelegate>
 
-@property (nonatomic,retain) NSMutableDictionary *billVotes;
-@property (nonatomic,retain) NSMutableArray *voters;
-@property (nonatomic,retain) NSString *voteID;
-@property (nonatomic,assign) UITableViewController *viewController;
+@property (nonatomic,strong) NSMutableDictionary *billVotes;
+@property (nonatomic,strong) NSMutableArray *voters;
+@property (nonatomic,strong) NSString *voteID;
+@property (nonatomic,weak) UITableViewController *viewController;
 
 - (instancetype)initWithBillVotes:(NSDictionary *)newVotes;
 

@@ -14,10 +14,10 @@
 #import <RestKit/RestKit.h>
 
 typedef NS_ENUM(uint16_t, ContributionQueryType) {
-	kContributionQueryRecipient	= 0,
+	kContributionQueryElectionYear = 0,
+    kContributionQueryTopDonations,
 	kContributionQueryDonor,
 	kContributionQueryIndividual,
-	kContributionQueryTop10Donors,
 	kContributionQueryTop10Recipients,
 	kContributionQueryTop10RecipientsIndiv,
 	kContributionQueryEntitySearch,
@@ -32,7 +32,6 @@ typedef NS_ENUM(uint16_t, ContributionQueryType) {
 - (NSIndexPath *) indexPathForDataObject:(id)dataObject;
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *title;
 
-- (void)initiateQueryWithQueryID:(NSString *)aQuery type:(NSNumber *)type cycle:(NSString *)cycle;
 - (void)initiateQueryWithQueryID:(NSString *)aQuery type:(NSNumber *)type cycle:(NSString *)cycleOrNil parameter:(NSString *)parameterOrNil;
 
 @end

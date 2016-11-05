@@ -24,11 +24,11 @@
 #import "StateMetaLoader.h"
 
 @interface BillSearchDataSource ()
-@property (NS_NONATOMIC_IOSONLY, retain) NSMutableArray *rows;
-@property (NS_NONATOMIC_IOSONLY, retain) NSMutableDictionary *sections;
+@property (NS_NONATOMIC_IOSONLY, copy) NSMutableArray *rows;
+@property (NS_NONATOMIC_IOSONLY, copy) NSMutableDictionary *sections;
 @property (NS_NONATOMIC_IOSONLY, assign) NSInteger loadingStatus;
-@property (NS_NONATOMIC_IOSONLY, retain) IBOutlet UISearchDisplayController *searchDisplayController;
-@property (NS_NONATOMIC_IOSONLY, retain) IBOutlet UITableViewController *delegateTVC;
+@property (NS_NONATOMIC_IOSONLY, strong) IBOutlet UISearchDisplayController *searchDisplayController;
+@property (NS_NONATOMIC_IOSONLY, strong) IBOutlet UITableViewController *delegateTVC;
 @end
 
 @implementation BillSearchDataSource
@@ -55,8 +55,8 @@
     {
         if ([newController isKindOfClass:[UISearchDisplayController class]])
         {
-            _searchDisplayController = [newController retain];
-            _searchDisplayController.searchResultsDataSource = self;
+            _searchDisplayController = newController;
+            newController.searchResultsDataSource = self;
         }
 	}
 	return self;
@@ -67,21 +67,15 @@
     self = [super init];
     if (self)
     {
-        _delegateTVC = [newDelegate retain];
+        _delegateTVC = newDelegate;
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	self.searchDisplayController = nil;
-	self.delegateTVC = nil;
-    self.rows = nil;
-    self.sections = nil;
-
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
-	
- 	[super dealloc];
+    _delegateTVC = nil;
 }
 
 // This is just a short cut, we wind up using this array several times.  Perhaps we should remember it instead of recreating?
@@ -143,11 +137,9 @@
 
 - (void)generateSections
 {
-    if (_sections)
-        [_sections release];
     _sections = [[NSMutableDictionary alloc] init];
 
-    [self.rows enumerateObjectsUsingBlock:^(NSDictionary *bill, NSUInteger idx, BOOL * stop)
+    [_rows enumerateObjectsUsingBlock:^(NSDictionary *bill, NSUInteger idx, BOOL * stop)
     {
         if (![bill isKindOfClass:[NSDictionary class]])
             return;
@@ -160,13 +152,13 @@
         if (!bills)
         {
             bills = [NSMutableArray array];
-            self.sections[billType] = bills;
+            _sections[billType] = bills;
         }
 
         [bills addObject:bill];
     }];
 
-	[self.sections enumerateKeysAndObjectsUsingBlock:^(NSString *billType, NSMutableArray *bills, BOOL * stop) {
+	[_sections enumerateKeysAndObjectsUsingBlock:^(NSString *billType, NSMutableArray *bills, BOOL * stop) {
         [bills sortUsingComparator:^NSComparisonResult(NSDictionary *bill1, NSDictionary *bill2) {
             NSString *bill_id1 = bill1[@"bill_id"];
             NSString *bill_id2 = bill2[@"bill_id"];
@@ -274,7 +266,7 @@
 	TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if (cell == nil)
 	{
-		cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
+		cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
 
 		cell.textLabel.textColor = [TexLegeTheme textDark];
 		cell.detailTextLabel.textColor = [TexLegeTheme indexText];
@@ -286,7 +278,7 @@
 			cell.accessoryType = UITableViewCellAccessoryNone;
 		}
     }
-	if (NO == IsEmpty(self.rows))
+	if (_rows.count < indexPath.row)
 		[self configureCell:cell atIndexPath:indexPath];		
 
 	return cell;
@@ -443,8 +435,6 @@
         if (!sponsors || ![sponsors isKindOfClass:[NSArray class]])
             return;
 
-        __block BOOL didAuthor = NO;
-
         [sponsors enumerateObjectsUsingBlock:^(NSDictionary *sponsor, NSUInteger sponsorIndex, BOOL * sponsorsStop) {
             if (![sponsor isKindOfClass:[NSDictionary class]])
                 return;
@@ -464,7 +454,6 @@
             if ([sponsorshipType caseInsensitiveCompare:@"author"] == NSOrderedSame)
             {
                 [authoredRows addObject:bill];
-                didAuthor = YES;
                 *sponsorsStop = YES;
                 return;
             }
@@ -506,7 +495,6 @@
 							   cancelButtonTitle: NSLocalizedStringFromTable(@"Cancel", @"StandardUI", @"Button cancelling some activity")
 							   otherButtonTitles:nil];
 		[ alert show ];	
-		[ alert release];
 	}
 	
 }
@@ -524,8 +512,6 @@
 		if (self.useLoadingDataCell)
 			self.loadingStatus = LOADING_IDLE;
 
-        if (_rows)
-            [_rows release];
         _rows = [[NSMutableArray alloc] init];
 
         NSError *error = nil;

@@ -20,14 +20,14 @@
 {
 }
 
-@property (nonatomic, retain) NSNumber * adjMean;
-@property (nonatomic, retain) NSNumber * wnomID;
-@property (nonatomic, retain) NSNumber * legislatorID;
-@property (nonatomic, retain) NSString * updatedDate;
-@property (nonatomic, retain) NSNumber * wnomAdj;
-@property (nonatomic, retain) NSNumber * session;
-@property (nonatomic, retain) NSNumber * wnomStderr;
-@property (nonatomic, retain) LegislatorObj * legislator;
+@property (nonatomic, strong) NSNumber * adjMean;
+@property (nonatomic, strong) NSNumber * wnomID;
+@property (nonatomic, strong) NSNumber * legislatorID;
+@property (nonatomic, strong) NSString * updatedDate;
+@property (nonatomic, strong) NSNumber * wnomAdj;
+@property (nonatomic, strong) NSNumber * session;
+@property (nonatomic, strong) NSNumber * wnomStderr;
+@property (nonatomic, strong) LegislatorObj * legislator;
 
 @end
 

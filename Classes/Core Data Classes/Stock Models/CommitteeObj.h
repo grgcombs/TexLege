@@ -20,21 +20,21 @@
 {
 }
 
-@property (nonatomic, retain) NSString * clerk_email;
-@property (nonatomic, retain) NSString * phone;
-@property (nonatomic, retain) NSNumber * committeeType;
-@property (nonatomic, retain) NSString * updatedDate;
-@property (nonatomic, retain) NSNumber * committeeId;
-@property (nonatomic, retain) NSNumber * votesmartID;
-@property (nonatomic, retain) NSString * url;
-@property (nonatomic, retain) NSString * office;
-@property (nonatomic, retain) NSString * clerk;
-@property (nonatomic, retain) NSString * committeeName;
-@property (nonatomic, retain) NSString * openstatesID;
-@property (nonatomic, retain) NSString * txlonline_id;
-@property (nonatomic, retain) NSString * committeeNameInitial;
-@property (nonatomic, retain) NSNumber * parentId;
-@property (nonatomic, retain) NSSet* committeePositions;
+@property (nonatomic, strong) NSString * clerk_email;
+@property (nonatomic, strong) NSString * phone;
+@property (nonatomic, strong) NSNumber * committeeType;
+@property (nonatomic, strong) NSString * updatedDate;
+@property (nonatomic, strong) NSNumber * committeeId;
+@property (nonatomic, strong) NSNumber * votesmartID;
+@property (nonatomic, strong) NSString * url;
+@property (nonatomic, strong) NSString * office;
+@property (nonatomic, strong) NSString * clerk;
+@property (nonatomic, strong) NSString * committeeName;
+@property (nonatomic, strong) NSString * openstatesID;
+@property (nonatomic, strong) NSString * txlonline_id;
+@property (nonatomic, strong) NSString * committeeNameInitial;
+@property (nonatomic, strong) NSNumber * parentId;
+@property (nonatomic, strong) NSSet* committeePositions;
 
 @end
 

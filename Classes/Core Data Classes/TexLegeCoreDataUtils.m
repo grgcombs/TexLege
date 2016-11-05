@@ -71,7 +71,6 @@
 	propertyToFetch.expressionResultType = retType;
 	// modify request to fetch only the attribute
 	request.propertiesToFetch = @[propertyToFetch];
-	[propertyToFetch release];
 	
 	// execute fetch
 	NSArray *results = [modelClass objectsWithFetchRequest:request];
@@ -131,7 +130,7 @@
 			return [latestWnomFloat2 compare:latestWnomFloat1];
 		}];
 	}
-	return [results autorelease];	
+	return results;	
 }
 
 + (id)dataObjectWithPredicate:(NSPredicate *)predicate entityName:(NSString*)entityName {
@@ -234,7 +233,7 @@
 	// Initialize object store
 	NSString *modelPath = [[NSBundle mainBundle] pathForResource:@"TexLege" ofType:@"momd"];
 	NSURL *momURL = [NSURL fileURLWithPath:modelPath];
-	NSManagedObjectModel *mom = [[[NSManagedObjectModel alloc] initWithContentsOfURL:momURL] autorelease];
+	NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
 		
 	objectManager.client.username = RESTKIT_USERNAME;
 	objectManager.client.password = RESTKIT_PASSWORD;
@@ -253,7 +252,7 @@
 	
 	// Update date format so that we can parse twitter dates properly
 	// Wed Sep 29 15:31:08 +0000 2010
-	NSMutableArray* dateFormats = [[mapper.dateFormats mutableCopy] autorelease];
+	NSMutableArray* dateFormats = [mapper.dateFormats mutableCopy];
 	[dateFormats addObject:@"E MMM d HH:mm:ss Z y"];
 	[dateFormats addObject:[NSDate dateFormatString]];
 	[dateFormats addObject:[NSDate timeFormatString]];

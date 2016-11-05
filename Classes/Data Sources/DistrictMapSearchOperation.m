@@ -41,10 +41,7 @@
 
 - (void) dealloc
 {
-	self.foundIDs = nil;
-	self.searchIDs = nil;
 	self.delegate = nil;
-	[super dealloc];
 }
 
 - (void)informDelegateOfFailureWithMessage:(NSString *)message failOption:(DistrictMapSearchOperationFailOption)failOption;
@@ -77,8 +74,6 @@
 
         @try
         {
-            if (_foundIDs)
-                [_foundIDs release];
             _foundIDs = [[NSMutableArray alloc] init];
 
             CLLocationCoordinate2D searchCoord = _searchCoordinate;

@@ -10,12 +10,14 @@
 
 @protocol TXLDetailProtocol <NSObject>
 
-@property (NS_NONATOMIC_IOSONLY, retain) id dataObject;
+@required
+
+    @property (NS_NONATOMIC_IOSONLY, strong) id dataObject;
 
 @optional
 
-- (IBAction)resetTableData:(id)sender;
+    - (IBAction)resetTableData:(id)sender;
 
-@property (nonatomic,retain) UIPopoverController *masterPopover;
+    @property (NS_NONATOMIC_IOSONLY,strong) UIPopoverController *masterPopover;
 
 @end

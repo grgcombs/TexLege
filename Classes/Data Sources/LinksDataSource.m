@@ -85,8 +85,6 @@ enum Sections {
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	self.fetchedResultsController = nil;
-    [super dealloc];
 }
 
 -(void)dataSourceReceivedMemoryWarning:(id)sender {
@@ -163,7 +161,7 @@ enum Sections {
 	TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if (cell == nil)
 	{		
-		cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Cell"] autorelease];
+		cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Cell"];
 		if (section == kHeaderSection) {
 			cell.accessoryView = nil;
 			cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
@@ -212,9 +210,6 @@ enum Sections {
 																	 sectionNameKeyPath:@"section" cacheName:@"Links"];
 	fetchedResultsController.delegate = self;
 	
-	[sortSection release];
-	[sortOrder release];
-	[sortDescriptors release];
 	
 	return fetchedResultsController;
 }    

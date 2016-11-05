@@ -52,22 +52,17 @@
 }
 
 - (void)presentAnalyticsOptInAlert {
-	self.currentAlert = [[[UIAlertView alloc] 
+	self.currentAlert = [[UIAlertView alloc] 
 						  initWithTitle:NSLocalizedStringFromTable(@"Permission To Use Analytics", @"AppAlerts", @"Title for alert asking for permission.")
 						  message:NSLocalizedStringFromTable(@"TexLege can unobtrusively submit anonymous usage data (like launch time and features used) to the developer.  This is solely intended to improve app development, and will NEVER be used for advertising or marketing.  It submits no geographic or identifying information. Please consider enabling this service.  You may change this later in the Settings app.", @"AppAlerts", @"")
 						  delegate:self 
 						  cancelButtonTitle:NSLocalizedStringFromTable(@"Deny", @"StandardUI", @"Button label for the user to deny an app action.")
-						  otherButtonTitles:NSLocalizedStringFromTable(@"Permit",@"StandardUI", @"Button label for the user to permit an app action."),nil] 
-						 autorelease];
+						  otherButtonTitles:NSLocalizedStringFromTable(@"Permit",@"StandardUI", @"Button label for the user to permit an app action."),nil];
 	self.currentAlert.tag = 6134;
 	[self.currentAlert show];
 	
 }
 
-- (void)dealloc {
-	self.currentAlert = nil;
-    [super dealloc];
-}
 
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {

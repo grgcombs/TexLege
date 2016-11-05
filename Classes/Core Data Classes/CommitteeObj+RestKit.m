@@ -81,7 +81,7 @@
 
 - (NSArray *)sortedMembers
 {
-	NSMutableArray *memberArray = [[[NSMutableArray alloc] init] autorelease];
+	NSMutableArray *memberArray = [[NSMutableArray alloc] init];
 	for (CommitteePositionObj *position in self.committeePositions) {
 		if (position.legislator && position.position.integerValue == POS_MEMBER)
 			[memberArray addObject:position.legislator];

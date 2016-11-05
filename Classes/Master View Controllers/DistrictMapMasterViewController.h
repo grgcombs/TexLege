@@ -18,9 +18,9 @@
 @interface DistrictMapMasterViewController : GeneralTableViewController <UISearchDisplayDelegate>  {
 
 }
-@property (nonatomic, retain) IBOutlet	UISegmentedControl	*chamberControl;
-@property (nonatomic, retain) IBOutlet	UISegmentedControl	*sortControl;
-@property (nonatomic, retain) IBOutlet	UIView	*filterControls;
+@property (nonatomic, strong) IBOutlet	UISegmentedControl	*chamberControl;
+@property (nonatomic, strong) IBOutlet	UISegmentedControl	*sortControl;
+@property (nonatomic, strong) IBOutlet	UIView	*filterControls;
 - (IBAction) filterChamber:(id)sender;
 - (IBAction) sortType:(id)sender;
 

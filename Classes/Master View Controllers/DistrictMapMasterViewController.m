@@ -63,15 +63,17 @@
 	
 	if ([UtilityMethods isIPadDevice])
 	    self.preferredContentSize = CGSizeMake(320.0, 600.0);
-	
-	self.searchDisplayController.delegate = self;
-	self.searchDisplayController.searchResultsDelegate = self;
+
+    UISearchDisplayController *searchController = self.searchDisplayController;
+
+	searchController.delegate = self;
+	searchController.searchResultsDelegate = self;
 	//self.dataSource.searchDisplayController = self.searchDisplayController;
 	//self.searchDisplayController.searchResultsDataSource = self.dataSource;
 	
 	self.chamberControl.tintColor = [TexLegeTheme accent];
 	self.sortControl.tintColor = [TexLegeTheme accent];
-	self.searchDisplayController.searchBar.tintColor = [TexLegeTheme accent];
+	searchController.searchBar.tintColor = [TexLegeTheme accent];
 	self.navigationItem.titleView = self.filterControls;
 	
 	[self.chamberControl setTitle:stringForChamber(BOTH_CHAMBERS, TLReturnFull) forSegmentAtIndex:0];
@@ -143,7 +145,6 @@
 	if (!self.detailViewController) {
 		MapViewController *tempVC = [[MapViewController alloc] init];
 		self.detailViewController = tempVC;
-		[tempVC release];
 	}
 
 	if (map) {
@@ -180,12 +181,6 @@
 #pragma mark -
 #pragma mark Memory management
 
-- (void)dealloc {
-	self.chamberControl = nil;
-	self.sortControl = nil;
-	self.filterControls = nil;
-    [super dealloc];
-}
 
 
 #pragma mark -
@@ -223,7 +218,6 @@
         newDict[@"DistrictMapChamberKey"] = segIndex;
         [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        [newDict release];
     }
     [self reapplyFiltersAndSort];
 }
@@ -240,7 +234,6 @@
         newDict[@"DistrictMapSortTypeKey"] = segIndex;
         [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        [newDict release];
     }
     [self reapplyFiltersAndSort];
 }
@@ -255,27 +248,27 @@
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar
 {
-	self.searchDisplayController.searchBar.text = @"";
+    UISearchDisplayController *searchController = self.searchDisplayController;
+	searchController.searchBar.text = @"";
 	[self.dataSource removeFilter];
 	
-	[self.searchDisplayController setActive:NO animated:YES];
+	[searchController setActive:NO animated:YES];
 }
 
 - (void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller
 {
 	[self.dataSource setHideTableIndex:YES];	
 	// for some reason, these get zeroed out after we restart searching.
-	self.searchDisplayController.searchResultsTableView.rowHeight = self.tableView.rowHeight;
-	self.searchDisplayController.searchResultsTableView.backgroundColor = self.tableView.backgroundColor;
-	self.searchDisplayController.searchResultsTableView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
+    UITableView *searchView = controller.searchResultsTableView;
+	searchView.rowHeight = self.tableView.rowHeight;
+	searchView.backgroundColor = self.tableView.backgroundColor;
+	searchView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
 	
 }
 
 - (void)searchDisplayControllerWillEndSearch:(UISearchDisplayController *)controller {
 	[self.dataSource setHideTableIndex:NO];	
 }
-
-
 
 @end
 

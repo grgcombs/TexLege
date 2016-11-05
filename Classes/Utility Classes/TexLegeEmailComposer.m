@@ -44,12 +44,6 @@
     return self;
 }
 
-- (void)dealloc {
-	self.mailComposerVC = nil;
-	self.currentAlert = nil;
-	self.currentCommander = nil;
-    [super dealloc];
-}
 
 - (void)presentMailComposerTo:(NSString*)recipient 
 					  subject:(NSString*)subject 
@@ -66,7 +60,6 @@
 	if ([MFMailComposeViewController canSendMail]) {
 		MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
 		self.mailComposerVC = mc;
-		[mc release];
 		self.mailComposerVC.mailComposeDelegate = self;
 		[self.mailComposerVC setSubject:subject];
 		[self.mailComposerVC setToRecipients:@[recipient]];
@@ -114,12 +107,12 @@
 #pragma mark Alert View
 
 - (void)presentMailFailureAlertViewWithTitle:(NSString*)failTitle message:(NSString *)failMessage {
-	self.currentAlert = [[[UIAlertView alloc] 
+	self.currentAlert = [[UIAlertView alloc] 
 						 initWithTitle:failTitle
 						 message:failMessage 
 						 delegate:self 
 						  cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel", @"StandardUI", @"Cancelling some activity") 
-						  otherButtonTitles:nil] autorelease];
+						  otherButtonTitles:nil];
 	[self.currentAlert show];
 	
 }

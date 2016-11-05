@@ -51,12 +51,6 @@
 	return self;
 }
 
-- (void)dealloc {
-	self.sectionArray = nil;
-	self.dataObjectID = nil;
-	
-    [super dealloc];
-}
 
 - (LegislatorObj *)legislator {
 	LegislatorObj *anObject = nil;
@@ -106,7 +100,7 @@
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
     if (self.sectionArray.count > sectionIndex)
         [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	[cellInfo release], cellInfo = nil;
+	cellInfo = nil;
 	
 	
     entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Map", @"DataTableUI", @"Title for cell"),
@@ -117,7 +111,7 @@
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
     if (self.sectionArray.count > sectionIndex)
         [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	[cellInfo release], cellInfo = nil;
+	cellInfo = nil;
 	
 	
 	if (self.legislator && self.legislator.nimsp_id) {
@@ -129,7 +123,7 @@
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
         if (self.sectionArray.count > sectionIndex)
             [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-		[cellInfo release], cellInfo = nil;
+		cellInfo = nil;
 		
 	}
 	
@@ -141,12 +135,12 @@
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
     if (self.sectionArray.count > sectionIndex)
         [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	[cellInfo release], cellInfo = nil;
+	cellInfo = nil;
 	
 	
 	
 	if (self.legislator && self.legislator.twitter && (self.legislator.twitter).length) {
-		tempString = ([self.legislator.twitter hasPrefix:@"@"]) ? self.legislator.twitter : [[[NSString alloc] initWithFormat:@"@%@", self.legislator.twitter] autorelease];
+		tempString = ([self.legislator.twitter hasPrefix:@"@"]) ? self.legislator.twitter : [[NSString alloc] initWithFormat:@"@%@", self.legislator.twitter];
         entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Twitter", @"DataTableUI", @"Title for Cell"),
                       @"entryValue": tempString,
                       @"title": tempString,
@@ -155,7 +149,7 @@
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
         if (self.sectionArray.count > sectionIndex)
             [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-		[cellInfo release], cellInfo = nil;
+		cellInfo = nil;
 		
 	}
 	
@@ -167,7 +161,7 @@
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
     if (self.sectionArray.count > sectionIndex)
         [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	[cellInfo release], cellInfo = nil;
+	cellInfo = nil;
 
     entryDict = @{
                   @"subtitle": NSLocalizedStringFromTable(@"Web", @"DataTableUI", @"Title for cell, As in, a web adress"),
@@ -179,7 +173,7 @@
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
     if (self.sectionArray.count > sectionIndex)
         [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	[cellInfo release], cellInfo = nil;
+	cellInfo = nil;
 	
     entryDict = @{
                   @"subtitle": NSLocalizedStringFromTable(@"Legislation", @"DataTableUI", @"Title for cell, Bills and resolutions this person has authored"),
@@ -191,7 +185,7 @@
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
     if (self.sectionArray.count > sectionIndex)
         [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	[cellInfo release], cellInfo = nil;
+	cellInfo = nil;
 	
 	tempString = nil;
 	[[NSUserDefaults standardUserDefaults] synchronize];	
@@ -211,7 +205,7 @@
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
     if (self.sectionArray.count > sectionIndex)
         [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	[cellInfo release], cellInfo = nil;
+	cellInfo = nil;
 	
 	
 	/* after that section's done... DO COMMITTEES */
@@ -226,7 +220,7 @@
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
         if (self.sectionArray.count > sectionIndex)
             [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-		[cellInfo release], cellInfo = nil;
+		cellInfo = nil;
 	}
 	
 	/* Now we handle all the office locations ... */
@@ -245,7 +239,7 @@
 			cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
             if (self.sectionArray.count > sectionIndex)
                 [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-			[cellInfo release], cellInfo = nil;
+			cellInfo = nil;
 		}
 	}
 	else {
@@ -258,7 +252,7 @@
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
         if (self.sectionArray.count > sectionIndex)
             [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-		[cellInfo release], cellInfo = nil;
+		cellInfo = nil;
 	}
 		
 	/* Now we handle all the office locations ... */
@@ -275,7 +269,7 @@
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
         if (self.sectionArray.count > sectionIndex)
             [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-		[cellInfo release], cellInfo = nil;
+		cellInfo = nil;
 	} 
 	if (self.legislator && self.legislator.cap_phone && (self.legislator.cap_phone).length) {
         entryDict = @{
@@ -288,7 +282,7 @@
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
         if (self.sectionArray.count > sectionIndex)
             [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-		[cellInfo release], cellInfo = nil;
+		cellInfo = nil;
 	} 
 	if (self.legislator && self.legislator.cap_fax && (self.legislator.cap_fax).length) {
         entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Fax", @"DataTableUI", @"Cell title listing a fax number"),
@@ -300,7 +294,7 @@
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
         if (self.sectionArray.count > sectionIndex)
             [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-		[cellInfo release], cellInfo = nil;
+		cellInfo = nil;
 	}
 	if (self.legislator && self.legislator.cap_phone2 && (self.legislator.cap_phone2).length) {
 		tempString = (self.legislator.cap_phone2_name.length > 0) ? self.legislator.cap_phone2_name : NSLocalizedStringFromTable(@"Phone #2", @"DataTableUI", @"Second phone number");
@@ -313,7 +307,7 @@
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
         if (self.sectionArray.count > sectionIndex)
             [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-		[cellInfo release], cellInfo = nil;
+		cellInfo = nil;
 	} 
 	
 	/* after that section's done... */
@@ -332,7 +326,7 @@
 			cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
             if (self.sectionArray.count > sectionIndex)
                 [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-			[cellInfo release], cellInfo = nil;
+			cellInfo = nil;
 		}			
 		if (office.fax && (office.fax).length) {
             entryDict = @{
@@ -345,7 +339,7 @@
 			cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
             if (self.sectionArray.count > sectionIndex)
                 [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-			[cellInfo release], cellInfo = nil;
+			cellInfo = nil;
 		}			
 		if (office.address && (office.address).length) {
 			
@@ -359,7 +353,7 @@
 			cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
             if (self.sectionArray.count > sectionIndex)
                 [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-			[cellInfo release], cellInfo = nil;
+			cellInfo = nil;
 		} 
 		
 	}
@@ -507,7 +501,7 @@
 	
 	/* Not found in queue, create a new cell object */
     if (cell == nil) {
-		cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:[TexLegeStandardGroupCell cellStyle] reuseIdentifier:cellIdentifier] autorelease];
+		cell = [[TexLegeStandardGroupCell alloc] initWithStyle:[TexLegeStandardGroupCell cellStyle] reuseIdentifier:cellIdentifier];
     }
 
     if (cellInfo == nil) {

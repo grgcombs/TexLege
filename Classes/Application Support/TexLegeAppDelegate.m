@@ -43,10 +43,10 @@
 - (void)resetSavedTableSelection:(id)sender;
 @property (NS_NONATOMIC_IOSONLY, getter=isDatabaseResetNeeded, readonly) BOOL databaseResetNeeded;
 
-@property (nonatomic,retain) DataModelUpdateManager *dataUpdater;
+@property (nonatomic,strong) DataModelUpdateManager *dataUpdater;
 @property (nonatomic,copy) NSMutableDictionary *savedTableSelection;
 @property (nonatomic,getter=isAppQuitting,assign) BOOL appQuitting;
-@property (nonatomic,retain) AnalyticsOptInAlertController *analyticsOptInController;
+@property (nonatomic,strong) AnalyticsOptInAlertController *analyticsOptInController;
 
 @end
 
@@ -89,24 +89,6 @@ NSInteger kNoSelection = -1;
 	return self;
 }
 
-- (void)dealloc
-{
-    self.analyticsOptInController = nil;
-	
-	self.savedTableSelection = nil;
-	self.tabBarController = nil;
-
-	self.capitolMapsMasterVC = nil;
-	self.linksMasterVC = nil; 
-	self.calendarMasterVC = nil;
-	self.legislatorMasterVC = nil;
-	self.committeeMasterVC = nil;
-	self.districtMapMasterVC = nil;
-	self.billsMasterVC = nil;
-
-	self.dataUpdater = nil;
-    [super dealloc];
-}
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
 {
@@ -311,8 +293,8 @@ NSInteger kNoSelection = -1;
 			if (split) {
 				// THIS SETS UP THE TAB BAR ITEMS/IMAGES AND SET THE TAG FOR TABBAR_ITEM_TAGS
 				split.title = controller.dataSource.name;
-				split.tabBarItem = [[[UITabBarItem alloc] initWithTitle:
-									controller.dataSource.name image:controller.dataSource.tabBarImage tag:index] autorelease];
+				split.tabBarItem = [[UITabBarItem alloc] initWithTitle:
+									controller.dataSource.name image:controller.dataSource.tabBarImage tag:index];
 				[splitViewControllers addObject:split];
 			}
 			index++;
@@ -506,8 +488,6 @@ NSInteger kNoSelection = -1;
         if ([_savedTableSelection isKindOfClass:[NSDictionary class]])
         {
             NSMutableDictionary *copy = [_savedTableSelection mutableCopy];
-            if (_savedTableSelection)
-                [_savedTableSelection release];
             _savedTableSelection = copy;
         }
         else
@@ -583,7 +563,6 @@ NSInteger kNoSelection = -1;
 												otherButtonTitles:NSLocalizedStringFromTable(@"Reset", @"StandardUI", @"Reset application settings to defaults"),nil];
 		resetDB.tag = 23452;
 		[resetDB show];
-		[resetDB release];
 	}
 	return needsReset;
 }

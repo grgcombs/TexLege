@@ -53,33 +53,28 @@
 
 #import <SafariServices/SFSafariViewController.h>
 
-@interface LegislatorDetailViewController (Private)
-- (void) setupHeader;
+@interface LegislatorDetailViewController ()
+- (void)setupHeader;
 @end
 
 
 @implementation LegislatorDetailViewController
-@synthesize dataObjectID;
-@synthesize dataSource;
-@synthesize headerView, miniBackgroundView;
-
-@synthesize leg_indexTitleLab, leg_rankLab, leg_chamberPartyLab, leg_chamberLab, leg_reelection;
-@synthesize leg_photoView, leg_partyLab, leg_districtLab, leg_tenureLab, leg_nameLab, freshmanPlotLab;
-@synthesize indivSlider, partySlider, allSlider;
-@synthesize notesPopover, masterPopover;
-@synthesize chartView, votingDataSource;
+@synthesize masterPopover = _masterPopover;
+@synthesize dataSource = _dataSource;
 
 #pragma mark -
 #pragma mark View lifecycle
 
-- (NSString *)nibName {
+- (NSString *)nibName
+{
 	if ([UtilityMethods isIPadDevice])
 		return @"LegislatorDetailViewController~ipad";
 	else
 		return @"LegislatorDetailViewController~iphone";
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 		
 	[[NSNotificationCenter defaultCenter] addObserver:self
@@ -105,10 +100,10 @@
 	VotingRecordDataSource *votingDS = [[VotingRecordDataSource alloc] init];
 	[votingDS prepareVotingRecordView:self.chartView];
 	self.votingDataSource = votingDS;
-	[votingDS release];
 }
 
-- (void)viewDidUnload {
+- (void)viewDidUnload
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	self.votingDataSource = nil;
@@ -118,7 +113,8 @@
 #pragma mark -
 #pragma mark Memory management
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     // Releases the view if it doesn't have a superview.
 	UINavigationController *nav = self.navigationController;
 	if (nav && (nav.viewControllers).count>3)
@@ -127,50 +123,43 @@
     [super didReceiveMemoryWarning];
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	self.indivSlider = nil;
-	self.partySlider = nil;
-	self.allSlider = nil;
 	self.dataSource = nil;
-	self.headerView = nil;
-	self.leg_photoView = nil;
-	self.leg_reelection = nil;
-	self.miniBackgroundView = nil;
-	self.leg_partyLab = self.leg_districtLab = self.leg_tenureLab = self.leg_nameLab = self.freshmanPlotLab = nil;
-	self.notesPopover = nil;
-	self.masterPopover = nil;
-	self.dataObjectID = nil;
-	self.chartView = nil;
-	self.votingDataSource = nil;
-
-	[super dealloc];
 }
 
-- (id)dataObject {
+- (id)dataObject
+{
 	return self.legislator;
 }
 
-- (void)setDataObject:(id)newObj {
+- (void)setDataObject:(id)newObj
+{
+    if (!newObj || ![newObj isKindOfClass:[LegislatorObj class]])
+        newObj = nil;
 	self.legislator = newObj;
 }
 
-- (NSString *)chamberPartyAbbrev {
+- (NSString *)chamberPartyAbbrev
+{
 	LegislatorObj *member = self.legislator;
 	NSString *partyName = stringForParty((member.party_id).integerValue, TLReturnAbbrevPlural);
 	
 	return [NSString stringWithFormat:@"%@ %@", [member chamberName], partyName];
 }
 
-- (NSString *) partisanRankStringForLegislator {
+- (NSString *) partisanRankStringForLegislator
+{
 	LegislatorObj *member = self.legislator;
 	if (IsEmpty(member.wnomScores))
 		return @"";
 
 	NSArray *legislators = [TexLegeCoreDataUtils allLegislatorsSortedByPartisanshipFromChamber:(member.legtype).integerValue 
 																					andPartyID:(member.party_id).integerValue];
-	if (legislators) {
+	if (legislators)
+    {
 		NSInteger rankIndex = [legislators indexOfObject:member] + 1;
 		NSInteger count = legislators.count;
 		NSString *partyShortName = stringForParty((member.party_id).integerValue, TLReturnAbbrevPlural);
@@ -179,7 +168,8 @@
 		return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ most partisan (out of %d %@)", @"DataTableUI", @"Partisan ranking, ie. 32nd most partisan out of 55 Democrats"), 
 				ordinalRank, count, partyShortName];	
 	}
-	else {
+	else
+    {
 		return @"";
 	}
 }
@@ -196,10 +186,9 @@
 	self.leg_districtLab.text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"District %@", @"DataTableUI", @"District number"), 
 								 member.district];
 	self.leg_tenureLab.text = [member tenureString];
-	if (member.nextElection) {
-		
-		self.leg_reelection.text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Reelection: %@", @"DataTableUI", @"Year of person's next reelection"), 
-									member.nextElection];
+	if (member.nextElection)
+    {
+		self.leg_reelection.text = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Reelection: %@", @"DataTableUI", @"Year of person's next reelection"), member.nextElection];
 	}
 	
 	PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
@@ -211,7 +200,8 @@
 	if (self.leg_rankLab)
 		self.leg_rankLab.text = [self partisanRankStringForLegislator];
 	
-	if (self.leg_chamberPartyLab) {
+	if (self.leg_chamberPartyLab)
+    {
 		self.leg_chamberPartyLab.text = [self chamberPartyAbbrev];
 		self.leg_chamberLab.text = [[member chamberName] stringByAppendingFormat:@" %@", NSLocalizedStringFromTable(@"Avg.", @"DataTableUI", @"Abbreviation for 'average'")];				
 	}
@@ -219,17 +209,20 @@
 	CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:(member.legtype).integerValue];
 	CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:(member.legtype).integerValue];
 	
-	if (self.indivSlider) {
+	if (self.indivSlider)
+    {
 		self.indivSlider.sliderMin = minSlider;
 		self.indivSlider.sliderMax = maxSlider;
 		self.indivSlider.sliderValue = member.latestWnomFloat;
 	}	
-	if (self.partySlider) {
+	if (self.partySlider)
+    {
 		self.partySlider.sliderMin = minSlider;
 		self.partySlider.sliderMax = maxSlider;
 		self.partySlider.sliderValue = [indexStats partyPartisanIndexUsingChamber:(member.legtype).integerValue andPartyID:(member.party_id).integerValue];
 	}	
-	if (self.allSlider) {
+	if (self.allSlider)
+    {
 		self.allSlider.sliderMin = minSlider;
 		self.allSlider.sliderMax = maxSlider;
 		self.allSlider.sliderValue = [indexStats overallPartisanIndexUsingChamber:(member.legtype).integerValue];
@@ -238,31 +231,32 @@
 	BOOL hasScores = !IsEmpty(member.wnomScores);
 	self.freshmanPlotLab.hidden = hasScores;
 	self.chartView.hidden = !hasScores;
-
 }
 
-
-- (LegislatorDetailDataSource *)dataSource {
-	LegislatorObj *member = self.legislator;
-	if (!dataSource && member) {
-		dataSource = [[LegislatorDetailDataSource alloc] initWithLegislator:member];
-	}
-	return dataSource;
+- (LegislatorDetailDataSource *)dataSource
+{
+    LegislatorObj *member = self.legislator;
+    if (!_dataSource && member)
+    {
+        _dataSource = [[LegislatorDetailDataSource alloc] initWithLegislator:member];
+    }
+    return _dataSource;
 }
 
-- (void)setDataSource:(LegislatorDetailDataSource *)newObj {	
-	if (newObj == dataSource)
+- (void)setDataSource:(LegislatorDetailDataSource *)newObj
+{
+	if (newObj == _dataSource)
 		return;
-	if (dataSource)
-		[dataSource release], dataSource = nil;
-	if (newObj)
-		dataSource = [newObj retain];
+    if (![newObj isKindOfClass:[LegislatorDetailDataSource class]])
+        newObj = nil;
+    _dataSource = newObj;
 }
 
-
-- (LegislatorObj *)legislator {
+- (LegislatorObj *)legislator
+{
 	LegislatorObj *anObject = nil;
-	if (self.dataObjectID) {
+	if (self.dataObjectID)
+    {
 		@try {
 			anObject = [LegislatorObj objectWithPrimaryKeyValue:self.dataObjectID];
 		}
@@ -272,33 +266,46 @@
 	return anObject;
 }
 
-- (void)setLegislator:(LegislatorObj *)anObject {
-	if (self.dataSource && anObject && self.dataObjectID && [anObject.legislatorID isEqual:self.dataObjectID])
+- (void)setLegislator:(LegislatorObj *)anObject
+{
+	if (self.dataSource
+        && anObject
+        && self.dataObjectID
+        && [anObject.legislatorID isEqual:self.dataObjectID])
+    {
 		return;
-	
-	self.dataSource = nil;
-	self.dataObjectID = nil;
-	
-	if (anObject) {
-		self.dataObjectID = anObject.legislatorID;
+    }
 
-		self.tableView.dataSource = self.dataSource;
+	if (!anObject)
+    {
+        self.dataSource = nil;
+        self.dataObjectID = nil;
 
-		[self setupHeader];
-		self.votingDataSource.legislatorID = anObject.legislatorID;
+        return;
+    }
 
-		if (masterPopover != nil) {
-			[masterPopover dismissPopoverAnimated:YES];
-		}		
-		[self.tableView reloadData];
-		[self.chartView reloadData];
-		[self.view setNeedsDisplay];
-	}
+    NSNumber *legislatorID = anObject.legislatorID;
+    self.dataObjectID = legislatorID;
+
+    self.tableView.dataSource = self.dataSource;
+
+    [self setupHeader];
+
+    self.votingDataSource.legislatorID = legislatorID;
+
+    if (self.masterPopover != nil)
+        [self.masterPopover dismissPopoverAnimated:YES];
+
+    [self.tableView reloadData];
+    [self.chartView reloadData];
+    [self.view setNeedsDisplay];
 }
+
 #pragma mark -
 #pragma mark Managing the popover
 
-- (IBAction)resetTableData:(id)sender {
+- (IBAction)resetTableData:(id)sender
+{
 	// this will force our datasource to renew everything
 	self.dataSource.legislator = self.legislator;
 	[self.tableView reloadData];	
@@ -306,23 +313,30 @@
 }
 
 // Called on the delegate when the user has taken action to dismiss the popover. This is not called when -dismissPopoverAnimated: is called directly.
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
 	[self.tableView reloadData];
-	if (self.notesPopover && [self.notesPopover isEqual:popoverController]) {
+	if (self.notesPopover && [self.notesPopover isEqual:popoverController])
+    {
 		self.notesPopover = nil;
 	}
 }
 	
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
 
 	BOOL ipad = [UtilityMethods isIPadDevice];
 	BOOL portrait = (![UtilityMethods isLandscapeOrientation]);
 
-	if (portrait && ipad && !self.legislator)
-		self.legislator = [TexLegeAppDelegate appDelegate].legislatorMasterVC.selectObjectOnAppear;		
+    LegislatorObj *legislator = self.legislator;
+	if (portrait && ipad && !legislator)
+    {
+		legislator = [TexLegeAppDelegate appDelegate].legislatorMasterVC.initialObjectToSelect;
+        self.legislator = legislator;
+    }
 	
-	if (self.legislator)
+	if (legislator)
 		[self setupHeader];
 }
 
@@ -331,7 +345,8 @@
 
 - (void)splitViewController: (UISplitViewController*)svc 
 	 willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem*)barButtonItem 
-	   forPopoverController: (UIPopoverController*)pc {
+	   forPopoverController: (UIPopoverController*)pc
+{
 	//debug_NSLog(@"Entering portrait, showing the button: %@", [aViewController class]);
 	barButtonItem.title = NSLocalizedStringFromTable(@"Legislators", @"StandardUI", @"The short title for buttons and tabs related to legislators");
 	[self.navigationItem setRightBarButtonItem:barButtonItem animated:YES];
@@ -341,19 +356,22 @@
 // Called when the view is shown again in the split view, invalidating the button and popover controller.
 - (void)splitViewController: (UISplitViewController*)svc 
 	 willShowViewController:(UIViewController *)aViewController 
-  invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem {
+  invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
 	//debug_NSLog(@"Entering landscape, hiding the button: %@", [aViewController class]);
 	[self.navigationItem setRightBarButtonItem:nil animated:YES];
 	self.masterPopover = nil;
 }
 
-- (void) splitViewController:(UISplitViewController *)svc popoverController: (UIPopoverController *)pc
+- (void)splitViewController:(UISplitViewController *)svc popoverController: (UIPopoverController *)pc
    willPresentViewController: (UIViewController *)aViewController
 {
-	if ([UtilityMethods isLandscapeOrientation]) {
+	if ([UtilityMethods isLandscapeOrientation])
+    {
 		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"ERR_POPOVER_IN_LANDSCAPE"];
 	}
-	if (self.notesPopover) {
+	if (self.notesPopover)
+    {
 		[self.notesPopover dismissPopoverAnimated:YES];
 		self.notesPopover = nil;
 	}
@@ -362,7 +380,8 @@
 #pragma mark -
 #pragma mark orientations
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
     // Override to allow orientations other than the default portrait orientation.
     return YES;
 }
@@ -374,9 +393,9 @@
 
 #pragma mark -
 #pragma mark Table View Delegate
-// the user selected a row in the table.
-- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath {
-	
+
+- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath
+{
 	// deselect the new row using animation
 	[aTableView deselectRowAtIndexPath:newIndexPath animated:YES];	
 	
@@ -386,8 +405,8 @@
 	if (!cellInfo.isClickable)
 		return;
 	
-		if (cellInfo.entryType == DirectoryTypeNotes) { // We need to edit the notes thing...
-			
+		if (cellInfo.entryType == DirectoryTypeNotes)
+        {
 			NotesViewController *nextViewController = nil;
 			if ([UtilityMethods isIPadDevice])
 				nextViewController = [[NotesViewController alloc] initWithNibName:@"NotesView~ipad" bundle:nil];
@@ -395,32 +414,36 @@
 				nextViewController = [[NotesViewController alloc] initWithNibName:@"NotesView" bundle:nil];
 			
 			// If we got a new view controller, push it .
-			if (nextViewController) {
+			if (nextViewController)
+            {
 				nextViewController.legislator = member;
 				nextViewController.backViewController = self;
 				
-				if ([UtilityMethods isIPadDevice]) {
-					self.notesPopover = [[[UIPopoverController alloc] initWithContentViewController:nextViewController] autorelease];
+				if ([UtilityMethods isIPadDevice])
+                {
+					self.notesPopover = [[UIPopoverController alloc] initWithContentViewController:nextViewController];
 					self.notesPopover.delegate = self;
 					CGRect cellRect = [aTableView rectForRowAtIndexPath:newIndexPath];
 					[self.notesPopover presentPopoverFromRect:cellRect inView:aTableView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 				}
-				else {
+				else
+                {
 					[self.navigationController pushViewController:nextViewController animated:YES];
 				}
 				
-				[nextViewController release];
 			}
 		}
-		else if (cellInfo.entryType == DirectoryTypeCommittee) {
+		else if (cellInfo.entryType == DirectoryTypeCommittee)
+        {
 			CommitteeDetailViewController *subDetailController = [[CommitteeDetailViewController alloc] initWithNibName:@"CommitteeDetailViewController" bundle:nil];
 			subDetailController.committee = cellInfo.entryValue;
 			[self.navigationController pushViewController:subDetailController animated:YES];
-			[subDetailController release];
 		}
-		else if (cellInfo.entryType == DirectoryTypeContributions) {
+		else if (cellInfo.entryType == DirectoryTypeContributions)
+        {
 #if CONTRIBUTIONS_API == TRANSPARENCY_DATA_API
-            if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:transApiBaseURL]]) {
+            if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:transApiBaseURL]])
+            {
                 LegislatorContributionsViewController *subDetailController = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
                 [subDetailController setQueryEntityID:cellInfo.entryValue type:@(kContributionQueryRecipient) cycle:@"-1"];
                 [self.navigationController pushViewController:subDetailController animated:YES];
@@ -428,39 +451,43 @@
             }
 
 #elif CONTRIBUTIONS_API == FOLLOW_THE_MONEY_API
-            if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:followTheMoneyApiBaseURL]]) {
+            if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:followTheMoneyApiBaseURL]])
+            {
                 LegislatorContributionsViewController *subDetailController = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
-                [subDetailController setQueryEntityID:cellInfo.entryValue type:@(kContributionQueryRecipient) cycle:nil parameter:cellInfo.parameter];
+                [subDetailController setQueryEntityID:cellInfo.entryValue type:@(kContributionQueryElectionYear) cycle:nil parameter:cellInfo.parameter];
                 [self.navigationController pushViewController:subDetailController animated:YES];
-                [subDetailController release];
             }
 #endif
 		}
-		else if (cellInfo.entryType == DirectoryTypeBills) {
-			if ([TexLegeReachability openstatesReachable]) { 
+		else if (cellInfo.entryType == DirectoryTypeBills)
+        {
+			if ([TexLegeReachability openstatesReachable])
+            {
 				BillsListViewController *subDetailController = [[BillsListViewController alloc] initWithStyle:UITableViewStylePlain];
 				subDetailController.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Bills Authored by %@", @"DataTableUI", @"Title for cell, the legislative bills authored by someone."), 
 											 [member shortNameForButtons]];
 				[subDetailController.dataSource startSearchForBillsAuthoredBy:cellInfo.entryValue];
 				[self.navigationController pushViewController:subDetailController animated:YES];
-				[subDetailController release];
 			}
 		}
-		else if (cellInfo.entryType == DirectoryTypeOfficeMap) {
+		else if (cellInfo.entryType == DirectoryTypeOfficeMap)
+        {
 			CapitolMap *capMap = cellInfo.entryValue;			
 			CapitolMapsDetailViewController *detailController = [[CapitolMapsDetailViewController alloc] initWithNibName:@"CapitolMapsDetailViewController" bundle:nil];
 			detailController.map = capMap;
 			
 			[self.navigationController pushViewController:detailController animated:YES];
-			[detailController release];
 		}
-		else if (cellInfo.entryType == DirectoryTypeMail) {
+		else if (cellInfo.entryType == DirectoryTypeMail)
+        {
 			[[TexLegeEmailComposer sharedTexLegeEmailComposer] presentMailComposerTo:cellInfo.entryValue 
 																			 subject:@"" body:@"" commander:self];			
 		}
 		// Switch to the appropriate application for this url...
-		else if (cellInfo.entryType == DirectoryTypeMap) {
-			if ([cellInfo.entryValue isKindOfClass:[DistrictOfficeObj class]] || [cellInfo.entryValue isKindOfClass:[DistrictMapObj class]])
+		else if (cellInfo.entryType == DirectoryTypeMap)
+        {
+			if ([cellInfo.entryValue isKindOfClass:[DistrictOfficeObj class]]
+                || [cellInfo.entryValue isKindOfClass:[DistrictMapObj class]])
 			{		
 				MapMiniDetailViewController *mapViewController = [[MapMiniDetailViewController alloc] init];
 				[mapViewController loadView];
@@ -472,37 +499,42 @@
 				[mapViewController resetMapViewWithAnimation:NO];
 				BOOL isDistMap = NO;
 				id<MKAnnotation> theAnnotation = nil;
-				if (districtOffice) {
+				if (districtOffice)
+                {
 					theAnnotation = districtOffice;
 					[mapViewController.mapView addAnnotation:theAnnotation];
 					[mapViewController moveMapToAnnotation:theAnnotation];
 				}
-				else {
+				else
+                {
 					theAnnotation = member.districtMap;
 					[mapViewController.mapView addAnnotation:theAnnotation];
 					[mapViewController moveMapToAnnotation:theAnnotation];
                     [mapViewController addDistrictOverlay:member.districtMap.polygon];
 					isDistMap = YES;
 				}
-				if (theAnnotation) {
+				if (theAnnotation)
+                {
 					mapViewController.navigationItem.title = theAnnotation.title;
 				}
 
 				[self.navigationController pushViewController:mapViewController animated:YES];
-				[mapViewController release];
 				
-				if (isDistMap) {
+				if (isDistMap)
+                {
 					[member.districtMap.managedObjectContext refreshObject:member.districtMap mergeChanges:NO];
 				}
 			}
 		}
 		else if (cellInfo.entryType > kDirectoryTypeIsURLHandler &&
-				 cellInfo.entryType < kDirectoryTypeIsExternalHandler) {	// handle the URL ourselves in a webView
+				 cellInfo.entryType < kDirectoryTypeIsExternalHandler)
+        {
 			NSURL *url = [cellInfo generateURL];
             if (!url)
                 return;
 
-			if ([TexLegeReachability canReachHostWithURL:url]) { // do we have a good URL/connection?
+			if ([TexLegeReachability canReachHostWithURL:url])
+            {
 
 				if ([url.scheme isEqualToString:@"twitter"])
 					[[UIApplication sharedApplication] openURL:url];
@@ -518,7 +550,6 @@
                     
                     webController.modalPresentationStyle = UIModalPresentationPageSheet;
                     [self presentViewController:webController animated:YES completion:nil];
-                    [webController release];
 				}
 			}
 		}
@@ -527,7 +558,8 @@
 			NSURL *myURL = [cellInfo generateURL];			
 			BOOL isPhone = ([UtilityMethods canMakePhoneCalls]);
 			
-			if ((cellInfo.entryType == DirectoryTypePhone) && (!isPhone)) {
+			if ((cellInfo.entryType == DirectoryTypePhone) && (!isPhone))
+            {
 				debug_NSLog(@"Tried to make a phone call, but this isn't a phone: %@", myURL.description);
 				[UtilityMethods alertNotAPhone];
 				return;
@@ -537,21 +569,26 @@
 		}
 }
 
-- (CGFloat)tableView:(UITableView *)aTableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat)tableView:(UITableView *)aTableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	CGFloat height = 44.0f;
 	TableCellDataObject *cellInfo = [self.dataSource dataObjectForIndexPath:indexPath];
 	
-	if (cellInfo == nil) {
+	if (cellInfo == nil)
+    {
 		debug_NSLog(@"LegislatorDetailViewController:heightForRow: error finding table entry for index path: %@", indexPath);
 		return height;
 	}
-	if (cellInfo.subtitle && [cellInfo.subtitle hasSubstring:NSLocalizedStringFromTable(@"Address", @"DataTableUI", @"Cell title listing a street address")
-											 caseInsensitive:YES]) {
+	if (cellInfo.subtitle
+        && [cellInfo.subtitle hasSubstring:NSLocalizedStringFromTable(@"Address", @"DataTableUI", @"Cell title listing a street address") caseInsensitive:YES])
+    {
 		height = 98.0f;
 	}
-	else if ([cellInfo.entryValue isKindOfClass:[NSString class]]) {
+	else if ([cellInfo.entryValue isKindOfClass:[NSString class]])
+    {
 		NSString *tempStr = cellInfo.entryValue;
-		if (!tempStr || tempStr.length <= 0) {
+		if (!tempStr || tempStr.length <= 0)
+        {
 			height = 0.0f;
 		}
 	}
@@ -559,4 +596,3 @@
 }
 
 @end
-

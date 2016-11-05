@@ -25,7 +25,6 @@
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];	
 
-	[super dealloc];
 }
 
 
@@ -49,7 +48,6 @@
 			UIImage *pinImage = [TexLegeMapPins imageForPinColorIndex:pinColorIndex status:TexLegePinAnnotationStatusHead];
 			UIImageView *pinHead = [[UIImageView alloc] initWithImage:pinImage];
 			[self addSubview:pinHead];
-			[pinHead release];
 		}
 		else
 			self.pinColor = pinColorIndex;
@@ -59,7 +57,6 @@
 		if (anImage) {
 			UIImageView *iconView = [[UIImageView alloc] initWithImage:anImage];
 			self.leftCalloutAccessoryView = iconView;
-			[iconView release];
 		}			
 	
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(annotationChanged_:) name:kUserPinAnnotationAddressChangeKey object:annotation];

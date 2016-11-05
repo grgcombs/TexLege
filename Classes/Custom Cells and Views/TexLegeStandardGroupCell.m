@@ -50,7 +50,6 @@
 		DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
 		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
 		self.accessoryView = qv;
-		[qv release];
 		//[iv release];
 		
 		self.backgroundColor = [TexLegeTheme backgroundLight];
@@ -60,17 +59,13 @@
 }
 
 
-- (void)dealloc {
-	self.cellInfo = nil;
-    [super dealloc];
-}
 
 - (void)setCellInfo:(TableCellDataObject *)newCellInfo {	
 	if (cellInfo)
-		[cellInfo release], cellInfo = nil;
+		cellInfo = nil;
 	
 	if (newCellInfo) {
-		cellInfo = [newCellInfo retain];
+		cellInfo = newCellInfo;
 		self.detailTextLabel.text = cellInfo.title;
 		self.textLabel.text = cellInfo.subtitle;
 		if (!cellInfo.isClickable) {

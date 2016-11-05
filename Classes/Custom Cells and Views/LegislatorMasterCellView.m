@@ -24,9 +24,9 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 {
 	self = [super initWithFrame:frame];
 	if (self) {
-		_title = [@"Representative - (D-23)" retain];
-		_name = [@"Rafael Anchía" retain];
-		_tenure = [@"4 Years" retain];
+		_title = @"Representative - (D-23)";
+		_name = @"Rafael Anchía";
+		_tenure = @"4 Years";
         _sliderValue = 0.0;
         _partisan_index = 0.0;
 		_sliderMin = -1.5;
@@ -61,14 +61,6 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 	[self setOpaque:YES];
 }
 
-- (void)dealloc
-{
-    self.questionImage = nil;
-    self.title = nil;
-    self.name = nil;
-    self.tenure = nil;
-	[super dealloc];
-}
 
 - (void)setSliderValue:(CGFloat)value
 {

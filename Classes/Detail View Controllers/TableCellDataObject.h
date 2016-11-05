@@ -35,13 +35,13 @@ typedef NS_ENUM(UInt32, DirectoryType) {
 
 @interface TableCellDataObject : NSObject
 
-@property (nonatomic, retain) id entryValue;
+@property (nonatomic, strong) id entryValue;
 @property (nonatomic) BOOL isClickable;
 @property (nonatomic) NSInteger entryType;
-@property (nonatomic, retain) id action;
-@property (nonatomic, retain) id parameter;
-@property (nonatomic, retain) NSString *title;
-@property (nonatomic, retain) NSString *subtitle;
+@property (nonatomic, strong) id action;
+@property (nonatomic, strong) id parameter;
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *subtitle;
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSURL *generateURL;
 
 - (instancetype)initWithDictionary:(NSDictionary *)aDictionary;

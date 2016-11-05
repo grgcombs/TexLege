@@ -22,16 +22,15 @@
 #import "TXLDetailProtocol.h"
 
 @implementation GeneralTableViewController
-@synthesize dataSource, detailViewController, controllerEnabled;
-@synthesize selectObjectOnAppear;
 
-- (NSString *)reachabilityStatusKey {
+- (NSString *)reachabilityStatusKey
+{
 	return nil;
 }
 
 - (instancetype) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	if ((self=[super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-		controllerEnabled = [@YES retain];
+		_controllerEnabled = @YES;
 		
 		NSString *statusKey = [self reachabilityStatusKey];
 		if (!IsEmpty(statusKey)) {
@@ -44,15 +43,20 @@
 	return self;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-	if (!IsEmpty(keyPath) && [self reachabilityStatusKey] && [keyPath isEqualToString:[self reachabilityStatusKey]]) {
-		BOOL enbl = (self.controllerEnabled).boolValue;
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if (!IsEmpty(keyPath)
+        && [self reachabilityStatusKey]
+        && [keyPath isEqualToString:[self reachabilityStatusKey]])
+    {
+		BOOL shouldEnable = (self.controllerEnabled).boolValue;
 		
 		id newVal = [change valueForKey:NSKeyValueChangeNewKey];
-		if (newVal && [newVal isKindOfClass:[NSNumber class]]) {
-			enbl = [newVal intValue] > NotReachable;
+		if (newVal && [newVal isKindOfClass:[NSNumber class]])
+        {
+			shouldEnable = [newVal intValue] > NotReachable;
 		}
-		self.controllerEnabled = @(enbl);
+		self.controllerEnabled = @(shouldEnable);
 	}
 	/*if (!IsEmpty(keyPath) && [keyPath isEqualToString:@"frame"]) {
 		NSLog(@"Class=%@ w=%f h=%f", NSStringFromClass([self class]), self.tableView.frame.size.width, self.tableView.frame.size.height);
@@ -63,18 +67,25 @@
 	return [NSObject class];
 }
 
-- (id<TableDataSource>)dataSource {
-	if (!dataSource) {
-		dataSource = [[[self dataSourceClass] alloc] init];
-	}
-	return dataSource;
+- (id<TableDataSource>)dataSource
+{
+    if (_dataSource)
+        return _dataSource;
+    Class class = [self dataSourceClass];
+    if (!class)
+        return nil;
+    _dataSource = [[class alloc] init];
+	return _dataSource;
 }
 
-- (BOOL)shouldPreselectRowOnAppear {
-    if ([UtilityMethods isIPadDevice] && self.detailViewController) {
-        SEL popoverSelector = @selector(masterPopover);
-        if ([self.detailViewController respondsToSelector:popoverSelector]) {
-            UIPopoverController *masterPopover = [self.detailViewController performSelector:popoverSelector withObject:nil];
+- (BOOL)shouldPreselectRowOnAppear
+{
+    if ([UtilityMethods isIPadDevice]
+        && self.detailViewController)
+    {
+        if ([self.detailViewController respondsToSelector:@selector(masterPopover)])
+        {
+            UIPopoverController *masterPopover = [self.detailViewController masterPopover];
             if (masterPopover)
                 return NO;
         }
@@ -96,7 +107,7 @@
 		if (objectID && [objectID isKindOfClass:[NSNumber class]]) {
 			@try {
 				if ([self.dataSource respondsToSelector:@selector(dataClass)])
-					self.selectObjectOnAppear = [[self.dataSource dataClass] objectWithPrimaryKeyValue:objectID];	
+					self.initialObjectToSelect = [[self.dataSource dataClass] objectWithPrimaryKeyValue:objectID];	
 			}
 			@catch (NSException * e) {
 			}
@@ -108,19 +119,19 @@
 			return;
 		
 		if ([object isKindOfClass:[NSIndexPath class]] && NO == [self.dataSource isKindOfClass:[BillsMenuDataSource class]]) {
-			self.selectObjectOnAppear = [self.dataSource dataObjectForIndexPath:object];
+			self.initialObjectToSelect = [self.dataSource dataObjectForIndexPath:object];
 		}
 	}
 	
-	if (self.selectObjectOnAppear && self.detailViewController && [UtilityMethods isIPadDevice]) {
+	if (self.initialObjectToSelect && self.detailViewController && [UtilityMethods isIPadDevice]) {
 		NSLog(@"Presetting a detail view's dataObject in %@!", self.description);
 		if ([self.detailViewController respondsToSelector:@selector(setDataObject:)]) {
 			@try {
-				[self.detailViewController performSelector:@selector(setDataObject:) withObject:self.selectObjectOnAppear];
+				[self.detailViewController performSelector:@selector(setDataObject:) withObject:self.initialObjectToSelect];
 			}
 			@catch (NSException * e) {
-				self.selectObjectOnAppear = nil;
-				//self.selectObjectOnAppear = [self.dataSource dataObjectForIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+				self.initialObjectToSelect = nil;
+				//self.initialObjectToSelect = [self.dataSource dataObjectForIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
 			}
 		}
 	}
@@ -133,11 +144,6 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"TABLEUPDATE_END" object:self.dataSource];
 
 	//self.tableView = nil;
-	self.dataSource = nil; 
-	self.selectObjectOnAppear = nil;
-	self.detailViewController = nil;
-	self.controllerEnabled = nil;
-	[super dealloc];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -156,7 +162,7 @@
 		tempFrame = self.navigationController.view.bounds;
 	}
 	
-	self.tableView = [[[UITableView alloc] initWithFrame:tempFrame style:(self.dataSource).tableViewStyle] autorelease];
+	self.tableView = [[UITableView alloc] initWithFrame:tempFrame style:(self.dataSource).tableViewStyle];
 	
 	// set the cell separator to a single straight line.
 	//self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
@@ -187,17 +193,19 @@
 	{		
 		NSError *error;
 		// You've got to delete the cache, or disable caching before you modify the predicate...
-		[NSFetchedResultsController deleteCacheWithName:dataSource.fetchedResultsController.cacheName];
-		
-		if (![dataSource.fetchedResultsController performFetch:&error]) {
+        [NSFetchedResultsController deleteCacheWithName:self.dataSource.fetchedResultsController.cacheName];
+
+		if (![self.dataSource.fetchedResultsController performFetch:&error]) {
 			// Handle the error...
 		}					
 	}
-	self.tableView.dataSource = dataSource;
-	if (self.searchDisplayController) {
-		self.searchDisplayController.searchResultsDataSource = dataSource;
-		if ([dataSource respondsToSelector:@selector(setSearchDisplayController:)])
-			[dataSource performSelector:@selector(setSearchDisplayController:) withObject:self.searchDisplayController];
+	self.tableView.dataSource = self.dataSource;
+    UISearchDisplayController *searchController = self.searchDisplayController;
+	if (searchController)
+    {
+		searchController.searchResultsDataSource = self.dataSource;
+		if ([self.dataSource respondsToSelector:@selector(setSearchDisplayController:)])
+			[self.dataSource performSelector:@selector(setSearchDisplayController:) withObject:searchController];
 	}
 	
 	// set the tableview delegate to this object and the datasource to the datasource which has already been set
@@ -232,7 +240,7 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"TABLEUPDATE_END" object:self.dataSource];
 
 	//self.dataSource = nil;
-	self.selectObjectOnAppear = nil;
+	self.initialObjectToSelect = nil;
 	[super viewDidUnload];
 }
 
@@ -251,12 +259,12 @@
 - (void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
 	
-	if ([self shouldPreselectRowOnAppear] && self.selectObjectOnAppear)  {	
+	if ([self shouldPreselectRowOnAppear] && self.initialObjectToSelect)  {	
 		NSIndexPath *selectedPath = nil;
 		
 		//if (![self.dataSource.name isEqualToString:@"Resources"])
 		@try {
-			selectedPath = [self.dataSource indexPathForDataObject:self.selectObjectOnAppear];
+			selectedPath = [self.dataSource indexPathForDataObject:self.initialObjectToSelect];
 		}
 		@catch (NSException * e) {
 		}
@@ -269,7 +277,7 @@
 			[self.tableView selectRowAtIndexPath:selectedPath animated:animated scrollPosition:UITableViewScrollPositionNone];
 			[self tableView:self.tableView didSelectRowAtIndexPath:selectedPath];
 		}
-		self.selectObjectOnAppear = nil;
+		self.initialObjectToSelect = nil;
 	}
 
 	// We're on an iphone, without a splitview or popovers, so if we get here, let's stop traversing our replay breadcrumbs
@@ -320,7 +328,7 @@
 		if ([self.detailViewController respondsToSelector:@selector(navigationController)])
 			detailNav = [self.detailViewController performSelector:@selector(navigationController)];
 		
-		if (!self.selectObjectOnAppear) {	// otherwise we pop whenever we're automatically selecting stuff ... right?
+		if (!self.initialObjectToSelect) {	// otherwise we pop whenever we're automatically selecting stuff ... right?
 			if (detailNav && detailNav.viewControllers && (detailNav.viewControllers).count > 1) { 
 				[detailNav popToRootViewControllerAnimated:YES];
 				

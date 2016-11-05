@@ -23,35 +23,40 @@
 #import "LoadingCell.h"
 #import "StateMetaLoader.h"
 
-@interface BillsCategoriesViewController (Private)
+@interface BillsCategoriesViewController ()
+
 - (void)configureCell:(TexLegeBadgeGroupCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)createChamberControl;
 - (IBAction)filterChamber:(id)sender;
 - (IBAction)loadCategoriesForChamber:(NSInteger)newChamber;
+
+@property (nonatomic,copy) NSMutableDictionary *categories;
+@property (nonatomic,strong) IBOutlet UISegmentedControl *chamberControl;
+@property (nonatomic,getter=isFresh) BOOL fresh;
+@property (nonatomic,strong) NSDate *updated;
+@property (nonatomic,assign) NSInteger loadingStatus;
+
 @end
 
 @implementation BillsCategoriesViewController
-@synthesize chamberControl, chamberCategories;
 
 #pragma mark -
 #pragma mark View lifecycle
 
 - (instancetype)initWithStyle:(UITableViewStyle)style {
 	if ((self=[super initWithStyle:style])) {
-		loadingStatus = LOADING_IDLE;
-		categories_ = [[NSMutableDictionary alloc] init];
-		updated = nil;
-		isFresh = NO;
+		_loadingStatus = LOADING_IDLE;
+		_categories = [[NSMutableDictionary alloc] init];
+		_updated = nil;
+		_fresh = NO;
 	}
 	return self;
 }
 
-- (void)dealloc {	
+- (void)dealloc
+{
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
-	self.chamberControl = nil;
-	nice_release(updated);
-	nice_release(categories_);
-	[super dealloc];
+
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -97,7 +102,6 @@
 	//label.numberOfLines =
 	label.text = NSLocalizedStringFromTable(@"Large subjects download slowly.", @"DataTableUI", @"Tells the user that downloading a long list of bills for a given subject will take some time."); 
 	self.tableView.tableHeaderView = label;
-	[label release];
 	
 	[self chamberCategories];	// load them from the network, if necessary
 }
@@ -122,7 +126,6 @@
 		newDict[NSStringFromClass([self class])] = segIndex;
 		[[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
 		[[NSUserDefaults standardUserDefaults] synchronize];
-		[newDict release];
 	}
 	
 	[self.tableView reloadData];
@@ -130,8 +133,8 @@
 
 - (NSString *)chamber {
 	NSInteger theChamber = BOTH_CHAMBERS;
-	if (chamberControl)
-		theChamber = chamberControl.selectedSegmentIndex;
+	if (self.chamberControl)
+		theChamber = self.chamberControl.selectedSegmentIndex;
 	return [NSString stringWithFormat:@"%ld", (long)theChamber];
 }
 
@@ -142,12 +145,12 @@
 
 - (void)configureCell:(TexLegeBadgeGroupCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-	if (!categories_ || IsEmpty(categories_[self.chamber]))
+	if (IsEmpty(self.categories[self.chamber]))
 		return;
 
 	BOOL useDark = (indexPath.row % 2 == 0);
 	cell.backgroundColor = useDark ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
-	NSDictionary *category = categories_[self.chamber][indexPath.row];
+	NSDictionary *category = self.categories[self.chamber][indexPath.row];
 	
 	BOOL clickable = [category[kBillCategoriesCountKey] integerValue] > 0;
 	NSDictionary *cellDict = @{@"entryValue": category[kBillCategoriesCountKey],
@@ -155,7 +158,6 @@
 							  @"title": category[kBillCategoriesTitleKey]};
 	TableCellDataObject *cellInfo = [[TableCellDataObject alloc] initWithDictionary:cellDict];
 	cell.cellInfo = cellInfo;
-	[cellInfo release];
 }
 
 #pragma mark -
@@ -173,9 +175,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if (categories_ && !IsEmpty(categories_[self.chamber]))
-		return [categories_[self.chamber] count];
-	else if (loadingStatus > LOADING_IDLE)
+	if (!IsEmpty(self.categories[self.chamber]))
+		return [self.categories[self.chamber] count];
+	else if (self.loadingStatus > LOADING_IDLE)
 		return 1;
 	else
 		return 0;
@@ -183,9 +185,9 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if (loadingStatus > LOADING_IDLE) {
+	if (self.loadingStatus > LOADING_IDLE) {
 		if (indexPath.row == 0) {
-			return [LoadingCell loadingCellWithStatus:loadingStatus tableView:tableView];
+			return [LoadingCell loadingCellWithStatus:self.loadingStatus tableView:tableView];
 		}
 		else {	// to make things work with our upcoming configureCell:, we need to trick this a little
 			indexPath = [NSIndexPath indexPathForRow:(indexPath.row-1) inSection:indexPath.section];
@@ -197,8 +199,8 @@
 	TexLegeBadgeGroupCell *cell = (TexLegeBadgeGroupCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if (cell == nil)
 	{
-		cell = [[[TexLegeBadgeGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle 
-									   reuseIdentifier:CellIdentifier] autorelease];		
+		cell = [[TexLegeBadgeGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle 
+									   reuseIdentifier:CellIdentifier];		
     }
 	
 	[self configureCell:cell atIndexPath:indexPath];		
@@ -209,15 +211,15 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-	if (!categories_ ||  ([categories_[self.chamber] count] <= indexPath.row))
+	if (!self.categories ||  ([self.categories[self.chamber] count] <= indexPath.row))
 		return;
 	
-	NSDictionary *item = categories_[self.chamber][indexPath.row];
+	NSDictionary *item = self.categories[self.chamber][indexPath.row];
 	if (item && item[kBillCategoriesTitleKey]) {
 		NSString *cat = item[kBillCategoriesTitleKey];
 		NSInteger count = [item[kBillCategoriesCountKey] integerValue];
 		if (cat && count) {
-			BillsListViewController *catResultsView = [[[BillsListViewController alloc] initWithStyle:UITableViewStylePlain] autorelease];
+			BillsListViewController *catResultsView = [[BillsListViewController alloc] initWithStyle:UITableViewStylePlain];
 			BillSearchDataSource *dataSource = [catResultsView valueForKey:@"dataSource"];
 			catResultsView.title = cat;
 			[dataSource startSearchForSubject:cat chamber:(self.chamber).integerValue];
@@ -234,7 +236,7 @@
 
 - (IBAction)loadCategoriesForChamber:(NSInteger)newChamber {
 	if ([TexLegeReachability openstatesReachable]) {
-		loadingStatus = LOADING_ACTIVE;
+		self.loadingStatus = LOADING_ACTIVE;
 		OpenLegislativeAPIs *api = [OpenLegislativeAPIs sharedOpenLegislativeAPIs];
 		StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
 		if (IsEmpty(meta.selectedState) || IsEmpty(meta.currentSession))
@@ -248,21 +250,21 @@
 		[api.osApiClient get:resourcePath queryParams:queryParams delegate:self];
 	}
 	else {
-		loadingStatus = LOADING_NO_NET;
+		self.loadingStatus = LOADING_NO_NET;
 	}
 }
 
 - (NSMutableDictionary*)chamberCategories {
-	if (!categories_ || 
-		(!isFresh && !categories_[self.chamber]) || 
-		!updated || 
-		([[NSDate date] timeIntervalSinceDate:updated] > 3600*24)) {	// if we're over a day old, let's refresh
-		isFresh = NO;
+	if (!self.categories ||
+		(!self.isFresh && !self.categories[self.chamber]) ||
+		!self.updated ||
+		([[NSDate date] timeIntervalSinceDate:self.updated] > 3600*24)) {	// if we're over a day old, let's refresh
+		self.fresh = NO;
 		debug_NSLog(@"BillCategories is stale, need to refresh");
 		
 		[self loadCategoriesForChamber:BOTH_CHAMBERS];	// let's get everything
 	}
-	return categories_;
+	return self.categories;
 }
 
 
@@ -285,23 +287,24 @@
 	ctl.selectedSegmentIndex = 0;
 	ctl.userInteractionEnabled = YES;
 	self.chamberControl = ctl;
-	[ctl release];
 	[self.chamberControl addTarget:self action:@selector(filterChamber:) forControlEvents:UIControlEventValueChanged];
 }
 
 #pragma mark -
 #pragma mark RestKit:RKObjectLoaderDelegate
 
-- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error {
-	if (error && request) {
+- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
+{
+	if (error && request)
+    {
 		debug_NSLog(@"Error loading categories from %@: %@", [request description], [error localizedDescription]);
 	}
 	[[NSNotificationCenter defaultCenter] postNotificationName:kBillCategoriesNotifyError object:nil];
-	loadingStatus = LOADING_IDLE;
+    self.loadingStatus = LOADING_IDLE;
 
-	isFresh = NO;
+	self.fresh = NO;
 	
-	nice_release(categories_);
+    self.categories = nil;
 	
 	// We had trouble loading the events online, so pull up the cache from the one in the documents folder, if possible
 	NSString *thePath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kBillCategoriesCacheFile];
@@ -311,11 +314,11 @@
 		NSData *json = [NSData dataWithContentsOfFile:thePath];
         NSError *error = nil;
 		if (json)
-            categories_ = [[NSJSONSerialization JSONObjectWithData:json options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error] retain];
+            self.categories = [NSJSONSerialization JSONObjectWithData:json options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
 	}
-	if (!categories_) {
-		categories_ = [[NSMutableDictionary dictionary] retain];
-		loadingStatus = LOADING_NO_NET;
+	if (!self.categories) {
+		_categories = [[NSMutableDictionary alloc] init];
+        self.loadingStatus = LOADING_NO_NET;
 	}
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName:kBillCategoriesNotifyLoaded object:nil];
@@ -325,8 +328,10 @@
 }
 
 
-- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response {  
-	if ([request isGET] && [response isOK]) {  
+- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response
+{
+	if ([request isGET] && [response isOK])
+    {
 		// Success! Let's take a look at the data  
 		
         NSError *error = nil;
@@ -343,7 +348,6 @@
 											 total, kBillCategoriesCountKey,
 											 nil];
 			[newArray addObject:newEntry];
-			[newEntry release];
 		}
 		NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:kBillCategoriesTitleKey ascending:YES];
 		[newArray sortUsingDescriptors:@[desc]];
@@ -354,34 +358,30 @@
 		else if ([request.resourcePath hasSubstring:@"/lower" caseInsensitive:NO])
 			inChamber = HOUSE;
 
-		categories_[[NSString stringWithFormat:@"%ld", (long)inChamber]] = newArray;
-		[newArray release];
+		self.categories[[NSString stringWithFormat:@"%ld", (long)inChamber]] = newArray;
 		
 		if (inChamber < SENATE)
 			[self loadCategoriesForChamber:inChamber+1];	// let's load the next chamber too
 		
-		if (categories_.allKeys.count == 3) { // once we have all three arrays ready to go, let's save it
+		if (self.categories.count == 3) { // once we have all three arrays ready to go, let's save it
 			NSString *thePath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kBillCategoriesCacheFile];
 			NSError *error = nil;
-            NSData *json = [NSJSONSerialization dataWithJSONObject:categories_ options:NSJSONWritingPrettyPrinted error:&error];
+            NSData *json = [NSJSONSerialization dataWithJSONObject:self.categories options:NSJSONWritingPrettyPrinted error:&error];
 
 			if (![json writeToFile:thePath atomically:YES]) {
 				NSLog(@"BillCategories: Error writing categories cache to file: %@ = %@", error.localizedDescription, thePath);
 			}
 		}
 		
-		isFresh = YES;
-		if (updated)
-			[updated release];
-		updated = [[NSDate date] retain];
-		
-		loadingStatus = LOADING_IDLE;
+		self.fresh = YES;
+        self.updated = [NSDate date];
+		self.loadingStatus = LOADING_IDLE;
 
 		[[NSNotificationCenter defaultCenter] postNotificationName:kBillCategoriesNotifyLoaded object:nil];
 		
 		[self.tableView reloadData];
 	}
 }
-@end
 
+@end
 

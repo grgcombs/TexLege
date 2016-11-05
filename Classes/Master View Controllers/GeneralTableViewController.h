@@ -12,24 +12,20 @@
 
 
 #import "TableDataSourceProtocol.h"
+#import "TXLDetailProtocol.h"
 
-@interface GeneralTableViewController : UITableViewController <UITableViewDelegate> {
-	IBOutlet id detailViewController;
-	IBOutlet id<TableDataSource> dataSource;
-			 id	selectObjectOnAppear;
-	NSNumber *controllerEnabled;
-}
+@interface GeneralTableViewController : UITableViewController <UITableViewDelegate>
 
-@property (nonatomic,retain) IBOutlet id<TableDataSource> dataSource;
-@property (nonatomic,retain) IBOutlet UIViewController *detailViewController;
-@property (nonatomic,retain)		  id selectObjectOnAppear;
-@property (nonatomic,retain) NSNumber *controllerEnabled;
+@property (nonatomic,strong) IBOutlet id<TableDataSource> dataSource;
+@property (nonatomic,strong) IBOutlet UIViewController<TXLDetailProtocol> *detailViewController;
+@property (nonatomic,strong) id initialObjectToSelect;
+@property (nonatomic,strong) NSNumber *controllerEnabled;
 
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *reachabilityStatusKey;
 
 - (void)configure;
 - (void)runLoadView;
-@property (NS_NONATOMIC_IOSONLY, readonly, assign) Class dataSourceClass;
+@property (NS_NONATOMIC_IOSONLY, readonly, weak) Class dataSourceClass;
 - (IBAction)selectDefaultObject:(id)sender;
 @property (NS_NONATOMIC_IOSONLY, readonly, strong) id firstDataObject;
 - (void)reapplyFiltersAndSort;

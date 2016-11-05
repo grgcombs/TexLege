@@ -20,26 +20,26 @@
 
 @interface DistrictMapObj :  RKManagedObject  <MKAnnotation, LegislatorAnnotation>
 
-@property (nonatomic, retain) NSNumber * chamber;
-@property (nonatomic, retain) NSNumber * centerLon;
-@property (nonatomic, retain) NSNumber * spanLat;
-@property (nonatomic, retain) NSNumber * districtMapID;
-@property (nonatomic, retain) NSNumber * lineWidth;
-@property (nonatomic, retain) NSString * updatedDate;
-@property (nonatomic, retain) NSData * coordinatesData;
-@property (nonatomic, retain) NSNumber * pinColorIndex;
-@property (nonatomic, retain) NSNumber * numberOfCoords;
-@property (nonatomic, retain) NSNumber * maxLat;
-@property (nonatomic, retain) NSNumber * minLat;
-@property (nonatomic, retain) NSNumber * spanLon;
-@property (nonatomic, retain) NSString * coordinatesBase64;
-@property (nonatomic, retain) NSNumber * maxLon;
-@property (nonatomic, retain) NSNumber * district;
-@property (nonatomic, retain) id lineColor;
-@property (nonatomic, retain) NSNumber * minLon;
-@property (nonatomic, retain) NSNumber * centerLat;
-@property (nonatomic, retain) LegislatorObj * legislator;
-@property (nonatomic, readonly) NSString * boundaryID;
+@property (nonatomic, strong) NSNumber * chamber;
+@property (nonatomic, strong) NSNumber * centerLon;
+@property (nonatomic, strong) NSNumber * spanLat;
+@property (nonatomic, strong) NSNumber * districtMapID;
+@property (nonatomic, strong) NSNumber * lineWidth;
+@property (nonatomic, strong) NSString * updatedDate;
+@property (nonatomic, strong) NSData * coordinatesData;
+@property (nonatomic, strong) NSNumber * pinColorIndex;
+@property (nonatomic, strong) NSNumber * numberOfCoords;
+@property (nonatomic, strong) NSNumber * maxLat;
+@property (nonatomic, strong) NSNumber * minLat;
+@property (nonatomic, strong) NSNumber * spanLon;
+@property (nonatomic, strong) NSString * coordinatesBase64;
+@property (nonatomic, strong) NSNumber * maxLon;
+@property (nonatomic, strong) NSNumber * district;
+@property (nonatomic, strong) id lineColor;
+@property (nonatomic, strong) NSNumber * minLon;
+@property (nonatomic, strong) NSNumber * centerLat;
+@property (nonatomic, strong) LegislatorObj * legislator;
+@property (weak, nonatomic, readonly) NSString * boundaryID;
 
 @end
 

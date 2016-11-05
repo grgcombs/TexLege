@@ -28,13 +28,13 @@
 @property (NS_NONATOMIC_IOSONLY, assign) ReachabilityStatus tloConnectionStatus;
 @property (NS_NONATOMIC_IOSONLY, assign) ReachabilityStatus googleConnectionStatus;
 
-@property (NS_NONATOMIC_IOSONLY, retain) Reachability *hostReach;
-@property (NS_NONATOMIC_IOSONLY, retain) Reachability *internetReach;
-@property (NS_NONATOMIC_IOSONLY, retain) Reachability *wifiReach;
-@property (NS_NONATOMIC_IOSONLY, retain) Reachability *openstatesReach;
-@property (NS_NONATOMIC_IOSONLY, retain) Reachability *texlegeReach;
-@property (NS_NONATOMIC_IOSONLY, retain) Reachability *tloReach;
-@property (NS_NONATOMIC_IOSONLY, retain) Reachability *googleReach;
+@property (NS_NONATOMIC_IOSONLY, strong) Reachability *hostReach;
+@property (NS_NONATOMIC_IOSONLY, strong) Reachability *internetReach;
+@property (NS_NONATOMIC_IOSONLY, strong) Reachability *wifiReach;
+@property (NS_NONATOMIC_IOSONLY, strong) Reachability *openstatesReach;
+@property (NS_NONATOMIC_IOSONLY, strong) Reachability *texlegeReach;
+@property (NS_NONATOMIC_IOSONLY, strong) Reachability *tloReach;
+@property (NS_NONATOMIC_IOSONLY, strong) Reachability *googleReach;
 
 @end
 
@@ -68,15 +68,7 @@
 - (void)dealloc
 {
     self.delegate = nil;
-    self.hostReach = nil;
-    self.openstatesReach = nil;
-    self.texlegeReach = nil;
-    self.tloReach = nil;
-    self.googleReach = nil;
-    self.internetReach = nil;
-    self.wifiReach = nil;
 
-    [super dealloc];
 }
 
 - (void)startCheckingReachability:(id<TexLegeReachabilityDelegate>)delegate
@@ -87,45 +79,31 @@
     // method "reachabilityChanged" will be called. 
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(reachabilityChanged:) name: kReachabilityChangedNotification object: nil];
 
-    if (_hostReach)
-        [_hostReach release];
-	_hostReach = [[Reachability reachabilityWithHostName: @"www.apple.com"] retain];
+	_hostReach = [Reachability reachabilityWithHostName: @"www.apple.com"];
 	[_hostReach startNotifier];
 	[self updateStatusWithReachability: _hostReach];
 	
-    if (_openstatesReach)
-        [_openstatesReach release];
-	_openstatesReach = [[Reachability reachabilityWithHostName:osApiHost] retain];
+	_openstatesReach = [Reachability reachabilityWithHostName:osApiHost];
 	[_openstatesReach startNotifier];
 	[self updateStatusWithReachability: _openstatesReach];
 
-    if (_googleReach)
-        [_googleReach release];
-	_googleReach = [[Reachability reachabilityWithHostName:@"maps.google.com"] retain];
+	_googleReach = [Reachability reachabilityWithHostName:@"maps.google.com"];
 	[_googleReach startNotifier];
 	[self updateStatusWithReachability: _googleReach];
 	
-    if (_texlegeReach)
-        [_texlegeReach release];
-	_texlegeReach = [[Reachability reachabilityWithHostName:RESTKIT_HOST] retain];
+	_texlegeReach = [Reachability reachabilityWithHostName:RESTKIT_HOST];
 	[_texlegeReach startNotifier];
 	[self updateStatusWithReachability: _texlegeReach];
 	
-    if (_tloReach)
-        [_tloReach release];
-	_tloReach = [[Reachability reachabilityWithHostName:tloApiHost] retain];
+	_tloReach = [Reachability reachabilityWithHostName:tloApiHost];
 	[_tloReach startNotifier];
 	[self updateStatusWithReachability: _tloReach];
 	
-    if (_internetReach)
-        [_internetReach release];
-	_internetReach = [[Reachability reachabilityForInternetConnection] retain];
+	_internetReach = [Reachability reachabilityForInternetConnection];
 	[_internetReach startNotifier];
 	[self updateStatusWithReachability: _internetReach];
 	
-    if (_wifiReach)
-        [_wifiReach release];
-    _wifiReach = [[Reachability reachabilityForLocalWiFi] retain];
+    _wifiReach = [Reachability reachabilityForLocalWiFi];
 	[_wifiReach startNotifier];
 	[self updateStatusWithReachability: _wifiReach];
 }
@@ -176,8 +154,9 @@
 		if (curReach == self.tloReach)
 			self.tloConnectionStatus = (ReachabilityStatus)currentStatus;
 
-        if (self.delegate)
-            [self.delegate reachabilityDidChange:self];
+        id<TexLegeReachabilityDelegate> delegate = self.delegate;
+        if (delegate)
+            [delegate reachabilityDidChange:self];
 	}
 }
 
@@ -203,7 +182,6 @@
 									 cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel", @"StandardUI", @"Cancelling some activity")
 									 otherButtonTitles:nil];
 	[ noInternetAlert show ];	
-	[ noInternetAlert release ];
 }
 
 + (void)noHostAlert
@@ -215,7 +193,6 @@
 			 cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel", @"StandardUI", @"Cancelling some activity") 
 			 otherButtonTitles:nil];
 	[ alert show ];	
-	[ alert release ];
 }
 
 - (BOOL)isNetworkReachable

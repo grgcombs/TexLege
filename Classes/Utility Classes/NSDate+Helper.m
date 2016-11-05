@@ -30,12 +30,6 @@
 	return self;
 }
 
-- (void)dealloc {
-	[t_formatter release];
-	[t_modFormatter release];
-	[t_calendar release];
-	[super dealloc];
-}
 
 - (NSDateFormatter *)modFormatter {
 	if (!t_modFormatter)
@@ -74,7 +68,7 @@
 	weekdayFormatter.locale = usLocale;
 	weekdayFormatter.dateFormat = @"EEEE";
 	NSString *weekday = [weekdayFormatter stringFromDate:self];
-	if (usLocale) [usLocale release], usLocale = nil;
+	if (usLocale) usLocale = nil;
 	
 	return weekday;
 }
@@ -182,7 +176,6 @@
 		NSDateComponents *componentsToSubtract = [[NSDateComponents alloc] init];
 		componentsToSubtract.day = -7;
 		NSDate *lastweek = [calendar dateByAddingComponents:componentsToSubtract toDate:today options:0];
-		[componentsToSubtract release];
 		if ([date compare:lastweek] == NSOrderedDescending) {
 			displayFormatter.dateFormat = @"EEEE"; // Tuesday
 		} else {
@@ -257,7 +250,6 @@
 	componentsToSubtract.day = 0 - (weekdayComponents.weekday - 1);
 	beginningOfWeek = nil;
 	beginningOfWeek = [calendar dateByAddingComponents:componentsToSubtract toDate:self options:0];
-	[componentsToSubtract release];
 	
 	//normalize to midnight, extract the year, month, and day components and create a new date from those components.
 	NSDateComponents *components = [calendar components:(NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay)
@@ -281,7 +273,6 @@
 	// to get the end of week for a particular date, add (7 - weekday) days
 	componentsToAdd.day = (7 - weekdayComponents.weekday);
 	NSDate *endOfWeek = [calendar dateByAddingComponents:componentsToAdd toDate:self options:0];
-	[componentsToAdd release];
 	
 	return endOfWeek;
 }
@@ -293,7 +284,6 @@
 	// to get the week offset for a particular date, subtract 7 days
 	componentsToAdd.day = days;
 	NSDate *timeFrom = [calendar dateByAddingComponents:componentsToAdd toDate:self options:0];
-	[componentsToAdd release];
 	
 	return timeFrom;
 }

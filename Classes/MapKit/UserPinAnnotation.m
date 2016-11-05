@@ -80,12 +80,8 @@ NSString * const kUserPinAnnotationAddressChangeKey = @"UserPinAnnotationAddress
 
 - (void)dealloc
 {
-    self.imageName = nil;
-    self.pinColorIndex = nil;
-    self.placemark = nil;
     self.coordinateChangedDelegate = nil;
 
-	[super dealloc];
 }
 
 - (void)reloadTitle

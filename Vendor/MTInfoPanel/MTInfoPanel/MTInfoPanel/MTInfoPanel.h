@@ -35,9 +35,9 @@ typedef NS_ENUM(unsigned int, MTInfoPanelType) {
 @interface MTInfoPanel : UIView
 
 @property (nonatomic, assign) SEL onTouched;
-@property (nonatomic, assign) id delegate;
+@property (nonatomic, weak) id delegate;
 @property (nonatomic, assign) SEL onFinished;
-@property (nonatomic, assign) NSString *subtitle;
+@property (nonatomic, weak) NSString *subtitle;
 
 + (MTInfoPanel *)showPanelInView:(UIView *)view
                             type:(MTInfoPanelType)type 

@@ -18,8 +18,8 @@
 	NSNumber *legislatorID;
 	NSDictionary *chartData;
 }
-@property (nonatomic,retain) NSNumber *legislatorID;
-@property (nonatomic,retain) NSDictionary *chartData;
+@property (nonatomic,strong) NSNumber *legislatorID;
+@property (nonatomic,strong) NSDictionary *chartData;
 
 - (void)prepareVotingRecordView:(S7GraphView *)aView;
 

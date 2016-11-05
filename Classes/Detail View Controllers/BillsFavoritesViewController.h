@@ -15,10 +15,6 @@
 
 #define kBillFavoritesStorageFile @"FavoriteBills.plist"
 
-@interface BillsFavoritesViewController : UITableViewController <RKRequestDelegate, UITableViewDelegate> {
-	NSMutableArray *_watchList;
-	NSMutableDictionary *_cachedBills;
-}
+@interface BillsFavoritesViewController : UITableViewController <RKRequestDelegate, UITableViewDelegate>
 - (IBAction)loadBills:(id)sender;
-	
 @end

@@ -77,10 +77,10 @@
 	self.searchDisplayController.searchBar.tintColor = [TexLegeTheme accent];
 	self.navigationItem.titleView = self.filterControls;
 	
-	self.selectObjectOnAppear = nil;
+	self.initialObjectToSelect = nil;
 /*
- if (!self.selectObjectOnAppear && [UtilityMethods isIPadDevice])
-		self.selectObjectOnAppear = [self firstDataObject];
+ if (!self.initialObjectToSelect && [UtilityMethods isIPadDevice])
+		self.initialObjectToSelect = [self firstDataObject];
 */
 }
 
@@ -95,7 +95,7 @@
 
 	/*
 	//// ALL OF THE FOLLOWING MUST NOT RUN ON IPHONE (I.E. WHEN THERE'S NO SPLITVIEWCONTROLLER	
-	if ([UtilityMethods isIPadDevice] && self.selectObjectOnAppear == nil) {
+	if ([UtilityMethods isIPadDevice] && self.initialObjectToSelect == nil) {
 		id detailObject = nil;
 
 		if (self.detailViewController && [self.detailViewController isKindOfClass:[MapViewController class]]) {
@@ -116,11 +116,11 @@
 				}
 				detailObject = [self.dataSource dataObjectForIndexPath:currentIndexPath];				
 			}
-			self.selectObjectOnAppear = detailObject;
+			self.initialObjectToSelect = detailObject;
 			
 		}
 			
-		self.selectObjectOnAppear = detailObject;
+		self.initialObjectToSelect = detailObject;
 	}	
 	
 	// END: IPAD ONLY

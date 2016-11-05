@@ -20,25 +20,25 @@
 
 @interface DistrictOfficeObj :  RKManagedObject  <MKAnnotation, LegislatorAnnotation>
 
-@property (nonatomic, retain) NSNumber * chamber;
-@property (nonatomic, retain) NSNumber * spanLat;
-@property (nonatomic, retain) NSString * phone;
-@property (nonatomic, retain) NSNumber * districtOfficeID;
-@property (nonatomic, retain) NSNumber * pinColorIndex;
-@property (nonatomic, retain) NSNumber * longitude;
-@property (nonatomic, retain) NSString * stateCode;
-@property (nonatomic, retain) NSNumber * latitude;
-@property (nonatomic, retain) NSString * updatedDate;
-@property (nonatomic, retain) NSString * fax;
-@property (nonatomic, retain) NSString * formattedAddress;
-@property (nonatomic, retain) NSString * address;
-@property (nonatomic, retain) NSString * city;
-@property (nonatomic, retain) NSString * county;
-@property (nonatomic, retain) NSNumber * district;
-@property (nonatomic, retain) NSNumber * spanLon;
-@property (nonatomic, retain) NSString * zipCode;
-@property (nonatomic, retain) NSNumber * legislatorID;
-@property (nonatomic, retain) LegislatorObj * legislator;
+@property (nonatomic, strong) NSNumber * chamber;
+@property (nonatomic, strong) NSNumber * spanLat;
+@property (nonatomic, strong) NSString * phone;
+@property (nonatomic, strong) NSNumber * districtOfficeID;
+@property (nonatomic, strong) NSNumber * pinColorIndex;
+@property (nonatomic, strong) NSNumber * longitude;
+@property (nonatomic, strong) NSString * stateCode;
+@property (nonatomic, strong) NSNumber * latitude;
+@property (nonatomic, strong) NSString * updatedDate;
+@property (nonatomic, strong) NSString * fax;
+@property (nonatomic, strong) NSString * formattedAddress;
+@property (nonatomic, strong) NSString * address;
+@property (nonatomic, strong) NSString * city;
+@property (nonatomic, strong) NSString * county;
+@property (nonatomic, strong) NSNumber * district;
+@property (nonatomic, strong) NSNumber * spanLon;
+@property (nonatomic, strong) NSString * zipCode;
+@property (nonatomic, strong) NSNumber * legislatorID;
+@property (nonatomic, strong) LegislatorObj * legislator;
 
 @end
 

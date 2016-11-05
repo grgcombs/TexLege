@@ -171,16 +171,14 @@
                                     stageKeys, @"keys",
                                     @(billType), @"billType",
                                     nil];
-    [stages release];
-    [stageKeys release];
 
-    nice_release(stage1);
-    nice_release(stage2);
-    nice_release(stage3);
-    nice_release(stage4);
-    nice_release(stage5);
-    nice_release(stage6);
-    nice_release(stage7);
+
+
+
+
+
+
+
 
     return results;
 }

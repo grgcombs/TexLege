@@ -62,23 +62,16 @@
 		_voters = nil;
 		if (newVotes)
         {
-			_billVotes = [[newVotes mutableCopy] retain];
+			_billVotes = [newVotes mutableCopy];
             id voteID = newVotes[@"vote_id"];
             if (voteID)
-                _voteID = [voteID retain];
+                _voteID = voteID;
 			[self loadVotesAndVoters];
 		}
 	}
 	return self;
 }
 
-- (void)dealloc
-{
-	self.voteID = nil;
-	self.voters = nil;	
-	self.billVotes = nil;	
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark UITableViewDataSource methods
@@ -126,10 +119,11 @@
         return;
 
     LegislatorDetailViewController *legVC = [[LegislatorDetailViewController alloc] initWithNibName:@"LegislatorDetailViewController" bundle:nil];
-    legVC.legislator = legislator;	
-    if (self.viewController)
-        [self.viewController.navigationController pushViewController:legVC animated:YES];
-    [legVC release];
+    legVC.legislator = legislator;
+    UIViewController *controller = self.viewController;
+    if (!controller)
+        return;
+    [controller.navigationController pushViewController:legVC animated:YES];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -142,8 +136,8 @@
 	
 	if (cell == nil)
     {
-		cell = [[[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:leg_cell_ID] autorelease];
-		cell.accessoryView = [[[UIImageView alloc] initWithFrame:CGRectMake(0.f, 0.f, 50.f, 50.f)] autorelease];
+		cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:leg_cell_ID];
+		cell.accessoryView = [[UIImageView alloc] initWithFrame:CGRectMake(0.f, 0.f, 50.f, 50.f)];
 		cell.detailTextLabel.font = [TexLegeTheme boldFifteen];
 		cell.textLabel.font = [TexLegeTheme boldTwelve];
 	}
@@ -201,7 +195,7 @@
     self.voters = nil;
     NSMutableArray *voters = [@[] mutableCopy];
     self.voters = voters;
-    [voters release], voters = nil;
+    voters = nil;
 
     @autoreleasepool {
 
@@ -242,7 +236,6 @@
                                                       member.photo_url, @"photo_url",
                                                       nil];
                         [self.voters addObject:voter];
-                        [voter release];
                     }
                 }
             }

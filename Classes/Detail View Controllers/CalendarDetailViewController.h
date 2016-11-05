@@ -19,12 +19,12 @@
 
 @interface CalendarDetailViewController : KalViewController <UISplitViewControllerDelegate,UISearchDisplayDelegate,UITableViewDelegate, UIPopoverControllerDelegate, EKEventViewDelegate, TXLDetailProtocol>
 
-@property (nonatomic, retain) id dataObject;
-@property (nonatomic, retain) UIPopoverController *masterPopover;
-@property (nonatomic, retain) UIPopoverController *eventPopover;
+@property (nonatomic, strong) id dataObject;
+@property (nonatomic, strong) UIPopoverController *masterPopover;
+@property (nonatomic, strong) UIPopoverController *eventPopover;
 
-@property (nonatomic, retain) IBOutlet UIWebView *webView;
-@property (nonatomic, retain) ChamberCalendarObj *chamberCalendar;
+@property (nonatomic, strong) IBOutlet UIWebView *webView;
+@property (nonatomic, strong) ChamberCalendarObj *chamberCalendar;
 @property (nonatomic, assign) CGRect selectedRowRect;
 
 + (NSString *)nibName;

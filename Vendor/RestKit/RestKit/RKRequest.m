@@ -294,7 +294,8 @@
     [self cancelAndInformDelegate:YES];
 }
 
-- (void)didFailLoadWithError:(NSError*)error {
+- (void)didFailLoadWithError:(NSError*)error
+{
 	_isLoading = NO;
 
 	if ([_delegate respondsToSelector:@selector(request:didFailLoadWithError:)]) {
@@ -304,7 +305,8 @@
 	[[NSNotificationCenter defaultCenter] postNotificationName:RKRequestFailedWithErrorNotification object:self userInfo:nil];
 }
 
-- (void)didFinishLoad:(RKResponse*)response {
+- (void)didFinishLoad:(RKResponse*)response
+{
   	_isLoading = NO;
   	_isLoaded = YES;
 

@@ -20,14 +20,14 @@
 {
 }
 
-@property (nonatomic, retain) NSString * phone;
-@property (nonatomic, retain) NSString * updatedDate;
-@property (nonatomic, retain) NSNumber * legislatorID;
-@property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) NSString * email;
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSNumber * stafferID;
-@property (nonatomic, retain) LegislatorObj * legislator;
+@property (nonatomic, strong) NSString * phone;
+@property (nonatomic, strong) NSString * updatedDate;
+@property (nonatomic, strong) NSNumber * legislatorID;
+@property (nonatomic, strong) NSString * title;
+@property (nonatomic, strong) NSString * email;
+@property (nonatomic, strong) NSString * name;
+@property (nonatomic, strong) NSNumber * stafferID;
+@property (nonatomic, strong) LegislatorObj * legislator;
 
 @end
 

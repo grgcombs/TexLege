@@ -16,6 +16,6 @@
 @interface BillsListViewController : UITableViewController <UITableViewDelegate> {
 	IBOutlet BillSearchDataSource *dataSource;
 }
-@property (nonatomic,retain) BillSearchDataSource *dataSource;
+@property (nonatomic,strong) BillSearchDataSource *dataSource;
 
 @end

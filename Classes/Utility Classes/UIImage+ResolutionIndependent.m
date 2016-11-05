@@ -49,7 +49,7 @@
 }
 
 + (UIImage*)imageWithContentsOfResolutionIndependentFile:(NSString *)path {
-    return [[[UIImage alloc] initWithContentsOfResolutionIndependentFile:path] autorelease];
+    return [[UIImage alloc] initWithContentsOfResolutionIndependentFile:path];
 }
 
 @end

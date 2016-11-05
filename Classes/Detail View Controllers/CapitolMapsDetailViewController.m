@@ -52,16 +52,13 @@
 	if ([UtilityMethods isIPadDevice] && !self.map && ![UtilityMethods isLandscapeOrientation])  {
 		TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
 		
-		self.map = appDelegate.capitolMapsMasterVC.selectObjectOnAppear;		
+		self.map = appDelegate.capitolMapsMasterVC.initialObjectToSelect;		
 
 	}	
 }
 
 - (void)dealloc {
-	self.webView = nil;
 	self.map = nil;
-	self.masterPopover = nil;
-	[super dealloc];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -85,13 +82,13 @@
 
 - (void)setMap:(CapitolMap *)newObj {
 	
-	if (map) [map release], map = nil;
+	if (map) map = nil;
 	if (newObj) {
 		if (masterPopover) {
 			[masterPopover dismissPopoverAnimated:YES];
 		}
 		
-		map = [newObj retain];
+		map = newObj;
 
 		self.navigationItem.title = map.name;
 		[self.webView loadRequest:[NSURLRequest requestWithURL:map.url]];

@@ -33,7 +33,7 @@ extern const CGFloat kCommitteeMemberCellViewHeight;
 @property (nonatomic) CGFloat sliderMin;
 @property (nonatomic) CGFloat sliderMax;
 
-@property (retain, nonatomic) UIImage *questionImage;
+@property (strong, nonatomic) UIImage *questionImage;
 @property (nonatomic,getter=isHighlighted,assign) BOOL highlighted;
 
 - (void)setLegislator:(LegislatorObj *)value;

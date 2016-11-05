@@ -19,7 +19,7 @@
 		370813E6122C537800D8CA69 /* DisclosureQuartzView.m in Sources */ = {isa = PBXBuildFile; fileRef = 370813E5122C536B00D8CA69 /* DisclosureQuartzView.m */; };
 		37094D96133B162E00B9693C /* TexLegeBadgeGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37094D95133B162E00B9693C /* TexLegeBadgeGroupCell.m */; };
 		37094D97133B162E00B9693C /* TexLegeBadgeGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37094D95133B162E00B9693C /* TexLegeBadgeGroupCell.m */; };
-		3709AEAE101FBE7900C1061B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 3709AEAD101FBE7900C1061B /* Reachability.m */; };
+		3709AEAE101FBE7900C1061B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 3709AEAD101FBE7900C1061B /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3709AF0D101FBF5100C1061B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3709AF0C101FBF5100C1061B /* SystemConfiguration.framework */; };
 		370B9DC1122AC5DF00AC9CC8 /* LegislatorDetailDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 370B9DC0122AC5DF00AC9CC8 /* LegislatorDetailDataSource.m */; };
 		370B9DD0122AD22C00AC9CC8 /* TexLegeStandardGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 370B9DCF122AD22C00AC9CC8 /* TexLegeStandardGroupCell.m */; };
@@ -108,7 +108,7 @@
 		37674B331002C492003FD09F /* Map.Floor3.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2C1002C492003FD09F /* Map.Floor3.pdf */; };
 		37674B341002C492003FD09F /* Map.FloorE2.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2D1002C492003FD09F /* Map.FloorE2.pdf */; };
 		37678E8A1AFEC2DC0016B8E5 /* libRestKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37678E851AFEC2C20016B8E5 /* libRestKit.a */; };
-		37678F491AFFE92F0016B8E5 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1C7513CB677100655550 /* JSONKit.m */; };
+		37678F491AFFE92F0016B8E5 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1C7513CB677100655550 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37678F4A1AFFE93E0016B8E5 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1C7513CB677100655550 /* JSONKit.m */; };
 		37678F561AFFEC9F0016B8E5 /* VotingRecordDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5AC7133D6F8B0070EA64 /* VotingRecordDataSource.m */; };
 		376850221234AAFD00AEEC3D /* PartisanScaleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 376850211234AAFD00AEEC3D /* PartisanScaleView.m */; };
@@ -398,7 +398,7 @@
 		37BA166813B2FCFA0088057B /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
 		37BA166913B2FCFB0088057B /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
 		37BF251211D64B5400B71688 /* LegislatorDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */; };
-		37C7845914D30444006BBEDE /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C7845814D30444006BBEDE /* LocalyticsDatabase.m */; };
+		37C7845914D30444006BBEDE /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C7845814D30444006BBEDE /* LocalyticsDatabase.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37C7845A14D30444006BBEDE /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C7845814D30444006BBEDE /* LocalyticsDatabase.m */; };
 		37C7845C14D304B2006BBEDE /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845B14D304B2006BBEDE /* libsqlite3.dylib */; };
 		37C7845D14D304DF006BBEDE /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845B14D304B2006BBEDE /* libsqlite3.dylib */; };
@@ -456,7 +456,7 @@
 		37E36CFA139E69F800917F40 /* 138-scales@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E36CF8139E69F800917F40 /* 138-scales@2x.png */; };
 		37E36CFB139E69F800917F40 /* 138-scales.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E36CF7139E69F800917F40 /* 138-scales.png */; };
 		37E36CFC139E69F800917F40 /* 138-scales@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E36CF8139E69F800917F40 /* 138-scales@2x.png */; };
-		37E36D03139E6D0A00917F40 /* VTPGAdvancedLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36D02139E6D0A00917F40 /* VTPGAdvancedLog.m */; };
+		37E36D03139E6D0A00917F40 /* VTPGAdvancedLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36D02139E6D0A00917F40 /* VTPGAdvancedLog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37E36D04139E6D0A00917F40 /* VTPGAdvancedLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36D02139E6D0A00917F40 /* VTPGAdvancedLog.m */; };
 		37E635FC139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E635FA139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m */; };
 		37E635FE139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E635FA139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m */; };
@@ -512,8 +512,8 @@
 		37F7C06C14D32775000853D5 /* UIViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05714D32775000853D5 /* UIViewAdditions.m */; };
 		37F7C06D14D32775000853D5 /* UIViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05714D32775000853D5 /* UIViewAdditions.m */; };
 		37FC487013110A9E00A4C0B2 /* BillSearchDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FC486F13110A9E00A4C0B2 /* BillSearchDataSource.m */; };
-		37FE1CDD13CB75FD00655550 /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CD913CB75FD00655550 /* LocalyticsSession.m */; };
-		37FE1CDE13CB75FD00655550 /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CDB13CB75FD00655550 /* UploaderThread.m */; };
+		37FE1CDD13CB75FD00655550 /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CD913CB75FD00655550 /* LocalyticsSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		37FE1CDE13CB75FD00655550 /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CDB13CB75FD00655550 /* UploaderThread.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37FE1CDF13CB75FD00655550 /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CD913CB75FD00655550 /* LocalyticsSession.m */; };
 		37FE1CE013CB75FD00655550 /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CDB13CB75FD00655550 /* UploaderThread.m */; };
 		37FE1E0C13CB8E3300655550 /* AppendingFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1D9A13CB8E3300655550 /* AppendingFlowView.m */; };
@@ -1127,6 +1127,15 @@
 		37F7C05614D32775000853D5 /* UIViewAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIViewAdditions.h; path = src/UIViewAdditions.h; sourceTree = "<group>"; };
 		37F7C05714D32775000853D5 /* UIViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIViewAdditions.m; path = src/UIViewAdditions.m; sourceTree = "<group>"; };
 		37F9523F1211409300206241 /* 110-bug@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "110-bug@2x.png"; sourceTree = "<group>"; };
+		37FAD07A1DCBEE8100158071 /* SLFInfoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLFInfoItem.h; sourceTree = "<group>"; };
+		37FAD07B1DCBEE8100158071 /* SLFInfoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLFInfoItem.m; sourceTree = "<group>"; };
+		37FAD07C1DCBEE8100158071 /* SLFInfoPanelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLFInfoPanelManager.h; sourceTree = "<group>"; };
+		37FAD07D1DCBEE8100158071 /* SLFInfoPanelManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLFInfoPanelManager.m; sourceTree = "<group>"; };
+		37FAD0851DCBEE9600158071 /* SLFAbstractCodableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLFAbstractCodableObject.h; sourceTree = "<group>"; };
+		37FAD0861DCBEE9600158071 /* SLFAbstractCodableObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLFAbstractCodableObject.m; sourceTree = "<group>"; };
+		37FAD0881DCBEF1100158071 /* SLFTypeCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLFTypeCheck.h; sourceTree = "<group>"; };
+		37FAD0891DCBEF3100158071 /* SLFObjectQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLFObjectQueue.h; sourceTree = "<group>"; };
+		37FAD08A1DCBEF3100158071 /* SLFObjectQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLFObjectQueue.m; sourceTree = "<group>"; };
 		37FBB74812224A8400CD8E20 /* DistrictOfficeDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DistrictOfficeDataSource.h; sourceTree = "<group>"; };
 		37FBB74912224A8400CD8E20 /* DistrictOfficeDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DistrictOfficeDataSource.m; sourceTree = "<group>"; };
 		37FBB75A122253BC00CD8E20 /* DistrictOfficeMasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DistrictOfficeMasterViewController.h; sourceTree = "<group>"; };
@@ -1341,6 +1350,7 @@
 			children = (
 				3701B5FA19AD348800A9F631 /* RestKit.xcodeproj */,
 				37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */,
+				37FAD0791DCBEE8100158071 /* SLFInfoPanel */,
 				3781E7BA14E0930A002A80AC /* MTInfoPanel */,
 				37FE1EAE13CB8EFE00655550 /* IntelligentSplitViewController */,
 				37FE1D9413CB8E3300655550 /* AppendingFlowView */,
@@ -2165,6 +2175,23 @@
 			path = custom;
 			sourceTree = "<group>";
 		};
+		37FAD0791DCBEE8100158071 /* SLFInfoPanel */ = {
+			isa = PBXGroup;
+			children = (
+				37FAD0851DCBEE9600158071 /* SLFAbstractCodableObject.h */,
+				37FAD0861DCBEE9600158071 /* SLFAbstractCodableObject.m */,
+				37FAD07A1DCBEE8100158071 /* SLFInfoItem.h */,
+				37FAD07B1DCBEE8100158071 /* SLFInfoItem.m */,
+				37FAD07C1DCBEE8100158071 /* SLFInfoPanelManager.h */,
+				37FAD07D1DCBEE8100158071 /* SLFInfoPanelManager.m */,
+				37FAD0891DCBEF3100158071 /* SLFObjectQueue.h */,
+				37FAD08A1DCBEF3100158071 /* SLFObjectQueue.m */,
+				37FAD0881DCBEF1100158071 /* SLFTypeCheck.h */,
+			);
+			name = SLFInfoPanel;
+			path = Vendor/SLFInfoPanel;
+			sourceTree = SOURCE_ROOT;
+		};
 		37FE1C4D13CB677000655550 /* JSONKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -2950,6 +2977,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = NO;
 				HEADER_SEARCH_PATHS = (
@@ -2977,6 +3005,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3077,12 +3106,14 @@
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -3126,6 +3157,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3152,12 +3184,14 @@
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -3202,6 +3236,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3228,12 +3263,14 @@
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -3279,12 +3316,14 @@
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;

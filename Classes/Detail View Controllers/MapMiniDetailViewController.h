@@ -15,11 +15,11 @@
 @interface MapMiniDetailViewController : UIViewController <MKMapViewDelegate, UIActionSheetDelegate> {
 }
 
-@property (nonatomic,retain) IBOutlet MKMapView *mapView;
+@property (nonatomic,strong) IBOutlet MKMapView *mapView;
 @property (nonatomic,readonly) MKCoordinateRegion texasRegion;
-@property (nonatomic,retain) MKPolygonRenderer *districtView;
+@property (nonatomic,strong) MKPolygonRenderer *districtView;
 @property (nonatomic) CLLocationCoordinate2D annotationActionCoord;
-@property (nonatomic,retain) id<MKOverlay> districtOverlay;
+@property (nonatomic,strong) id<MKOverlay> districtOverlay;
 @property (nonatomic,assign) NSInteger colorIndex;
 
 - (void) addDistrictOverlay:(id<MKOverlay>)overlay;

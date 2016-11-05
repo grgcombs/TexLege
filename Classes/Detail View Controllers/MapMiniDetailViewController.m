@@ -53,10 +53,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 		return @"MapMiniDetailViewController~iphone";
 }
 
-- (void) dealloc {
-	self.mapView = nil;
-	[super dealloc];
-}
 
 - (void) didReceiveMemoryWarning {	
 
@@ -138,7 +134,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 			[toRemove removeLastObject];
 			[self.mapView removeOverlays:toRemove];
 		}
-		[toRemove release];
 	}
 }
 
@@ -181,7 +176,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
     {
         return;
     }
-    __block MapMiniDetailViewController *bself = self;
+    __weak MapMiniDetailViewController *bself = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [bself.mapView addOverlay:overlay];
     });
@@ -231,7 +226,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
     }
 	else
 		[popupQuery showInView:self.mapView];
-	[popupQuery release];
 }
 
 //- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -278,8 +272,8 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
         MKPinAnnotationView* pinView = (MKPinAnnotationView *)[theMapView dequeueReusableAnnotationViewWithIdentifier:districtAnnotationID];
         if (!pinView)
         {
-            DistrictPinAnnotationView* customPinView = [[[DistrictPinAnnotationView alloc]
-												   initWithAnnotation:annotation reuseIdentifier:districtAnnotationID] autorelease];			
+            DistrictPinAnnotationView* customPinView = [[DistrictPinAnnotationView alloc]
+												   initWithAnnotation:annotation reuseIdentifier:districtAnnotationID];			
             return customPinView;
         }
         else
@@ -319,7 +313,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 				myColor = [TexLegeTheme texasGreen];
 		}
 
-		MKPolygonRenderer *aView = [[[MKPolygonRenderer alloc] initWithPolygon:(MKPolygon*)overlay] autorelease];
+		MKPolygonRenderer *aView = [[MKPolygonRenderer alloc] initWithPolygon:(MKPolygon*)overlay];
 		aView.fillColor = [/*[UIColor cyanColor]*/myColor colorWithAlphaComponent:0.2];
         aView.strokeColor = [myColor colorWithAlphaComponent:0.7];
         aView.lineWidth = 3;
@@ -331,7 +325,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	
 	else if ([overlay isKindOfClass:[MKPolyline class]])
     {
-        MKPolylineRenderer*    aView = [[[MKPolylineRenderer alloc] initWithPolyline:(MKPolyline*)overlay] autorelease];
+        MKPolylineRenderer*    aView = [[MKPolylineRenderer alloc] initWithPolyline:(MKPolyline*)overlay];
 				
         aView.strokeColor = myColor;// colorWithAlphaComponent:0.7];
         aView.lineWidth = 3;
@@ -378,7 +372,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
             [self.mapView removeOverlays:toRemove];
         }
 
-		[toRemove release];
 		
 		if (!foundOne) {
 			MKPolygon *mapPoly = [(DistrictMapObj*)annotation polygon];

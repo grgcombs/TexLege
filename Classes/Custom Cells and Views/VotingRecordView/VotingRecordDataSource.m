@@ -28,16 +28,12 @@
 }
 
 - (void)dealloc {
-	self.chartData = nil;
 	self.legislatorID = nil;
-	[super dealloc];
 }
 
 - (void)setLegislatorID:(NSNumber *)newID {
-	if (legislatorID)
-		[legislatorID release];
 	if (newID) {
-		legislatorID = [newID retain];
+		legislatorID = newID;
 		self.chartData = [[PartisanIndexStats sharedPartisanIndexStats] partisanshipDataForLegislatorID:newID];	
 	}
 }
@@ -81,8 +77,6 @@
     dateFormatter.dateFormat = @"''yy";
     aView.xValuesFormatter = dateFormatter;
     
-    [dateFormatter release];
-    [numberFormatter release];
     
     aView.yUnit = NSLocalizedStringFromTable(@"Partisanship", @"DataTableUI", @"The data value axis for the partisanship chart, like 'dollars', or 'car sales'");
 }

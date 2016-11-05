@@ -45,7 +45,7 @@
 	for (NSDictionary * mapEntry in searchArray)
 	{
 		if ([fileString isEqualToString:[mapEntry valueForKey:@"file"]]) {
-			foundMap = [[[CapitolMap alloc] init] autorelease];
+			foundMap = [[CapitolMap alloc] init];
 			[foundMap importFromDictionary:mapEntry];
 			break;
 		}
@@ -53,13 +53,6 @@
 	return foundMap;
 }
 
-- (void)dealloc {
-	self.name = nil;
-	self.file = nil;
-	self.type = nil;
-	self.order = nil;
-	[super dealloc];
-}
 
 - (void)importFromDictionary:(NSDictionary *)dictionary
 {				

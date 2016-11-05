@@ -66,8 +66,8 @@
 		return;
 	}*/	
 	
-	if (!self.selectObjectOnAppear && [UtilityMethods isIPadDevice])
-			self.selectObjectOnAppear = [self firstDataObject];
+	if (!self.initialObjectToSelect && [UtilityMethods isIPadDevice])
+			self.initialObjectToSelect = [self firstDataObject];
 
 	[self.chamberControl setTitle:stringForChamber(BOTH_CHAMBERS, TLReturnFull) forSegmentAtIndex:0];
 	[self.chamberControl setTitle:stringForChamber(HOUSE, TLReturnFull) forSegmentAtIndex:1];
@@ -90,7 +90,7 @@
 	}
 			
 	//// ALL OF THE FOLLOWING MUST *NOT* RUN ON IPHONE (I.E. WHEN THERE'S NO SPLITVIEWCONTROLLER
-	if ([UtilityMethods isIPadDevice] && self.selectObjectOnAppear == nil) {
+	if ([UtilityMethods isIPadDevice] && self.initialObjectToSelect == nil) {
 		id detailObject = self.detailViewController ? [self.detailViewController valueForKey:@"committee"] : nil;
 		if (!detailObject) {
 			NSIndexPath *currentIndexPath = (self.tableView).indexPathForSelectedRow;
@@ -100,7 +100,7 @@
 			}
 			detailObject = [self.dataSource dataObjectForIndexPath:currentIndexPath];				
 		}
-		self.selectObjectOnAppear = detailObject;
+		self.initialObjectToSelect = detailObject;
 	}	
 
     [self reapplyFiltersAndSort];
@@ -137,7 +137,7 @@
 		
 	// create a CommitteeDetailViewController. This controller will display the full size tile for the element
 	if (self.detailViewController == nil) {
-		self.detailViewController = [[[CommitteeDetailViewController alloc] initWithNibName:@"CommitteeDetailViewController" bundle:nil] autorelease];
+		self.detailViewController = [[CommitteeDetailViewController alloc] initWithNibName:@"CommitteeDetailViewController" bundle:nil];
 	}
 	
 	CommitteeObj *committee = dataObject;
@@ -166,10 +166,6 @@
     // Relinquish ownership any cached data, images, etc that aren't in use.
 }
 
-- (void)dealloc {
-	self.chamberControl = nil;
-    [super dealloc];
-}
 
 
 #pragma mark -
@@ -207,7 +203,6 @@
         newDict[NSStringFromClass([self class])] = segIndex;
         [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        [newDict release];
     }
     [self reapplyFiltersAndSort];
 }
@@ -230,9 +225,9 @@
 - (void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller {
 	[self.dataSource setHideTableIndex:YES];	
 	// for some reason, these get zeroed out after we restart searching.
-	self.searchDisplayController.searchResultsTableView.rowHeight = self.tableView.rowHeight;
-	self.searchDisplayController.searchResultsTableView.backgroundColor = self.tableView.backgroundColor;
-	self.searchDisplayController.searchResultsTableView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
+	controller.searchResultsTableView.rowHeight = self.tableView.rowHeight;
+	controller.searchResultsTableView.backgroundColor = self.tableView.backgroundColor;
+	controller.searchResultsTableView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
 	
 }
 

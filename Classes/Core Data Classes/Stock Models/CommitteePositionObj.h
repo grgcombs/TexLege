@@ -21,13 +21,13 @@
 {
 }
 
-@property (nonatomic, retain) NSString * updatedDate;
-@property (nonatomic, retain) NSNumber * position;
-@property (nonatomic, retain) NSNumber * legislatorID;
-@property (nonatomic, retain) NSNumber * committeePositionID;
-@property (nonatomic, retain) NSNumber * committeeId;
-@property (nonatomic, retain) CommitteeObj * committee;
-@property (nonatomic, retain) LegislatorObj * legislator;
+@property (nonatomic, strong) NSString * updatedDate;
+@property (nonatomic, strong) NSNumber * position;
+@property (nonatomic, strong) NSNumber * legislatorID;
+@property (nonatomic, strong) NSNumber * committeePositionID;
+@property (nonatomic, strong) NSNumber * committeeId;
+@property (nonatomic, strong) CommitteeObj * committee;
+@property (nonatomic, strong) LegislatorObj * legislator;
 
 @end
 

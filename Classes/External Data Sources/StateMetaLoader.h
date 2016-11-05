@@ -19,31 +19,24 @@
 #define kStateMetaNotifyLoaded		@"STATE_METADATA_LOADED"
 
 
-@interface StateMetaLoader : NSObject <RKRequestDelegate> {
-	NSMutableDictionary *_metadata;
-	NSMutableArray *_loadingStates;
-	BOOL isFresh;
-	NSDate *updated;
-	
-	NSString *_selectedState;
-	NSString *_currentSession;
-}
+@interface StateMetaLoader : NSObject <RKRequestDelegate>
 
 + (id)sharedStateMeta;	// Singleton
 
 // Oftentimes, we just need a quick and dirty answer from our singleton
 + (NSString *)nameForChamber:(NSInteger)chamber;
 
-
 - (void)loadMetadataForState:(NSString *)stateID;
 
-@property (nonatomic) BOOL isFresh;
-
-@property (nonatomic,copy) NSString *selectedState;
-@property (nonatomic,readonly) NSString *currentSession;
-@property (nonatomic,readonly) NSDictionary *stateMetadata;
+@property (NS_NONATOMIC_IOSONLY,getter=isFresh) BOOL fresh;
+@property (NS_NONATOMIC_IOSONLY,copy) NSDate *updated;
+@property (NS_NONATOMIC_IOSONLY,copy) NSString *selectedState;
+@property (NS_NONATOMIC_IOSONLY,copy) NSString *currentSession;
+@property (NS_NONATOMIC_IOSONLY,copy,readonly) NSDictionary *stateMetadata;
+@property (NS_NONATOMIC_IOSONLY,copy,readonly) NSArray *loadingStates;
 
 @end
+
 #define kMetaSelectedStateKey		@"selected_state"
 
 #define kMetaLowerChamberNameKey @"lower_chamber_name"			// House of Representatives

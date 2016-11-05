@@ -16,7 +16,7 @@
 @interface LegislatorContributionsViewController : UITableViewController <UIAlertViewDelegate> {
 
 }
-@property (nonatomic,retain) LegislatorContributionsDataSource *dataSource;
+@property (nonatomic,strong) LegislatorContributionsDataSource *dataSource;
 
 - (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)cycleOrNil;
 - (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)cycleOrNil parameter:(NSString *)parameterOrNil;

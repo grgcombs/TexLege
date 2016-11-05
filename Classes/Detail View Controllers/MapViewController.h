@@ -16,6 +16,7 @@
 
 #import "UserPinAnnotation.h"
 #import "DistrictMapSearchOperation.h"
+#import "TXLDetailProtocol.h"
 
 @interface MapViewController : UIViewController <MKMapViewDelegate,
                                                  UISearchBarDelegate,
@@ -25,21 +26,21 @@
                                                  UIGestureRecognizerDelegate,
                                                  DistrictMapSearchOperationDelegate,
                                                  CLLocationManagerDelegate,
-                                                 UserPinAnnotationDelegate>
+                                                 UserPinAnnotationDelegate,
+                                                 TXLDetailProtocol>
 
-@property (nonatomic,retain) IBOutlet UIPopoverController *masterPopover;
-@property (nonatomic,retain) IBOutlet MKMapView *mapView;
-@property (nonatomic,retain) IBOutlet UIToolbar *toolbar;
-@property (nonatomic,retain) IBOutlet UISegmentedControl *mapTypeControl;
-@property (nonatomic,retain) IBOutlet UIBarButtonItem *mapTypeControlButton;
-@property (nonatomic,retain) IBOutlet UIBarButtonItem *userLocationButton;
-@property (nonatomic,retain) IBOutlet UIBarButtonItem *districtOfficesButton;
-@property (nonatomic,retain) IBOutlet UIBarButtonItem *searchBarButton;
-@property (nonatomic,retain) IBOutlet UISearchBar *searchBar;
+@property (nonatomic,strong) IBOutlet MKMapView *mapView;
+@property (nonatomic,strong) IBOutlet UIToolbar *toolbar;
+@property (nonatomic,strong) IBOutlet UISegmentedControl *mapTypeControl;
+@property (nonatomic,strong) IBOutlet UIBarButtonItem *mapTypeControlButton;
+@property (nonatomic,strong) IBOutlet UIBarButtonItem *userLocationButton;
+@property (nonatomic,strong) IBOutlet UIBarButtonItem *districtOfficesButton;
+@property (nonatomic,strong) IBOutlet UIBarButtonItem *searchBarButton;
+@property (nonatomic,strong) IBOutlet UISearchBar *searchBar;
 @property (nonatomic,readonly) MKCoordinateRegion texasRegion;
-@property (nonatomic,retain) UserPinAnnotation *searchLocation;
-@property (nonatomic,retain) MKPolygonRenderer *senateDistrictView, *houseDistrictView;
-@property (nonatomic,retain) NSOperationQueue *genericOperationQueue;
+@property (nonatomic,strong) UserPinAnnotation *searchLocation;
+@property (nonatomic,strong) MKPolygonRenderer *senateDistrictView, *houseDistrictView;
+@property (nonatomic,strong) NSOperationQueue *genericOperationQueue;
 @property (nonatomic,assign) NSInteger colorIndex;
 
 #if 0 // can't get custom objects while using propertiesToFetch: anymore

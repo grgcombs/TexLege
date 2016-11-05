@@ -31,8 +31,8 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	if (!self.selectObjectOnAppear && [UtilityMethods isIPadDevice])
-		self.selectObjectOnAppear = [self firstDataObject];
+	if (!self.initialObjectToSelect && [UtilityMethods isIPadDevice])
+		self.initialObjectToSelect = [self firstDataObject];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -51,7 +51,7 @@
 	
 	//// ALL OF THE FOLLOWING MUST *NOT* RUN ON IPHONE (I.E. WHEN THERE'S NO SPLITVIEWCONTROLLER
 	
-	if ([UtilityMethods isIPadDevice] && self.selectObjectOnAppear == nil) {
+	if ([UtilityMethods isIPadDevice] && self.initialObjectToSelect == nil) {
 		id detailObject = self.detailViewController ? [self.detailViewController valueForKey:@"map"] : nil;
 		
 		if (!detailObject) {
@@ -62,7 +62,7 @@
 			}
 			detailObject = [self.dataSource dataObjectForIndexPath:currentIndexPath];			
 		}
-		self.selectObjectOnAppear = detailObject;
+		self.initialObjectToSelect = detailObject;
 	}	
 	if ([UtilityMethods isIPadDevice])
 		[self.tableView reloadData]; // this "fixes" an issue where it's using cached (bogus) values for our vote index sliders
@@ -91,7 +91,7 @@
 	
 	// create a CapitolMapsDetailViewController. This controller will display the full size tile for the element
 	if (self.detailViewController == nil) {
-		self.detailViewController = [[[CapitolMapsDetailViewController alloc] initWithNibName:@"CapitolMapsDetailViewController" bundle:nil] autorelease];
+		self.detailViewController = [[CapitolMapsDetailViewController alloc] initWithNibName:@"CapitolMapsDetailViewController" bundle:nil];
 	}
 	
 	CapitolMap *capitolMap = dataObject;

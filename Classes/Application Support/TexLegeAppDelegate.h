@@ -25,27 +25,27 @@
 
 @interface TexLegeAppDelegate : NSObject  <UIApplicationDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, TexLegeReachabilityDelegate>
 
-@property (nonatomic, retain, readonly) DataModelUpdateManager *dataUpdater;
-@property (nonatomic, retain, readonly) UIWindow *mainWindow;
+@property (nonatomic, strong, readonly) DataModelUpdateManager *dataUpdater;
+@property (nonatomic, strong, readonly) UIWindow *mainWindow;
 @property (nonatomic, copy, readonly) NSDictionary *savedTableSelection;
 @property (nonatomic, getter=isAppQuitting,readonly) BOOL appQuitting;
 
 // For Functional View Controllers
-@property (nonatomic, retain) IBOutlet LinksMasterViewController *linksMasterVC;
-@property (nonatomic, retain) IBOutlet CapitolMapsMasterViewController *capitolMapsMasterVC;
-@property (nonatomic, retain) IBOutlet CommitteeMasterViewController *committeeMasterVC;
-@property (nonatomic, retain) IBOutlet LegislatorMasterViewController *legislatorMasterVC;
-@property (nonatomic, retain) IBOutlet CalendarMasterViewController *calendarMasterVC;
-@property (nonatomic, retain) IBOutlet DistrictMapMasterViewController *districtMapMasterVC;
-@property (nonatomic, retain) IBOutlet BillsMasterViewController *billsMasterVC;
+@property (nonatomic, strong) IBOutlet LinksMasterViewController *linksMasterVC;
+@property (nonatomic, strong) IBOutlet CapitolMapsMasterViewController *capitolMapsMasterVC;
+@property (nonatomic, strong) IBOutlet CommitteeMasterViewController *committeeMasterVC;
+@property (nonatomic, strong) IBOutlet LegislatorMasterViewController *legislatorMasterVC;
+@property (nonatomic, strong) IBOutlet CalendarMasterViewController *calendarMasterVC;
+@property (nonatomic, strong) IBOutlet DistrictMapMasterViewController *districtMapMasterVC;
+@property (nonatomic, strong) IBOutlet BillsMasterViewController *billsMasterVC;
 
-@property (nonatomic, retain) IBOutlet UITabBarController *tabBarController;
+@property (nonatomic, strong) IBOutlet UITabBarController *tabBarController;
 
 // For iPad Interface
-@property (nonatomic, readonly) UISplitViewController *splitViewController;
-@property (nonatomic, readonly) UIViewController *currentMasterViewController;
-@property (nonatomic, readonly) UINavigationController * masterNavigationController;
-@property (nonatomic, readonly) UINavigationController *detailNavigationController;
+@property (weak, nonatomic, readonly) UISplitViewController *splitViewController;
+@property (weak, nonatomic, readonly) UIViewController *currentMasterViewController;
+@property (weak, nonatomic, readonly) UINavigationController * masterNavigationController;
+@property (weak, nonatomic, readonly) UINavigationController *detailNavigationController;
 
 - (id) savedTableSelectionForKey:(NSString *)vcKey;
 - (void)setSavedTableSelection:(id)object forKey:(NSString *)vcKey;

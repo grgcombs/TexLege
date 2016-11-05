@@ -65,11 +65,7 @@
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
-	self.fetchedResultsController = nil;
-	self.searchDisplayController = nil;
-	self.filterString = nil;
 	
-    [super dealloc];
 }
 
 -(void)dataSourceReceivedMemoryWarning:(id)sender {
@@ -147,7 +143,7 @@
 
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Committees"];
 	if (cell == nil) {
-		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Committees"] autorelease];
+		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Committees"];
 
 		cell.detailTextLabel.font = [TexLegeTheme boldFifteen];
 		cell.textLabel.font =		[TexLegeTheme boldTwelve];
@@ -164,7 +160,6 @@
 		DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
 		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
 		cell.accessoryView = qv;
-		[qv release];
 		//[iv release];
 		
 	}
@@ -316,7 +311,7 @@
 
 - (NSArray *)sortDescriptors
 {
-    NSSortDescriptor *sort = [[[NSSortDescriptor alloc] initWithKey:@"committeeName" ascending:YES] autorelease];
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"committeeName" ascending:YES];
     return @[sort];
 }
 /*

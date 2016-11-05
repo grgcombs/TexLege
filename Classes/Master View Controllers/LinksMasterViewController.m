@@ -32,15 +32,12 @@
 
 - (void)configure {
 	[super configure];				
-//	if (self.selectObjectOnAppear && [self.selectObjectOnAppear isKindOfClass:[LinkObj class]]) {
-		self.selectObjectOnAppear = nil; // let's not go hitting up websites on startup (Resources) 
+//	if (self.initialObjectToSelect && [self.initialObjectToSelect isKindOfClass:[LinkObj class]]) {
+		self.initialObjectToSelect = nil; // let's not go hitting up websites on startup (Resources) 
 //	}
 	
 }
 
-- (void)dealloc {
-	[super dealloc];
-}
 
 - (void)didReceiveMemoryWarning {
 	
@@ -54,8 +51,8 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];	
-	if (!self.selectObjectOnAppear && [UtilityMethods isIPadDevice])
-		self.selectObjectOnAppear = [self firstDataObject];
+	if (!self.initialObjectToSelect && [UtilityMethods isIPadDevice])
+		self.initialObjectToSelect = [self firstDataObject];
 }
 
 - (void)viewDidUnload {
@@ -69,7 +66,7 @@
 	
 	//// ALL OF THE FOLLOWING MUST *NOT* RUN ON IPHONE (I.E. WHEN THERE'S NO SPLITVIEWCONTROLLER
 	
-	/*if ([UtilityMethods isIPadDevice] && self.selectObjectOnAppear == nil) {
+	/*if ([UtilityMethods isIPadDevice] && self.initialObjectToSelect == nil) {
 		id detailObject = nil; //self.detailViewController ? [self.detailViewController valueForKey:@"link"] : nil;
 		//if (!detailObject) {
 			NSIndexPath *currentIndexPath = [self.tableView indexPathForSelectedRow];
@@ -79,7 +76,7 @@
 			}
 			detailObject = [self.dataSource dataObjectForIndexPath:currentIndexPath];				
 		//}
-		self.selectObjectOnAppear = detailObject;
+		self.initialObjectToSelect = detailObject;
 	}	*/
 	
 	if ([UtilityMethods isIPadDevice])
@@ -147,7 +144,7 @@
 		
 		// save off this item's selection to our AppDelegate
 		[appDelegate setSavedTableSelection:newIndexPath forKey:NSStringFromClass([self class])];
-		//self.selectObjectOnAppear= link;
+		//self.initialObjectToSelect= link;
 
         NSURL *url = [link actualURL];
         if (!url)
@@ -166,7 +163,6 @@
             
             webController.hidesBottomBarWhenPushed = YES;
             [self.navigationController pushViewController:webController animated:YES];
-            [webController release];
 		}
 		else if (self.detailViewController)
         {

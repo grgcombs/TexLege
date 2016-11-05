@@ -9,11 +9,6 @@
 
 
 @interface XMLReader : NSObject <NSXMLParserDelegate>
-{
-    NSMutableArray *dictionaryStack;
-    NSMutableString *textInProgress;
-    NSError **errorPointer;
-}
 
 + (NSMutableDictionary *)dictionaryForXMLData:(NSData *)data error:(NSError **)errorPointer;
 + (NSMutableDictionary *)dictionaryForXMLString:(NSString *)string error:(NSError **)errorPointer;

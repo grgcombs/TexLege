@@ -44,8 +44,8 @@
 
 - (void)configure {
 	[super configure];	
-	if (!self.selectObjectOnAppear && [UtilityMethods isIPadDevice])
-		self.selectObjectOnAppear = [self firstDataObject];
+	if (!self.initialObjectToSelect && [UtilityMethods isIPadDevice])
+		self.initialObjectToSelect = [self firstDataObject];
 }
 
 
@@ -55,10 +55,6 @@
     // Relinquish ownership any cached data, images, etc that aren't in use.
 }
 
-- (void)dealloc {
-	self.chamberControl = nil;
-    [super dealloc];
-}
 
 
 #pragma mark -
@@ -71,20 +67,19 @@
 	
 	if ([UtilityMethods isIPadDevice])
 	    self.preferredContentSize = CGSizeMake(320.0, 600.0);
-	
-	self.searchDisplayController.delegate = self;
-	self.searchDisplayController.searchResultsDelegate = self;
-	//self.dataSource.searchDisplayController = self.searchDisplayController;
-	//self.searchDisplayController.searchResultsDataSource = self.dataSource;
+
+    UISearchDisplayController *searchController = self.searchDisplayController;
+	searchController.delegate = self;
+	searchController.searchResultsDelegate = self;
+	//searchController.searchResultsDataSource = self.dataSource;
 	
 	self.chamberControl.tintColor = [TexLegeTheme accent];
-	self.searchDisplayController.searchBar.tintColor = [TexLegeTheme accent];
+	searchController.searchBar.tintColor = [TexLegeTheme accent];
 	self.navigationItem.titleView = self.chamberControl;
 	
 	[self.chamberControl setTitle:stringForChamber(BOTH_CHAMBERS, TLReturnFull) forSegmentAtIndex:0];
 	[self.chamberControl setTitle:stringForChamber(HOUSE, TLReturnFull) forSegmentAtIndex:1];
 	[self.chamberControl setTitle:stringForChamber(SENATE, TLReturnFull) forSegmentAtIndex:2];
-	
 }
 
 - (void)viewDidUnload {	
@@ -102,7 +97,7 @@
 	}
 
 	//// ALL OF THE FOLLOWING MUST NOT RUN ON IPHONE (I.E. WHEN THERE'S NO SPLITVIEWCONTROLLER	
-	if ([UtilityMethods isIPadDevice] && self.selectObjectOnAppear == nil) {
+	if ([UtilityMethods isIPadDevice] && self.initialObjectToSelect == nil) {
 		id detailObject = self.detailViewController ? [self.detailViewController valueForKey:@"legislator"] : nil;
 		if (!detailObject) {
 			NSIndexPath *currentIndexPath = (self.tableView).indexPathForSelectedRow;
@@ -112,7 +107,7 @@
 			}
 			detailObject = [self.dataSource dataObjectForIndexPath:currentIndexPath];				
 		}
-		self.selectObjectOnAppear = detailObject;
+		self.initialObjectToSelect = detailObject;
 	}
 
     [self reapplyFiltersAndSort];
@@ -167,7 +162,7 @@
 	
 	// create a LegislatorDetailViewController. This controller will display the full size tile for the element
 	if (self.detailViewController == nil) {
-		self.detailViewController = [[[LegislatorDetailViewController alloc] initWithNibName:@"LegislatorDetailViewController" bundle:nil] autorelease];
+		self.detailViewController = [[LegislatorDetailViewController alloc] initWithNibName:@"LegislatorDetailViewController" bundle:nil];
 	}
 	
 	LegislatorObj *legislator = dataObject;
@@ -232,7 +227,6 @@
         newDict[NSStringFromClass([self class])] = segIndex;
         [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        [newDict release];
     }
     [self reapplyFiltersAndSort];
 }
@@ -243,19 +237,20 @@
     return YES;
 }
 
-- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar {
-	self.searchDisplayController.searchBar.text = @"";
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+{
+	searchBar.text = @"";
 	[self.dataSource removeFilter];
 	[self.searchDisplayController setActive:NO animated:YES];
 }
 
-- (void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller {
+- (void)searchDisplayControllerWillBeginSearch:(UISearchDisplayController *)controller
+{
 	self.dataSource.hideTableIndex = YES;
 	// for some reason, these get zeroed out after we restart searching.
-	self.searchDisplayController.searchResultsTableView.rowHeight = self.tableView.rowHeight;
-	self.searchDisplayController.searchResultsTableView.backgroundColor = self.tableView.backgroundColor;
-	self.searchDisplayController.searchResultsTableView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
-	
+	controller.searchResultsTableView.rowHeight = self.tableView.rowHeight;
+	controller.searchResultsTableView.backgroundColor = self.tableView.backgroundColor;
+	controller.searchResultsTableView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
 }
 
 - (void)searchDisplayControllerWillEndSearch:(UISearchDisplayController *)controller {

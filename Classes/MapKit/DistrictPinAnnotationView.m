@@ -68,14 +68,12 @@
 			UIImageView *pinHead = [[UIImageView alloc] initWithImage:pinImage];
 			pinHead.tag = 999;
 			[self addSubview:pinHead];
-			[pinHead release];
 		}
 	}
 	UIImage *anImage = [self.annotation performSelector:@selector(image)];
 	if (anImage) {
 		UIImageView *iconView = [[UIImageView alloc] initWithImage:anImage];
 		self.leftCalloutAccessoryView = iconView;
-		[iconView release];
 	}
 }
 

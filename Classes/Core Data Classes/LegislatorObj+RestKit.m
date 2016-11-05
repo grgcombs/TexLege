@@ -223,7 +223,7 @@
 }
 
 - (NSArray *)sortedStaffers {
-	NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES] autorelease];
+	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
 	return [(self.staffers).allObjects 
 			sortedArrayUsingDescriptors:@[sortDescriptor]];
 }

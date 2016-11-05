@@ -21,19 +21,15 @@
 
 @interface BillsDetailViewController : UITableViewController <RKRequestDelegate, UISplitViewControllerDelegate, UIPopoverControllerDelegate, TXLDetailProtocol>
 
-@property (nonatomic,retain) id dataObject;
+@property (nonatomic,strong) IBOutlet UIView *headerView;
+@property (nonatomic,strong) IBOutlet UIView *descriptionView;
+@property (nonatomic,strong) IBOutlet AppendingFlowView *statusView;
+@property (nonatomic,strong) IBOutlet UITextView *lab_description;
+@property (nonatomic,strong) IBOutlet UIButton *starButton;
+@property (nonatomic,strong) IBOutlet DDActionHeaderView *actionHeader;
 
-@property (nonatomic,retain) IBOutlet UIView *headerView, *descriptionView;
-@property (nonatomic,retain) IBOutlet AppendingFlowView *statusView;
-@property (nonatomic,retain) IBOutlet UITextView *lab_description;
-@property (nonatomic,retain) IBOutlet UIButton *starButton;
-@property (nonatomic,retain) IBOutlet DDActionHeaderView *actionHeader;
-
-@property (nonatomic,retain) UIPopoverController *masterPopover;
-@property (nonatomic,retain) IBOutlet NSMutableDictionary *bill;
-@property (nonatomic,retain) BillVotesDataSource *voteDataSource;
-
-- (IBAction)resetTableData:(id)sender;
+@property (nonatomic,strong) NSDictionary *bill;
+@property (nonatomic,strong) BillVotesDataSource *voteDataSource;
 
 - (IBAction)starButtonToggle:(id)sender;
 

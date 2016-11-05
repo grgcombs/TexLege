@@ -31,7 +31,7 @@
 
 - (instancetype)initWithStyle:(UITableViewStyle)style {
 	if ((self = [super initWithStyle:style])) {
-		dataSource = [[[BillSearchDataSource alloc] initWithTableViewController:self] retain];
+		dataSource = [[BillSearchDataSource alloc] initWithTableViewController:self];
 		
 		// This will tell the data source to produce a "loading" cell for the table whenever it's searching.
 		dataSource.useLoadingDataCell = YES;
@@ -66,9 +66,7 @@
 
 - (void)dealloc {	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	self.dataSource = nil;
 	
-	[super dealloc];
 }
 
 - (void)viewDidLoad {
@@ -104,50 +102,53 @@
 #pragma mark -
 #pragma mark Table view data source
 
-- (void)tableView:(UITableView *)aTableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)aTableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	BOOL useDark = (indexPath.row % 2 == 0);
 	cell.backgroundColor = useDark ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
 }
 
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	if (![UtilityMethods isIPadDevice])
 		[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
 	NSDictionary *bill = [dataSource dataObjectForIndexPath:indexPath];
-	if (bill && bill[@"bill_id"]) {
-		if (bill) {
-						
-			BOOL changingViews = NO;
-			BOOL needsPushVC = (NO == [UtilityMethods isIPadDevice]);
-			
-			BillsDetailViewController *detailView = nil;
-			if ([UtilityMethods isIPadDevice]) {
-				id aDetail = [TexLegeAppDelegate appDelegate].detailNavigationController.visibleViewController;
-				if ([aDetail isKindOfClass:[BillsDetailViewController class]])
-					detailView = aDetail;
-				else if ([aDetail isKindOfClass:[BillsListViewController class]]) {
-					needsPushVC = YES;
-				}
-			}
-			if (!detailView) {
-				detailView = [[[BillsDetailViewController alloc] 
-							   initWithNibName:@"BillsDetailViewController" bundle:nil] autorelease];
-				changingViews = YES;
-			}
-			
-			detailView.dataObject = bill;
-			[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:bill[@"bill_id"] 
-																			   session:bill[@"session"] 
-																			  delegate:detailView];
-			
-			if (needsPushVC)
-				[self.navigationController pushViewController:detailView animated:YES];
-			else if (changingViews)
-				//[[[TexLegeAppDelegate appDelegate] detailNavigationController] pushViewController:detailView animated:YES];
-				[[TexLegeAppDelegate appDelegate].detailNavigationController setViewControllers:@[detailView] animated:NO];
-		}			
-	}
+	if (!bill)
+        return;
+    NSString *billID = bill[@"bill_id"];
+    if (!billID)
+        return;
+
+    BOOL changingViews = NO;
+    BOOL needsPushVC = (NO == [UtilityMethods isIPadDevice]);
+    UINavigationController *detailNav = [[TexLegeAppDelegate appDelegate] detailNavigationController];
+
+    BillsDetailViewController *detailView = nil;
+    if ([UtilityMethods isIPadDevice])
+    {
+        id aDetail = detailNav.visibleViewController;
+        if ([aDetail isKindOfClass:[BillsDetailViewController class]])
+            detailView = aDetail;
+        else if ([aDetail isKindOfClass:[BillsListViewController class]])
+            needsPushVC = YES;
+    }
+
+    if (!detailView)
+    {
+        detailView = [[BillsDetailViewController alloc] initWithNibName:@"BillsDetailViewController" bundle:nil];
+        changingViews = YES;
+    }
+
+    detailView.dataObject = bill;
+    [[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:billID
+                                                                       session:bill[@"session"]
+                                                                      delegate:detailView];
+    if (needsPushVC)
+        [self.navigationController pushViewController:detailView animated:YES];
+    else if (changingViews)
+        //[detailNav pushViewController:detailView animated:YES];
+        [detailNav setViewControllers:@[detailView] animated:NO];
 }
 
 @end

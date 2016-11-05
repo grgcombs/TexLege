@@ -42,9 +42,7 @@
 
 - (void) dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	self.billSearchDS = nil;
 
-	[super dealloc];
 }
 
 - (NSString *)nibName {
@@ -59,7 +57,7 @@
 	[super viewDidLoad];
 		
 	if (!self.billSearchDS)
-		self.billSearchDS = [[[BillSearchDataSource alloc] initWithSearchDisplayController:self.searchDisplayController] autorelease];
+		self.billSearchDS = [[BillSearchDataSource alloc] initWithSearchDisplayController:self.searchDisplayController];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(reloadData:) name:kBillSearchNotifyDataLoaded object:self.billSearchDS];
@@ -166,7 +164,7 @@
 		if (dataObject) {
 
 			if (!self.detailViewController || ![self.detailViewController isKindOfClass:[BillsDetailViewController class]]) {
-				self.detailViewController = [[[BillsDetailViewController alloc] initWithNibName:@"BillsDetailViewController" bundle:nil] autorelease];
+				self.detailViewController = [[BillsDetailViewController alloc] initWithNibName:@"BillsDetailViewController" bundle:nil];
 				changingDetails = YES;
 			}
 			if ([self.detailViewController respondsToSelector:@selector(setDataObject:)])
@@ -199,7 +197,7 @@
 			return;
 		
 		UITableViewController *tempVC = nil;
-		tempVC = [[[NSClassFromString(theClass) alloc] initWithStyle:UITableViewStylePlain] autorelease];	// we don't want a nib for this one
+		tempVC = [[NSClassFromString(theClass) alloc] initWithStyle:UITableViewStylePlain];	// we don't want a nib for this one
 		
 		if (aTableView == self.searchDisplayController.searchResultsTableView)
         {
@@ -208,7 +206,6 @@
 		
 		NSDictionary *tagMenu = [[NSDictionary alloc] initWithObjectsAndKeys:theClass, @"FEATURE", nil];
 		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"BILL_MENU" attributes:tagMenu];
-		[tagMenu release];
 		
 		// push the detail view controller onto the navigation stack to display it				
 		[self.navigationController pushViewController:tempVC animated:YES];
@@ -227,7 +224,7 @@
 		_searchString = [searchString copy];
 		if (_searchString && _searchString.length >= 3)
         {
-			[self.billSearchDS startSearchForText:_searchString chamber:self.searchDisplayController.searchBar.selectedScopeButtonIndex];
+			[self.billSearchDS startSearchForText:_searchString chamber:controller.searchBar.selectedScopeButtonIndex];
 		}		
 	}
 #endif
@@ -244,11 +241,12 @@
 	return NO;
 }
 
-- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
 {
-    self.searchString = [[NSString alloc] initWithString:@""];
-	self.searchDisplayController.searchBar.text = _searchString;
-	[self.searchDisplayController setActive:NO animated:YES];
+    self.searchString = @"";
+    UISearchDisplayController *searchController = self.searchDisplayController;
+	searchController.searchBar.text = _searchString;
+	[searchController setActive:NO animated:YES];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
@@ -270,11 +268,11 @@
 {
 	////////self.dataSource.hideTableIndex = YES;
 	// for some reason, these get zeroed out after we restart searching.
-	if (self.tableView && self.searchDisplayController.searchResultsTableView)
+	if (self.tableView && controller.searchResultsTableView)
     {
-		self.searchDisplayController.searchResultsTableView.rowHeight = self.tableView.rowHeight;
-		self.searchDisplayController.searchResultsTableView.backgroundColor = self.tableView.backgroundColor;
-		self.searchDisplayController.searchResultsTableView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
+		controller.searchResultsTableView.rowHeight = self.tableView.rowHeight;
+		controller.searchResultsTableView.backgroundColor = self.tableView.backgroundColor;
+		controller.searchResultsTableView.sectionIndexMinimumDisplayRowCount = self.tableView.sectionIndexMinimumDisplayRowCount;
 	}
 }
 
@@ -282,4 +280,5 @@
 {
 	////////self.dataSource.hideTableIndex = NO;
 }
+
 @end

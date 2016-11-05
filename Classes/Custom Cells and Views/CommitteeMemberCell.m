@@ -32,7 +32,6 @@
 		DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
 		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
 		self.accessoryView = qv;
-		[qv release];
 		//[iv release];
 		
 		CGFloat endX = self.contentView.bounds.size.width - 53.f;
@@ -90,9 +89,8 @@
 
 - (void)dealloc {
 	if (cellView)
-		[cellView release], cellView = nil;
+		cellView = nil;
 	
-    [super dealloc];
 }
 
 @end

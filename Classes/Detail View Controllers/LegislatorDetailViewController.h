@@ -19,30 +19,26 @@
 @class TableCellDataObject;
 @class LegislatorDetailDataSource;
 @class VotingRecordDataSource;
+
 @interface LegislatorDetailViewController : UITableViewController <UISplitViewControllerDelegate, 
 													UIPopoverControllerDelegate, TXLDetailProtocol>
-{	
-}
-@property (nonatomic,retain) id dataObject;
-@property (nonatomic,retain) NSNumber *dataObjectID;
 
-@property (nonatomic,retain) IBOutlet S7GraphView *chartView;
-@property (nonatomic,retain) VotingRecordDataSource *votingDataSource;
+//@property (nonatomic,strong) id dataObject;
+@property (nonatomic,strong) NSNumber *dataObjectID;
 
-@property (nonatomic,retain) IBOutlet UIView *miniBackgroundView;
-@property (nonatomic,retain) IBOutlet UIView *headerView;
-@property (nonatomic,retain) IBOutlet UIImageView *leg_photoView;
-@property (nonatomic,retain) IBOutlet UILabel *leg_indexTitleLab, *leg_rankLab, *leg_chamberPartyLab, *leg_chamberLab;
-@property (nonatomic,retain) IBOutlet UILabel *leg_partyLab, *leg_districtLab, *leg_tenureLab, *leg_nameLab, *freshmanPlotLab;
-@property (nonatomic,retain) IBOutlet UILabel *leg_reelection;
-@property (nonatomic,retain) IBOutlet PartisanScaleView *indivSlider, *partySlider, *allSlider;
+@property (nonatomic,strong) IBOutlet S7GraphView *chartView;
+@property (nonatomic,strong) VotingRecordDataSource *votingDataSource;
 
+@property (nonatomic,strong) IBOutlet UIView *miniBackgroundView;
+@property (nonatomic,strong) IBOutlet UIView *headerView;
+@property (nonatomic,strong) IBOutlet UIImageView *leg_photoView;
+@property (nonatomic,strong) IBOutlet UILabel *leg_indexTitleLab, *leg_rankLab, *leg_chamberPartyLab, *leg_chamberLab;
+@property (nonatomic,strong) IBOutlet UILabel *leg_partyLab, *leg_districtLab, *leg_tenureLab, *leg_nameLab, *freshmanPlotLab;
+@property (nonatomic,strong) IBOutlet UILabel *leg_reelection;
+@property (nonatomic,strong) IBOutlet PartisanScaleView *indivSlider, *partySlider, *allSlider;
 
-@property (nonatomic,retain) UIPopoverController *notesPopover;
-@property (nonatomic,retain) UIPopoverController *masterPopover;
-@property (nonatomic,assign) LegislatorObj *legislator;
-@property (nonatomic,retain) LegislatorDetailDataSource *dataSource;
-
-- (IBAction)resetTableData:(id)sender;
+@property (nonatomic,strong) UIPopoverController *notesPopover;
+@property (nonatomic,weak) LegislatorObj *legislator;
+@property (nonatomic,strong) LegislatorDetailDataSource *dataSource;
 
 @end

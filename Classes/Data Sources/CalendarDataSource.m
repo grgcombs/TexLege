@@ -54,10 +54,6 @@
 	return self;
 }
 
-- (void)dealloc {
-	self.calendarList = nil;
-	[super dealloc];
-}
 
 - (void) loadChamberCalendars {
 	[[CalendarEventsLoader sharedCalendarEventsLoader] loadEvents:self];
@@ -79,7 +75,6 @@
         calendarDict[@"chamber"] = @(chamberIndex);
         calendar = [[ChamberCalendarObj alloc] initWithDictionary:calendarDict];
         [self.calendarList addObject:calendar];
-        [calendar release];
         [calendarDict removeAllObjects];
 
         for (chamberIndex=HOUSE; chamberIndex < numberOfChambers; chamberIndex++) {
@@ -90,10 +85,8 @@
             calendarDict[@"chamber"] = @(chamberIndex);
             calendar = [[ChamberCalendarObj alloc] initWithDictionary:calendarDict];
             [self.calendarList addObject:calendar];
-            [calendar release];
             [calendarDict removeAllObjects];
         }
-        [calendarDict release];
     }
 }
 
@@ -125,7 +118,7 @@
 	
 	/* Not found in queue, create a new cell object */
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		cell.textLabel.textColor =	[TexLegeTheme textDark];
 		cell.textLabel.textAlignment = NSTextAlignmentLeft;
 		cell.textLabel.font = [UIFont boldSystemFontOfSize:15];
@@ -138,7 +131,6 @@
 		DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
 		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
 		cell.accessoryView = qv;
-		[qv release];
 		//[iv release];
 		
     }

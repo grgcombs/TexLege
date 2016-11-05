@@ -21,8 +21,8 @@
 	LoadingCell *loadingCell = (LoadingCell *)[tableView dequeueReusableCellWithIdentifier:loadingCellIdentifier];
 	if (loadingCell == nil)
 	{
-		loadingCell = [[[LoadingCell alloc] initWithStyle:UITableViewCellStyleDefault 
-											  reuseIdentifier:loadingCellIdentifier] autorelease];		
+		loadingCell = [[LoadingCell alloc] initWithStyle:UITableViewCellStyleDefault 
+											  reuseIdentifier:loadingCellIdentifier];		
 		
 		if (loadingStatus == LOADING_ACTIVE) {
 			loadingCell.textLabel.text = NSLocalizedStringFromTable(@"Contacting Server", @"StandardUI", @"Notifies the user that data is currently loading");
@@ -31,14 +31,12 @@
 			activity.hidesWhenStopped = YES;
 			[activity startAnimating];
 			loadingCell.accessoryView = activity;
-			[activity release];
 		}
 		else { // (loadingStatus == LOADING_NO_NET)
 			loadingCell.textLabel.text = NSLocalizedStringFromTable(@"Network Connection Unavailable", @"StandardUI", @"");
 			UIImageView *errorView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 24.f, 24.f)];
 			errorView.image = [UIImage imageNamed:@"error"];
 			loadingCell.accessoryView = errorView;
-			[errorView release];
 		}
 		
 		loadingCell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -66,9 +64,6 @@
 }
 
 
-- (void)dealloc {
-    [super dealloc];
-}
 
 
 @end

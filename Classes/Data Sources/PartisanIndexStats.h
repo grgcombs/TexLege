@@ -20,10 +20,10 @@
 @interface PartisanIndexStats : NSObject <RKRequestDelegate>
 
 @property (NS_NONATOMIC_IOSONLY, copy, readonly) NSDictionary *partisanIndexAggregates;
+@property (NS_NONATOMIC_IOSONLY, copy, readonly) NSDate *updated;
 @property (NS_NONATOMIC_IOSONLY, readonly, getter=isFresh) BOOL fresh;
 @property (NS_NONATOMIC_IOSONLY, readonly, getter=isLoading) BOOL loading;
 @property (NS_NONATOMIC_IOSONLY, readonly) BOOL hasData;
-@property (NS_NONATOMIC_IOSONLY, readonly) NSDate *updated;
 
 + (PartisanIndexStats *)sharedPartisanIndexStats;
 - (void)loadPartisanIndex:(id)sender;
@@ -32,9 +32,7 @@
 - (CGFloat) maxPartisanIndexUsingChamber:(NSInteger)chamber;
 - (CGFloat) overallPartisanIndexUsingChamber:(NSInteger)chamber;
 - (CGFloat) partyPartisanIndexUsingChamber:(NSInteger)chamber andPartyID:(NSInteger)party;
-
 - (NSArray *) historyForParty:(NSInteger)party chamber:(NSInteger)chamber;
-
 - (NSDictionary *)partisanshipDataForLegislatorID:(NSNumber*)legislatorID;
 
 @end

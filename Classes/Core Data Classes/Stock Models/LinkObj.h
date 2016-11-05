@@ -19,11 +19,11 @@
 {
 }
 
-@property (nonatomic, retain) NSString * label;
-@property (nonatomic, retain) NSNumber * section;
-@property (nonatomic, retain) NSNumber * sortOrder;
-@property (nonatomic, retain) NSString * url;
-@property (nonatomic, retain) NSString * updatedDate;
+@property (nonatomic, strong) NSString * label;
+@property (nonatomic, strong) NSNumber * section;
+@property (nonatomic, strong) NSNumber * sortOrder;
+@property (nonatomic, strong) NSString * url;
+@property (nonatomic, strong) NSString * updatedDate;
 
 @end
 

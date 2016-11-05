@@ -22,7 +22,7 @@ extern const CGFloat kPartisanScaleViewHeight;
 @property (nonatomic,assign) CGFloat sliderValue;
 @property (nonatomic,assign) CGFloat sliderMin;
 @property (nonatomic,assign) CGFloat sliderMax;
-@property (nonatomic,retain) UIImage *questionImage;
+@property (nonatomic,strong) UIImage *questionImage;
 
 
 @end

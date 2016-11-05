@@ -18,7 +18,7 @@
 @property (nonatomic, copy) NSString * summary;
 //@property (nonatomic, copy) NSString * detail;
 @property (nonatomic, copy) NSString * badgeText;
-@property (nonatomic, retain) UIColor * badgeColor;
-@property (nonatomic, retain) UIColor * badgeHighlightedColor;
+@property (nonatomic, strong) UIColor * badgeColor;
+@property (nonatomic, strong) UIColor * badgeHighlightedColor;
 @property (nonatomic, getter=isClickable) BOOL clickable;
 @end

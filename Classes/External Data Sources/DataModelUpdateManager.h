@@ -21,7 +21,7 @@
 	RKRequestQueue *_queue;
 }
 
-@property (nonatomic,retain) NSCountedSet *activeUpdates;
+@property (nonatomic,strong) NSCountedSet *activeUpdates;
 - (void) performDataUpdatesIfAvailable:(id)sender;
 
 @end

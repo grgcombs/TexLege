@@ -26,17 +26,21 @@
 #pragma mark Initialization
 
 
-- (instancetype)initWithStyle:(UITableViewStyle)style {
+- (instancetype)initWithStyle:(UITableViewStyle)style
+{
     // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-    if ((self = [super initWithStyle:style])) {
-		if (!self.dataSource)
-			self.dataSource = [[[LegislatorContributionsDataSource alloc] init] autorelease];
+    self = [super initWithStyle:style];
+    if (self)
+    {
+		if (!_dataSource)
+			_dataSource = [[LegislatorContributionsDataSource alloc] init];
     }
     return self;
 }
 
 
-- (IBAction)contributionDataChanged:(id)sender {
+- (IBAction)contributionDataChanged:(id)sender
+{
 	[self.tableView reloadData];
 }
 
@@ -47,12 +51,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 	if (!self.dataSource)
-		self.dataSource = [[[LegislatorContributionsDataSource alloc] init] autorelease];
+		self.dataSource = [[LegislatorContributionsDataSource alloc] init];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contributionDataChanged:) name:kContributionsDataNotifyLoaded object:self.dataSource];
 	self.tableView.dataSource = self.dataSource;
 	
-	UILabel *nimsp = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 66)] autorelease];
+	UILabel *nimsp = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 66)];
 	nimsp.backgroundColor = [UIColor clearColor];
 	nimsp.font = [TexLegeTheme boldFourteen];
 	nimsp.shadowColor = [UIColor colorWithWhite:1.0 alpha:0.5];
@@ -79,8 +83,6 @@
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:kContributionsDataNotifyLoaded object:self.dataSource];	
 
-	self.dataSource = nil;
-    [super dealloc];
 }
 
 
@@ -104,10 +106,10 @@
 		case kContributionQueryDonor:
 			typeString = @"DonorSummaryQuery";
 			break;
-		case kContributionQueryRecipient:
+		case kContributionQueryElectionYear:
 			typeString = @"RecipientSummaryQuery";
 			break;
-		case kContributionQueryTop10Donors:
+		case kContributionQueryTopDonations:
 			typeString = @"Top10DonorsQuery";
 			break;
 		case kContributionQueryTop10Recipients:
@@ -121,7 +123,6 @@
 	}
 	NSDictionary *logDict = [[NSDictionary alloc] initWithObjectsAndKeys:typeString, @"queryType", nil];
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"CONTRIBUTIONS_QUERY" attributes:logDict];
-	[logDict release];
 
 	[self.dataSource initiateQueryWithQueryID:newObj type:newType cycle:cycleOrNil parameter:parameterOrNil];
 	self.navigationItem.title = [self.dataSource title];
@@ -131,14 +132,31 @@
 #pragma mark -
 #pragma mark Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
 	TableCellDataObject *dataObject = [self.dataSource dataObjectForIndexPath:indexPath];
 	
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-	if (dataObject && dataObject.isClickable) {
-        BOOL isValid = (([dataObject.parameter isKindOfClass:[NSString class]] && [dataObject.parameter length])
-                        || ([dataObject.entryValue isKindOfClass:[NSString class]] && [dataObject.entryValue length]));
+	if (dataObject && dataObject.isClickable)
+    {
+        NSString *parameter = dataObject.parameter;
+        if ([parameter isKindOfClass:[NSString class]] && [parameter length])
+        {
+
+        }
+        else
+            parameter = nil;
+
+        NSString *entryValue = dataObject.entryValue;
+        if ([entryValue isKindOfClass:[NSString class]] && [entryValue length])
+        {
+
+        }
+        else
+            entryValue = nil;
+        
+        BOOL isValid = (parameter || entryValue);
 
         if (!isValid)
         {
@@ -148,7 +166,6 @@
 			
 			NSDictionary *logDict = [[NSDictionary alloc] initWithObjectsAndKeys:queryName, @"queryName", nil];
 			[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"CONTRIBUTION_QUERY_ERROR" attributes:logDict];
-			[logDict release];
 			
 			UIAlertView *dataAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"Incomplete Records", @"AppAlerts", @"Title for alert indicating insufficient record data for the requested campaign contributor.")
 																 message:NSLocalizedStringFromTable(@"The campaign finance data provider has incomplete information for this request.  You may visit followthemoney.org to perform a manual search.", @"AppAlerts", @"")
@@ -156,7 +173,6 @@
 													   cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel", @"StandardUI", @"Button title cancelling some action")
 													   otherButtonTitles:NSLocalizedStringFromTable(@"Open Website", @"StandardUI", @"Button title"), nil];
 			[dataAlert show];
-			[dataAlert release];
 			
 			return;
 		}
@@ -165,8 +181,6 @@
 
         [detail setQueryEntityID:dataObject.entryValue type:dataObject.action cycle:nil parameter:dataObject.parameter];
 		[self.navigationController pushViewController:detail animated:YES];
-		[detail release];
-		
 	}
 }
 

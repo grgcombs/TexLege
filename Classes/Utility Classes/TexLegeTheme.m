@@ -31,7 +31,7 @@
 }
 
 + (UILabel *)disclosureLabel:(BOOL)small {
-	UILabel *lab = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 22.f, 32.f)] autorelease];
+	UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 22.f, 32.f)];
 	lab.text = [TexLegeTheme disclosureChar];
 	if (small)
 		lab.font = [TexLegeTheme disclosureFontSmall];

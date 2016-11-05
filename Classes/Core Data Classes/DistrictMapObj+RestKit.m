@@ -60,7 +60,6 @@
 
     NSData *coordinatesData = [[NSData alloc] initWithBase64EncodedString:newCoords options:NSDataBase64DecodingIgnoreUnknownCharacters];
     self.coordinatesData = coordinatesData;
-    [coordinatesData release];
 
     //self.coordinatesData = [NSData dataWithBase64EncodedString:newCoords];
 	

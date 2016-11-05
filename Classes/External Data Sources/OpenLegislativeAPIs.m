@@ -39,11 +39,11 @@ NSString * const followTheMoneyApiBaseURL = @"http://api.followthemoney.org";
 
 - (instancetype)init {
 	if ((self=[super init])) {
-		_osApiClient = [[RKClient clientWithBaseURL:osApiBaseURL] retain];
-		_transApiClient = [[RKClient clientWithBaseURL:transApiBaseURL] retain];
-		_vsApiClient = [[RKClient clientWithBaseURL:vsApiBaseURL] retain];
-		_tloApiClient = [[RKClient clientWithBaseURL:tloApiBaseURL] retain];
-        _followTheMoneyApiClient = [[RKClient clientWithBaseURL:followTheMoneyApiBaseURL] retain];
+		_osApiClient = [RKClient clientWithBaseURL:osApiBaseURL];
+		_transApiClient = [RKClient clientWithBaseURL:transApiBaseURL];
+		_vsApiClient = [RKClient clientWithBaseURL:vsApiBaseURL];
+		_tloApiClient = [RKClient clientWithBaseURL:tloApiBaseURL];
+        _followTheMoneyApiClient = [RKClient clientWithBaseURL:followTheMoneyApiBaseURL];
 	}
 	return self;
 }
@@ -52,37 +52,11 @@ NSString * const followTheMoneyApiBaseURL = @"http://api.followthemoney.org";
 {
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
 
-	if (_osApiClient)
-    {
-        [_osApiClient release];
-        _osApiClient = nil;
-    }
 
-	if (_transApiClient)
-    {
-        [_transApiClient release];
-        _transApiClient = nil;
-    }
 
-	if (_vsApiClient)
-    {
-        [_vsApiClient release];
-        _vsApiClient = nil;
-    }
 
-	if (_tloApiClient)
-    {
-        [_tloApiClient release];
-        _tloApiClient = nil;
-    }
 
-    if (_followTheMoneyApiClient)
-    {
-        [_followTheMoneyApiClient release];
-        _followTheMoneyApiClient = nil;
-    }
     
-	[super dealloc];
 }
 
 - (void)queryOpenStatesBillWithID:(NSString *)billID session:(NSString *)session delegate:(id)sender {

@@ -19,16 +19,14 @@
 #define kBillMetadataNotifyError	@"BILL_METADATA_ERROR"
 #define kBillMetadataNotifyLoaded	@"BILL_METADATA_LOADED"
 
-@interface BillMetadataLoader : NSObject <RKRequestDelegate> {
-	NSMutableDictionary *_metadata;
-	BOOL isFresh, isLoading;
-	NSDate *updated;
-}
+@interface BillMetadataLoader : NSObject <RKRequestDelegate>
+
 + (BillMetadataLoader *)sharedBillMetadataLoader;
 - (void)loadMetadata:(id)sender;
 
-@property (nonatomic,readonly) NSDictionary *metadata;
-@property (nonatomic) BOOL isFresh;
+@property (nonatomic,copy,readonly) NSDictionary *metadata;
+@property (nonatomic,copy,readonly) NSDate *updated;
+@property (nonatomic,getter=isFresh,readonly) BOOL fresh;
 
 #define kBillMetadataUpdatedKey @"updated"
 #define kBillMetadataContentsKey @"contents"
