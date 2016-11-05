@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="10117" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" colorMatched="YES">
     <dependencies>
         <deployment version="2096" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TexLegeAppDelegate">
@@ -25,19 +26,19 @@
             <tabBar key="tabBar" contentMode="scaleToFill" id="3">
                 <rect key="frame" x="0.0" y="975" width="768" height="49"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
             </tabBar>
             <connections>
                 <outlet property="delegate" destination="-1" id="80"/>
             </connections>
         </tabBarController>
-        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Legislators" id="8" userLabel="LegislatorSplitView" customClass="IntelligentSplitViewController">
+        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Legislators" id="8" userLabel="LegislatorSplitView">
             <toolbarItems/>
-            <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
             <navigationController key="masterViewController" autoresizesArchivedViewToFullSize="NO" id="10">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="11" customClass="TexLegeNavBar">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <tableViewController autoresizesArchivedViewToFullSize="NO" title="Legislators" nibName="LegislatorMasterViewController" clearsSelectionOnViewWillAppear="NO" id="16" customClass="LegislatorMasterViewController">
@@ -52,9 +53,10 @@
             </navigationController>
             <navigationController key="detailViewController" autoresizesArchivedViewToFullSize="NO" id="9">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="12">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <tableViewController autoresizesArchivedViewToFullSize="NO" nibName="LegislatorDetailViewController~ipad" clearsSelectionOnViewWillAppear="NO" id="21" customClass="LegislatorDetailViewController">
@@ -68,13 +70,13 @@
                 <outlet property="delegate" destination="21" id="68"/>
             </connections>
         </splitViewController>
-        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Committees" id="26" userLabel="CommitteeSplitView" customClass="IntelligentSplitViewController">
+        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Committees" id="26" userLabel="CommitteeSplitView">
             <toolbarItems/>
-            <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
             <navigationController key="masterViewController" autoresizesArchivedViewToFullSize="NO" id="27">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="33" customClass="TexLegeNavBar">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <tableViewController autoresizesArchivedViewToFullSize="NO" title="Committees" nibName="CommitteeMasterViewController" clearsSelectionOnViewWillAppear="NO" id="32" customClass="CommitteeMasterViewController">
@@ -89,9 +91,10 @@
             </navigationController>
             <navigationController key="detailViewController" autoresizesArchivedViewToFullSize="NO" id="28">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="30">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <tableViewController autoresizesArchivedViewToFullSize="NO" nibName="CommitteeDetailViewController~ipad" clearsSelectionOnViewWillAppear="NO" id="29" customClass="CommitteeDetailViewController">
@@ -105,14 +108,14 @@
                 <outlet property="delegate" destination="29" id="67"/>
             </connections>
         </splitViewController>
-        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Districts" id="109" userLabel="DistrictMapsSplitView" customClass="IntelligentSplitViewController">
+        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Districts" id="109" userLabel="DistrictMapsSplitView">
             <toolbarItems/>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
-            <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
             <navigationController key="masterViewController" autoresizesArchivedViewToFullSize="NO" id="110">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="116" customClass="TexLegeNavBar">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <tableViewController autoresizesArchivedViewToFullSize="NO" title="District Offices" nibName="DistrictOfficeMasterViewController" clearsSelectionOnViewWillAppear="NO" id="115" userLabel="District Maps Master View Controller" customClass="DistrictMapMasterViewController">
@@ -127,9 +130,10 @@
             </navigationController>
             <navigationController key="detailViewController" autoresizesArchivedViewToFullSize="NO" id="111">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="113">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <viewController autoresizesArchivedViewToFullSize="NO" nibName="MapViewController" id="112" customClass="MapViewController">
@@ -143,13 +147,13 @@
                 <outlet property="delegate" destination="112" id="119"/>
             </connections>
         </splitViewController>
-        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Meetings" id="35" userLabel="CalendarsSplitView" customClass="IntelligentSplitViewController">
+        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Meetings" id="35" userLabel="CalendarsSplitView">
             <toolbarItems/>
-            <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
             <navigationController key="masterViewController" autoresizesArchivedViewToFullSize="NO" id="37">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="38" customClass="TexLegeNavBar">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <tableViewController autoresizesArchivedViewToFullSize="NO" title="Upcoming Meetings" clearsSelectionOnViewWillAppear="NO" id="39" customClass="CalendarMasterViewController">
@@ -164,9 +168,10 @@
             </navigationController>
             <navigationController key="detailViewController" autoresizesArchivedViewToFullSize="NO" id="36">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="41">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <viewController autoresizesArchivedViewToFullSize="NO" nibName="CalendarDetailViewController~ipad" automaticallyAdjustsScrollViewInsets="NO" id="44" customClass="CalendarDetailViewController">
@@ -181,14 +186,14 @@
                 <outlet property="delegate" destination="44" id="66"/>
             </connections>
         </splitViewController>
-        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Maps" id="123" userLabel="BillsSplitView" customClass="IntelligentSplitViewController">
+        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Maps" id="123" userLabel="BillsSplitView">
             <toolbarItems/>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
-            <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
             <navigationController key="masterViewController" autoresizesArchivedViewToFullSize="NO" id="125">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="126" customClass="TexLegeNavBar">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <tableViewController autoresizesArchivedViewToFullSize="NO" title="Bills" nibName="BillsMasterViewController" clearsSelectionOnViewWillAppear="NO" id="127" userLabel="Bills Master View Controller (Bills)" customClass="BillsMasterViewController">
@@ -203,9 +208,10 @@
             </navigationController>
             <navigationController key="detailViewController" autoresizesArchivedViewToFullSize="NO" id="124">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="129">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <viewController autoresizesArchivedViewToFullSize="NO" nibName="BillsDetailViewController~ipad" id="130" userLabel="Bills Detail View Controller (Item)" customClass="BillsDetailViewController">
@@ -219,14 +225,14 @@
                 <outlet property="delegate" destination="130" id="132"/>
             </connections>
         </splitViewController>
-        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Maps" id="46" userLabel="CapitolMapsSplitView" customClass="IntelligentSplitViewController">
+        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Maps" id="46" userLabel="CapitolMapsSplitView">
             <toolbarItems/>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
-            <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
             <navigationController key="masterViewController" autoresizesArchivedViewToFullSize="NO" id="47">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="53" customClass="TexLegeNavBar">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <tableViewController autoresizesArchivedViewToFullSize="NO" title="Capitol Maps" clearsSelectionOnViewWillAppear="NO" id="52" customClass="CapitolMapsMasterViewController">
@@ -241,9 +247,10 @@
             </navigationController>
             <navigationController key="detailViewController" autoresizesArchivedViewToFullSize="NO" id="48">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="50">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <viewController autoresizesArchivedViewToFullSize="NO" nibName="CapitolMapsDetailViewController" id="49" customClass="CapitolMapsDetailViewController">
@@ -257,14 +264,14 @@
                 <outlet property="delegate" destination="49" id="65"/>
             </connections>
         </splitViewController>
-        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Resources" id="55" userLabel="LinksSplitView" customClass="IntelligentSplitViewController">
+        <splitViewController autoresizesArchivedViewToFullSize="NO" title="Resources" id="55" userLabel="LinksSplitView">
             <toolbarItems/>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
-            <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
             <navigationController key="masterViewController" autoresizesArchivedViewToFullSize="NO" id="57">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="58" customClass="TexLegeNavBar">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <tableViewController autoresizesArchivedViewToFullSize="NO" title="Resources" clearsSelectionOnViewWillAppear="NO" id="59" customClass="LinksMasterViewController">
@@ -279,9 +286,10 @@
             </navigationController>
             <navigationController key="detailViewController" autoresizesArchivedViewToFullSize="NO" id="56">
                 <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="61">
+                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </navigationBar>
                 <viewControllers>
                     <viewController autoresizesArchivedViewToFullSize="NO" id="62" customClass="SVWebViewController">
@@ -296,4 +304,9 @@
             </connections>
         </splitViewController>
     </objects>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination"/>
+    </simulatedMetricsContainer>
 </document>

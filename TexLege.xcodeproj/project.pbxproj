@@ -51,14 +51,13 @@
 		37242D3612415CC4005C43D3 /* LegislatorContributionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37242D3512415CC4005C43D3 /* LegislatorContributionsViewController.m */; };
 		3726FC3F120A99800043D6B9 /* 01-refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3726FC34120A99800043D6B9 /* 01-refresh@2x.png */; };
 		3729EC2910077F83000AD804 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3729EC2810077F83000AD804 /* CoreData.framework */; };
-		372C280F13B06C7500836162 /* iPadTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 372C280E13B06C7500836162 /* iPadTabBarController.xib */; };
 		372D061C12FC799200E63696 /* Kal.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 372D061812FC799200E63696 /* Kal.bundle */; };
 		372D066712FC901C00E63696 /* TexLegeLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D066612FC901C00E63696 /* TexLegeLibrary.m */; };
 		372D5CC011E9983A005A21E2 /* CapitolMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D5CBF11E9983A005A21E2 /* CapitolMap.m */; };
 		372FAB5A12147B2000AEF237 /* ChamberCalendarObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 372FAB5912147B2000AEF237 /* ChamberCalendarObj.m */; };
 		372FDB23139F1CFB00D39374 /* LegislatorDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3739DBE4123355EF00D4F7D2 /* LegislatorDetailViewController~iphone.xib */; };
 		372FDB24139F1CFB00D39374 /* LegislatorDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3739DBE4123355EF00D4F7D2 /* LegislatorDetailViewController~iphone.xib */; };
-		3732A0F811DB203F009E8957 /* iPhoneTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3732A0F711DB203F009E8957 /* iPhoneTabBarController.xib */; };
+		3732A0F811DB203F009E8957 /* TabBarController~iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3732A0F711DB203F009E8957 /* TabBarController~iPhone.xib */; };
 		3735DD3D12087CEF0000AF5A /* CalendarDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3735DD3C12087CEF0000AF5A /* CalendarDetailViewController~iphone.xib */; };
 		3735DDAF120899980000AF5A /* UISearchDisplayController+NoHideNav.m in Sources */ = {isa = PBXBuildFile; fileRef = 3735DDAE120899980000AF5A /* UISearchDisplayController+NoHideNav.m */; };
 		3735DFFE120917490000AF5A /* CommitteeMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3735DFFC120917490000AF5A /* CommitteeMasterViewController.m */; };
@@ -142,7 +141,7 @@
 		3773597C1323104A0033F343 /* NotesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 379C1F021012E0CD007844B5 /* NotesView.xib */; };
 		3773597E1323104A0033F343 /* LegislatorDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */; };
 		377359871323104A0033F343 /* CommitteeDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37AD57BA11DA651700D68934 /* CommitteeDetailViewController~iphone.xib */; };
-		377359881323104A0033F343 /* iPhoneTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3732A0F711DB203F009E8957 /* iPhoneTabBarController.xib */; };
+		377359881323104A0033F343 /* TabBarController~iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3732A0F711DB203F009E8957 /* TabBarController~iPhone.xib */; };
 		3773598A1323104A0033F343 /* LegislatorMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 373B820511E378CD00A81142 /* LegislatorMasterViewController.xib */; };
 		3773598B1323104A0033F343 /* CapitolMapsDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3786786211E442800003690F /* CapitolMapsDetailViewController.xib */; };
 		377359941323104A0033F343 /* CalendarDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C5CC12027D2D00507757 /* CalendarDetailViewController~ipad.xib */; };
@@ -394,6 +393,7 @@
 		37B614F4139D1863003B85B4 /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
 		37B614F5139D1863003B85B4 /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
 		37B64234120FE9FF0076B196 /* LegislatorMasterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B64233120FE9FF0076B196 /* LegislatorMasterCell.m */; };
+		37B8A0CF1DCE5EFC0073BFB0 /* TabBarController~iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B8A0CE1DCE5EFC0073BFB0 /* TabBarController~iPad.xib */; };
 		37B8A0DC1DCE62220073BFB0 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374915301DCBAB4B00C3B765 /* SDWebImage.framework */; };
 		37BA166813B2FCFA0088057B /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
 		37BA166913B2FCFB0088057B /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
@@ -517,8 +517,6 @@
 		37FE1CE013CB75FD00655550 /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CDB13CB75FD00655550 /* UploaderThread.m */; };
 		37FE1E0C13CB8E3300655550 /* AppendingFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1D9A13CB8E3300655550 /* AppendingFlowView.m */; };
 		37FE1E5613CB8E3300655550 /* AppendingFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1D9A13CB8E3300655550 /* AppendingFlowView.m */; };
-		37FE1F1513CB8EFE00655550 /* IntelligentSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1ED813CB8EFE00655550 /* IntelligentSplitViewController.m */; };
-		37FE1F3E13CB8EFE00655550 /* IntelligentSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1ED813CB8EFE00655550 /* IntelligentSplitViewController.m */; };
 		37FE46301357BF1600E8C038 /* CommitteePositionObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DF1357A198003DA1BB /* CommitteePositionObj.m */; };
 		37FE46311357BF1900E8C038 /* LinkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DB1357A198003DA1BB /* LinkObj.m */; };
 		37FE46321357BF2100E8C038 /* LegislatorObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DD1357A198003DA1BB /* LegislatorObj.m */; };
@@ -531,27 +529,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 53761307155AD0D5005750A4;
 			remoteInfo = SDWebImage;
-		};
-		3701B63919AD34E400A9F631 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 531041C2157EAFA400BBABC3;
-			remoteInfo = "SDWebImage+MKAnnotation";
-		};
-		37093E6516A36B1200399644 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 531041C2157EAFA400BBABC3;
-			remoteInfo = "SDWebImage+MKAnnotation";
-		};
-		3749152D1DCBAB4B00C3B765 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 537D95C117ECC1FE0097C263;
-			remoteInfo = "SDWebImage+WebP";
 		};
 		3749152F1DCBAB4B00C3B765 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -684,7 +661,6 @@
 		3726FC94120AABE10043D6B9 /* disclosure.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = disclosure.png; path = ../disclosure.png; sourceTree = "<group>"; };
 		3726FC95120AABE10043D6B9 /* disclosure@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "disclosure@2x.png"; path = "../disclosure@2x.png"; sourceTree = "<group>"; };
 		3729EC2810077F83000AD804 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		372C280E13B06C7500836162 /* iPadTabBarController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = iPadTabBarController.xib; path = "Resources-iPad/iPadTabBarController.xib"; sourceTree = "<group>"; };
 		372D061812FC799200E63696 /* Kal.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Kal.bundle; path = src/Kal.bundle; sourceTree = "<group>"; };
 		372D066512FC901C00E63696 /* TexLegeLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexLegeLibrary.h; sourceTree = "<group>"; };
 		372D066612FC901C00E63696 /* TexLegeLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TexLegeLibrary.m; sourceTree = "<group>"; };
@@ -692,7 +668,7 @@
 		372D5CBF11E9983A005A21E2 /* CapitolMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CapitolMap.m; sourceTree = "<group>"; };
 		372FAB5812147B2000AEF237 /* ChamberCalendarObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChamberCalendarObj.h; sourceTree = "<group>"; };
 		372FAB5912147B2000AEF237 /* ChamberCalendarObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChamberCalendarObj.m; sourceTree = "<group>"; };
-		3732A0F711DB203F009E8957 /* iPhoneTabBarController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = iPhoneTabBarController.xib; path = Resources/iPhoneTabBarController.xib; sourceTree = "<group>"; };
+		3732A0F711DB203F009E8957 /* TabBarController~iPhone.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "TabBarController~iPhone.xib"; path = "Resources/TabBarController~iPhone.xib"; sourceTree = "<group>"; };
 		3735DD3C12087CEF0000AF5A /* CalendarDetailViewController~iphone.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "CalendarDetailViewController~iphone.xib"; path = "Resources/CalendarDetailViewController~iphone.xib"; sourceTree = "<group>"; };
 		3735DDAD120899980000AF5A /* UISearchDisplayController+NoHideNav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UISearchDisplayController+NoHideNav.h"; path = "Classes/Utility Classes/UISearchDisplayController+NoHideNav.h"; sourceTree = SOURCE_ROOT; };
 		3735DDAE120899980000AF5A /* UISearchDisplayController+NoHideNav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UISearchDisplayController+NoHideNav.m"; path = "Classes/Utility Classes/UISearchDisplayController+NoHideNav.m"; sourceTree = SOURCE_ROOT; };
@@ -888,6 +864,7 @@
 		37B614F1139D1863003B85B4 /* 103-map-inv.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "103-map-inv.png"; sourceTree = "<group>"; };
 		37B64232120FE9FF0076B196 /* LegislatorMasterCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegislatorMasterCell.h; path = "Classes/Custom Cells and Views/LegislatorMasterCell.h"; sourceTree = SOURCE_ROOT; };
 		37B64233120FE9FF0076B196 /* LegislatorMasterCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorMasterCell.m; path = "Classes/Custom Cells and Views/LegislatorMasterCell.m"; sourceTree = SOURCE_ROOT; };
+		37B8A0CE1DCE5EFC0073BFB0 /* TabBarController~iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "TabBarController~iPad.xib"; path = "Resources-iPad/TabBarController~iPad.xib"; sourceTree = "<group>"; };
 		37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "LegislatorDetailViewController~ipad.xib"; path = "Resources-iPad/LegislatorDetailViewController~ipad.xib"; sourceTree = "<group>"; };
 		37C7845714D30444006BBEDE /* LocalyticsDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalyticsDatabase.h; sourceTree = "<group>"; };
 		37C7845814D30444006BBEDE /* LocalyticsDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalyticsDatabase.m; sourceTree = "<group>"; };
@@ -1164,8 +1141,6 @@
 		37FE1CDC13CB75FD00655550 /* WebserviceConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebserviceConstants.h; sourceTree = "<group>"; };
 		37FE1D9913CB8E3300655550 /* AppendingFlowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppendingFlowView.h; sourceTree = "<group>"; };
 		37FE1D9A13CB8E3300655550 /* AppendingFlowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppendingFlowView.m; sourceTree = "<group>"; };
-		37FE1ED713CB8EFE00655550 /* IntelligentSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntelligentSplitViewController.h; sourceTree = "<group>"; };
-		37FE1ED813CB8EFE00655550 /* IntelligentSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntelligentSplitViewController.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1364,7 +1339,6 @@
 				37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */,
 				37FAD0791DCBEE8100158071 /* SLFInfoPanel */,
 				3781E7BA14E0930A002A80AC /* MTInfoPanel */,
-				37FE1EAE13CB8EFE00655550 /* IntelligentSplitViewController */,
 				37FE1D9413CB8E3300655550 /* AppendingFlowView */,
 				375E5ACA133D6F9E0070EA64 /* s7graphview */,
 				37E635F7139B4B3200A9CC27 /* TTTOrdinalNumberFormatter */,
@@ -1471,7 +1445,7 @@
 			children = (
 				3760AB8B139EFAA700386A90 /* TexLegeInfo~ipad.htm */,
 				37A72062122EB9A30015AAE0 /* TexLegeInfoImage~ipad.png */,
-				372C280E13B06C7500836162 /* iPadTabBarController.xib */,
+				37B8A0CE1DCE5EFC0073BFB0 /* TabBarController~iPad.xib */,
 				37D46DC9123BFA9800C2C403 /* CommitteeDetailViewController~ipad.xib */,
 				37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */,
 				37B3CE981249373100FB3F94 /* MapMiniDetailViewController~ipad.xib */,
@@ -1692,7 +1666,7 @@
 				3739DBE4123355EF00D4F7D2 /* LegislatorDetailViewController~iphone.xib */,
 				37B3CEB312493D3100FB3F94 /* MapMiniDetailViewController~iphone.xib */,
 				37A2CCF5122C173B00339495 /* MapViewController~iphone.xib */,
-				3732A0F711DB203F009E8957 /* iPhoneTabBarController.xib */,
+				3732A0F711DB203F009E8957 /* TabBarController~iPhone.xib */,
 				3735DD3C12087CEF0000AF5A /* CalendarDetailViewController~iphone.xib */,
 				37AD57BA11DA651700D68934 /* CommitteeDetailViewController~iphone.xib */,
 				37F4926E1311C556005D5DE1 /* BillsDetailViewController~iphone.xib */,
@@ -2225,16 +2199,6 @@
 			path = Vendor/AppendingFlowView/Classes;
 			sourceTree = SOURCE_ROOT;
 		};
-		37FE1EAE13CB8EFE00655550 /* IntelligentSplitViewController */ = {
-			isa = PBXGroup;
-			children = (
-				37FE1ED713CB8EFE00655550 /* IntelligentSplitViewController.h */,
-				37FE1ED813CB8EFE00655550 /* IntelligentSplitViewController.m */,
-			);
-			name = IntelligentSplitViewController;
-			path = Vendor/IntelligentSplitViewController;
-			sourceTree = SOURCE_ROOT;
-		};
 		C83CD92C0D5822C30066AE4B /* Application Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -2399,7 +2363,7 @@
 				379C1F031012E0CD007844B5 /* NotesView.xib in Resources */,
 				37BF251211D64B5400B71688 /* LegislatorDetailViewController~ipad.xib in Resources */,
 				37AD57BC11DA651700D68934 /* CommitteeDetailViewController~iphone.xib in Resources */,
-				3732A0F811DB203F009E8957 /* iPhoneTabBarController.xib in Resources */,
+				3732A0F811DB203F009E8957 /* TabBarController~iPhone.xib in Resources */,
 				373B820611E378CD00A81142 /* LegislatorMasterViewController.xib in Resources */,
 				3786786311E442800003690F /* CapitolMapsDetailViewController.xib in Resources */,
 				37D1C5CD12027D2D00507757 /* CalendarDetailViewController~ipad.xib in Resources */,
@@ -2440,6 +2404,7 @@
 				37C945DC1237DDC000D2D582 /* PinHeadBlue@2x.png in Resources */,
 				37C94A3A12387D6500D2D582 /* DistrictMapMasterViewController.xib in Resources */,
 				37D46DCA123BFA9800C2C403 /* CommitteeDetailViewController~ipad.xib in Resources */,
+				37B8A0CF1DCE5EFC0073BFB0 /* TabBarController~iPad.xib in Resources */,
 				37B3CE991249373100FB3F94 /* MapMiniDetailViewController~ipad.xib in Resources */,
 				37B3CEB412493D3100FB3F94 /* MapMiniDetailViewController~iphone.xib in Resources */,
 				372D061C12FC799200E63696 /* Kal.bundle in Resources */,
@@ -2490,7 +2455,6 @@
 				378ABD33139F0BCA00928FBF /* DataTableUI.strings in Resources */,
 				378ABD35139F0BCA00928FBF /* StandardUI.strings in Resources */,
 				37CD0A9413A3567900F4C68B /* Abbreviations.strings in Resources */,
-				372C280F13B06C7500836162 /* iPadTabBarController.xib in Resources */,
 				3768E93B13B156F600BA5A67 /* SVWebViewController.bundle in Resources */,
 				375F316313B238CC0002F12F /* action.png in Resources */,
 				375F316413B238CC0002F12F /* action@2x.png in Resources */,
@@ -2514,7 +2478,7 @@
 				3773597C1323104A0033F343 /* NotesView.xib in Resources */,
 				3773597E1323104A0033F343 /* LegislatorDetailViewController~ipad.xib in Resources */,
 				377359871323104A0033F343 /* CommitteeDetailViewController~iphone.xib in Resources */,
-				377359881323104A0033F343 /* iPhoneTabBarController.xib in Resources */,
+				377359881323104A0033F343 /* TabBarController~iPhone.xib in Resources */,
 				3773598A1323104A0033F343 /* LegislatorMasterViewController.xib in Resources */,
 				3773598B1323104A0033F343 /* CapitolMapsDetailViewController.xib in Resources */,
 				377359941323104A0033F343 /* CalendarDetailViewController~ipad.xib in Resources */,
@@ -2780,7 +2744,6 @@
 				37FE1CDD13CB75FD00655550 /* LocalyticsSession.m in Sources */,
 				37FE1CDE13CB75FD00655550 /* UploaderThread.m in Sources */,
 				37FE1E0C13CB8E3300655550 /* AppendingFlowView.m in Sources */,
-				37FE1F1513CB8EFE00655550 /* IntelligentSplitViewController.m in Sources */,
 				37C7845914D30444006BBEDE /* LocalyticsDatabase.m in Sources */,
 				37F7C05814D32775000853D5 /* KalDataSource.m in Sources */,
 				37678F561AFFEC9F0016B8E5 /* VotingRecordDataSource.m in Sources */,
@@ -2911,7 +2874,6 @@
 				37FE1CDF13CB75FD00655550 /* LocalyticsSession.m in Sources */,
 				37FE1CE013CB75FD00655550 /* UploaderThread.m in Sources */,
 				37FE1E5613CB8E3300655550 /* AppendingFlowView.m in Sources */,
-				37FE1F3E13CB8EFE00655550 /* IntelligentSplitViewController.m in Sources */,
 				37C7845A14D30444006BBEDE /* LocalyticsDatabase.m in Sources */,
 				37F7C05914D32775000853D5 /* KalDataSource.m in Sources */,
 				37F7C05B14D32775000853D5 /* KalDate.m in Sources */,

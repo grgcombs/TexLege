@@ -255,9 +255,9 @@ NSInteger kNoSelection = -1;
 {
 	NSArray *nibObjects = nil;
 	if ([UtilityMethods isIPadDevice]) 
-		nibObjects = [[NSBundle mainBundle] loadNibNamed:@"iPadTabBarController" owner:self options:nil];
+		nibObjects = [[NSBundle mainBundle] loadNibNamed:@"TabBarController~iPad" owner:self options:nil];
 	else
-		nibObjects = [[NSBundle mainBundle] loadNibNamed:@"iPhoneTabBarController" owner:self options:nil];
+		nibObjects = [[NSBundle mainBundle] loadNibNamed:@"TabBarController~iPhone" owner:self options:nil];
 	
 	if (IsEmpty(nibObjects))
     {
