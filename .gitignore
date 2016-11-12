@@ -1,9 +1,10 @@
 *.DS_Store
+*.xcscmblueprint
 /PrivateData
+/Builds/
 build
 *.mode1v3
 *.pbxuser
 xcuserdata
 
 Resources/InfoPlist.h
-/Builds/
