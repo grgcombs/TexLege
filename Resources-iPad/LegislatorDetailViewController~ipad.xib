@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="10117" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" colorMatched="NO">
     <dependencies>
         <deployment version="2096" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <development version="7000" identifier="xcode"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LegislatorDetailViewController">
@@ -29,65 +30,65 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <tableView multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" style="grouped" separatorStyle="default" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="13">
-            <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+            <rect key="frame" x="0.0" y="0.0" width="703" height="768"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
             <splitViewDetailSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <inset key="contentInset" minX="0.0" minY="38" maxX="0.0" maxY="0.0"/>
             <view key="tableHeaderView" contentMode="scaleToFill" id="175">
-                <rect key="frame" x="0.0" y="0.0" width="768" height="395"/>
+                <rect key="frame" x="0.0" y="0.0" width="703" height="395"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                 <subviews>
                     <view opaque="NO" contentMode="scaleToFill" id="178">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="203"/>
+                        <rect key="frame" x="0.0" y="0.0" width="703" height="203"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Tenure" lineBreakMode="tailTruncation" minimumFontSize="14" id="180">
-                                <rect key="frame" x="142" y="135" width="190" height="30"/>
+                                <rect key="frame" x="142" y="135" width="170" height="30"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="22"/>
-                                <color key="textColor" red="0.86274516580000005" green="0.89411771299999998" blue="0.9215686917" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="textColor" red="0.83131265640258789" green="0.86803054809570312" blue="0.90194940567016602" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                                 <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <size key="shadowOffset" width="-1" height="-2"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Reelection:" lineBreakMode="tailTruncation" minimumFontSize="14" id="219">
-                                <rect key="frame" x="142" y="173" width="208" height="30"/>
+                                <rect key="frame" x="142" y="173" width="186" height="30"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="22"/>
-                                <color key="textColor" red="0.86274516580000005" green="0.89411771299999998" blue="0.9215686917" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="textColor" red="0.83131265640258789" green="0.86803054809570312" blue="0.90194940567016602" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                                 <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <size key="shadowOffset" width="-1" height="-2"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Name" lineBreakMode="tailTruncation" minimumFontSize="16" id="181">
-                                <rect key="frame" x="142" y="8" width="624" height="43"/>
+                                <rect key="frame" x="142" y="8" width="559" height="43"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="32"/>
-                                <color key="textColor" red="0.86274516580000005" green="0.89411771299999998" blue="0.9215686917" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="textColor" red="0.83131265640258789" green="0.86803054809570312" blue="0.90194940567016602" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                                 <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <size key="shadowOffset" width="-1" height="-2"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Party" lineBreakMode="tailTruncation" minimumFontSize="14" id="182">
-                                <rect key="frame" x="142" y="97" width="190" height="30"/>
+                                <rect key="frame" x="142" y="97" width="170" height="30"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="22"/>
-                                <color key="textColor" red="0.86274516580000005" green="0.89411771299999998" blue="0.9215686917" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="textColor" red="0.83131265640258789" green="0.86803054809570312" blue="0.90194940567016602" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                                 <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <size key="shadowOffset" width="-1" height="-2"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="District" lineBreakMode="tailTruncation" minimumFontSize="14" id="183">
-                                <rect key="frame" x="142" y="59" width="190" height="30"/>
+                                <rect key="frame" x="142" y="59" width="170" height="30"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="22"/>
-                                <color key="textColor" red="0.86274516580000005" green="0.89411771299999998" blue="0.9215686917" alpha="1" colorSpace="deviceRGB"/>
+                                <color key="textColor" red="0.83131265640258789" green="0.86803054809570312" blue="0.90194940567016602" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                                 <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <size key="shadowOffset" width="-1" height="-2"/>
@@ -95,18 +96,18 @@
                             <imageView multipleTouchEnabled="YES" contentMode="scaleAspectFit" id="184">
                                 <rect key="frame" x="9" y="14" width="125" height="175"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                             </imageView>
                             <view opaque="NO" contentMode="scaleToFill" id="179" userLabel="Roll Call Sliders View">
-                                <rect key="frame" x="358" y="59" width="410" height="144"/>
+                                <rect key="frame" x="293" y="59" width="410" height="144"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Rank: __" lineBreakMode="tailTruncation" minimumFontSize="10" id="188">
                                         <rect key="frame" x="40" y="0.0" width="359" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                                        <color key="textColor" red="0.86274516580000005" green="0.89411771299999998" blue="0.9215686917" alpha="1" colorSpace="deviceRGB"/>
+                                        <color key="textColor" red="0.83131265640258789" green="0.86803054809570312" blue="0.90194940567016602" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                         <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <size key="shadowOffset" width="0.0" height="0.0"/>
@@ -114,9 +115,9 @@
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Party Avg." lineBreakMode="tailTruncation" minimumFontSize="10" id="189">
                                         <rect key="frame" x="275" y="69" width="133" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                                        <color key="textColor" red="0.86274516580000005" green="0.89411771299999998" blue="0.9215686917" alpha="1" colorSpace="deviceRGB"/>
+                                        <color key="textColor" red="0.83131265640258789" green="0.86803054809570312" blue="0.90194940567016602" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                         <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <size key="shadowOffset" width="0.0" height="0.0"/>
@@ -124,9 +125,9 @@
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Legislator" lineBreakMode="tailTruncation" minimumFontSize="10" id="217">
                                         <rect key="frame" x="275" y="34" width="133" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                                        <color key="textColor" red="0.86274516580000005" green="0.89411771299999998" blue="0.9215686917" alpha="1" colorSpace="deviceRGB"/>
+                                        <color key="textColor" red="0.83131265640258789" green="0.86803054809570312" blue="0.90194940567016602" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                         <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <size key="shadowOffset" width="0.0" height="0.0"/>
@@ -134,9 +135,9 @@
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Overall Avg." lineBreakMode="tailTruncation" minimumFontSize="10" id="190">
                                         <rect key="frame" x="275" y="104" width="134" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                                        <color key="textColor" red="0.86274516580000005" green="0.89411771299999998" blue="0.9215686917" alpha="1" colorSpace="deviceRGB"/>
+                                        <color key="textColor" red="0.83131265640258789" green="0.86803054809570312" blue="0.90194940567016602" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                         <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <size key="shadowOffset" width="0.0" height="0.0"/>
@@ -144,35 +145,35 @@
                                     <view opaque="NO" contentMode="scaleToFill" id="185" userLabel="Individual Slider" customClass="PartisanScaleView">
                                         <rect key="frame" x="24" y="31" width="247" height="36"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                     </view>
                                     <view opaque="NO" contentMode="scaleToFill" id="186" userLabel="Party Avg. Slider" customClass="PartisanScaleView">
                                         <rect key="frame" x="24" y="66" width="247" height="36"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                     </view>
                                     <view opaque="NO" contentMode="scaleToFill" id="187" userLabel="Overall Avg. Slider" customClass="PartisanScaleView">
                                         <rect key="frame" x="24" y="101" width="247" height="36"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
                     </view>
                     <view multipleTouchEnabled="YES" contentMode="scaleToFill" id="221" customClass="S7GraphView">
-                        <rect key="frame" x="44" y="209" width="680" height="186"/>
+                        <rect key="frame" x="44" y="209" width="615" height="186"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <label hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="New legislators lack sufficient voting history to generate historical plots." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="3" minimumFontSize="10" id="177">
-                        <rect key="frame" x="250" y="266" width="298" height="66"/>
+                        <rect key="frame" x="215" y="266" width="298" height="66"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
-                        <color key="textColor" red="0.80000007149999997" green="0.33333334329999997" blue="0.0" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="textColor" red="0.74671310186386108" green="0.25203120708465576" blue="0.018537156283855438" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
@@ -184,4 +185,9 @@
             </connections>
         </tableView>
     </objects>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation" orientation="landscapeRight"/>
+        <simulatedScreenMetrics key="destination"/>
+    </simulatedMetricsContainer>
 </document>
