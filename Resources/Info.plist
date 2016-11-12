@@ -35,6 +35,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCalendarsUsageDescription</key>
+	<string>If privacy settings permit access, TexLege may (upon your request) add legislative events to your mobile device calendar.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>If privacy settings permit access, TexLege will use your mobile device location only to determine the legislative representation for your vicinity.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
