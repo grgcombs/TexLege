@@ -394,7 +394,6 @@
 		37B614F5139D1863003B85B4 /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
 		37B64234120FE9FF0076B196 /* LegislatorMasterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B64233120FE9FF0076B196 /* LegislatorMasterCell.m */; };
 		37B8A0CF1DCE5EFC0073BFB0 /* TabBarController~iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B8A0CE1DCE5EFC0073BFB0 /* TabBarController~iPad.xib */; };
-		37B8A0DC1DCE62220073BFB0 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 374915301DCBAB4B00C3B765 /* SDWebImage.framework */; };
 		37BA166813B2FCFA0088057B /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
 		37BA166913B2FCFB0088057B /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
 		37BF251211D64B5400B71688 /* LegislatorDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */; };
@@ -404,6 +403,7 @@
 		37C7845D14D304DF006BBEDE /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845B14D304B2006BBEDE /* libsqlite3.dylib */; };
 		37C7845F14D30A98006BBEDE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845E14D30A97006BBEDE /* libz.dylib */; };
 		37C7846014D30AA3006BBEDE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845E14D30A97006BBEDE /* libz.dylib */; };
+		37C864E71DD7E73B000B0B60 /* libSDWebImage iOS static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA1116A227CC005C7CCE /* libSDWebImage iOS static.a */; };
 		37C945DB1237DDC000D2D582 /* PinHeadBlue.png in Resources */ = {isa = PBXBuildFile; fileRef = 37C945D91237DDC000D2D582 /* PinHeadBlue.png */; };
 		37C945DC1237DDC000D2D582 /* PinHeadBlue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37C945DA1237DDC000D2D582 /* PinHeadBlue@2x.png */; };
 		37C94A2712387ABA00D2D582 /* DistrictMapMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C94A2612387ABA00D2D582 /* DistrictMapMasterViewController.m */; };
@@ -1149,7 +1149,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37B8A0DC1DCE62220073BFB0 /* SDWebImage.framework in Frameworks */,
+				37C864E71DD7E73B000B0B60 /* libSDWebImage iOS static.a in Frameworks */,
 				37678E8A1AFEC2DC0016B8E5 /* libRestKit.a in Frameworks */,
 				37E9CA2816A22959005C7CCE /* ImageIO.framework in Frameworks */,
 				37C7845F14D30A98006BBEDE /* libz.dylib in Frameworks */,
