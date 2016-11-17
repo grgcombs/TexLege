@@ -16,30 +16,39 @@
 #import "PartisanIndexStats.h"
 #import "LegislatorObj.h"
 
+@interface VotingRecordDataSource()
+@property (nonatomic,copy) NSDictionary *chartData;
+@property (nonatomic,copy) NSString *legislatorName;
+@property (nonatomic,copy) NSNumber *legType;
+@end
+
 @implementation VotingRecordDataSource
-@synthesize legislatorID, chartData;
 
 - (instancetype)init {
-	if ((self=[super init])) {
-		legislatorID = nil;
-		chartData = nil;
+    self = [super init];
+    if (self)
+    {
 	}
 	return self;
 }
 
-- (void)dealloc {
-	self.legislatorID = nil;
-}
-
-- (void)setLegislatorID:(NSNumber *)newID {
-	if (newID) {
-		legislatorID = newID;
-		self.chartData = [[PartisanIndexStats sharedPartisanIndexStats] partisanshipDataForLegislatorID:newID];	
-	}
+- (void)setLegislator:(LegislatorObj *)legislator
+{
+    if (!legislator)
+    {
+        _chartData = nil;
+        _legislatorName = nil;
+        _legType = nil;
+        return;
+    }
+    _legislatorName = legislator.lastname;
+    _legType = legislator.legtype;
+    _chartData = [[PartisanIndexStats sharedPartisanIndexStats] partisanshipDataForLegislator:legislator];
 }
 
 // stupid to go here, but I'm too tired to put this someplace proper
-- (void)prepareVotingRecordView:(S7GraphView *)aView {
+- (void)prepareVotingRecordView:(S7GraphView *)aView
+{
 	if (!aView)
 		return;
 	
@@ -85,10 +94,10 @@
 
 - (NSDictionary *)graphViewMinAndMaxY:(S7GraphView *)graphView {
 	
-	LegislatorObj *member = [LegislatorObj objectWithPrimaryKeyValue:self.legislatorID];
 	PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
-	CGFloat sliderMin = [indexStats minPartisanIndexUsingChamber:(member.legtype).integerValue];
-	CGFloat sliderMax = [indexStats maxPartisanIndexUsingChamber:(member.legtype).integerValue];
+    NSNumber *legType = self.legType;
+	CGFloat sliderMin = [indexStats minPartisanIndexUsingChamber:(legType).integerValue];
+	CGFloat sliderMax = [indexStats maxPartisanIndexUsingChamber:(legType).integerValue];
 
 	if (sliderMax > (-sliderMin))
 		sliderMin = (-sliderMax);
@@ -100,8 +109,8 @@
 }
 
 - (NSUInteger)graphViewMaximumNumberOfXaxisValues:(S7GraphView *)graphView {
-	if (chartData)
-		return [chartData[@"member"] count]; 
+	if (_chartData)
+		return [_chartData[@"member"] count];
     return 0;
 }
 
@@ -124,7 +133,7 @@
     /* An array of objects that will be further formatted to be displayed on the X-axis.
      The number of elements should be equal to the number of points you have for every plot. */
 	
-	return chartData[@"time"];
+	return self.chartData[@"time"];
 }
 
 - (NSArray *)graphView:(S7GraphView *)graphView yValuesForPlot:(NSUInteger)plotIndex {
@@ -134,19 +143,22 @@
 	// Returning the following object in an array will treat it like missing data
 	// [NSNumber numberWithFloat:CGFLOAT_MAX]
 	
-	
+    NSDictionary *chartData = self.chartData;
+    NSArray *items = nil;
+
     switch (plotIndex) {
         case 0:
-			return 	chartData[@"repub"];
+			items = chartData[@"repub"];
             break;
 		case 2:
-			return 	chartData[@"democ"];
+			items =	chartData[@"democ"];
             break;
         case 1:
         default:
-			return 	chartData[@"member"];
+			items =	chartData[@"member"];
             break;
     }
+    return items;
 }
 
 - (BOOL)graphView:(S7GraphView *)graphView shouldFillPlot:(NSUInteger)plotIndex {
@@ -177,20 +189,21 @@
 }
 
 - (NSString *)graphView:(S7GraphView *)graphView nameForPlot:(NSInteger)plotIndex {
+    NSString *name = nil;
+
     switch (plotIndex) {
         case 0:
-			return 	stringForParty(REPUBLICAN, TLReturnAbbrevPlural);
+			name = 	stringForParty(REPUBLICAN, TLReturnAbbrevPlural);
             break;
 		case 2:
-			return 	stringForParty(DEMOCRAT, TLReturnAbbrevPlural);
+			name = 	stringForParty(DEMOCRAT, TLReturnAbbrevPlural);
             break;
         case 1:
-        default: {
-			LegislatorObj *member = [LegislatorObj objectWithPrimaryKeyValue:self.legislatorID];
-			return member.lastname;
-		}
+        default:
+			name = self.legislatorName;
             break;
     }
+    return name;
 }
 
 @end

@@ -18,7 +18,8 @@
 - (instancetype)initWithLegislator:(LegislatorObj *)newObject;
 - (id) dataObjectForIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)indexPathForDataObject:(id)dataObject;
-	
+- (void)createSectionList;
+
 @property (nonatomic,strong) NSNumber *dataObjectID;
 @property (nonatomic,strong) LegislatorObj *legislator;
 @property (nonatomic,strong) NSMutableArray *sectionArray;

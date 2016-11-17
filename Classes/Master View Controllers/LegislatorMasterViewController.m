@@ -145,12 +145,12 @@
 //START:code.split.delegate
 - (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath withAnimation:(BOOL)animated {
 	TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
-	
-	if (![UtilityMethods isIPadDevice])
+
+    BOOL isTablet = [UtilityMethods isIPadDevice];
+
+	if (!isTablet)
 		[aTableView deselectRowAtIndexPath:newIndexPath animated:YES];
-	
-	BOOL isSplitViewDetail = ([UtilityMethods isIPadDevice]);
-	
+
 	id dataObject = [self.dataSource dataObjectForIndexPath:newIndexPath];
 	if (!dataObject)
 		return;
@@ -166,14 +166,16 @@
 	}
 	
 	LegislatorObj *legislator = dataObject;
-	if (legislator) {
+	if (legislator)
+    {
 		((LegislatorDetailViewController*) self.detailViewController).legislator = legislator;
 		if (aTableView == self.searchDisplayController.searchResultsTableView) { // we've clicked in a search table
 			[self searchBarCancelButtonClicked:nil];
 		}
 		
-		if (!isSplitViewDetail) {
-			// push the detail view controller onto the navigation stack to display it				
+		if (!isTablet)
+        {
+			// push the detail view controller onto the navigation stack to display it
 			[self.navigationController pushViewController:self.detailViewController animated:YES];
 			self.detailViewController = nil;
 		}

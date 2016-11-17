@@ -258,6 +258,61 @@
 #pragma mark -
 #pragma mark Chart Generation
 
+- (NSDictionary *)partisanshipDataForLegislator:(LegislatorObj*)legislator
+{
+    if (!legislator || ![legislator isKindOfClass:[LegislatorObj class]])
+        return nil;
+
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"session" ascending:YES];
+    NSArray *descriptors = [[NSArray alloc] initWithObjects:sortDescriptor,nil];
+    NSArray *scores = legislator.wnomScores.allObjects;
+
+    NSArray *sortedScores = [scores sortedArrayUsingDescriptors:descriptors];
+    NSInteger countOfScores = sortedScores.count;
+
+
+    NSInteger chamber = (legislator.legtype).integerValue;
+    NSArray *democHistory = [self historyForParty:DEMOCRAT chamber:chamber];
+    NSArray *repubHistory = [self historyForParty:REPUBLICAN chamber:chamber];
+
+    NSUInteger i = 0;
+
+    NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:3];
+    NSMutableArray *repubScores = [[NSMutableArray alloc] init];
+    NSMutableArray *demScores = [[NSMutableArray alloc] init];
+    NSMutableArray *memberScores = [[NSMutableArray alloc] init];
+    NSMutableArray *dates = [[NSMutableArray alloc] init];
+
+    for ( i = 0; i < countOfScores ; i++)
+    {
+        WnomObj *wnomObj = sortedScores[i];
+        NSDate *date = [NSDate dateFromString:[wnomObj year].stringValue withFormat:@"yyyy"];
+        NSNumber *democY = [democHistory findWhereKeyPath:@"session" equals:wnomObj.session][@"wnom"];
+        NSNumber *repubY = [repubHistory findWhereKeyPath:@"session" equals:wnomObj.session][@"wnom"];
+        if (!democY)
+            democY = @0.0f;
+        if (!repubY)
+            repubY = @0.0f;
+
+        [repubScores addObject:repubY];
+        [demScores addObject:democY];
+        [dates addObject:date];
+
+        CGFloat legVal = wnomObj.wnomAdj.floatValue;
+        if (legVal != 0.0f)
+            [memberScores addObject:wnomObj.wnomAdj];
+        else
+            [memberScores addObject:@CGFLOAT_MIN];
+    }
+    
+    results[@"repub"] = repubScores;
+    results[@"democ"] = demScores;
+    results[@"member"] = memberScores;
+    results[@"time"] = dates;
+    
+    return results;
+}
+
 - (NSDictionary *)partisanshipDataForLegislatorID:(NSNumber*)legislatorID
 {
 	if (!legislatorID)
@@ -266,53 +321,7 @@
 	LegislatorObj *legislator = [LegislatorObj objectWithPrimaryKeyValue:legislatorID];
 	if (!legislator)
 		return nil;
-	
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"session" ascending:YES];
-	NSArray *descriptors = [[NSArray alloc] initWithObjects:sortDescriptor,nil];
-	NSArray *sortedScores = [(legislator.wnomScores).allObjects sortedArrayUsingDescriptors:descriptors];
-	NSInteger countOfScores = (legislator.wnomScores).count;
-	
-	
-	NSInteger chamber = (legislator.legtype).integerValue;
-	NSArray *democHistory = [self historyForParty:DEMOCRAT chamber:chamber];
-	NSArray *repubHistory = [self historyForParty:REPUBLICAN chamber:chamber];
-		
-	NSUInteger i = 0;
-	
-	NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:3];
-	NSMutableArray *repubScores = [[NSMutableArray alloc] init];
-	NSMutableArray *demScores = [[NSMutableArray alloc] init];
-	NSMutableArray *memberScores = [[NSMutableArray alloc] init];
-	NSMutableArray *dates = [[NSMutableArray alloc] init];
-	
-	for ( i = 0; i < countOfScores ; i++)
-    {
-		WnomObj *wnomObj = sortedScores[i];
-		NSDate *date = [NSDate dateFromString:[wnomObj year].stringValue withFormat:@"yyyy"];
-		NSNumber *democY = [democHistory findWhereKeyPath:@"session" equals:wnomObj.session][@"wnom"];
-		NSNumber *repubY = [repubHistory findWhereKeyPath:@"session" equals:wnomObj.session][@"wnom"];
-		if (!democY)
-			democY = @0.0f;
-		if (!repubY)
-			repubY = @0.0f;
-		
-		[repubScores addObject:repubY];
-		[demScores addObject:democY];
-		[dates addObject:date];
-
-		CGFloat legVal = wnomObj.wnomAdj.floatValue;
-		if (legVal != 0.0f)
-			[memberScores addObject:wnomObj.wnomAdj];
-		else
-			[memberScores addObject:@CGFLOAT_MIN];
-	}
-		
-	results[@"repub"] = repubScores;
-	results[@"democ"] = demScores;
-	results[@"member"] = memberScores;
-	results[@"time"] = dates;
-	
-	return results;
+    return [self partisanshipDataForLegislator:legislator];
 }
 
 - (void)loadPartisanIndexFromCache:(id)sender

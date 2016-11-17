@@ -35,28 +35,35 @@
 #import "CapitolMap.h"
 #import "NotesViewController.h"
 
-@interface LegislatorDetailDataSource (Private)
-- (void) createSectionList;
-@end
-
-
 @implementation LegislatorDetailDataSource
-@synthesize dataObjectID, sectionArray;
+@synthesize legislator = _legislator;
+@synthesize dataObjectID = _dataObjectID;
 
-- (instancetype)initWithLegislator:(LegislatorObj *)newObject {
-	if ((self = [super init])) {
-		if (newObject) 
-			self.legislator = newObject;
+- (instancetype)initWithLegislator:(LegislatorObj *)newObject
+{
+	if ((self = [super init]))
+    {
+		if (newObject)
+        {
+			_legislator = newObject;
+            if (newObject.legislatorID)
+                _dataObjectID = newObject.legislatorID;
+        }
 	}
 	return self;
 }
 
 
-- (LegislatorObj *)legislator {
+- (LegislatorObj *)legislator
+{
+    if (_legislator)
+        return _legislator;
+
 	LegislatorObj *anObject = nil;
-	if (self.dataObjectID) {
+	if (_dataObjectID)
+    {
 		@try {
-			anObject = [LegislatorObj objectWithPrimaryKeyValue:self.dataObjectID];
+			anObject = [LegislatorObj objectWithPrimaryKeyValue:_dataObjectID];
 		}
 		@catch (NSException * e) {
 		}
@@ -64,134 +71,163 @@
 	return anObject;
 }
 
-- (void)setLegislator:(LegislatorObj *)newLegislator {
-	self.dataObjectID = nil;
-	if (newLegislator) {
-		self.dataObjectID = newLegislator.legislatorID;
-		
+- (void)setLegislator:(LegislatorObj *)newLegislator
+{
+    _dataObjectID = nil;
+    _legislator = newLegislator;
+	if (newLegislator)
+    {
+        if (newLegislator.legislatorID)
+            _dataObjectID = newLegislator.legislatorID;
+
 		[self createSectionList];		
 	}
 }
 
-- (void) createSectionList {	
-	NSInteger numberOfSections = 4 + [self.legislator numberOfDistrictOffices];
+- (void)createSectionList
+{
+    LegislatorObj *legislator = _legislator;
+
+	NSInteger numberOfSections = 4 + [legislator numberOfDistrictOffices];
 	
 	NSString *tempString = nil;
 	BOOL isPhone = [UtilityMethods canMakePhoneCalls];
 	TableCellDataObject *cellInfo = nil;
+	NSMutableArray *sectionArray = [NSMutableArray arrayWithCapacity:numberOfSections];
+    self.sectionArray = sectionArray;
 	
-	// create an array of sections, with arrays of DirectoryDetailInfo entries as contents
-	self.sectionArray = nil;	// this calls removeAllObjects and release automatically
-	self.sectionArray = [NSMutableArray arrayWithCapacity:numberOfSections];
-	
-	NSInteger i;
-	for (i=0; i < numberOfSections; i++) {
-		[self.sectionArray addObject:[NSMutableArray arrayWithCapacity:30]]; // just an arbitrary maximum
+    NSInteger i = 0;
+	for (i=0; i < numberOfSections; i++)
+    {
+		[sectionArray addObject:[NSMutableArray arrayWithCapacity:30]]; // just an arbitrary maximum
 	}
 	
-	/*	Section 0: Personal Information */		
-	NSInteger sectionIndex = 0;	
-	
-    NSDictionary *entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Name", @"DataTableUI", @"Title for cell"),
-							    @"entryValue": [self.legislator fullName],
-							    @"title": [self.legislator fullName],
-							    @"isClickable": @NO,
-                                @"entryType": @(DirectoryTypeNone)};
-	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-    if (self.sectionArray.count > sectionIndex)
-        [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	cellInfo = nil;
-	
-	
-    entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Map", @"DataTableUI", @"Title for cell"),
-                  @"entryValue": self.legislator.districtMap,
-                  @"title": NSLocalizedStringFromTable(@"District Map", @"DataTableUI", @"Title for cell"),
-                  @"isClickable": @YES,
-                  @"entryType": @(DirectoryTypeMap)};
-	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-    if (self.sectionArray.count > sectionIndex)
-        [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	cellInfo = nil;
-	
-	
-	if (self.legislator && self.legislator.nimsp_id) {
+    NSDictionary *entryDict = nil;
+    NSInteger sectionIndex = 0;
+
+    NSString *fullName = legislator.fullName;
+    if (fullName && fullName.length)
+    {
+        NSDictionary *entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Name", @"DataTableUI", @"Title for cell"),
+                                    @"entryValue": fullName,
+                                    @"title": fullName,
+                                    @"isClickable": @NO,
+                                    @"entryType": @(DirectoryTypeNone)};
+        cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
+        cellInfo = nil;
+    }
+
+    DistrictMapObj *districtMap = legislator.districtMap;
+    if (districtMap)
+    {
+        entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Map", @"DataTableUI", @"Title for cell"),
+                      @"entryValue": districtMap,
+                      @"title": NSLocalizedStringFromTable(@"District Map", @"DataTableUI", @"Title for cell"),
+                      @"isClickable": @YES,
+                      @"entryType": @(DirectoryTypeMap)};
+        cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
+        cellInfo = nil;
+    }
+
+    NSNumber *nimsp = legislator.nimsp_id;
+	if (nimsp)
+    {
         entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Finances", @"DataTableUI", @"Title for Cell"),
-                      @"entryValue": self.legislator.nimsp_id,
+                      @"entryValue": nimsp,
                       @"title": NSLocalizedStringFromTable(@"Campaign Contributions", @"DataTableUI", @"title for cell"),
                       @"isClickable": @YES,
                       @"entryType": @(DirectoryTypeContributions)};
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-        if (self.sectionArray.count > sectionIndex)
-            [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
 		cellInfo = nil;
-		
 	}
-	
-    entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Email", @"DataTableUI", @"Title for Cell"),
-				  @"entryValue": self.legislator.email,
-				  @"title": self.legislator.email,
-                  @"isClickable": @YES,
-                  @"entryType": @(DirectoryTypeMail)};
-	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-    if (self.sectionArray.count > sectionIndex)
-        [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	cellInfo = nil;
-	
-	
-	
-	if (self.legislator && self.legislator.twitter && (self.legislator.twitter).length) {
-		tempString = ([self.legislator.twitter hasPrefix:@"@"]) ? self.legislator.twitter : [[NSString alloc] initWithFormat:@"@%@", self.legislator.twitter];
+
+    NSString *email = legislator.email;
+    if (email && email.length)
+    {
+        entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Email", @"DataTableUI", @"Title for Cell"),
+                      @"entryValue": email,
+                      @"title": email,
+                      @"isClickable": @YES,
+                      @"entryType": @(DirectoryTypeMail)};
+        cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
+        cellInfo = nil;
+    }
+
+    NSString *twitter = legislator.twitter;
+	if (twitter && twitter.length)
+    {
+		tempString = ([twitter hasPrefix:@"@"]) ? twitter : [[NSString alloc] initWithFormat:@"@%@", twitter];
         entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Twitter", @"DataTableUI", @"Title for Cell"),
                       @"entryValue": tempString,
                       @"title": tempString,
                       @"isClickable": @YES,
                       @"entryType": @(DirectoryTypeTwitter)};
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-        if (self.sectionArray.count > sectionIndex)
-            [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
 		cellInfo = nil;
 		
 	}
-	
-    entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Web", @"DataTableUI", @"Title for Cell, As in, a web address"),
-                  @"entryValue": self.legislator.website,
-                  @"title": NSLocalizedStringFromTable(@"Official Website", @"DataTableUI", @"Title for Cell"),
-                  @"isClickable": @YES,
-                  @"entryType": @(DirectoryTypeWeb)};
-	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-    if (self.sectionArray.count > sectionIndex)
-        [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	cellInfo = nil;
 
-    entryDict = @{
-                  @"subtitle": NSLocalizedStringFromTable(@"Web", @"DataTableUI", @"Title for cell, As in, a web adress"),
-                  @"entryValue": self.legislator.bio_url,
-                  @"title": NSLocalizedStringFromTable(@"Votesmart Bio", @"DataTableUI", @"Title for cell, Biographical information available at VoteSmart.org"),
-                  @"isClickable": @YES,
-                  @"entryType": @(DirectoryTypeWeb),
-                  };
-	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-    if (self.sectionArray.count > sectionIndex)
-        [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	cellInfo = nil;
-	
-    entryDict = @{
-                  @"subtitle": NSLocalizedStringFromTable(@"Legislation", @"DataTableUI", @"Title for cell, Bills and resolutions this person has authored"),
-                  @"entryValue": self.legislator.openstatesID,
-                  @"title": NSLocalizedStringFromTable(@"Authored Bills", @"DataTableUI", @"Title for cell, Bills and resolutions this person has authored"),
-                  @"isClickable": @YES,
-                  @"entryType": @(DirectoryTypeBills),
-                  };
-	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-    if (self.sectionArray.count > sectionIndex)
-        [(self.sectionArray)[sectionIndex] addObject:cellInfo];
-	cellInfo = nil;
-	
+    NSString *website = legislator.website;
+    if (website && website.length)
+    {
+        entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Web", @"DataTableUI", @"Title for Cell, As in, a web address"),
+                      @"entryValue": website,
+                      @"title": NSLocalizedStringFromTable(@"Official Website", @"DataTableUI", @"Title for Cell"),
+                      @"isClickable": @YES,
+                      @"entryType": @(DirectoryTypeWeb)};
+        cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
+        cellInfo = nil;
+    }
+
+    NSString *bio_url = legislator.bio_url;
+    if (bio_url && bio_url.length)
+    {
+        entryDict = @{
+                      @"subtitle": NSLocalizedStringFromTable(@"Web", @"DataTableUI", @"Title for cell, As in, a web adress"),
+                      @"entryValue": bio_url,
+                      @"title": NSLocalizedStringFromTable(@"Votesmart Bio", @"DataTableUI", @"Title for cell, Biographical information available at VoteSmart.org"),
+                      @"isClickable": @YES,
+                      @"entryType": @(DirectoryTypeWeb),
+                      };
+        cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
+        cellInfo = nil;
+    }
+
+    NSString *openstatesID = legislator.openstatesID;
+    if (openstatesID && openstatesID.length)
+    {
+        entryDict = @{
+                      @"subtitle": NSLocalizedStringFromTable(@"Legislation", @"DataTableUI", @"Title for cell, Bills and resolutions this person has authored"),
+                      @"entryValue": openstatesID,
+                      @"title": NSLocalizedStringFromTable(@"Authored Bills", @"DataTableUI", @"Title for cell, Bills and resolutions this person has authored"),
+                      @"isClickable": @YES,
+                      @"entryType": @(DirectoryTypeBills),
+                      };
+        cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
+        cellInfo = nil;
+    }
+
 	tempString = nil;
 	[[NSUserDefaults standardUserDefaults] synchronize];	
 	NSDictionary *storedNotesDict = [[NSUserDefaults standardUserDefaults] valueForKey:@"LEGE_NOTES"];
 	if (storedNotesDict) {
-		tempString = [storedNotesDict valueForKey:(self.legislator.legislatorID).stringValue];
+		tempString = [storedNotesDict valueForKey:(legislator.legislatorID).stringValue];
 	}
 	if (IsEmpty(tempString)) {
 		tempString = kStaticNotes;
@@ -203,23 +239,34 @@
                   @"entryType": @(DirectoryTypeNotes),
                   };
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-    if (self.sectionArray.count > sectionIndex)
-        [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+    if (sectionArray.count > sectionIndex)
+        [(sectionArray)[sectionIndex] addObject:cellInfo];
 	cellInfo = nil;
 	
 	
 	/* after that section's done... DO COMMITTEES */
 	sectionIndex++;
-	for (CommitteePositionObj *position in [self.legislator sortedCommitteePositions]) {
-        entryDict = @{@"subtitle": [position positionString],
-                      @"entryValue": position.committee,
-                      @"title": (position.committee).committeeName,
+	for (CommitteePositionObj *position in [legislator sortedCommitteePositions])
+    {
+        CommitteeObj *committee = position.committee;
+        if (!committee)
+            continue;
+        NSString *title = committee.committeeName;
+        if (!title)
+            continue;
+        NSString *subtitle = position.positionString;
+        if (!subtitle)
+            subtitle = @"";
+
+        entryDict = @{@"subtitle": subtitle,
+                      @"entryValue": committee,
+                      @"title": title,
                       @"isClickable": @YES,
                       @"entryType": @(DirectoryTypeCommittee),
                       };
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-        if (self.sectionArray.count > sectionIndex)
-            [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
 		cellInfo = nil;
 	}
 	
@@ -227,18 +274,30 @@
 	sectionIndex++;
 	/*	Section 1: Staffers */
 	
-	if ([self.legislator numberOfStaffers] > 0) {
-		for (StafferObj *staffer in [self.legislator sortedStaffers]) {
+	if ([legislator numberOfStaffers] > 0)
+    {
+		for (StafferObj *staffer in [legislator sortedStaffers])
+        {
+            NSString *role = staffer.title;
+            if (!role)
+                role = @"";
+            NSString *email = staffer.email;
+            if (!email)
+                email = @"";
+            NSString *name = staffer.name;
+            if (!name)
+                continue;
+
             entryDict = @{
-                          @"subtitle": staffer.title,
-                          @"entryValue": staffer.email,
-                          @"title": staffer.name,
-                          @"isClickable": @YES,
+                          @"subtitle": role,
+                          @"entryValue": email,
+                          @"title": name,
+                          @"isClickable": (email.length > 0) ? @YES : @NO,
                           @"entryType": @(DirectoryTypeMail),
                           };
 			cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-            if (self.sectionArray.count > sectionIndex)
-                [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+            if (sectionArray.count > sectionIndex)
+                [(sectionArray)[sectionIndex] addObject:cellInfo];
 			cellInfo = nil;
 		}
 	}
@@ -250,109 +309,133 @@
                       @"entryType": @(DirectoryTypeNone),
                       };
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-        if (self.sectionArray.count > sectionIndex)
-            [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
 		cellInfo = nil;
 	}
 		
 	/* Now we handle all the office locations ... */
 	sectionIndex++;
 	/*	Section 2: Capitol Office */		
-		
-	if (self.legislator && self.legislator.cap_office && (self.legislator.cap_office).length) {
+
+    NSString * office = legislator.cap_office;
+	if (office && office.length)
+    {
         entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Office", @"DataTableUI", @"The person's office number, indicating the location inside the building"),
-                      @"entryValue": [CapitolMap mapFromOfficeString:self.legislator.cap_office],
-                      @"title": self.legislator.cap_office,
+                      @"entryValue": [CapitolMap mapFromOfficeString:office],
+                      @"title": office,
                       @"isClickable": @YES,
                       @"entryType": @(DirectoryTypeOfficeMap),
                      };
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-        if (self.sectionArray.count > sectionIndex)
-            [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
 		cellInfo = nil;
-	} 
-	if (self.legislator && self.legislator.cap_phone && (self.legislator.cap_phone).length) {
+	}
+
+
+    NSString *phone = legislator.cap_phone;
+	if (phone && phone.length)
+    {
         entryDict = @{
 					 @"subtitle": NSLocalizedStringFromTable(@"Phone", @"DataTableUI", @"Cell title listing a phone number"),
-					 @"entryValue": self.legislator.cap_phone,
-					 @"title": self.legislator.cap_phone,
+					 @"entryValue": phone,
+					 @"title": phone,
 					 @"isClickable": @(isPhone),
 					 @"entryType": @(DirectoryTypePhone),
                      };
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-        if (self.sectionArray.count > sectionIndex)
-            [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
 		cellInfo = nil;
-	} 
-	if (self.legislator && self.legislator.cap_fax && (self.legislator.cap_fax).length) {
+	}
+
+    NSString *fax = legislator.cap_fax;
+	if (fax && fax.length)
+    {
         entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Fax", @"DataTableUI", @"Cell title listing a fax number"),
-					  @"entryValue": self.legislator.cap_fax,
-					  @"title": self.legislator.cap_fax,
+					  @"entryValue": fax,
+					  @"title": fax,
 					  @"isClickable": @NO,
 					  @"entryType": @(DirectoryTypeNone)
                       };
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-        if (self.sectionArray.count > sectionIndex)
-            [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
 		cellInfo = nil;
 	}
-	if (self.legislator && self.legislator.cap_phone2 && (self.legislator.cap_phone2).length) {
-		tempString = (self.legislator.cap_phone2_name.length > 0) ? self.legislator.cap_phone2_name : NSLocalizedStringFromTable(@"Phone #2", @"DataTableUI", @"Second phone number");
+
+    NSString *phone2 = legislator.cap_phone2;
+    NSString *phone2name = legislator.cap_phone2_name;
+
+	if (phone2 && phone2.length)
+    {
+		tempString = (phone2name.length > 0) ? phone2name : NSLocalizedStringFromTable(@"Phone #2", @"DataTableUI", @"Second phone number");
         entryDict = @{@"subtitle":tempString,
-					  @"entryValue": self.legislator.cap_phone2,
-					  @"title": self.legislator.cap_phone2,
+					  @"entryValue": phone2name,
+					  @"title": phone2name,
 					  @"isClickable": @(isPhone),
 					  @"entryType": @(DirectoryTypePhone),
                       };
 		cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-        if (self.sectionArray.count > sectionIndex)
-            [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+        if (sectionArray.count > sectionIndex)
+            [(sectionArray)[sectionIndex] addObject:cellInfo];
 		cellInfo = nil;
 	} 
 	
 	/* after that section's done... */
 	/*	Section 3+: District Offices */		
 	
-	for (DistrictOfficeObj *office in self.legislator.districtOffices) {
+	for (DistrictOfficeObj *office in legislator.districtOffices)
+    {
 		sectionIndex++;
-		if (office.phone && (office.phone).length) {
+        phone = office.phone;
+		if (phone && phone.length)
+        {
             entryDict = @{
                           @"subtitle": NSLocalizedStringFromTable(@"Phone", @"DataTableUI", @"Cell title listing a phone number"),
-                          @"entryValue": office.phone,
-                          @"title": office.phone,
+                          @"entryValue": phone,
+                          @"title": phone,
                           @"isClickable": @(isPhone),
                           @"entryType": @(DirectoryTypePhone),
                           };
 			cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-            if (self.sectionArray.count > sectionIndex)
-                [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+            if (sectionArray.count > sectionIndex)
+                [(sectionArray)[sectionIndex] addObject:cellInfo];
 			cellInfo = nil;
-		}			
-		if (office.fax && (office.fax).length) {
+		}
+
+        fax = office.fax;
+		if (fax && fax.length)
+        {
             entryDict = @{
 						 @"subtitle": NSLocalizedStringFromTable(@"Fax", @"DataTableUI", @"Cell title listing a fax number"),
-						 @"entryValue": office.fax,
-						 @"title": office.fax,
+						 @"entryValue": fax,
+						 @"title": fax,
 						 @"isClickable": @NO,
 						 @"entryType": @(DirectoryTypeNone),
                          };
 			cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-            if (self.sectionArray.count > sectionIndex)
-                [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+            if (sectionArray.count > sectionIndex)
+                [(sectionArray)[sectionIndex] addObject:cellInfo];
 			cellInfo = nil;
-		}			
-		if (office.address && (office.address).length) {
-			
+		}
+
+        NSString *address = office.address;
+		if (address && address.length)
+            address = [office cellAddress];
+        if (address && address.length)
+        {
             entryDict = @{
                           @"subtitle": NSLocalizedStringFromTable(@"Address", @"DataTableUI", @"Cell title listing a street address"),
                           @"entryValue": office,
-                          @"title": [office cellAddress],
+                          @"title": address,
                           @"isClickable": @YES,
                           @"entryType": @(DirectoryTypeMap),
                           };
 			cellInfo = [[TableCellDataObject alloc] initWithDictionary:entryDict];
-            if (self.sectionArray.count > sectionIndex)
-                [(self.sectionArray)[sectionIndex] addObject:cellInfo];
+            if (sectionArray.count > sectionIndex)
+                [(sectionArray)[sectionIndex] addObject:cellInfo];
 			cellInfo = nil;
 		} 
 		
@@ -456,9 +539,10 @@
 
 
 - (NSString *)chamberPartyAbbrev {
-	NSString *partyName = stringForParty((self.legislator.party_id).integerValue, TLReturnAbbrev);
+    LegislatorObj *legislator = _legislator;
+	NSString *partyName = stringForParty((legislator.party_id).integerValue, TLReturnAbbrev);
 	
-	return [NSString stringWithFormat:@"%@ %@ %@", [self.legislator chamberName], partyName, 
+	return [NSString stringWithFormat:@"%@ %@ %@", [legislator chamberName], partyName, 
 			 NSLocalizedStringFromTable(@"Avg.", @"DataTableUI", @"Abbreviation for the word average.")];
 }
 

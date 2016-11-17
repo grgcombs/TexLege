@@ -13,13 +13,11 @@
 #import <Foundation/Foundation.h>
 #import "S7GraphView.h"
 
+@class  LegislatorObj;
 
-@interface VotingRecordDataSource : NSObject <S7GraphViewDataSource,S7GraphViewDelegate>{
-	NSNumber *legislatorID;
-	NSDictionary *chartData;
-}
-@property (nonatomic,strong) NSNumber *legislatorID;
-@property (nonatomic,strong) NSDictionary *chartData;
+@interface VotingRecordDataSource : NSObject <S7GraphViewDataSource,S7GraphViewDelegate>
+@property (nonatomic,unsafe_unretained) LegislatorObj *legislator;
+@property (nonatomic,copy,readonly) NSDictionary *chartData;
 
 - (void)prepareVotingRecordView:(S7GraphView *)aView;
 

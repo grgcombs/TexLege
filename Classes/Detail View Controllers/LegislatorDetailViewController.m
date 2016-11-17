@@ -61,6 +61,8 @@
 @implementation LegislatorDetailViewController
 @synthesize masterPopover = _masterPopover;
 @synthesize dataSource = _dataSource;
+@synthesize legislator = _legislator;
+@synthesize dataObject = _dataObject;
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -128,18 +130,16 @@
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	self.dataSource = nil;
-}
-
-- (id)dataObject
-{
-	return self.legislator;
+    _legislator = nil;
 }
 
 - (void)setDataObject:(id)newObj
 {
     if (!newObj || ![newObj isKindOfClass:[LegislatorObj class]])
         newObj = nil;
-	self.legislator = newObj;
+
+    _dataObject = newObj;
+	_legislator = newObj;
 }
 
 - (NSString *)chamberPartyAbbrev
@@ -150,7 +150,7 @@
 	return [NSString stringWithFormat:@"%@ %@", [member chamberName], partyName];
 }
 
-- (NSString *) partisanRankStringForLegislator
+- (NSString *)partisanRankStringForLegislator
 {
 	LegislatorObj *member = self.legislator;
 	if (IsEmpty(member.wnomScores))
@@ -235,10 +235,15 @@
 
 - (LegislatorDetailDataSource *)dataSource
 {
-    LegislatorObj *member = self.legislator;
-    if (!_dataSource && member)
+    if (_dataSource
+        && _legislator
+        && [_dataSource.legislator isEqual:_legislator])
     {
-        _dataSource = [[LegislatorDetailDataSource alloc] initWithLegislator:member];
+        return _dataSource;
+    }
+    else if (_legislator)
+    {
+        _dataSource = [[LegislatorDetailDataSource alloc] initWithLegislator:_legislator];
     }
     return _dataSource;
 }
@@ -268,13 +273,14 @@
 
 - (void)setLegislator:(LegislatorObj *)anObject
 {
-	if (self.dataSource
+    if (_legislator
         && anObject
-        && self.dataObjectID
-        && [anObject.legislatorID isEqual:self.dataObjectID])
+        && (_legislator == anObject || [_legislator isEqual:anObject])
+        && _dataSource && [_legislator isEqual:_dataSource.legislator])
     {
-		return;
+        return;
     }
+    _legislator = anObject;
 
 	if (!anObject)
     {
@@ -287,11 +293,16 @@
     NSNumber *legislatorID = anObject.legislatorID;
     self.dataObjectID = legislatorID;
 
-    self.tableView.dataSource = self.dataSource;
+    LegislatorDetailDataSource *dataSource = [self dataSource];
+    if (dataSource)
+    {
+        [dataSource createSectionList];
+    }
+    self.tableView.dataSource = dataSource;
 
     [self setupHeader];
 
-    self.votingDataSource.legislatorID = legislatorID;
+    self.votingDataSource.legislator = anObject;
 
     if (self.masterPopover != nil)
         [self.masterPopover dismissPopoverAnimated:YES];

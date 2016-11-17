@@ -34,5 +34,6 @@
 - (CGFloat) partyPartisanIndexUsingChamber:(NSInteger)chamber andPartyID:(NSInteger)party;
 - (NSArray *) historyForParty:(NSInteger)party chamber:(NSInteger)chamber;
 - (NSDictionary *)partisanshipDataForLegislatorID:(NSNumber*)legislatorID;
+- (NSDictionary *)partisanshipDataForLegislator:(LegislatorObj*)legislator;
 
 @end
