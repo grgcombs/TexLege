@@ -273,13 +273,6 @@
 
 - (void)setLegislator:(LegislatorObj *)anObject
 {
-    if (_legislator
-        && anObject
-        && (_legislator == anObject || [_legislator isEqual:anObject])
-        && _dataSource && [_legislator isEqual:_dataSource.legislator])
-    {
-        return;
-    }
     _legislator = anObject;
 
 	if (!anObject)
