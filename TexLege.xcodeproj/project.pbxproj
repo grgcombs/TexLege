@@ -70,6 +70,12 @@
 		373EBA5112F0A01100A3E604 /* DataModelUpdateManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 373EBA5012F0A01100A3E604 /* DataModelUpdateManager.m */; };
 		37412A39124322C400807502 /* LegislatorContributionsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37412A38124322C400807502 /* LegislatorContributionsDataSource.m */; };
 		37413B1712114D09003CA7E8 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37413B1612114D09003CA7E8 /* MessageUI.framework */; };
+		37418C1F1DF0F16C005DD85A /* SLFAbstractCodableObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FAD0861DCBEE9600158071 /* SLFAbstractCodableObject.m */; };
+		37418C201DF0F16C005DD85A /* SLFInfoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FAD07B1DCBEE8100158071 /* SLFInfoItem.m */; };
+		37418C211DF0F16C005DD85A /* SLFInfoPanelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FAD07D1DCBEE8100158071 /* SLFInfoPanelManager.m */; };
+		37418C221DF0F16C005DD85A /* SLFObjectQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FAD08A1DCBEF3100158071 /* SLFObjectQueue.m */; };
+		37418C2B1DF0F240005DD85A /* SLFInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37418C2A1DF0F240005DD85A /* SLFInfoView.m */; };
+		37418C3E1DF1D1F5005DD85A /* UIColor+SLFUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 37418C3D1DF1D1F5005DD85A /* UIColor+SLFUtils.m */; };
 		3742D6EF122E18D100698483 /* DistrictMapSearchOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3742D6EE122E18D100698483 /* DistrictMapSearchOperation.m */; };
 		3742D723122E1FDF00698483 /* NSInvocation+CWVariableArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 3742D722122E1FDF00698483 /* NSInvocation+CWVariableArguments.m */; };
 		3747C25D11E7B15300A6D8C6 /* PartisanIndexStats.m in Sources */ = {isa = PBXBuildFile; fileRef = 3747C25C11E7B15300A6D8C6 /* PartisanIndexStats.m */; };
@@ -690,6 +696,10 @@
 		37412A37124322C400807502 /* LegislatorContributionsDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorContributionsDataSource.h; sourceTree = "<group>"; };
 		37412A38124322C400807502 /* LegislatorContributionsDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LegislatorContributionsDataSource.m; sourceTree = "<group>"; };
 		37413B1612114D09003CA7E8 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		37418C291DF0F240005DD85A /* SLFInfoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLFInfoView.h; sourceTree = "<group>"; };
+		37418C2A1DF0F240005DD85A /* SLFInfoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLFInfoView.m; sourceTree = "<group>"; };
+		37418C3C1DF1D1F5005DD85A /* UIColor+SLFUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+SLFUtils.h"; sourceTree = "<group>"; };
+		37418C3D1DF1D1F5005DD85A /* UIColor+SLFUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+SLFUtils.m"; sourceTree = "<group>"; };
 		3742D6ED122E18D100698483 /* DistrictMapSearchOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DistrictMapSearchOperation.h; sourceTree = "<group>"; };
 		3742D6EE122E18D100698483 /* DistrictMapSearchOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DistrictMapSearchOperation.m; sourceTree = "<group>"; };
 		3742D721122E1FDF00698483 /* NSInvocation+CWVariableArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSInvocation+CWVariableArguments.h"; path = "Classes/Utility Classes/NSInvocation+CWVariableArguments.h"; sourceTree = SOURCE_ROOT; };
@@ -2174,6 +2184,10 @@
 				37FAD0891DCBEF3100158071 /* SLFObjectQueue.h */,
 				37FAD08A1DCBEF3100158071 /* SLFObjectQueue.m */,
 				37FAD0881DCBEF1100158071 /* SLFTypeCheck.h */,
+				37418C291DF0F240005DD85A /* SLFInfoView.h */,
+				37418C2A1DF0F240005DD85A /* SLFInfoView.m */,
+				37418C3C1DF1D1F5005DD85A /* UIColor+SLFUtils.h */,
+				37418C3D1DF1D1F5005DD85A /* UIColor+SLFUtils.m */,
 			);
 			name = SLFInfoPanel;
 			path = Vendor/SLFInfoPanel;
@@ -2653,6 +2667,7 @@
 				378AFC81100BDD640040706A /* CommitteesDataSource.m in Sources */,
 				378AFC84100BDD940040706A /* LegislatorsDataSource.m in Sources */,
 				37A002D21B41D16800B48D48 /* TexLege.xcdatamodeld in Sources */,
+				37418C3E1DF1D1F5005DD85A /* UIColor+SLFUtils.m in Sources */,
 				379C1EEA1012DF28007844B5 /* NotesViewController.m in Sources */,
 				37D6E82810175F0800D4D7C2 /* UtilityMethods.m in Sources */,
 				3709AEAE101FBE7900C1061B /* Reachability.m in Sources */,
@@ -2660,7 +2675,9 @@
 				3775FA4C11D8701B00D69AC5 /* LegislatorMasterViewController.m in Sources */,
 				37AD57BB11DA651700D68934 /* CommitteeDetailViewController.m in Sources */,
 				3747C25D11E7B15300A6D8C6 /* PartisanIndexStats.m in Sources */,
+				37418C201DF0F16C005DD85A /* SLFInfoItem.m in Sources */,
 				372D5CC011E9983A005A21E2 /* CapitolMap.m in Sources */,
+				37418C1F1DF0F16C005DD85A /* SLFAbstractCodableObject.m in Sources */,
 				3737803B11F8082500E36500 /* WnomObj+RestKit.m in Sources */,
 				370F7AA911FEAF730004AC50 /* PolygonMath.m in Sources */,
 				377ACE4811FFA30E002C7E49 /* CalendarDataSource.m in Sources */,
@@ -2692,6 +2709,7 @@
 				376850221234AAFD00AEEC3D /* PartisanScaleView.m in Sources */,
 				374E2A6B12360C6E0005E245 /* TexLegeMapPins.m in Sources */,
 				37D3649D1236869200CCF86E /* UserPinAnnotationView.m in Sources */,
+				37418C2B1DF0F240005DD85A /* SLFInfoView.m in Sources */,
 				37C94A2712387ABA00D2D582 /* DistrictMapMasterViewController.m in Sources */,
 				379393FE123B1A82003103B3 /* CommitteeMemberCellView.m in Sources */,
 				37D46C01123B483800C2C403 /* CommitteeMemberCell.m in Sources */,
@@ -2712,6 +2730,7 @@
 				3770F57513182BF500686DE3 /* BillsFavoritesViewController.m in Sources */,
 				376F632D13298DE000F2B3DA /* BillsCategoriesViewController.m in Sources */,
 				37D38B10132ECFFB002F1730 /* BillsListViewController.m in Sources */,
+				37418C221DF0F16C005DD85A /* SLFObjectQueue.m in Sources */,
 				37A8F14613315D4D00085AAF /* BillMetadataLoader.m in Sources */,
 				371FB1D91333B43C0003740A /* CalendarEventsLoader.m in Sources */,
 				370EAC381337E3CF007788BC /* TexLegeObjectCache.m in Sources */,
@@ -2725,6 +2744,7 @@
 				371A449D134682E100DFDBB8 /* XMLReader.m in Sources */,
 				376DFEB613492FF700360BF4 /* LoadingCell.m in Sources */,
 				3763ED701354E0F4000E524C /* UIImage+ResolutionIndependent.m in Sources */,
+				37418C211DF0F16C005DD85A /* SLFInfoPanelManager.m in Sources */,
 				37D0D1F01357A198003DA1BB /* CommitteeObj.m in Sources */,
 				37D0D1F41357A198003DA1BB /* StafferObj.m in Sources */,
 				37D0D1F51357A198003DA1BB /* DistrictOfficeObj.m in Sources */,

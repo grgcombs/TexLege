@@ -181,6 +181,10 @@
 	return ([self statusCode] == 201);
 }
 
+- (BOOL)isNotModified {
+    return ([self statusCode] == 304);
+}
+
 - (BOOL)isUnauthorized {
 	return ([self statusCode] == 401);
 }

@@ -200,9 +200,31 @@
 	if (NO == [self encounteredErrorWhileProcessingRequest:response]) {
         // TODO: Should probably be an expected MIME types array set by client/manager
         // if ([self.objectMapper hasParserForMIMEType:[response MIMEType]) canMapFromMIMEType:
-        BOOL isAcceptable = (self.objectMapper.format == RKMappingFormatXML && [response isXML]) ||
-                            (self.objectMapper.format == RKMappingFormatJSON && [response isJSON]);
-		if ([response isSuccessful] && isAcceptable) {
+
+        BOOL isAcceptable = NO;
+
+        if ([response isSuccessful])
+        {
+            switch (self.objectMapper.format) {
+                case RKMappingFormatXML: {
+                    isAcceptable = [response isXML];
+                    break;
+                }
+                case RKMappingFormatJSON: {
+                    isAcceptable = ([response isJSON]);
+                    if (!isAcceptable)
+                        isAcceptable = [response.MIMEType hasSuffix:@"json"];
+                    if (!isAcceptable)
+                        isAcceptable = ([response.MIMEType isEqualToString:@"text/plain"]
+                                        && [response.URL.pathExtension isEqualToString:@"json"]);
+                    break;
+                }
+            }
+
+        }
+        
+        if (isAcceptable)
+        {
 			[self performSelectorInBackground:@selector(processLoadModelsInBackground:) withObject:response];
 		} else {
 			NSLog(@"Encountered unexpected response code: %ld (MIME Type: %@)", (long)response.statusCode, response.MIMEType);

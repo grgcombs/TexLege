@@ -138,6 +138,11 @@
 @property (NS_NONATOMIC_IOSONLY, getter=isCreated, readonly) BOOL created;
 
 /**
+ * Indicates an HTTP response code of 304
+ */
+@property (NS_NONATOMIC_IOSONLY, getter=isNotModified, readonly) BOOL notModified;
+
+/**
  * Indicates an HTTP response code of 401
  */
 @property (NS_NONATOMIC_IOSONLY, getter=isUnauthorized, readonly) BOOL unauthorized;

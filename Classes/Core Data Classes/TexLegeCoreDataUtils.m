@@ -226,17 +226,35 @@
 	}
 }
 
-+ (void)initRestKitObjects:(id)sender {
++ (void)initRestKitObjects {
 	
 	RKObjectManager* objectManager = [RKObjectManager objectManagerWithBaseURL:RESTKIT_BASE_URL];
+    RKClient *client = objectManager.client;
+    if (client)
+    {
+        NSDictionary *bundleInfo = [NSBundle mainBundle].infoDictionary;
+        NSString *appName = (bundleInfo[@"CFBundleName"]) ?: @"TexLege";
+        NSString *version = bundleInfo[@"CFBundleShortVersionString"];
+        if (!version)
+            version = @"master";
+        else
+        {
+            NSRange range = [version rangeOfString:@"-" options:0];
+            if (range.location != NSNotFound && range.length > 0)
+                version = [version substringToIndex:range.location];
+        }
+        UIDevice *deviceInfo = [UIDevice currentDevice];
+        NSString *systemVersion = [deviceInfo.systemVersion stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+        client.HTTPHeaders[@"User-Agent"] = [NSString stringWithFormat:@"%@/%@ (%@; CPU OS %@ like Mac OS X)", appName, version, deviceInfo.model, systemVersion];
+    }
 	RKObjectMapper* mapper = objectManager.mapper;
 	// Initialize object store
 	NSString *modelPath = [[NSBundle mainBundle] pathForResource:@"TexLege" ofType:@"momd"];
 	NSURL *momURL = [NSURL fileURLWithPath:modelPath];
 	NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
 		
-	objectManager.client.username = RESTKIT_USERNAME;
-	objectManager.client.password = RESTKIT_PASSWORD;
+	//objectManager.client.username = RESTKIT_USERNAME;
+	//objectManager.client.password = RESTKIT_PASSWORD;
 	
 	[RKRequestQueue sharedQueue].showsNetworkActivityIndicatorWhenBusy = YES;
 	
@@ -319,7 +337,7 @@
 	return [RKObjectManager sharedManager].objectStore.managedObjectModel.entitiesByName.allKeys;
 }
 
-+ (void) resetSavedDatabase:(id)sender {
++ (void) resetSavedDatabase {
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"DATABASE_RESET"];
 	[[RKObjectManager sharedManager].objectStore deletePersistantStoreUsingSeedDatabaseName:SEED_DB_NAME];
 	

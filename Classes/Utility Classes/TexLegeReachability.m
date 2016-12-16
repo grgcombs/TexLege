@@ -79,33 +79,29 @@
     // method "reachabilityChanged" will be called. 
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(reachabilityChanged:) name: kReachabilityChangedNotification object: nil];
 
-	_hostReach = [Reachability reachabilityWithHostName: @"www.apple.com"];
-	[_hostReach startNotifier];
-	[self updateStatusWithReachability: _hostReach];
-	
-	_openstatesReach = [Reachability reachabilityWithHostName:osApiHost];
-	[_openstatesReach startNotifier];
-	[self updateStatusWithReachability: _openstatesReach];
-
-	_googleReach = [Reachability reachabilityWithHostName:@"maps.google.com"];
-	[_googleReach startNotifier];
-	[self updateStatusWithReachability: _googleReach];
-	
-	_texlegeReach = [Reachability reachabilityWithHostName:RESTKIT_HOST];
-	[_texlegeReach startNotifier];
-	[self updateStatusWithReachability: _texlegeReach];
-	
-	_tloReach = [Reachability reachabilityWithHostName:tloApiHost];
-	[_tloReach startNotifier];
-	[self updateStatusWithReachability: _tloReach];
-	
-	_internetReach = [Reachability reachabilityForInternetConnection];
-	[_internetReach startNotifier];
-	[self updateStatusWithReachability: _internetReach];
-	
     _wifiReach = [Reachability reachabilityForLocalWiFi];
-	[_wifiReach startNotifier];
-	[self updateStatusWithReachability: _wifiReach];
+	_hostReach = [Reachability reachabilityWithHostName: @"www.apple.com"];
+    _openstatesReach = [Reachability reachabilityWithHostName:osApiHost];
+    _googleReach = [Reachability reachabilityWithHostName:@"maps.google.com"];
+    _texlegeReach = [Reachability reachabilityWithHostName:RESTKIT_HOST];
+    _tloReach = [Reachability reachabilityWithHostName:tloApiHost];
+    _internetReach = [Reachability reachabilityForInternetConnection];
+
+    [_internetReach startNotifier];
+    [_wifiReach startNotifier];
+	[_hostReach startNotifier];
+    [_openstatesReach startNotifier];
+    [_googleReach startNotifier];
+    [_texlegeReach startNotifier];
+    [_tloReach startNotifier];
+
+    [self updateStatusWithReachability: _internetReach];
+    [self updateStatusWithReachability: _wifiReach];
+	[self updateStatusWithReachability: _hostReach];
+	[self updateStatusWithReachability: _openstatesReach];
+	[self updateStatusWithReachability: _googleReach];
+	[self updateStatusWithReachability: _texlegeReach];
+	[self updateStatusWithReachability: _tloReach];
 }
 
 - (void)reachabilityChanged:(NSNotification *)note

@@ -31,6 +31,7 @@
 #import "DataModelUpdateManager.h"
 #import "BillMetadataLoader.h"
 #import "CalendarEventsLoader.h"
+#import "SLFInfoView.h"
 
 #import "StateMetaLoader.h"
 
@@ -46,6 +47,7 @@
 @property (nonatomic,strong) DataModelUpdateManager *dataUpdater;
 @property (nonatomic,copy) NSMutableDictionary *savedTableSelection;
 @property (nonatomic,getter=isAppQuitting,assign) BOOL appQuitting;
+@property (nonatomic,assign) BOOL hasAlertedNotReachable;
 @property (nonatomic,strong) AnalyticsOptInAlertController *analyticsOptInController;
 
 @end
@@ -318,26 +320,67 @@ NSInteger kNoSelection = -1;
 
 - (void)reachabilityDidChange:(TexLegeReachability *)reachability
 {
-	if (!self.tabBarController)
-        return;
     if (!reachability)
         reachability = [TexLegeReachability sharedTexLegeReachability];
 
-    for (UITabBarItem *item in [self.tabBarController valueForKeyPath:@"viewControllers.tabBarItem"])
+    if (self.tabBarController)
     {
-        if (item.tag == TAB_BILL || item.tag == TAB_CALENDAR)
-            item.enabled = reachability.openstatesConnectionStatus > NotReachable;
-        else if (item.tag == TAB_DISTRICTMAP)
-            item.enabled = reachability.googleConnectionStatus > NotReachable;
-	}
+        for (UITabBarItem *item in [self.tabBarController valueForKeyPath:@"viewControllers.tabBarItem"])
+        {
+            if (item.tag == TAB_BILL || item.tag == TAB_CALENDAR)
+                item.enabled = reachability.openstatesConnectionStatus > NotReachable;
+            else if (item.tag == TAB_DISTRICTMAP)
+                item.enabled = reachability.googleConnectionStatus > NotReachable;
+        }
+    }
+
+    if (reachability.openstatesConnectionStatus <= NotReachable
+        || reachability.texlegeConnectionStatus <= NotReachable)
+    {
+        if (self.hasAlertedNotReachable)
+            return;
+
+        // check again in a few seconds
+        __weak typeof(self) wSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf)
+                return;
+
+            TexLegeReachability *reachability = [TexLegeReachability sharedTexLegeReachability];
+
+            if (reachability.openstatesConnectionStatus <= NotReachable
+                || reachability.texlegeConnectionStatus <= NotReachable)
+            {
+                if (sSelf.hasAlertedNotReachable)
+                    return;
+
+                sSelf.hasAlertedNotReachable = YES;
+                [SLFInfoView showInfoInWindow:sSelf.window
+                                         type:SLFInfoTypeError
+                                        title:NSLocalizedString(@"Network Failure!",@"")
+                                     subtitle:NSLocalizedString(@"This application requires Internet access to operate.  One or more of the required data servers is unreachable",@"")
+                                    hideAfter:4.f];
+            }
+        });
+    }
 }
 
-- (void)runOnInitialAppStart:(id)sender
+- (void)runOnInitialAppStart
 {	
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 
-	NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleVersion"];
-	
+    NSDictionary *bundleInfo = [NSBundle mainBundle].infoDictionary;
+    NSString *version = bundleInfo[@"CFBundleShortVersionString"];
+    if (!version || !version.length) // impossible, right?
+        version = bundleInfo[@"CFBundleVersion"];
+    else
+    {
+        NSRange range = [version rangeOfString:@"-" options:0];
+        if (range.location != NSNotFound && range.length > 0)
+            version = [version substringToIndex:range.location];
+    }
+
 	[self restoreArchivableSavedTableSelection];
 	
 	[self setupViewControllerHierarchy];
@@ -367,23 +410,24 @@ NSInteger kNoSelection = -1;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {		
 	NSLog(@"iOS Version: %@", [UIDevice currentDevice].systemVersion);
-	
+
+    self.hasAlertedNotReachable = NO;
 	[[TexLegeReachability sharedTexLegeReachability] startCheckingReachability:self];
 	
 	// initialize RestKit to handle our seed database and user database
-	[TexLegeCoreDataUtils initRestKitObjects:self];	
+	[TexLegeCoreDataUtils initRestKitObjects];
 	
     // Set up the mainWindow and content view
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
-	[self runOnInitialAppStart:nil];
+	[self runOnInitialAppStart];
 		
 	return YES;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-
+    self.hasAlertedNotReachable = NO;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -411,7 +455,8 @@ NSInteger kNoSelection = -1;
 - (void)runOnEveryAppStart
 {
 	self.appQuitting = NO;
-	
+    self.hasAlertedNotReachable = NO;
+
 	[[StateMetaLoader sharedStateMeta] setSelectedState:@"tx"];
 	[PartisanIndexStats sharedPartisanIndexStats];
 	[[BillMetadataLoader sharedBillMetadataLoader] loadMetadata:self];
@@ -422,10 +467,15 @@ NSInteger kNoSelection = -1;
 		self.analyticsOptInController = [[AnalyticsOptInAlertController alloc] init];
 		if (![_analyticsOptInController presentAnalyticsOptInAlertIfNecessary])
 			[_analyticsOptInController updateOptInFromSettings];
-		
+
+        __weak typeof(self) wSelf = self;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            if (self.dataUpdater)
-                [self.dataUpdater performDataUpdatesIfAvailable:nil];
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf)
+                return;
+            DataModelUpdateManager *updater = sSelf.dataUpdater;
+            if (updater)
+                [updater performDataUpdatesIfAvailable:nil];
         });
 	}
 	[[LocalyticsSession sharedLocalyticsSession] resume];
@@ -550,7 +600,7 @@ NSInteger kNoSelection = -1;
 	return data;
 }
 
-- (BOOL) isDatabaseResetNeeded
+- (BOOL)isDatabaseResetNeeded
 {
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	BOOL needsReset = [[NSUserDefaults standardUserDefaults] boolForKey:kResetSavedDatabaseKey];
@@ -579,10 +629,14 @@ NSInteger kNoSelection = -1;
         return;
 
     [self resetSavedTableSelection:nil];
-    [TexLegeCoreDataUtils resetSavedDatabase:nil];
+    [TexLegeCoreDataUtils resetSavedDatabase];
 
-    DataModelUpdateManager *updater = self.dataUpdater;
+    __weak typeof(self) wSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        __strong typeof(wSelf) sSelf = wSelf;
+        if (!sSelf)
+            return;
+        DataModelUpdateManager *updater = sSelf.dataUpdater;
         if (updater)
             [updater performDataUpdatesIfAvailable:nil];
     });

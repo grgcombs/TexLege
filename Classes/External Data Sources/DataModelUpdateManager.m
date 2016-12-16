@@ -14,10 +14,12 @@
 #import "UtilityMethods.h"
 #import "TexLegeReachability.h"
 #import "TexLegeCoreDataUtils.h"
-#import "MTInfoPanel.h"
+#import "SLFInfoView.h"
+#import "SLFInfoPanelManager.h"
 #import "LocalyticsSession.h"
 #import "DistrictMapObj+RestKit.h"
 #import "NSDate+Helper.h"
+#import "SLFTypeCheck.h"
 
 #define FORCE_ALL_UPDATES 0
 
@@ -42,12 +44,12 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 #define intToNum(integer) [NSNumber numberWithInt:integer]
 
 @interface DataModelUpdateManager()
+@property (nonatomic,copy) NSDictionary *labelsForEntities;
+@property (nonatomic,copy) NSCountedSet *activeUpdates;
+@property (nonatomic,strong) RKRequestQueue *requestQueue;
 
 @property (weak, nonatomic,readonly) UIView *appRootView;
-@property (nonatomic,strong) MTInfoPanel *infoPanel;
-
-- (NSString *)localDataTimestampForModel:(NSString *)classString;
-
+@property (nonatomic,strong) SLFInfoPanelManager *infoManager;
 // Someday we may opt to handle updating for this aggregate partisanship file.  Right now it's manually updated.
 // In the future, we might use a method like the following to get timestamps and update accordingly.
 #define WNOMAGGREGATES_UPDATING 0
@@ -57,42 +59,43 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 @end
 
 @implementation DataModelUpdateManager
-@synthesize activeUpdates;
-@synthesize infoPanel = _infoPanel;
 
-- (instancetype) init {
-	if ((self=[super init])) {
-		_queue = [[RKRequestQueue alloc] init];
-		_queue.concurrentRequestsLimit = 1;
-		_queue.delegate = self;
-//		_queue.showsNetworkActivityIndicatorWhenBusy = YES;
-		
-		activeUpdates = [[NSCountedSet alloc] init];
-		statusBlurbsAndModels = [[NSDictionary alloc] initWithObjectsAndKeys: 
-									  NSLocalizedStringFromTable(@"Legislators", @"DataTableUI", @"Status indicator for updates"), @"LegislatorObj",
-									  NSLocalizedStringFromTable(@"Partisanship Scores", @"DataTableUI", @"Status indicator for updates"), @"WnomObj",
-									  NSLocalizedStringFromTable(@"Staffers", @"DataTableUI", @"Status indicator for updates"), @"StafferObj",
-									  NSLocalizedStringFromTable(@"Committees", @"DataTableUI", @"Status indicator for updates"), @"CommitteeObj",
-									  NSLocalizedStringFromTable(@"Committee Positions", @"DataTableUI", @"Status indicator for updates"), @"CommitteePositionObj",
-									  NSLocalizedStringFromTable(@"District Offices", @"DataTableUI", @"Status indicator for updates"), @"DistrictOfficeObj",
-									  NSLocalizedStringFromTable(@"Resources", @"DataTableUI", @"Status indicator for updates"), @"LinkObj",
-									  NSLocalizedStringFromTable(@"District Maps", @"DataTableUI", @"Status indicator for updates"), @"DistrictMapObj",
-									  NSLocalizedStringFromTable(@"Party Scores", @"DataTableUI", @"Status indicator for updates"), @"WnomAggregateObj",
-									  nil];		
+- (instancetype) init
+{
+    self = [super init];
+	if (self)
+    {
+		_requestQueue = [[RKRequestQueue alloc] init];
+		_requestQueue.concurrentRequestsLimit = 1;
+		_requestQueue.delegate = self;
+
+		_activeUpdates = [[NSCountedSet alloc] init];
+
+        NSString *file = @"DataTableUI";
+        _labelsForEntities = @{
+                               @"LegislatorObj": NSLocalizedStringFromTable(@"Legislators", file, nil),
+                               @"WnomObj": NSLocalizedStringFromTable(@"Partisanship Scores", file, nil),
+                               @"StafferObj": NSLocalizedStringFromTable(@"Staffers", file, nil),
+                               @"CommitteeObj": NSLocalizedStringFromTable(@"Committees", file,nil),
+                               @"CommitteePositionObj": NSLocalizedStringFromTable(@"Committee Positions", file, nil),
+                               @"DistrictOfficeObj": NSLocalizedStringFromTable(@"District Offices", file, nil),
+                               @"LinkObj": NSLocalizedStringFromTable(@"Resources", file, nil),
+                               @"DistrictMapObj": NSLocalizedStringFromTable(@"District Maps", file, nil),
+                               @"WnomAggregateObj": NSLocalizedStringFromTable(@"Party Scores", file, nil),
+                               };
 	}
 	return self;
 }
 
 
-- (void) dealloc {
+- (void)dealloc {
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
-	[_queue cancelRequestsWithDelegate:self];
-	_queue = nil;
-	statusBlurbsAndModels = nil;
+	[_requestQueue cancelRequestsWithDelegate:self];
 }
 
 // Totally cheating my way through this right now.  But it'll pass the app store reviewers!!!
-- (UIView *)appRootView {
+- (UIView *)appRootView
+{
     @try {
         UITabBarController *tabBarController = (UITabBarController *)[UIApplication sharedApplication].keyWindow.rootViewController;
         if (tabBarController && tabBarController.isViewLoaded)
@@ -126,50 +129,62 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
     if (![TexLegeReachability texlegeReachable])
         return;
 
-	NSArray *objects = statusBlurbsAndModels.allKeys;
+    SLFInfoPanelManager *infoManager = [SLFInfoPanelManager sharedInfoManager];
+    UIView *rootView = self.appRootView;
+    if (!infoManager || ![infoManager.parentView isEqual:rootView])
+    {
+        infoManager = [[SLFInfoPanelManager alloc] initWithManagerId:@"TXLDataUpdates" parentView:rootView];
+        _infoManager = infoManager;
+        [SLFInfoPanelManager setSharedInfoManager:infoManager];
+    }
+
+	NSArray *entities = self.labelsForEntities.allKeys;
 
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"DATABASE_UPDATE_REQUEST"];
 
-    NSString *statusString = NSLocalizedStringFromTable(@"Checking for Data Updates", @"DataTableUI", @"Status indicator for updates");
-    UIView *rootView = self.appRootView;
-    if (rootView)
-    {
-        self.infoPanel = [MTInfoPanel showPanelInView:rootView type:MTInfoPanelTypeActivity title:NSLocalizedString(@"Data Update", @"") subtitle:statusString];
-    }
-    
+    NSString *statusString = NSLocalizedStringFromTable(@"Checking for Data Updates", @"DataTableUI", nil);
+
+    SLFInfoItem *updateStartingItem = [[SLFInfoItem alloc] initWithIdentifier:@"TXLStartingUpdates" type:SLFInfoTypeActivity title:NSLocalizedString(@"Data Update", nil) subtitle:statusString image:nil duration:5];
+    [infoManager addInfoItem:updateStartingItem];
+
     self.activeUpdates = [NSCountedSet set];
 
     RKObjectManager* objectManager = [RKObjectManager sharedManager];
 
-    for (NSString *entityName in objects)
+    for (NSString *entityName in entities)
     {
-#if FORCE_ALL_UPDATES
-        NSString *localTS = @"2008-01-01 00:00:00";
-#else
-        NSString *localTS = [self localDataTimestampForModel:entityName];
-#endif
-        if (!localTS)
-            continue; // runtime updates are turned off for this entity, skip it
 
-        NSString *resourcePath = [NSString stringWithFormat:@"/rest.php/%@/", entityName];
-        NSDictionary *queryParams = @{TXLUPDMGR_UPDATEDPARAM: localTS};
-        NSString* resourcePathWithQuery = RKPathAppendQueryParams(resourcePath, queryParams);
+#if 0
+    #if FORCE_ALL_UPDATES
+            NSString *localTS = @"2008-01-01 00:00:00";
+    #else
+            NSString *localTS = [self localDataTimestampForModel:entityName];
+    #endif
+            if (!localTS)
+                continue; // runtime updates are turned off for this entity, skip it
+
+            //NSString *resourcePath = [NSString stringWithFormat:@"/rest.php/%@/", entityName];
+            //NSDictionary *queryParams = @{TXLUPDMGR_UPDATEDPARAM: localTS};
+#else
+    #warning GREG -- do something to make this more efficient??? Put an e-tag in the repository?
+        NSString *resourcePath = [NSString stringWithFormat:@"/%@.json", entityName];
+#endif
 
         Class entityClass = NSClassFromString(entityName);
-        if (!entityClass || !resourcePathWithQuery)
+        if (!entityClass)
             continue;
 
         [self.activeUpdates addObject:entityName];
 
-        RKObjectLoader *loader = [objectManager objectLoaderWithResourcePath:resourcePathWithQuery delegate:self];
+        RKObjectLoader *loader = [objectManager objectLoaderWithResourcePath:resourcePath delegate:self];
         loader.method = RKRequestMethodGET;
         loader.objectClass = entityClass;
         loader.backgroundPolicy = RKRequestBackgroundPolicyContinue;
-        [_queue addRequest:loader];
+        [_requestQueue addRequest:loader];
     }
 
-    if (_queue.count)
-        [_queue start];
+    if (_requestQueue.count)
+        [_requestQueue start];
 }
 
 // Send a simple query to our server's REST API.  The queryType determines the content and the resulting actions once we receive the response
@@ -216,23 +231,10 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 	if (changed)
     {
 		[objectManager.objectStore save];
-		
+
 		NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", className.uppercaseString];
 		[[NSNotificationCenter defaultCenter] postNotificationName:notification object:nil];
-		
-		NSString *statusString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Pruned %@", @"DataTableUI", @"Status indicator for updates, these objects are being removed from the database"), statusBlurbsAndModels[className]];
-        if (self.infoPanel)
-            self.infoPanel.subtitle = statusString;
-	}	
-}
-
-- (void)updateProgress
-{
-	NSInteger count = _queue.count;
-	CGFloat progress = 1.0f;
-	if (count > 0)
-		progress = 1.0f / (CGFloat)count;
-        //[MTStatusBarOverlay sharedMTStatusBarOverlay].progress = progress;
+	}
 }
 
 #pragma mark -
@@ -241,7 +243,6 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 - (void)requestQueue:(RKRequestQueue *)queue didSendRequest:(RKRequest *)request
 {
     //_statusLabel.text = [NSString stringWithFormat:@"RKRequestQueue %@ sharedQueue is current loading %d of %d requests", queue, [queue loadingCount], [queue count]];
-	[self updateProgress];
 }
 
 - (void)requestQueueDidBeginLoading:(RKRequestQueue *)queue
@@ -251,19 +252,23 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 
 - (void)requestQueueDidFinishLoading:(RKRequestQueue *)queue
 {
-//    _statusLabel.text = [NSString stringWithFormat:@"Queue %@ Finished Loading...", queue];
-	[self updateProgress];
-	if (_queue.count == 0)
+	if (self.requestQueue.count > 0)
+        return;
+
+    UIView *rootView = self.appRootView;
+    if (rootView)
     {
-        NSString *statusString = NSLocalizedStringFromTable(@"Update Completed", @"DataTableUI", @"Status indicator for updates");
-        if (self.infoPanel)
-        {
-            self.infoPanel.subtitle = statusString;
-            [self.infoPanel hidePanel];
-        }
-        UIView *rootView = self.appRootView;
-        if (rootView)
-            self.infoPanel = [MTInfoPanel showPanelInView:rootView type:MTInfoPanelTypeSuccess title:NSLocalizedString(@"Data Update", @"") subtitle:statusString hideAfter:4];
+        NSString *identifier = @"TXLFinishedUpdates";
+        SLFInfoItem *infoItem = [[SLFInfoItem alloc] initWithIdentifier:identifier
+                                                                   type:SLFInfoTypeSuccess
+                                                                  title:NSLocalizedString(@"Data Update", @"")
+                                                               subtitle:NSLocalizedStringFromTable(@"Update Completed", @"DataTableUI", nil)
+                                                                  image:nil
+                                                               duration:2];
+
+        SLFInfoPanelManager *infoManager = [SLFInfoPanelManager sharedInfoManager];
+        NSAssert([infoManager.parentView isEqual:rootView], @"SLFInfoPanel -- mismatched root views");
+        [infoManager addInfoItem:infoItem];
     }
 }
 
@@ -272,10 +277,7 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 
 - (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
 {
-	if (error && request)
-    {
-		debug_NSLog(@"Error loading data model query from %@: %@", [request description], [error localizedDescription]);		
-	}	
+    debug_NSLog(@"Error loading data model query from %@: %@", [request description], [error localizedDescription]);
 }
 
 // Handling GET Requests  
@@ -329,10 +331,20 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
             NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", className.uppercaseString];
             debug_NSLog(@"%@ %lu objects", notification, (unsigned long)[objects count]);
 
-            NSString *statusString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Updated %@", @"DataTableUI", @"Status indicator for updates"), statusBlurbsAndModels[className]];
-            if (self.infoPanel)
+            NSString *statusString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Updated %@", @"DataTableUI", nil), self.labelsForEntities[className]];
+            SLFInfoPanelManager *infoManager = [SLFInfoPanelManager sharedInfoManager];
+            if (infoManager)
             {
-                self.infoPanel.subtitle = statusString;
+                NSString *identifier = [@"TXLUpdates-" stringByAppendingString:className];
+                SLFInfoItem *infoItem = [[SLFInfoItem alloc] initWithIdentifier:identifier
+                                                                           type:SLFInfoTypeActivity
+                                                                          title:NSLocalizedString(@"Data Update", @"")
+                                                                       subtitle:statusString
+                                                                          image:nil
+                                                                       duration:2];
+
+                [infoManager addInfoItem:infoItem];
+
             }
 
             // We shouldn't do a costly reset if there's another reset headed out way in a few seconds.
@@ -362,10 +374,21 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 {
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"RESTKIT_DATA_ERROR"];
     UIView *rootView = self.appRootView;
+
     if (rootView)
     {
-        self.infoPanel = [MTInfoPanel showPanelInView:rootView type:MTInfoPanelTypeError title:NSLocalizedString(@"Data Update", @"") subtitle:NSLocalizedStringFromTable(@"Error During Update", @"AppAlerts", @"Status indicator for updates") hideAfter:5];
+        SLFInfoItem *infoItem = [[SLFInfoItem alloc] initWithIdentifier:@"TXLUpdatesError"
+                                                                   type:SLFInfoTypeError
+                                                                  title:NSLocalizedString(@"Data Update", @"")
+                                                               subtitle:NSLocalizedStringFromTable(@"Error During Update", @"AppAlerts", nil)
+                                                                  image:nil
+                                                               duration:-1];
+
+        SLFInfoPanelManager *infoManager = [SLFInfoPanelManager sharedInfoManager];
+        NSAssert([infoManager.parentView isEqual:rootView], @"SLFInfoPanel -- mismatched root views");
+        [infoManager addInfoItem:infoItem];
     }
+
 	NSString *className = NSStringFromClass(objectLoader.objectClass);
 	if (className)
 		[self.activeUpdates removeObject:className];
@@ -373,8 +396,22 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 	NSLog(@"RestKit Data error loading %@: %@", className, error.localizedDescription);
 }
 
-#pragma mark -
-#pragma mark Timestamp Files
+#pragma mark - Efficient Updates
+
+- (NSString *)eTagForModel:(NSString *)classString
+{
+    if (!classString)
+        return nil;
+
+    NSString * const kDataModelEtagsKey = @"dataEtags";
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *etags = [defaults dictionaryForKey:kDataModelEtagsKey];
+    if (!etags)
+        return nil;
+    NSString *etag = SLFTypeNonEmptyStringOrNil(etags[classString]);
+    return etag;
+}
 
 - (NSString *)localDataTimestampForModel:(NSString *)classString
 {

@@ -37,8 +37,8 @@
 + (void) deleteAllObjectsInEntityNamed:(NSString*)entityName;
 
 //+ (void)loadDataFromRest:(NSString *)entityName delegate:(id)delegate;
-+ (void)initRestKitObjects:(id)sender;
-+ (void)resetSavedDatabase:(id)sender;
++ (void)initRestKitObjects;
++ (void)resetSavedDatabase;
 + (NSArray *)registeredDataModels;
 @end
 
