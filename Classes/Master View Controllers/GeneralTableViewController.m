@@ -175,57 +175,63 @@
 	
 }
 
--(void)viewDidLoad {
+-(void)viewDidLoad
+{
 	[super viewDidLoad];
-	//NSLog(@"--------------Loading %@", NSStringFromClass([self class]));
+    UITableView *tableView = self.tableView;
 
 	//[self.navigationController.view addObserver:self forKeyPath:@"frame" options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld) context:nil];
 	
-	self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
-	self.tableView.autoresizesSubviews = YES;
+	tableView.autoresizingMask = (UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight);
+	tableView.autoresizesSubviews = YES;
 
-	self.title = (self.dataSource).name;	
 	// set the long name shown in the navigation bar
 	//self.navigationItem.title=[dataSource navigationBarName];
 	
 	// FETCH CORE DATA
-	if ((self.dataSource).usesCoreData)
-	{		
-		NSError *error;
-		// You've got to delete the cache, or disable caching before you modify the predicate...
-        [NSFetchedResultsController deleteCacheWithName:self.dataSource.fetchedResultsController.cacheName];
+    id<TableDataSource> dataSource = self.dataSource;
+    self.title = [dataSource name];
+	if (dataSource.usesCoreData)
+	{
+        NSFetchedResultsController *frc = [dataSource fetchedResultsController];
 
-		if (![self.dataSource.fetchedResultsController performFetch:&error]) {
+		NSError *error = nil;
+		// You've got to delete the cache, or disable caching before you modify the predicate...
+        [NSFetchedResultsController deleteCacheWithName:frc.cacheName];
+
+		if (![frc performFetch:&error]) {
 			// Handle the error...
 		}					
 	}
-	self.tableView.dataSource = self.dataSource;
+	tableView.dataSource = dataSource;
     UISearchDisplayController *searchController = self.searchDisplayController;
 	if (searchController)
     {
-		searchController.searchResultsDataSource = self.dataSource;
-		if ([self.dataSource respondsToSelector:@selector(setSearchDisplayController:)])
-			[self.dataSource performSelector:@selector(setSearchDisplayController:) withObject:searchController];
+		searchController.searchResultsDataSource = dataSource;
+		if ([dataSource respondsToSelector:@selector(setSearchDisplayController:)])
+			[dataSource performSelector:@selector(setSearchDisplayController:) withObject:searchController];
 	}
 	
 	// set the tableview delegate to this object and the datasource to the datasource which has already been set
-	self.tableView.delegate = self;
+	tableView.delegate = self;
 	//self.tableView.dataSource = self.dataSource;
 	
 	self.clearsSelectionOnViewWillAppear = NO;
-	self.tableView.separatorColor = [TexLegeTheme separator];
-	self.tableView.backgroundColor = [TexLegeTheme tableBackground];
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+	tableView.separatorColor = [TexLegeTheme separator];
+	tableView.backgroundColor = [TexLegeTheme tableBackground];
+    tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
 	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];
 	//self.searchDisplayController.searchBar.tintColor = [TexLegeTheme accent];
 	//self.navigationItem.titleView = self.chamberControl;
 	
-	if ([UtilityMethods isIPadDevice]) {
-		NSUInteger sectionCount = (self.tableView).numberOfSections;
+	if ([UtilityMethods isIPadDevice])
+    {
+		NSUInteger sectionCount = tableView.numberOfSections;
 		CGFloat tableHeight = 0;
 		NSInteger section = 0;
-		for (section=0; section < sectionCount; section++) {
-			tableHeight += [self.tableView rectForSection:section].size.height;
+		for (section=0; section < sectionCount; section++)
+        {
+			tableHeight += [tableView rectForSection:section].size.height;
 		}
 		self.preferredContentSize = CGSizeMake(320.0, tableHeight);
 	}
@@ -233,7 +239,8 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endUpdates:) name:@"TABLEUPDATE_END" object:self.dataSource];
 }
 	
-- (void)viewDidUnload {
+- (void)viewDidUnload
+{
 	//NSLog(@"--------------Unloading %@", NSStringFromClass([self class]));
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"TABLEUPDATE_START" object:self.dataSource];
@@ -244,21 +251,27 @@
 	[super viewDidUnload];
 }
 
-- (IBAction)selectDefaultObject:(id)sender {
+- (IBAction)selectDefaultObject:(id)sender
+{
 	NSIndexPath *selectFirst = [NSIndexPath indexPathForRow:0 inSection:0];
-	[self.tableView selectRowAtIndexPath:selectFirst animated:NO scrollPosition:UITableViewScrollPositionNone];
-	[self tableView:self.tableView didSelectRowAtIndexPath:selectFirst];
+    UITableView *tableView = self.tableView;
+	[tableView selectRowAtIndexPath:selectFirst animated:NO scrollPosition:UITableViewScrollPositionNone];
+	[self tableView:tableView didSelectRowAtIndexPath:selectFirst];
 }
 
-- (id)firstDataObject {
+- (id)firstDataObject
+{
 	NSIndexPath *currentIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
 	id detailObject = [self.dataSource dataObjectForIndexPath:currentIndexPath];			
 	return detailObject;
 }
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void)viewDidAppear:(BOOL)animated
+{
 	[super viewDidAppear:animated];
-	
+
+    UITableView *tableView = self.tableView;
+
 	if ([self shouldPreselectRowOnAppear] && self.initialObjectToSelect)  {	
 		NSIndexPath *selectedPath = nil;
 		
@@ -274,8 +287,8 @@
 		}
 				
 		if (selectedPath) {
-			[self.tableView selectRowAtIndexPath:selectedPath animated:animated scrollPosition:UITableViewScrollPositionNone];
-			[self tableView:self.tableView didSelectRowAtIndexPath:selectedPath];
+			[tableView selectRowAtIndexPath:selectedPath animated:animated scrollPosition:UITableViewScrollPositionNone];
+			[self tableView:tableView didSelectRowAtIndexPath:selectedPath];
 		}
 		self.initialObjectToSelect = nil;
 	}
@@ -323,17 +336,22 @@
 	
 	// if we have a stack of view controllers and someone selected a new cell from our master list, 
 	//	lets go all the way back to accomodate their selection.
-	if ([UtilityMethods isIPadDevice]) {
+	if ([UtilityMethods isIPadDevice])
+    {
 		UINavigationController *detailNav = nil;
-		if ([self.detailViewController respondsToSelector:@selector(navigationController)])
-			detailNav = [self.detailViewController performSelector:@selector(navigationController)];
+        UIViewController *detailController = self.detailViewController;
+
+		if ([detailController respondsToSelector:@selector(navigationController)])
+			detailNav = [detailController performSelector:@selector(navigationController)];
 		
-		if (!self.initialObjectToSelect) {	// otherwise we pop whenever we're automatically selecting stuff ... right?
+		if (!self.initialObjectToSelect)
+        {	// otherwise we pop whenever we're automatically selecting stuff ... right?
 			if (detailNav && detailNav.viewControllers && (detailNav.viewControllers).count > 1) { 
 				[detailNav popToRootViewControllerAnimated:YES];
 				
-				if ([self.detailViewController respondsToSelector:@selector(tableView)]) {
-					UITableView *detailTable = [self.detailViewController performSelector:@selector(tableView)];
+				if ([detailController respondsToSelector:@selector(tableView)])
+                {
+					UITableView *detailTable = [detailController performSelector:@selector(tableView)];
 					if (detailTable) {
 						CGRect guessTop = CGRectMake(0, 0, 10.0f, 10.0f);
 						[detailTable scrollRectToVisible:guessTop animated:YES];
@@ -344,11 +362,8 @@
 	}
 }
 
-
-#pragma mark -
-#pragma mark Orientation
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation { 	
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
 	return YES;
 }
 

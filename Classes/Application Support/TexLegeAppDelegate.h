@@ -47,7 +47,7 @@
 @property (weak, nonatomic, readonly) UINavigationController * masterNavigationController;
 @property (weak, nonatomic, readonly) UINavigationController *detailNavigationController;
 
-- (id) savedTableSelectionForKey:(NSString *)vcKey;
+- (id)savedTableSelectionForKey:(NSString *)vcKey;
 - (void)setSavedTableSelection:(id)object forKey:(NSString *)vcKey;
 
 + (TexLegeAppDelegate *)appDelegate;

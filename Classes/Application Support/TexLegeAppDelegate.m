@@ -10,7 +10,7 @@
 //
 //
 
-#import <RestKit/RestKit.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 #import "TexLegeAppDelegate.h"
 #import "TexLegeCoreDataUtils.h"
@@ -31,18 +31,16 @@
 #import "DataModelUpdateManager.h"
 #import "BillMetadataLoader.h"
 #import "CalendarEventsLoader.h"
-#import "SLFInfoView.h"
+@import SLFRestKit;
+#import "SLToastManager+TexLege.h"
 
 #import "StateMetaLoader.h"
 
 @interface TexLegeAppDelegate ()
 
-- (void)runOnEveryAppStart;
-- (void)runOnAppQuit;
-- (void)restoreArchivableSavedTableSelection;
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSData *archivableSavedTableSelection;
-- (void)resetSavedTableSelection:(id)sender;
 @property (NS_NONATOMIC_IOSONLY, getter=isDatabaseResetNeeded, readonly) BOOL databaseResetNeeded;
+@property (NS_NONATOMIC_IOSONLY, strong) SLToastManager *toastMgr;
 
 @property (nonatomic,strong) DataModelUpdateManager *dataUpdater;
 @property (nonatomic,copy) NSMutableDictionary *savedTableSelection;
@@ -226,7 +224,8 @@ NSInteger kNoSelection = -1;
     }
 }
 
-- (void)setTabOrderIfSaved {
+- (void)setTabOrderIfSaved
+{
 	[[NSUserDefaults standardUserDefaults] synchronize];	
 
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -253,7 +252,7 @@ NSInteger kNoSelection = -1;
 	}
 }
 
-- (void) setupViewControllerHierarchy
+- (void)setupViewControllerHierarchy
 {
 	NSArray *nibObjects = nil;
 	if ([UtilityMethods isIPadDevice]) 
@@ -356,17 +355,23 @@ NSInteger kNoSelection = -1;
                     return;
 
                 sSelf.hasAlertedNotReachable = YES;
-                [SLFInfoView showInfoInWindow:sSelf.window
-                                         type:SLFInfoTypeError
-                                        title:NSLocalizedString(@"Network Failure!",@"")
-                                     subtitle:NSLocalizedString(@"This application requires Internet access to operate.  One or more of the required data servers is unreachable",@"")
-                                    hideAfter:4.f];
+
+                SLToastManager *toastMgr = sSelf.toastMgr;
+                if (!toastMgr)
+                    toastMgr = [SLToastManager txlSharedManager];
+
+                [toastMgr addToastWithIdentifier:@"TXLReachability-Error"
+                                            type:SLToastTypeError
+                                           title:NSLocalizedString(@"Network Failure!",@"")
+                                        subtitle:NSLocalizedString(@"This application requires Internet access to operate.  One or more of the required data servers is unreachable",@"")
+                                           image:nil
+                                        duration:-1];
             }
         });
     }
 }
 
-- (void)runOnInitialAppStart
+- (void)runOnInitialAppStart:(UIApplication *)application
 {	
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 
@@ -404,7 +409,7 @@ NSInteger kNoSelection = -1;
 		
 	[[LocalyticsSession sharedLocalyticsSession] startSession:LOCALITICS_APIKEY];
 	
-	[self runOnEveryAppStart];
+    [self runOnEveryAppStart:application];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -420,7 +425,7 @@ NSInteger kNoSelection = -1;
     // Set up the mainWindow and content view
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
-	[self runOnInitialAppStart];
+    [self runOnInitialAppStart:application];
 		
 	return YES;
 }
@@ -437,7 +442,7 @@ NSInteger kNoSelection = -1;
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-	[self runOnEveryAppStart];	
+    [self runOnEveryAppStart:application];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
@@ -452,8 +457,13 @@ NSInteger kNoSelection = -1;
 	[self runOnAppQuit];
 }
 
-- (void)runOnEveryAppStart
+- (void)runOnEveryAppStart:(UIApplication *)application
 {
+    SLToastManager *toastMgr = [[SLToastManager alloc] initWithManagerId:@"TexLegeRootToast" parentView:self.window];
+    toastMgr.statusBarFrame = application.statusBarFrame;
+    _toastMgr = toastMgr;
+    [SLToastManager txlSetSharedManager:toastMgr];
+    
 	self.appQuitting = NO;
     self.hasAlertedNotReachable = NO;
 
@@ -482,7 +492,8 @@ NSInteger kNoSelection = -1;
  	[[LocalyticsSession sharedLocalyticsSession] upload];
 }
 
-- (void)runOnAppQuit {
+- (void)runOnAppQuit
+{
 	//[[CalendarEventsLoader sharedCalendarEventsLoader] addAllEventsToiCal:self];		//testing
 	
 	if (self.isAppQuitting)

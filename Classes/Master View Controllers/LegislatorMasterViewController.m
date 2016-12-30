@@ -22,7 +22,6 @@
 @interface LegislatorMasterViewController (Private)
 - (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar;
 - (IBAction)redisplayVisibleCells:(id)sender;
-
 @end
 
 
@@ -54,8 +53,6 @@
     [super didReceiveMemoryWarning];
     // Relinquish ownership any cached data, images, etc that aren't in use.
 }
-
-
 
 #pragma mark -
 #pragma mark View lifecycle
