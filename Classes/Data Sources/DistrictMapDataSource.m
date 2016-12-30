@@ -32,9 +32,10 @@
 
 
 @implementation DistrictMapDataSource
-@synthesize fetchedResultsController;
-@synthesize hideTableIndex, byDistrict;
-@synthesize filterChamber, filterString, searchDisplayController;
+@synthesize hideTableIndex = _hideTableIndex;
+@synthesize hasFilter = _hasFilter;
+@synthesize filterChamber = _filterChamber;
+@synthesize searchDisplayController = _searchDisplayController;
 
 #if NEEDS_TO_PARSE_KMLMAPS == 1
 @synthesize importer;
@@ -45,10 +46,11 @@
 }
 
 - (instancetype)init {
-	if ((self = [super init])) {
-		self.filterChamber = 0;
-		self.filterString = [NSMutableString stringWithString:@""];
-		fetchedResultsController = nil;
+	if ((self = [super init]))
+    {
+		_filterChamber = 0;
+		_filterString = [NSMutableString stringWithString:@""];
+		_fetchedResultsController = nil;
 		
 #if NEEDS_TO_PARSE_KMLMAPS == 1
 
@@ -58,7 +60,7 @@
 		mapCount = 0;
 		self.importer = [[[DistrictMapImporter alloc] initWithChamber:SENATE dataSource:self] autorelease];
 		
-		self.byDistrict = NO;
+		_byDistrict = NO;
 #endif
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(dataSourceReceivedMemoryWarning:)
@@ -74,13 +76,17 @@
 
 - (void)resetCoreData:(NSNotification *)notification
 {
+    NSFetchedResultsController *frc = self.fetchedResultsController;
+
     // You've got to delete the cache, or disable caching before you modify the predicate...
-    [NSFetchedResultsController deleteCacheWithName:(self.fetchedResultsController).cacheName];
-    (self.fetchedResultsController.fetchRequest).predicate = [self getFilterPredicate];
-    (self.fetchedResultsController.fetchRequest).sortDescriptors = [self sortDescriptors];
+    [NSFetchedResultsController deleteCacheWithName:frc.cacheName];
+
+    NSFetchRequest *fetchRequest = frc.fetchRequest;
+    fetchRequest.predicate = [self getFilterPredicate];
+    fetchRequest.sortDescriptors = [self sortDescriptors];
 
     NSError *error = nil;
-    if (![self.fetchedResultsController performFetch:&error]) {
+    if (![frc performFetch:&error]) {
         // Handle error
         debug_NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
     }           
@@ -266,7 +272,7 @@
 	// return the letter that represents the requested section
 	
 	NSInteger count = tableView.numberOfSections;
-    NSArray *sections = fetchedResultsController.sections;
+    NSArray *sections = self.fetchedResultsController.sections;
     if (count > 0 &&
         sections.count > section &&
         !self.hasFilter &&
@@ -381,7 +387,7 @@
 	}	 
  	// Save the context.
 	NSError *error;
-	if (![[DistrictMapObj managedObjectContext] save:&error]) {
+	if (![[DistrictMapObj rkManagedObjectContext] save:&error]) {
 		// Handle the error...
 	}
 	
@@ -390,7 +396,7 @@
 
 - (void)insertDistrictMaps:(NSArray *)districtMaps
 {	
-	NSManagedObjectContext *moc = [DistrictMapObj managedObjectContext];
+	NSManagedObjectContext *moc = [DistrictMapObj rkManagedObjectContext];
 	NSEntityDescription *entity = [NSEntityDescription entityForName:@"DistrictMapObj" 
 											  inManagedObjectContext:moc];
 	
@@ -487,10 +493,10 @@
 }
 
 - (NSFetchedResultsController *)fetchedResultsController {
-    if (fetchedResultsController != nil) {
-        return fetchedResultsController;
+    if (_fetchedResultsController != nil) {
+        return _fetchedResultsController;
     }
-	NSFetchRequest *fetchRequest = [DistrictMapObj fetchRequest];
+	NSFetchRequest *fetchRequest = [DistrictMapObj rkFetchRequest];
 	
 	/* In reality, the light properties thing doesn't actually work without a DictionaryResultType
 		However, you can't use a dictionary result in conjunction with change notification in the FRC.
@@ -500,15 +506,15 @@
 //	[fetchRequest setPropertiesToFetch:[DistrictMapObj lightPropertiesToFetch]];
 //	[fetchRequest setResultType:NSDictionaryResultType];
 	fetchRequest.sortDescriptors = [self sortDescriptors];
-	
-	fetchedResultsController = [[NSFetchedResultsController alloc] 
-															 initWithFetchRequest:fetchRequest 
-															 managedObjectContext:[DistrictMapObj managedObjectContext] 
-															 sectionNameKeyPath:nil cacheName:@"DistrictMaps"];
-	
-    fetchedResultsController.delegate = self;
-	return fetchedResultsController;
-}    
 
+    NSString *cacheName = nil; // @"DistrictMaps"
+	_fetchedResultsController = [[NSFetchedResultsController alloc]
+															 initWithFetchRequest:fetchRequest 
+															 managedObjectContext:[DistrictMapObj rkManagedObjectContext] 
+															 sectionNameKeyPath:nil cacheName:cacheName];
+	
+    _fetchedResultsController.delegate = self;
+	return _fetchedResultsController;
+}    
 
 @end

@@ -339,7 +339,7 @@
         return fetchedResultsController;
     }
     
-	NSFetchRequest *fetchRequest = [DistrictOfficeObj fetchRequest];
+	NSFetchRequest *fetchRequest = [DistrictOfficeObj rkFetchRequest];
 	
 	if (self.byDistrict) {
 		NSSortDescriptor *sort1 = [[NSSortDescriptor alloc] initWithKey:@"district" ascending:YES] ;
@@ -356,11 +356,12 @@
 		[sort2 release];
 		
 	}
-		
-	fetchedResultsController = [[NSFetchedResultsController alloc] 
+
+    NSString *cacheName = nil; // @"DistrictOffices"
+	fetchedResultsController = [[NSFetchedResultsController alloc]
 															 initWithFetchRequest:fetchRequest 
-															 managedObjectContext:[DistrictOfficeObj managedObjectContext] 
-															 sectionNameKeyPath:nil cacheName:@"DistrictOffices"];
+															 managedObjectContext:[DistrictOfficeObj rkManagedObjectContext]
+															 sectionNameKeyPath:nil cacheName:cacheName];
 	
     fetchedResultsController.delegate = self;
 		
@@ -378,7 +379,7 @@
 - (IBAction)saveAction:(id)sender {
 	
     NSError *error;
-	NSManagedObjectContext *moc = [DistrictOfficeObj managedObjectContext];
+	NSManagedObjectContext *moc = [DistrictOfficeObj rkManagedObjectContext];
     if (moc) {
         if ([moc hasChanges] && ![moc save:&error]) {
 			// Handle error.
@@ -474,13 +475,13 @@
 	
 	// Get our table-specific Core Data.
 	NSEntityDescription *entity = [NSEntityDescription entityForName:@"DistrictOfficeObj" 
-											  inManagedObjectContext:[DistrictOfficeObj managedObjectContext]];
+											  inManagedObjectContext:[DistrictOfficeObj rkManagedObjectContext]];
 	[fetchRequest setEntity:entity];
 	
 	//[fetchRequest setPropertiesToFetch:[NSArray arrayWithObjects:@"legislatorID", nil]];
 	
 	NSError *error = nil;
-	NSArray *objArray = [[DistrictOfficeObj managedObjectContext] executeFetchRequest:fetchRequest error:&error];
+	NSArray *objArray = [[DistrictOfficeObj rkManagedObjectContext] executeFetchRequest:fetchRequest error:&error];
 	
 	[fetchRequest release];
 	
@@ -513,7 +514,7 @@
 	NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"DistrictOffices" ofType:@"plist"];
 	NSArray *rawPlistArray = [[NSArray alloc] initWithContentsOfFile:thePath];
 	
-	NSManagedObjectContext *moc = [DistrictOfficeObj managedObjectContext];
+	NSManagedObjectContext *moc = [DistrictOfficeObj rkManagedObjectContext];
 	NSEntityDescription *entity = [NSEntityDescription entityForName:@"DistrictOfficeObj" 
 														inManagedObjectContext:moc];
 	

@@ -10,7 +10,7 @@
 //
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "LegislatorObj.h"
 
 @interface LegislatorDetailDataSource : NSObject <UITableViewDataSource>

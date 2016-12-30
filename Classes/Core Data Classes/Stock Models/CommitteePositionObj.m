@@ -11,16 +11,15 @@
 //
 
 #import "CommitteePositionObj.h"
-
 #import "CommitteeObj.h"
 #import "LegislatorObj.h"
 
 @implementation CommitteePositionObj 
 
+@dynamic committeePositionID;
 @dynamic updatedDate;
 @dynamic position;
 @dynamic legislatorID;
-@dynamic committeePositionID;
 @dynamic committeeId;
 @dynamic committee;
 @dynamic legislator;

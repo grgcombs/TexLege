@@ -11,15 +11,14 @@
 //
 
 #import "CommitteePositionObj.h"
+@class RKManagedObjectMapping;
 
 @interface CommitteePositionObj (RestKit)
-{
-}
 
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *positionString;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *positionString;
 - (NSComparisonResult) comparePositionAndCommittee:(CommitteePositionObj *)p;
 
++ (NSString*)primaryKeyProperty;
++ (RKManagedObjectMapping *)attributeMapping;
+
 @end
-
-
-

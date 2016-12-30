@@ -12,7 +12,6 @@
 
 #import "LinkObj.h"
 
-
 @implementation LinkObj 
 
 @dynamic label;

@@ -11,8 +11,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData.h>
+#import <SLFRestKit/SLFRestKit.h>
 #import "TexLegeCoreDataUtils.h"
 
 @interface DataModelUpdateManager : NSObject <RKObjectLoaderDelegate, UIAlertViewDelegate, RKRequestQueueDelegate>

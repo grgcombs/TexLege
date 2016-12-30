@@ -10,24 +10,20 @@
 //
 //
 
-#import "TexLege.h"
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 @class LegislatorObj;
 
-@interface StafferObj :  RKManagedObject  
-{
-}
+@interface StafferObj :  NSManagedObject
 
-@property (nonatomic, strong) NSString * phone;
-@property (nonatomic, strong) NSString * updatedDate;
-@property (nonatomic, strong) NSNumber * legislatorID;
-@property (nonatomic, strong) NSString * title;
-@property (nonatomic, strong) NSString * email;
-@property (nonatomic, strong) NSString * name;
-@property (nonatomic, strong) NSNumber * stafferID;
-@property (nonatomic, strong) LegislatorObj * legislator;
+@property (nonatomic, strong) NSNumber *stafferID;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) NSString *phone;
+@property (nonatomic, strong) NSString *email;
+@property (nonatomic, strong) NSString *updatedDate;
+@property (nonatomic, strong) NSNumber *legislatorID;
+@property (nonatomic, strong) LegislatorObj *legislator;
 
 @end
 

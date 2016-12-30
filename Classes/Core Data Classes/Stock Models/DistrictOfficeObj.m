@@ -11,7 +11,6 @@
 //
 
 #import "DistrictOfficeObj.h"
-
 #import "LegislatorObj.h"
 
 @implementation DistrictOfficeObj 
@@ -36,7 +35,9 @@
 @dynamic legislatorID;
 @dynamic legislator;
 
-- (CLLocationCoordinate2D)coordinate {
+- (CLLocationCoordinate2D)coordinate
+{
     return CLLocationCoordinate2DMake(self.latitude.doubleValue, self.longitude.doubleValue);
 }
+
 @end

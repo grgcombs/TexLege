@@ -11,83 +11,103 @@
 //
 
 #import "LegislatorObj+RestKit.h"
-#import "CommitteePositionObj.h"
-#import "WnomObj.h"
-#import "UtilityMethods.h"
+#import <SLFRestKit/SLFRestKit.h>
 #import "CommitteePositionObj+RestKit.h"
+#import "WnomObj+RestKit.h"
+#import "UtilityMethods.h"
+
+static RKManagedObjectMapping *legislatorAttributesMapping = nil;
 
 @implementation LegislatorObj (RestKit)
 
-#pragma mark RKObjectMappable methods
-
-+ (NSDictionary*)elementToPropertyMappings {	
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"partisan_index", @"partisan_index",
-			@"bio_url", @"bio_url",
-			@"cap_fax", @"cap_fax",
-			@"cap_office", @"cap_office",
-			@"cap_phone", @"cap_phone",
-			@"cap_phone2", @"cap_phone2",
-			@"cap_phone2_name", @"cap_phone2_name",
-			@"district", @"district",
-			@"email", @"email",
-			@"firstname", @"firstname",
-			@"lastname", @"lastname",
-			@"legislatorID", @"legislatorID",
-			@"legtype", @"legtype",
-			@"legtype_name", @"legtype_name",
-			@"middlename", @"middlename",
-			@"nextElection", @"nextElection",
-			@"nickname", @"nickname",
-			@"nimsp_id", @"nimsp_id",
-			@"notes", @"notes",
-			@"openstatesID", @"openstatesID",
-			@"party_id", @"party_id",
-			@"party_name", @"party_name",
-			@"photo_name", @"photo_name",
-			@"photo_url", @"photo_url",
-			@"preferredname", @"preferredname",
-			@"stateID", @"stateID",
-			@"suffix", @"suffix",
-			@"tenure", @"tenure",
-			@"transDataContributorID", @"transDataContributorID",
-			@"twitter", @"twitter",
-			@"txlonline_id", @"txlonline_id",
-			@"votesmartDistrictID", @"votesmartDistrictID",
-			@"votesmartID", @"votesmartID",
-			@"votesmartOfficeID", @"votesmartOfficeID",
-			@"updated",@"updatedDate",
-			nil];
++ (NSString*)primaryKeyProperty
+{
+    return @"legislatorID";
 }
 
-+ (NSString*)primaryKeyProperty {
-	return @"legislatorID";
++ (RKManagedObjectMapping *)attributeMapping
+{
+    if (legislatorAttributesMapping)
+        return legislatorAttributesMapping;
+
+    RKManagedObjectMapping *mapping = [RKManagedObjectMapping mappingForClass:[self class] inManagedObjectStore:[RKObjectManager sharedManager].objectStore];
+    mapping.primaryKeyAttribute = @"legislatorID";
+    [mapping mapAttributesFromArray:@[
+                                      @"legislatorID",
+                                      @"firstname",
+                                      @"middlename",
+                                      @"lastname",
+                                      @"suffix",
+                                      @"nickname",
+                                      @"preferredname",
+                                      @"stateID",
+                                      @"district",
+                                      @"legtype",
+                                      @"legtype_name",
+                                      @"photo_name",
+                                      @"photo_url",
+                                      @"party_id",
+                                      @"party_name",
+                                      @"tenure",
+                                      @"nextElection",
+                                      @"bio_url",
+                                      @"twitter",
+                                      @"cap_office",
+                                      @"cap_phone",
+                                      @"cap_phone2",
+                                      @"cap_phone2_name",
+                                      @"cap_fax",
+                                      @"email",
+                                      @"partisan_index",
+                                      @"notes",
+                                      @"txlonline_id",
+                                      @"openstatesID",
+                                      @"nimsp_id",
+                                      @"transDataContributorID",
+                                      @"votesmartDistrictID",
+                                      @"votesmartID",
+                                      @"votesmartOfficeID",
+                                      ]];
+    [mapping mapKeyPath:@"updated" toAttribute:@"updatedDate"];
+
+    //[mapping connectRelationship:@"state" withObjectForPrimaryKeyAttribute:@"stateID"];
+    
+    //[mapping hasMany:@"committeePositions" withMapping:committeePositionMapping];
+    //[mapping hasMany:@"staffers" withMapping:stafferMapping];
+
+    legislatorAttributesMapping = mapping;
+
+    return mapping;
 }
-
-
-#pragma mark Custom Accessors
 
 - (NSComparisonResult)compareMembersByName:(LegislatorObj *)p
-{	
+{
+    if (!p || ![p isKindOfClass:self.class])
+        return NSOrderedAscending;
+    
 	return [[self fullNameLastFirst] compare: [p fullNameLastFirst]];	
 }
 
-- (NSString *) lastnameInitial {
+- (NSString *)lastnameInitial
+{
 	[self willAccessValueForKey:@"lastnameInitial"];
 	NSString * initial = [self.lastname substringToIndex:1];
 	[self didAccessValueForKey:@"lastnameInitial"];
 	return initial;
 }
 
-- (void) setLastnameInitial:(NSString *)newName {
+- (void)setLastnameInitial:(NSString *)newName
+{
 	// ignore this
 }
 
-- (NSString *)partyShortName {
+- (NSString *)partyShortName
+{
 	return stringForParty((self.party_id).integerValue, TLReturnInitial);
 }
 
-- (NSString *)legTypeShortName {
+- (NSString *)legTypeShortName
+{
 	return abbreviateString(self.legtype_name);
 /*	if ([self.legtype_name isEqualToString:NSLocalizedStringFromTable(@"Speaker", @"DataTableUI", @"The speaker of the house")])
 		return NSLocalizedStringFromTable(@"Spk.", @"DataTableUI", @"Abbreviation for the Speaker");
@@ -96,107 +116,113 @@
 */
 }
 
-- (NSString *)legProperName {
-	NSMutableString *name = [NSMutableString stringWithCapacity:128];
-	if ((self.firstname).length > 0)
+- (NSString *)legProperName
+{
+	NSMutableString *name = [@"" mutableCopy];
+	if (self.firstname.length > 0)
 		[name appendString:self.firstname];
-	else if ((self.middlename).length > 0)
+	else if (self.middlename.length > 0)
 		[name appendString:self.firstname];
-	
-	[name appendFormat:@" %@", self.lastname];
-	
-	if ((self.suffix).length > 0)
+	if (self.lastname.length > 0)
+        [name appendFormat:@" %@", self.lastname];
+	if (self.suffix.length > 0)
 		[name appendFormat:@", %@", self.suffix];
 
 	return name;
 }
 
-- (NSString *)districtPartyString {
-	NSString *string = [NSString stringWithFormat: @"(%@-%ld)", self.partyShortName, (long)(self.district).integerValue];
-	return string;
+- (NSString *)districtPartyString
+{
+	return [NSString stringWithFormat: @"(%@-%ld)", self.partyShortName, (long)(self.district).integerValue];
 }
 
-- (NSString *)fullName {
-	NSMutableString *name = [NSMutableString stringWithCapacity:128];
+- (NSString *)fullName
+{
+	NSMutableString *name = [@"" mutableCopy];
 
-	if ((self.firstname).length > 0)
+	if (self.firstname.length > 0)
 		[name appendString:self.firstname];
-	if ((self.middlename).length > 0)
+	if (self.middlename.length > 0)
 		[name appendFormat:@" %@", self.middlename];
-	if ((self.nickname).length > 0)
+	if (self.nickname.length > 0)
 		[name appendFormat:@" \"%@\"", self.nickname];
-	if ((self.lastname).length > 0)
+	if (self.lastname.length > 0)
 		[name appendFormat:@" %@", self.lastname];
-	if ((self.suffix).length > 0)
+	if (self.suffix.length > 0)
 		[name appendFormat:@", %@", self.suffix];
 
 	return name;
 }
 
-- (NSString *)fullNameLastFirst {
-	NSMutableString *name = [NSMutableString stringWithCapacity:128];
-	
-	if ((self.lastname).length > 0)
-		[name appendFormat:@"%@, ", self.lastname];
-	if ((self.firstname).length > 0)
-		[name appendString:self.firstname];
-	if ((self.middlename).length > 0)
-		[name appendFormat:@" %@", self.middlename];
-	if ((self.suffix).length > 0)
-		[name appendFormat:@" %@", self.suffix];
-	
+- (NSString *)fullNameLastFirst
+{
+    NSMutableString *name = [@"" mutableCopy];
+
+    if (self.lastname.length > 0)
+        [name appendFormat:@" %@", self.lastname];
+    if (self.firstname.length > 0)
+        [name appendString:self.firstname];
+    if (self.middlename.length > 0)
+        [name appendFormat:@" %@", self.middlename];
+    if (self.suffix.length > 0)
+        [name appendFormat:@", %@", self.suffix];
+
 	return name;
 }
 
-- (NSString *)shortNameForButtons {
-	NSString *string;
-	string = [NSString stringWithFormat:@"%@ (%@)", [self legProperName], [self partyShortName]];
-	return string;
+- (NSString *)shortNameForButtons
+{
+	return [NSString stringWithFormat:@"%@ (%@)", [self legProperName], [self partyShortName]];
 }
 
-- (NSString *)labelSubText {
-	NSString *string;
-	string = [NSString stringWithFormat: NSLocalizedStringFromTable(@"%@ - District %d", @"DataTableUI", @"The person and their district number"),
+- (NSString *)labelSubText
+{
+	return [NSString stringWithFormat: NSLocalizedStringFromTable(@"%@ - District %d", @"DataTableUI", @"The person and their district number"),
 			self.legtype_name, (self.district).integerValue];
-	return string;
 }
 
-- (NSString *)website {
+- (NSString *)website
+{
 	NSString *formatString = nil;
-	if ((self.legtype).integerValue == HOUSE)
+	if (self.legtype.integerValue == HOUSE)
 		formatString = [UtilityMethods texLegeStringWithKeyPath:@"OfficialURLs.houseWeb"];	// contains format placeholders
 	else
 		formatString = [UtilityMethods texLegeStringWithKeyPath:@"OfficialURLs.senateWeb"];	// contains format placeholders
 	
-	if (formatString)
-		return [formatString stringByReplacingOccurrencesOfString:@"%@" withString:(self.district).stringValue];
-	return nil;
+	if (!formatString)
+        return nil;
+    return [formatString stringByReplacingOccurrencesOfString:@"%@" withString:self.district.stringValue];
 }
 
-- (NSString*)searchName {
-	NSString * tempString;
+- (NSString*)searchName
+{
+	NSString * tempString = nil;
 	[self willAccessValueForKey:@"searchName"];
-	tempString = [NSString stringWithFormat: @"%@ %@ %@", [self legTypeShortName], 
-			[self legProperName], [self districtPartyString]];
+	tempString = [NSString stringWithFormat: @"%@ %@ %@", [self legTypeShortName], [self legProperName], [self districtPartyString]];
 	[self didAccessValueForKey:@"searchName"];
 	return tempString;
 }
 
- - (NSInteger)numberOfDistrictOffices {
-	if (IsEmpty(self.districtOffices))
+ - (NSInteger)numberOfDistrictOffices
+{
+    NSSet *offices = self.districtOffices;
+	if (IsEmpty(offices))
 		return 0;
 	else
-		return (self.districtOffices).count;
+		return offices.count;
 }
 
-- (NSInteger)numberOfStaffers {
-	if (IsEmpty(self.staffers))
+- (NSInteger)numberOfStaffers
+{
+    NSSet *staffers = self.staffers;
+	if (IsEmpty(staffers))
 		return 0;
 	else
-		return (self.staffers).count;
+		return staffers.count;
 }
 
-- (NSString *)tenureString {
+- (NSString *)tenureString
+{
 	NSString *stringVal = nil;
 	NSInteger years = self.tenure.integerValue;
 	
@@ -218,14 +244,14 @@
 
 - (NSArray *)sortedCommitteePositions
 {
-	return [(self.committeePositions).allObjects 
-							sortedArrayUsingSelector:@selector(comparePositionAndCommittee:)];
+    NSSet *positions = self.committeePositions;
+	return [positions.allObjects sortedArrayUsingSelector:@selector(comparePositionAndCommittee:)];
 }
 
-- (NSArray *)sortedStaffers {
+- (NSArray *)sortedStaffers
+{
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
-	return [(self.staffers).allObjects 
-			sortedArrayUsingDescriptors:@[sortDescriptor]];
+    return [self.staffers sortedArrayUsingDescriptors:@[sortDescriptor]];
 }
 
 - (NSString *)districtMapURL
@@ -237,24 +263,27 @@
 	return nil;	
 }
 
-- (NSString *)chamberName {	
-	return  stringForChamber((self.legtype).integerValue, TLReturnFull);
+- (NSString *)chamberName
+{
+	return  stringForChamber(self.legtype.integerValue, TLReturnFull);
 }
 
-- (WnomObj *)latestWnomScore {
-	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"session"ascending:NO];
-	NSArray *wnoms = [(self.wnomScores).allObjects sortedArrayUsingDescriptors:@[sortDescriptor]];
-	
+- (WnomObj *)latestWnomScore
+{
+	NSSortDescriptor *sortBySession = [NSSortDescriptor sortDescriptorWithKey:@"session" ascending:NO];
+    NSSet *scores = self.wnomScores;
+	NSArray *wnoms = [scores sortedArrayUsingDescriptors:@[sortBySession]];
 	if (!IsEmpty(wnoms))
 		return wnoms[0];
 	return nil;
 }
 
-- (CGFloat)latestWnomFloat {
-	CGFloat retVal = 0.0f;
+- (double)latestWnomFloat
+{
 	WnomObj *latest = self.latestWnomScore;
-	if (latest)
-		retVal = (latest.wnomAdj).floatValue;
-	return retVal;
+    if (!latest)
+        return 0;
+    return latest.wnomAdj.doubleValue;
 }
+
 @end

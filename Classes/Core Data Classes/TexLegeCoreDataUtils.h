@@ -11,12 +11,14 @@
 //
 
 #import "TexLege.h"
-@import MapKit;
-#import <RestKit/CoreData.h>
+#import <MapKit/MapKit.h>
+#import <CoreData/CoreData.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 //@class TexLegeDataMaintenance;
 
 @class LegislatorObj, CommitteeObj, DistrictMapObj;
+
 @interface TexLegeCoreDataUtils : NSObject<RKManagedObjectStoreDelegate>
 
 + (id) fetchCalculation:(NSString *)calc ofProperty:(NSString *)prop withType:(NSAttributeType)retType onEntity:(NSString *)entityName;
@@ -40,6 +42,7 @@
 + (void)initRestKitObjects;
 + (void)resetSavedDatabase;
 + (NSArray *)registeredDataModels;
+
 @end
 
 /*

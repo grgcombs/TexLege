@@ -18,24 +18,28 @@
 #import "CommitteeObj+RestKit.h"
 #import "TexLegeAppDelegate.h"
 
-@interface CommitteesDataSource (Private)
+@interface CommitteesDataSource ()
+@property (nonatomic,copy) NSMutableString *filterString;
 @end
+
 
 @implementation CommitteesDataSource
 
-@synthesize fetchedResultsController;
-
-@synthesize hideTableIndex;
-@synthesize filterChamber, filterString, searchDisplayController;
+@synthesize filterChamber = _filterChamber;
+@synthesize hideTableIndex = _hideTableIndex;
+@synthesize fetchedResultsController = _fetchedResultsController;
+@synthesize searchDisplayController = _searchDisplayController;
 
 - (Class)dataClass {
 	return [CommitteeObj class];
 }
 
-- (instancetype)init {
-	if ((self = [super init])) {
-		self.filterChamber = 0;
-		self.filterString = [NSMutableString stringWithString:@""];
+- (instancetype)init
+{
+	if ((self = [super init]))
+    {
+		_filterChamber = 0;
+		_filterString = [NSMutableString stringWithString:@""];
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(dataSourceReceivedMemoryWarning:)
@@ -49,26 +53,29 @@
 
 - (void)resetCoreData:(NSNotification *)notification
 {
+    NSFetchedResultsController *frc = self.fetchedResultsController;
     // You've got to delete the cache, or disable caching before you modify the predicate...
-    [NSFetchedResultsController deleteCacheWithName:(self.fetchedResultsController).cacheName];
-    (self.fetchedResultsController.fetchRequest).predicate = [self getFilterPredicate];
-    (self.fetchedResultsController.fetchRequest).sortDescriptors = [self sortDescriptors];
+    [NSFetchedResultsController deleteCacheWithName:frc.cacheName];
+
+    NSFetchRequest *fetchRequest = frc.fetchRequest;
+    fetchRequest.predicate = [self getFilterPredicate];
+    fetchRequest.sortDescriptors = [self sortDescriptors];
 
     NSError *error = nil;
-    if (![self.fetchedResultsController performFetch:&error]) {
+    if (![frc performFetch:&error]) {
         // Handle error
         debug_NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
     }
 }
 
 
-- (void)dealloc {
+- (void)dealloc
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-
-	
 }
 
--(void)dataSourceReceivedMemoryWarning:(id)sender {
+-(void)dataSourceReceivedMemoryWarning:(id)sender
+{
 	// let's give this a swinging shot....	
 	for (NSManagedObject *object in self.fetchedResultsController.fetchedObjects) {
         [object.managedObjectContext refreshObject:object mergeChanges:NO];
@@ -99,32 +106,41 @@
 
 
 // atomic number is displayed in a plain style tableview
-- (UITableViewStyle)tableViewStyle {
+- (UITableViewStyle)tableViewStyle
+{
 	return UITableViewStylePlain;
 }
 
-
-// return the committee at the index in the sorted by symbol array
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
-	CommitteeObj *tempEntry = nil;
-	@try {
-		tempEntry = [self.fetchedResultsController objectAtIndexPath:indexPath];
-	}
-	@catch (NSException * e) {
-		// Perhaps we're returning from a search and we've got a wacked out indexPath.  Let's reset the search and see what happens.
-		debug_NSLog(@"CommitteeDataSource.m -- committeeDataForIndexPath:  indexPath must be out of bounds.  %@", [indexPath description]); 
-		[self removeFilter];
-        @try {
-            tempEntry = [self.fetchedResultsController objectAtIndexPath:indexPath];
+- (id)safeObjectForIndexPath:(NSIndexPath *)indexPath
+{
+    NSFetchedResultsController *frc = self.fetchedResultsController;
+    CommitteeObj *object = nil;
+    NSArray *sections = frc.sections;
+    if (sections.count > indexPath.section)
+    {
+        id<NSFetchedResultsSectionInfo> section = sections[indexPath.section];
+        if ([section numberOfObjects] > indexPath.row)
+        {
+            object = [frc objectAtIndexPath:indexPath];
         }
-        @catch (NSException *exception) {
-            return nil;
-        }
-	}
-	return tempEntry;
+    }
+    return object;
 }
 
-- (NSIndexPath *)indexPathForDataObject:(id)dataObject {
+- (id)dataObjectForIndexPath:(NSIndexPath *)indexPath
+{
+    CommitteeObj *object = [self safeObjectForIndexPath:indexPath];
+    if (!object)
+    {
+        // Perhaps we're returning from a search and we've got a wacked out indexPath.  Let's reset the search and see what happens.
+        [self removeFilter];
+        object = [self safeObjectForIndexPath:indexPath];
+    }
+    return object;
+}
+
+- (NSIndexPath *)indexPathForDataObject:(id)dataObject
+{
 	NSIndexPath *tempIndex = nil;
 	@try {
 		tempIndex = [self.fetchedResultsController indexPathForObject:dataObject];
@@ -161,7 +177,6 @@
 		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
 		cell.accessoryView = qv;
 		//[iv release];
-		
 	}
     
 	CommitteeObj *tempEntry = [self dataObjectForIndexPath:indexPath];
@@ -184,7 +199,6 @@
 	 */
 	cell.accessoryView.hidden = (tableView == self.searchDisplayController.searchResultsTableView);
 
-
 	return cell;
 }
 
@@ -198,7 +212,7 @@
 
     // This is for the little index along the right side of the table ... use nil if you don't want it.
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
-	return  hideTableIndex ? nil : (self.fetchedResultsController).sectionIndexTitles ;
+	return  _hideTableIndex ? nil : (self.fetchedResultsController).sectionIndexTitles;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
@@ -223,7 +237,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
 	NSInteger count = tableView.numberOfSections;
-    NSArray *sections = fetchedResultsController.sections;
+    NSArray *sections = self.fetchedResultsController.sections;
 	if (count > 0 &&
         sections.count > section)
     {
@@ -237,7 +251,8 @@
 #pragma mark Filtering Functions
 
 // do we want to do a proper whichFilter sort of thing?
-- (BOOL) hasFilter {
+- (BOOL)hasFilter
+{
 	return (self.filterString.length > 0 || self.filterChamber > 0);
 }
 
@@ -280,7 +295,8 @@
 }
 
 // probably unnecessary, but we might as well validate the new info with our expectations...
-- (void) setFilterByString:(NSString *)filter {
+- (void) setFilterByString:(NSString *)filter
+{
 	if (!filter) filter = @"";
 	if (![self.filterString isEqualToString:filter]) {
 		self.filterString = [NSMutableString stringWithString:filter];
@@ -289,22 +305,23 @@
 	[self updateFilterPredicate];	
 }
 
-- (void) removeFilter {
+- (void) removeFilter
+{
 	// do we want to tell it to clear out our chamber selection too? Not really, the ViewController sets it for us.
 	// self.filterChamber = 0;
 	[self setFilterByString:@""]; // we updateFilterPredicate automatically
 	
-}	
+}
 
-
-#pragma mark -
 #pragma mark Core Data Methods
 
-- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller
+{
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"TABLEUPDATE_START" object:self];
 	//    [self.tableView beginUpdates];
 }
-- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller
+{
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"TABLEUPDATE_END" object:self];
 	//    [self.tableView endUpdates];
 }
@@ -314,37 +331,30 @@
     NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"committeeName" ascending:YES];
     return @[sort];
 }
-/*
- Set up the fetched results controller.
- */
-- (NSFetchedResultsController *)fetchedResultsController {
-    
-    if (fetchedResultsController != nil) {
-        return fetchedResultsController;
-    }
-    
+
+- (NSFetchedResultsController *)fetchedResultsController
+{
+    if (_fetchedResultsController != nil)
+        return _fetchedResultsController;
+
 	// Create the fetch request for the entity.
-	NSFetchRequest *fetchRequest = [CommitteeObj fetchRequest];
+	NSFetchRequest *fetchRequest = [CommitteeObj rkFetchRequest];
 			
 	// Sort by committeeName.
 	fetchRequest.sortDescriptors = [self sortDescriptors];
 	
 	NSString * sectionString;
-	// we don't want sections when searching, change to hasFilter if you don't want it for toolbarAction either...
-    // nil for section name key path means "no sections".
-	if (self.filterString.length > 0) 
+	if (self.filterString.length > 0)
 		sectionString = nil;
 	else
 		sectionString = @"committeeNameInitial";
-	
-	fetchedResultsController = [[NSFetchedResultsController alloc] 
-															 initWithFetchRequest:fetchRequest 
-															 managedObjectContext:[CommitteeObj managedObjectContext] 
-															 sectionNameKeyPath:sectionString cacheName:@"Committees"];
 
-    fetchedResultsController.delegate = self;
+    NSString *cacheName = nil; // @"Committees"
 
-	return fetchedResultsController;
+	NSFetchedResultsController *frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:[CommitteeObj rkManagedObjectContext] sectionNameKeyPath:sectionString cacheName:cacheName];
+    frc.delegate = self;
+    _fetchedResultsController = frc;
+	return frc;
 }    
 
 @end

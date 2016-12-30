@@ -12,33 +12,44 @@
 
 #import "LinkObj+RestKit.h"
 #import "UtilityMethods.h"
+#import <SLFRestKit/SLFRestKit.h>
+
+static RKManagedObjectMapping *linkAttributesMapping = nil;
 
 @implementation LinkObj (RestKit)
 
-#pragma mark RKObjectMappable methods
-
-+ (NSDictionary*)elementToPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"sortOrder", @"sortOrder",
-			@"url", @"url",
-			@"label", @"label",
-			@"section", @"section",
-			@"updated", @"updatedDate",
-			nil];
-}
-
-+ (NSString*)primaryKeyProperty {
++ (NSString*)primaryKeyProperty
+{
 	return @"sortOrder";
 }
 
++ (RKManagedObjectMapping *)attributeMapping
+{
+    if (linkAttributesMapping)
+        return linkAttributesMapping;
 
-#pragma mark Custom Accessors
+    RKManagedObjectMapping *mapping = [RKManagedObjectMapping mappingForClass:[self class] inManagedObjectStore:[RKObjectManager sharedManager].objectStore];
+    mapping.primaryKeyAttribute = @"sortOrder";
+    [mapping mapAttributesFromArray:@[
+                                    @"label",
+                                      @"section",
+                                      @"sortOrder",
+                                      @"url",
+                                      ]];
+    [mapping mapKeyPath:@"updated" toAttribute:@"updatedDate"];
 
-- (NSURL *) actualURL {	
+    linkAttributesMapping = mapping;
+
+    return mapping;
+}
+
+- (NSURL *)actualURL
+{
 	NSURL * actualURL = nil;
 	NSString *followTheMoney = [UtilityMethods texLegeStringWithKeyPath:@"ExternalURLs.nimspWeb"];
 
-	if ([self.url isEqualToString:@"aboutView"]) {
+	if ([self.url isEqualToString:@"aboutView"])
+    {
 		NSString *file = nil;
 
 		if ([UtilityMethods isIPadDevice])
@@ -49,13 +60,16 @@
 		NSURL *baseURL = [UtilityMethods urlToMainBundle];
 		actualURL = [NSURL URLWithString:file relativeToURL:baseURL];
 	}
-	else if ([self.url hasPrefix:followTheMoney]) {		
+	else if ([self.url hasPrefix:followTheMoney])
+    {
 		actualURL = [NSURL URLWithString:followTheMoney];
 	}
-	else if ([self.url hasPrefix:@"mailto:"]) {
+	else if ([self.url hasPrefix:@"mailto:"])
+    {
 		actualURL = nil;
 	}
-	else if (self.url) {
+	else if (self.url)
+    {
 		actualURL = [NSURL URLWithString:self.url];
 	}
 	

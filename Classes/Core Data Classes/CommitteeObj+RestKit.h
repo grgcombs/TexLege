@@ -11,17 +11,18 @@
 //
 
 #import "CommitteeObj.h"
+@class RKManagedObjectMapping;
 @class LegislatorObj;
 
 @interface CommitteeObj (RestKit)
-{
-}
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *typeString;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *description;
-@property (NS_NONATOMIC_IOSONLY, readonly, strong) LegislatorObj *chair;
-@property (NS_NONATOMIC_IOSONLY, readonly, strong) LegislatorObj *vicechair;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *sortedMembers;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *typeString;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *description;
+@property (NS_NONATOMIC_IOSONLY, readonly) LegislatorObj *chair;
+@property (NS_NONATOMIC_IOSONLY, readonly) LegislatorObj *vicechair;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSArray<LegislatorObj *> *sortedMembers;
+
++ (RKManagedObjectMapping *)attributeMapping;
++ (NSString*)primaryKeyProperty;
 
 @end
-
-

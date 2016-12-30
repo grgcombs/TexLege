@@ -11,40 +11,49 @@
 //
 
 #import "CommitteePositionObj+RestKit.h"
-#import "CommitteeObj.h"
+#import "CommitteeObj+RestKit.h"
+#import "LegislatorObj+RestKit.h"
+#import "TexLegeCoreDataUtils.h"
+#import <SLFRestKit/SLFRestKit.h>
+
+static RKManagedObjectMapping *positionAttributesMapping = nil;
 
 @implementation CommitteePositionObj (RestKit)
 
-#pragma mark RKObjectMappable methods
-
-+ (NSDictionary*)elementToPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"committeePositionID", @"committeePositionID",
-			@"legislatorID", @"legislatorID",
-			@"committeeId", @"committeeId",
-			@"position", @"position",
-			@"updated", @"updatedDate",
-			nil];
++ (NSString*)primaryKeyProperty
+{
+    return @"committeePositionID";
 }
 
-+ (NSDictionary*)relationshipToPrimaryKeyPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"legislator", @"legislatorID",
-			@"committee", @"committeeId",
-			nil];
++ (RKManagedObjectMapping *)attributeMapping
+{
+    if (positionAttributesMapping)
+        return positionAttributesMapping;
+
+    RKManagedObjectMapping *mapping = [RKManagedObjectMapping mappingForClass:[self class] inManagedObjectStore:[RKObjectManager sharedManager].objectStore];
+    mapping.primaryKeyAttribute = @"committeePositionID";
+    [mapping mapAttributesFromArray:@[
+                                      @"committeePositionID",
+                                      @"legislatorID",
+                                      @"committeeId",
+                                      @"position",
+                                      ]];
+
+    [mapping mapKeyPath:@"updated" toAttribute:@"updatedDate"];
+    //[mapping connectRelationship:@"legislator" withObjectForPrimaryKeyAttribute:@"legislatorID"];
+    //[mapping connectRelationship:@"committee" withObjectForPrimaryKeyAttribute:@"committeeId"];
+
+    positionAttributesMapping = mapping;
+
+    return mapping;
 }
 
-+ (NSString*)primaryKeyProperty {
-	return @"committeePositionID";
-}
-
-
-#pragma mark Custom Accessors
-
-- (NSString*)positionString {
-	if (self.position.integerValue == POS_CHAIR) 
+- (NSString*)positionString
+{
+    NSNumber *position = self.position;
+	if (position.integerValue == POS_CHAIR)
 		return NSLocalizedStringFromTable(@"Chair", @"DataTableUI", @"Abbreviation / title for a person who is the committee chairperson");
-	else if (self.position.integerValue == POS_VICE) 
+	else if (position.integerValue == POS_VICE) 
 		return NSLocalizedStringFromTable(@"Vice Chair", @"DataTableUI", @"Abbreviation / title for a person who is second to the committee chairperson");
 	else
 		return NSLocalizedStringFromTable(@"Member", @"DataTableUI", @"Title for a person who is a regular member of a committe (not chair/vice-chair)");
@@ -52,6 +61,9 @@
 
 - (NSComparisonResult)comparePositionAndCommittee:(CommitteePositionObj *)p
 {
+    if (!p || ![p isKindOfClass:self.class])
+        return NSOrderedDescending;
+
 	NSInteger selfOrder = self.position.integerValue;
 	NSInteger comparedToOrder = p.position.integerValue;
 	NSComparisonResult result = NSOrderedSame;

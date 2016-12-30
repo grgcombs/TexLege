@@ -11,7 +11,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <RestKit/RestKit.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 #define kBillMetadataFile @"BillMetadata.json"
 #define kBillMetadataPath @"BillMetadata"

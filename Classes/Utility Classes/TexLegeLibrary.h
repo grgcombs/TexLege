@@ -12,8 +12,8 @@
 
 #import "TexLege.h"
 
-#define OPENAPIS_DEFAULT_SESSION		@"82"
-#define WNOM_DEFAULT_LATEST_SESSION		82
+#define OPENAPIS_DEFAULT_SESSION		@"85"
+#define WNOM_DEFAULT_LATEST_SESSION		84
 
 // Legislative Chamber / Legislator Type
 enum kChambers {

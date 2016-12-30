@@ -10,7 +10,7 @@
 //
 //
 
-#import <RestKit/RestKit.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 #define kPartisanIndexNotifyError	@"PARTISAN_INDEX_ERROR"
 #define kPartisanIndexNotifyLoaded	@"PARTISAN_INDEX_LOADED"

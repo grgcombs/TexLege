@@ -11,13 +11,14 @@
 //
 
 #import "WnomObj.h"
+@class RKManagedObjectMapping;
 
 @interface WnomObj (RestKit)
-{
-}
 
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSNumber *year;
++ (RKManagedObjectMapping *)attributeMapping;
++ (NSString *)primaryKeyProperty;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) NSNumber *year;
+
 @end
-
-
 

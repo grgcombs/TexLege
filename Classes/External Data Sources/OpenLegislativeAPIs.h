@@ -7,15 +7,15 @@
  *
  */
 
-#import <RestKit/RestKit.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 extern NSString * const osApiHost;
+extern NSString * const tloApiHost;
+extern NSString * const followTheMoneyApiHost;
 extern NSString * const osApiBaseURL;
 extern NSString * const transApiBaseURL;
 extern NSString * const vsApiBaseURL;
-extern NSString * const tloApiHost;
 extern NSString * const tloApiBaseURL;
-extern NSString * const followTheMoneyApiHost;
 extern NSString * const followTheMoneyApiBaseURL;
 
 @interface OpenLegislativeAPIs : NSObject <RKRequestDelegate>

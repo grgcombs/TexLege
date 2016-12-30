@@ -11,21 +11,12 @@
 //
 
 #import "DistrictMapObj.h"
+@class RKManagedObjectMapping;
 
 @interface DistrictMapObj (RestKit)
-{
-}
 
++ (RKManagedObjectMapping *)attributeMapping;
++ (NSString *)primaryKeyProperty;
 - (void)resetRelationship:(id)sender;
 
-#if 0 // this doesn't work like it used to -- can't get real objects with propertiesToFetch: anymore.
-+ (NSArray *)lightPropertiesToFetch;
-#endif
-
-//- (id) initWithCoder: (NSCoder *)coder;
-//- (void)encodeWithCoder:(NSCoder *)coder;	
-
 @end
-
-
-

@@ -11,25 +11,24 @@
 //
 
 #import "CommitteeObj.h"
-
 #import "CommitteePositionObj.h"
 
 @implementation CommitteeObj 
 
-@dynamic clerk_email;
-@dynamic phone;
-@dynamic committeeType;
-@dynamic updatedDate;
 @dynamic committeeId;
+@dynamic committeeName;
+@dynamic committeeNameInitial;
+@dynamic committeeType;
+@dynamic txlonline_id;
+@dynamic openstatesID;
 @dynamic votesmartID;
-@dynamic url;
+@dynamic parentId;
 @dynamic office;
 @dynamic clerk;
-@dynamic committeeName;
-@dynamic openstatesID;
-@dynamic txlonline_id;
-@dynamic committeeNameInitial;
-@dynamic parentId;
+@dynamic clerk_email;
+@dynamic phone;
+@dynamic url;
+@dynamic updatedDate;
 @dynamic committeePositions;
 
 @end

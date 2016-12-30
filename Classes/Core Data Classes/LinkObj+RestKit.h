@@ -11,14 +11,13 @@
 //
 
 #import "LinkObj.h"
+@class RKManagedObjectMapping;
 
 @interface LinkObj (RestKit)
-{
-}
 
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSURL *actualURL;
++ (RKManagedObjectMapping *)attributeMapping;
++ (NSString *)primaryKeyProperty;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) NSURL *actualURL;
 
 @end
-
-
-

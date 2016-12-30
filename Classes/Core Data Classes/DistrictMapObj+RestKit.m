@@ -10,46 +10,55 @@
 //
 //
 #import "DistrictMapObj+RestKit.h"
-
+#import <SLFRestKit/SLFRestKit.h>
 #import "LegislatorObj.h"
 #import "TexLegeCoreDataUtils.h"
 
+static RKManagedObjectMapping *districtAttributeMapping = nil;
+
 @implementation DistrictMapObj (RestKit)
 
-#pragma mark RKObjectMappable methods
-
-+ (NSDictionary*)elementToPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"districtMapID", @"districtMapID",
-			@"district", @"district",
-			@"chamber", @"chamber",
-			@"pinColorIndex", @"pinColorIndex",
-//			@"lineColor", @"lineColor",
-			@"lineWidth", @"lineWidth",
-			@"centerLon", @"centerLon",
-			@"centerLat", @"centerLat",
-			@"spanLon", @"spanLon",
-			@"spanLat", @"spanLat",
-			@"maxLon", @"maxLon",
-			@"maxLat", @"maxLat",
-			@"minLon", @"minLon",
-			@"minLat", @"minLat",
-			@"numberOfCoords", @"numberOfCoords",
-//			@"coordinatesData", @"coordinatesData",
-			@"updated", @"updatedDate",
-			@"coordinatesBase64", @"coordinatesBase64",
-			nil];
++ (NSString*)primaryKeyProperty
+{
+    return @"districtMapID";
 }
 
-+ (NSString*)primaryKeyProperty {
-	return @"districtMapID";
++ (RKManagedObjectMapping *)attributeMapping
+{
+    if (districtAttributeMapping)
+        return districtAttributeMapping;
+
+    RKManagedObjectMapping *mapping = [RKManagedObjectMapping mappingForClass:[self class] inManagedObjectStore:[RKObjectManager sharedManager].objectStore];
+    mapping.primaryKeyAttribute = @"districtMapID";
+    [mapping mapAttributesFromArray:@[
+                                      @"districtMapID",
+                                      @"chamber",
+                                      @"district",
+                                      @"centerLat",
+                                      @"centerLon",
+                                      @"maxLat",
+                                      @"maxLon",
+                                      @"minLat",
+                                      @"minLon",
+                                      @"spanLat",
+                                      @"spanLon",
+                                      @"pinColorIndex",
+                                      @"lineColor",
+                                      @"lineWidth",
+                                      @"coordinatesBase64",
+                                      @"numberOfCoords",
+                                      @"coordinatesData",
+                                      ]];
+    [mapping mapKeyPath:@"updated" toAttribute:@"updatedDate"];
+    //[mapping connectRelationship:@"legislator" withObjectForPrimaryKeyAttribute:@"legislatorID"];
+
+    districtAttributeMapping = mapping;
+
+    return mapping;
 }
 
-
-#pragma mark -
-#pragma mark RestKit Additions
-
-- (void)resetRelationship:(id)sender {
+- (void)resetRelationship:(id)sender
+{
 	LegislatorObj * aLegislator = [TexLegeCoreDataUtils legislatorForDistrict:self.district andChamber:self.chamber];
 	self.legislator = aLegislator;
 }
@@ -58,46 +67,18 @@
 {
 	NSString *key = @"coordinatesBase64";
 
-    NSData *coordinatesData = [[NSData alloc] initWithBase64EncodedString:newCoords options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSData *coordinatesData = nil;
+    if (newCoords && newCoords.length)
+        coordinatesData = [[NSData alloc] initWithBase64EncodedString:newCoords options:NSDataBase64DecodingIgnoreUnknownCharacters];
     self.coordinatesData = coordinatesData;
 
-    //self.coordinatesData = [NSData dataWithBase64EncodedString:newCoords];
-	
 	[self willChangeValueForKey:key];
 	[self setPrimitiveValue:nil forKey:key];
 	[self didChangeValueForKey:key];
 }
 
-#pragma mark -
-#pragma mark Custom
+#if 0
 
-#if 0 // this doesn't work like it used to -- can't get real objects with propertiesToFetch: anymore.
-+ (NSArray *)lightPropertiesToFetch {
-	NSArray *props = [NSArray arrayWithObjects:
-					  @"districtMapID",
-					  @"district",
-					  @"chamber",
-					  @"pinColorIndex",
-					  //	@"lineColor",
-					  @"lineWidth",
-					  @"centerLon",
-					  @"centerLat",
-					  @"spanLon",
-					  @"spanLat",
-					  @"maxLon",
-					  @"maxLat",
-					  @"minLon",
-					  @"minLat",
-					  @"numberOfCoords",
-					  @"updatedDate",
-					  @"legislator.lastname",
-					  @"legislator.firstname",
-					  nil];
-	return props;
-}
-#endif
-
-/*
 - (void) importFromDictionary: (NSDictionary *)dictionary
 {				
 	if (dictionary) {
@@ -173,6 +154,7 @@
 		[coder encodeObject:object];	
 	}
 }
-*/
+
+#endif
 
 @end

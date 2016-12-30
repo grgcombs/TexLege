@@ -20,6 +20,7 @@
 #import "TexLegeTheme.h"
 #import "TexLegeReachability.h"
 #import "TXLDetailProtocol.h"
+#import <SLFRestKit/NSManagedObject+RestKit.h>
 
 @implementation GeneralTableViewController
 

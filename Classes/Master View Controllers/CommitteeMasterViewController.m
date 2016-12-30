@@ -130,7 +130,7 @@
 	BOOL isSplitViewDetail = ([UtilityMethods isIPadDevice]) && (self.splitViewController != nil);
 	
 	id dataObject = [self.dataSource dataObjectForIndexPath:newIndexPath];
-	if ([dataObject isKindOfClass:[RKManagedObject class]])
+	if ([dataObject isKindOfClass:[NSManagedObject class]])
 		[appDelegate setSavedTableSelection:[dataObject primaryKeyValue] forKey:NSStringFromClass([self class])];
 	else
 		[appDelegate setSavedTableSelection:newIndexPath forKey:NSStringFromClass([self class])];

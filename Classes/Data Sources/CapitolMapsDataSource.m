@@ -15,15 +15,10 @@
 #import "TexLegeTheme.h"
 #import "TexLegeStandardGroupCell.h"
 
-@interface CapitolMapsDataSource(Private)
-
-- (void)createSectionList;
-
+@interface CapitolMapsDataSource()
 @end
 
 @implementation CapitolMapsDataSource
-
-@synthesize sectionList;
 
 // TableDataSourceProtocol methods
 
@@ -50,19 +45,20 @@
 	return UITableViewStylePlain;
 }
 
-- (instancetype)init {
-	if ((self = [super init])) {
-		
-		self.sectionList = [[NSMutableArray alloc] init];
+- (instancetype)init
+{
+	if ((self = [super init]))
+    {
 		[self createSectionList];
 	}
 	return self;
 }
 
-
-
 /* Build a list of files */
-- (void)createSectionList {
+- (void)createSectionList
+{
+    NSMutableArray *sectionList = [[NSMutableArray alloc] init];
+
     @autoreleasepool {
         NSString *thePath = [[NSBundle mainBundle] pathForResource:@"CapitolMaps" ofType:@"plist"];
         NSArray *mapSectionsPlist = [[NSArray alloc] initWithContentsOfFile:thePath];
@@ -77,38 +73,42 @@
                 [newMap importFromDictionary:mapEntry];
                 [tempSection addObject:newMap];
             }
-            [self.sectionList addObject:tempSection];
+            [sectionList addObject:tempSection];
         }
         
     }
+    _sectionList = sectionList;
 }
 
 
 // return the map at the index in the array
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
-    if (self.sectionList.count <= indexPath.section)
+- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath
+{
+    NSArray *sectionList = self.sectionList;
+    if (sectionList.count <= indexPath.section)
         return nil;
-	NSArray *thisSection = (self.sectionList)[indexPath.section];
+	NSArray *thisSection = sectionList[indexPath.section];
 	if (thisSection && thisSection.count > indexPath.row)
 		return thisSection[indexPath.row];
 	
 	return nil;
 }
 
-- (NSIndexPath *)indexPathForDataObject:(id)dataObject {
+- (NSIndexPath *)indexPathForDataObject:(id)dataObject
+{
+    NSArray *sectionList = self.sectionList;
 	NSInteger section = 0;
 	NSInteger row = 0;
 	
-	if (dataObject && [dataObject isKindOfClass:[CapitolMap class]]) {
+	if (dataObject && [dataObject isKindOfClass:[CapitolMap class]])
+    {
 		section = [[dataObject valueForKey:@"type"] integerValue];
-        if (self.sectionList.count <= section)
+        if (sectionList.count <= section)
             return nil;
-		NSArray *thisSection = (self.sectionList)[section];
-		if (thisSection) {
-			row = [thisSection indexOfObject:dataObject];
-			if (row == NSNotFound)
-				row = 0;
-		}
+		NSArray *thisSection = sectionList[section];
+        row = [thisSection indexOfObject:dataObject];
+        if (row == NSNotFound)
+            row = 0;
 	}
 	return [NSIndexPath indexPathForRow:row inSection:section];
 }
@@ -140,7 +140,8 @@
 	return cell;
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
 	// Three sections
 	return (self.sectionList).count;
 }

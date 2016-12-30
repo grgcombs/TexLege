@@ -11,7 +11,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <RestKit/RestKit.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 #define kBillCategoriesNotifyError	@"BILL_CATEGORIES_ERROR"
 #define kBillCategoriesNotifyLoaded	@"BILL_CATEGORIES_LOADED"

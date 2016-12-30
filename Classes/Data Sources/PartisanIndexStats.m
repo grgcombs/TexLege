@@ -63,7 +63,7 @@
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
+	[[RKClient sharedClient].requestQueue cancelRequestsWithDelegate:self];
 	if (_updated)
 		_updated = nil;
 		
@@ -84,7 +84,7 @@
 /* This collects the calculations of partisanship across members in each chamber and party, then caches the results*/
 - (NSDictionary *)partisanIndexAggregates
 {
-	if (_partisanIndexAggregates == nil)
+    if (!_partisanIndexAggregates || !_partisanIndexAggregates.count)
     {
 		NSMutableDictionary *tempAggregates = [NSMutableDictionary dictionaryWithCapacity:4];
 		NSInteger chamber, party;
@@ -93,7 +93,7 @@
 			for (party = kUnknownParty; party <= REPUBLICAN; party++)
             {
 				NSArray *aggregatesArray = [self aggregatePartisanIndexForChamber:chamber andPartyID:party];
-				if (aggregatesArray && aggregatesArray.count)
+				if (aggregatesArray && aggregatesArray.count == 3)
                 {
 					NSNumber *avgIndex = aggregatesArray[0];
 					if (avgIndex)
@@ -146,10 +146,13 @@
 
 - (NSNumber *)maxWnomSession
 {
-	return [TexLegeCoreDataUtils fetchCalculation:@"max:" 
-									   ofProperty:@"session" 
-										 withType:NSInteger32AttributeType 
-										 onEntity:@"WnomObj"];
+    NSNumber *value = [TexLegeCoreDataUtils fetchCalculation:@"max:"
+                                                  ofProperty:@"session"
+                                                    withType:NSInteger32AttributeType
+                                                    onEntity:@"WnomObj"];
+    if (!value || value.intValue == 0)
+        return nil;
+    return value;
 }
 
 /* This queries the partisan index from each legislator and calculates aggregate statistics */
@@ -199,10 +202,15 @@
 	
 	/*_____________________*/
 	
-	NSFetchRequest *request = [WnomObj fetchRequest];
+	NSFetchRequest *request = [WnomObj rkFetchRequest];
 	request.predicate = predicate;
-	request.propertiesToFetch = @[edAvg, edMax, edMin];
+	request.propertiesToFetch = @[edAvg, edMax, edMin, @"legislator"];
 	request.resultType = NSDictionaryResultType;
+    request.relationshipKeyPathsForPrefetching = @[@"legislator"];
+    request.includesSubentities = YES;
+    request.includesPropertyValues = YES;
+    request.includesPendingChanges = YES;
+    request.returnsObjectsAsFaults = NO;
 
     NSArray *allResults = nil;
 	NSArray *objects = [WnomObj objectsWithFetchRequest:request];
@@ -218,8 +226,29 @@
 /*		debug_NSLog(@"Partisanship for Chamber (%d) Party (%d): min=%@ max=%@ avg=%@", 
 					chamber, party, minPartisanIndex, maxPartisanIndex, avgPartisanIndex);
 */
-		allResults = @[avgPartisanIndex, maxPartisanIndex, minPartisanIndex];
+        if (avgPartisanIndex && maxPartisanIndex && minPartisanIndex)
+            allResults = @[avgPartisanIndex, maxPartisanIndex, minPartisanIndex];
+        else
+            allResults = nil;
 	}
+
+    if (!allResults)
+    {
+        request.predicate = nil;
+        request.propertiesToFetch = nil;
+        request.resultType = NSManagedObjectResultType;
+        //objects = [WnomObj allObjects];
+        objects = [WnomObj objectsWithFetchRequest:request];
+
+        for (NSManagedObject *obj in objects)
+        {
+            WnomObj *wnom = ([obj isKindOfClass:[WnomObj class]]) ? (WnomObj *)obj : nil;
+            if (!wnom)
+                break;
+
+        }
+
+    }
 	
 	return allResults;
 }
@@ -392,7 +421,7 @@
 		}
 		
 		_loading = YES;
-		[[RKClient sharedClient] get:[NSString stringWithFormat:@"/rest.php/%@", kPartisanIndexPath] delegate:self];  	
+		[[RKClient sharedClient] get:[NSString stringWithFormat:@"/%@", kPartisanIndexFile] delegate:self];
 	}
 	else
     {

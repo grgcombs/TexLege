@@ -16,6 +16,8 @@
 #import "UtilityMethods.h"
 #import "TexLegeStandardGroupCell.h"
 #import "TexLegeTheme.h"
+#import <SLFRestKit/SLFRestKit.h>
+#import <SLFRestKit/NSManagedObject+RestKit.h>
 
 @implementation LinksDataSource
 
@@ -198,16 +200,18 @@ enum Sections {
 {  
 	if (fetchedResultsController != nil) return fetchedResultsController;
 	
-	NSFetchRequest *fetchRequest = [LinkObj fetchRequest];
+	NSFetchRequest *fetchRequest = [LinkObj rkFetchRequest];
 	
 	NSSortDescriptor *sortSection = [[NSSortDescriptor alloc] initWithKey:@"section" ascending:YES];
 	NSSortDescriptor *sortOrder = [[NSSortDescriptor alloc] initWithKey:@"sortOrder" ascending:YES];
 	NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortSection, sortOrder, nil];  
 	fetchRequest.sortDescriptors = sortDescriptors;
-	
+
+    NSString *cacheName = nil; // @"Links"
+
 	fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest 
-																   managedObjectContext:[LinkObj managedObjectContext]
-																	 sectionNameKeyPath:@"section" cacheName:@"Links"];
+																   managedObjectContext:[LinkObj rkManagedObjectContext]
+																	 sectionNameKeyPath:@"section" cacheName:cacheName];
 	fetchedResultsController.delegate = self;
 	
 	

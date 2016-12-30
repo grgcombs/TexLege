@@ -11,7 +11,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <RestKit/RestKit.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 typedef NS_ENUM(uint16_t, ContributionQueryType) {
 	kContributionQueryElectionYear = 0,

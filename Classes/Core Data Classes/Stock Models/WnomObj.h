@@ -10,15 +10,11 @@
 //
 //
 
-#import "TexLege.h"
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData.h>
+#import <CoreData/CoreData.h>
 
 @class LegislatorObj;
 
-@interface WnomObj :  RKManagedObject  
-{
-}
+@interface WnomObj :  NSManagedObject
 
 @property (nonatomic, strong) NSNumber * adjMean;
 @property (nonatomic, strong) NSNumber * wnomID;

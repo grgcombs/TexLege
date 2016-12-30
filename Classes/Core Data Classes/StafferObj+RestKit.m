@@ -10,32 +10,38 @@
 //
 //
 
-#import "StafferObj.h"
+#import "StafferObj+RestKit.h"
+
+static RKManagedObjectMapping *stafferAttributeMapping = nil;
 
 @implementation StafferObj (RestKit)
 
-#pragma mark RKObjectMappable methods
-
-+ (NSDictionary*)elementToPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"phone", @"phone",
-			@"stafferID", @"stafferID",
-			@"legislatorID", @"legislatorID",
-			@"name", @"name",
-			@"email", @"email",
-			@"title", @"title",
-			@"updated", @"updatedDate",
-			nil];
-}
-
-+ (NSDictionary*)relationshipToPrimaryKeyPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"legislator", @"legislatorID",
-			nil];
-}
-
-+ (NSString*)primaryKeyProperty {
++ (NSString*)primaryKeyProperty
+{
 	return @"stafferID";
+}
+
++ (RKManagedObjectMapping *)attributeMapping
+{
+    if (stafferAttributeMapping)
+        return stafferAttributeMapping;
+
+    RKManagedObjectMapping *mapping = [RKManagedObjectMapping mappingForClass:[self class] inManagedObjectStore:[RKObjectManager sharedManager].objectStore];
+    mapping.primaryKeyAttribute = @"stafferID";
+    [mapping mapAttributesFromArray:@[
+                                      @"phone",
+                                      @"stafferID",
+                                      @"legislatorID",
+                                      @"name",
+                                      @"email",
+                                      @"title",
+                                      ]];
+    [mapping mapKeyPath:@"updated" toAttribute:@"updatedDate"];
+    [mapping connectRelationship:@"legislator" withObjectForPrimaryKeyAttribute:@"legislatorID"];
+
+    stafferAttributeMapping = mapping;
+
+    return mapping;
 }
 
 @end

@@ -11,59 +11,76 @@
 //
 
 #import "CommitteeObj+RestKit.h"
-
 #import "CommitteePositionObj.h"
-#import "LegislatorObj.h"
 #import "LegislatorObj+RestKit.h"
+#import <SLFRestKit/SLFRestKit.h>
+#import "TexLegeLibrary.h"
+
+static RKManagedObjectMapping *committeeAttributesMapping = nil;
 
 @implementation CommitteeObj (RestKit)
 
-#pragma mark RKObjectMappable methods
-
-+ (NSDictionary*)elementToPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"committeeId", @"committeeId",
-			@"clerk", @"clerk",
-			@"clerk_email", @"clerk_email",
-			@"committeeName", @"committeeName",
-			@"committeeType", @"committeeType",
-			@"office", @"office",
-			@"openstatesID", @"openstatesID",
-			@"parentId", @"parentId",
-			@"phone", @"phone",
-			@"txlonline_id", @"txlonline_id",
-			@"url", @"url",
-			@"votesmartID", @"votesmartID",
-			@"updated", @"updatedDate",
-			nil];
++ (NSString*)primaryKeyProperty
+{
+    return @"committeeId";
 }
 
-+ (NSString*)primaryKeyProperty {
-	return @"committeeId";
-}
++ (RKManagedObjectMapping *)attributeMapping
+{
+    if (committeeAttributesMapping)
+        return committeeAttributesMapping;
 
+    RKManagedObjectMapping *mapping = [RKManagedObjectMapping mappingForClass:[self class] inManagedObjectStore:[RKObjectManager sharedManager].objectStore];
+    mapping.primaryKeyAttribute = @"committeeId";
+    [mapping mapAttributesFromArray:@[
+                                      @"committeeId",
+                                      @"committeeName",
+                                      @"committeeType",
+                                      @"openstatesID",
+                                      @"txlonline_id",
+                                      @"parentId",
+                                      @"votesmartID",
+                                      @"clerk",
+                                      @"clerk_email",
+                                      @"office",
+                                      @"phone",
+                                      @"url",
+                                      ]];
+    [mapping mapKeyPath:@"updated" toAttribute:@"updatedDate"];
+
+    //[mapping connectRelationship:@"state" withObjectForPrimaryKeyAttribute:@"stateID"];
+    //[mapping hasMany:@"committeePositions" withMapping:committeePositionMapping];
+
+    committeeAttributesMapping = mapping;
+
+    return mapping;
+}
 
 #pragma mark Custom Accessors
 
-- (NSString *) committeeNameInitial {
+- (NSString *)committeeNameInitial
+{
 	[self willAccessValueForKey:@"committeeNameInitial"];
 	NSString * initial = [self.committeeName substringToIndex:1];
 	[self didAccessValueForKey:@"committeeNameInitial"];
 	return initial;
 }
 
-- (NSString*)typeString {
+- (NSString*)typeString
+{
 	return stringForChamber((self.committeeType).integerValue, TLReturnFull);
 }
 
-- (NSString*)description {
+- (NSString*)description
+{
 	NSString  *typeName = [NSString stringWithFormat: @"%@ (%@)", self.committeeName, [self typeString]];
 	return typeName;
 }
 
 - (LegislatorObj *)chair
 {
-	for (CommitteePositionObj *position in self.committeePositions) {
+	for (CommitteePositionObj *position in self.committeePositions)
+    {
 		if (position.legislator && position.position.integerValue == POS_CHAIR)
 			return position.legislator;
 	}
@@ -72,23 +89,34 @@
 				 
 - (LegislatorObj *)vicechair
 {
-	for (CommitteePositionObj *position in self.committeePositions) {
+	for (CommitteePositionObj *position in self.committeePositions)
+    {
 		if (position.legislator && position.position.integerValue == POS_VICE)
 			return position.legislator;
 	}
 	return nil;
 }
 
-- (NSArray *)sortedMembers
+- (NSArray<LegislatorObj *> *)sortedMembers
 {
-	NSMutableArray *memberArray = [[NSMutableArray alloc] init];
-	for (CommitteePositionObj *position in self.committeePositions) {
-		if (position.legislator && position.position.integerValue == POS_MEMBER)
-			[memberArray addObject:position.legislator];
-	}
-	[memberArray sortUsingSelector:@selector(compareMembersByName:)];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"legislator != nil AND position == %@", @(POS_MEMBER)];
+    NSSet *filteredPositions = [self.committeePositions filteredSetUsingPredicate:predicate];
 
-	return memberArray;
+    NSMutableArray *members = [[NSMutableArray alloc] init];
+    for (CommitteePositionObj *position in filteredPositions)
+    {
+        LegislatorObj *legislator = position.legislator;
+        if (!legislator)
+            continue;
+        [members addObject:legislator];
+    }
+
+    NSSortDescriptor *sortByLast = [NSSortDescriptor sortDescriptorWithKey:@"lastname" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
+    NSSortDescriptor *sortByFirst = [NSSortDescriptor sortDescriptorWithKey:@"firstname" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
+    //NSSortDescriptor *sortLastNameFirst = [NSSortDescriptor sortDescriptorWithKey:@"fullNameLastFirst" ascending:YES];
+    [members sortUsingDescriptors:@[sortByLast,sortByFirst]];
+
+    return [members copy];
 }
 
 @end

@@ -11,7 +11,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <RestKit/RestKit.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 #define kStateMetaFile				@"StateMetadata.json"
 #define kStateMetaPath				@"StateMetadata"

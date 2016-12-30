@@ -11,19 +11,23 @@
 //
 
 #import "TexLegeCoreDataUtils.h"
+
 #import "LegislatorObj+RestKit.h"
 #import "CommitteeObj+RestKit.h"
 #import "CommitteePositionObj+RestKit.h"
 #import "DistrictMapObj+RestKit.h"
-#import "DistrictOfficeObj.h"
-#import "StafferObj.h"
+#import "DistrictOfficeObj+RestKit.h"
+#import "StafferObj+RestKit.h"
 #import "WnomObj+RestKit.h"
 #import "LinkObj+RestKit.h"
+
 #import "TexLegeAppDelegate.h"
 #import "NSDate+Helper.h"
 #import "LocalyticsSession.h"
-#import "TexLegeObjectCache.h"
+//#import "TexLegeObjectCache.h"
 #import "UtilityMethods.h"
+
+#import <SLFRestKit/NSManagedObject+RestKit.h>
 
 #import "NSInvocation+CWVariableArguments.h"
 
@@ -49,45 +53,47 @@
     return instance;
 }
 
-+ (id) fetchCalculation:(NSString *)calc ofProperty:(NSString *)prop withType:(NSAttributeType)retType onEntity:(NSString *)entityName {
-	
-	// Let's just hope it's the kind of class we want
++ (id)fetchCalculation:(NSString *)calc ofProperty:(NSString *)prop withType:(NSAttributeType)resultType onEntity:(NSString *)entityName
+{
 	Class modelClass = NSClassFromString(entityName);
-	if (!modelClass || NO == [modelClass isSubclassOfClass:[RKManagedObject class]])
+	if (!modelClass || NO == [modelClass isSubclassOfClass:[NSManagedObject class]])
 		return nil;
 
-	// setup request
-	NSFetchRequest *request = [modelClass fetchRequest];	
-	// need to use dictionary to access values
-	request.resultType = NSDictionaryResultType;
-	// build expression (must do this for each value you want to retrieve)
+	NSFetchRequest *request = [modelClass rkFetchRequest];
+    request.resultType = NSDictionaryResultType;
+
+	// must do this for each value you want to retrieve
 	NSExpression *attributeToFetch = [NSExpression expressionForKeyPath:prop];
-	NSExpression *functionToPerformOnAttribute = [NSExpression expressionForFunction:calc 
-																		   arguments:@[attributeToFetch]];
-	
+	NSExpression *functionToPerformOnAttribute = [NSExpression expressionForFunction:calc arguments:@[attributeToFetch]];
+
+    NSString * const calculatedPropertyKey = @"myFetchedValue";
+
 	NSExpressionDescription *propertyToFetch = [[NSExpressionDescription alloc] init];
-	propertyToFetch.name = @"myFetchedValue"; // name used to access value in dictionary
+	propertyToFetch.name = calculatedPropertyKey;
 	propertyToFetch.expression = functionToPerformOnAttribute;
-	propertyToFetch.expressionResultType = retType;
-	// modify request to fetch only the attribute
+	propertyToFetch.expressionResultType = resultType;
+
 	request.propertiesToFetch = @[propertyToFetch];
 	
-	// execute fetch
 	NSArray *results = [modelClass objectsWithFetchRequest:request];
 	
-	// get value
 	id fetchedVal = nil;
 	if (!IsEmpty(results))
-		fetchedVal = [results[0] valueForKey:@"myFetchedValue"];
+    {
+        NSDictionary *resultDictionary = results[0];
+        fetchedVal = resultDictionary[calculatedPropertyKey];
+		fetchedVal = [results[0] valueForKey:calculatedPropertyKey];
+    }
 	else
 		NSLog(@"CoreData Error while fetching calc (%@) of property (%@) on entity (%@).", calc, prop, entityName);
 	
 	return fetchedVal;
 }
 		
-+ (DistrictMapObj*)districtMapForDistrict:(NSNumber*)district andChamber:(NSNumber*)chamber {
++ (DistrictMapObj *)districtMapForDistrict:(NSNumber*)district andChamber:(NSNumber*)chamber
+{
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.district == %@ AND self.chamber == %@", district, chamber];
-    return [TexLegeCoreDataUtils dataObjectWithPredicate:predicate entityName:@"DistrictMapObj"];
+    return [TexLegeCoreDataUtils dataObjectWithPredicate:predicate entityName:NSStringFromClass([DistrictMapObj class])];
 }
 
 + (LegislatorObj*)legislatorForDistrict:(NSNumber*)district andChamber:(NSNumber*)chamber
@@ -96,14 +102,15 @@
 	return [LegislatorObj objectWithPredicate:predicate];
 }
 
-+ (NSArray *) allLegislatorsSortedByPartisanshipFromChamber:(NSInteger)chamber andPartyID:(NSInteger)party
++ (NSArray *)allLegislatorsSortedByPartisanshipFromChamber:(NSInteger)chamber andPartyID:(NSInteger)party
 {
-	if (chamber == BOTH_CHAMBERS) {
+	if (chamber == BOTH_CHAMBERS)
+    {
 		debug_NSLog(@"allMembersByChamber: ... cannot be BOTH chambers");
 		return nil;
 	}
 	
-	NSFetchRequest *fetchRequest = [LegislatorObj fetchRequest];
+	NSFetchRequest *fetchRequest = [LegislatorObj rkFetchRequest];
 	NSString *predicateString = nil;
 	if (party > kUnknownParty)
 		predicateString = [NSString stringWithFormat:@"legtype == %ld AND party_id == %ld", (long)chamber, (long)party];
@@ -116,7 +123,8 @@
 	NSMutableArray *results = [[NSMutableArray alloc] initWithArray:[LegislatorObj objectsWithFetchRequest:fetchRequest]];
 	BOOL ascending = (party != REPUBLICAN);
 	
-	if (ascending) {
+	if (ascending)
+    {
 		[results sortUsingComparator:^(LegislatorObj *item1, LegislatorObj *item2) {
 			NSNumber *latestWnomFloat1 = @(item1.latestWnomFloat);
 			NSNumber *latestWnomFloat2 = @(item2.latestWnomFloat);
@@ -133,31 +141,34 @@
 	return results;	
 }
 
-+ (id)dataObjectWithPredicate:(NSPredicate *)predicate entityName:(NSString*)entityName {
++ (id)dataObjectWithPredicate:(NSPredicate *)predicate entityName:(NSString*)entityName
+{
 	if (!predicate || !entityName || !NSClassFromString(entityName))
 		return nil;
 
-	NSFetchRequest *request = [NSClassFromString(entityName) fetchRequest];
+	NSFetchRequest *request = [NSClassFromString(entityName) rkFetchRequest];
 	request.predicate = predicate;
 	
 	return [NSClassFromString(entityName) objectWithFetchRequest:request];
 }
 
-+ (NSArray*)allObjectIDsInEntityNamed:(NSString*)entityName {
++ (NSArray*)allObjectIDsInEntityNamed:(NSString*)entityName
+{
 	if (entityName && NSClassFromString(entityName))
 	{	
-		NSFetchRequest *request = [NSClassFromString(entityName) fetchRequest];
+		NSFetchRequest *request = [NSClassFromString(entityName) rkFetchRequest];
 		request.resultType = NSManagedObjectIDResultType;	// only return object IDs
 		return [NSClassFromString(entityName) objectsWithFetchRequest:request];	
 	}
 	return nil;
 }
 
-+ (NSArray*)allPrimaryKeyIDsInEntityNamed:(NSString*)entityName {
++ (NSArray*)allPrimaryKeyIDsInEntityNamed:(NSString*)entityName
+{
 	Class entityClass = NSClassFromString(entityName);
 	if (entityName && entityClass)
 	{	
-		NSFetchRequest *request = [entityClass fetchRequest];
+		NSFetchRequest *request = [entityClass rkFetchRequest];
 		
 		// only return primary key IDs
 		request.resultType = NSDictionaryResultType;	
@@ -168,21 +179,13 @@
 	return nil;
 }
 
-#if 0 // can't get custom objects while using propertiesToFetch: anymore
-+ (NSArray *) allDistrictMapsLight {
-	NSFetchRequest *fetchRequest = [DistrictMapObj fetchRequest];	
-	[fetchRequest setPropertiesToFetch:[DistrictMapObj lightPropertiesToFetch]];
-	return [DistrictMapObj objectsWithFetchRequest:fetchRequest];
-}
-#endif
-
 + (NSArray *)allDistrictMapIDsWithBoundingBoxesContaining:(CLLocationCoordinate2D)coordinate
 {		
 	NSNumber *lat = @(coordinate.latitude);
 	NSNumber *lon = @(coordinate.longitude);
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"maxLat >= %@ AND minLat <= %@ AND maxLon >=%@ AND minLon <= %@", lat, lat, lon, lon];
 	
-	NSFetchRequest * request = [DistrictMapObj fetchRequest];
+	NSFetchRequest * request = [DistrictMapObj rkFetchRequest];
 	request.propertiesToFetch = @[@"districtMapID"];
 	request.resultType = NSDictionaryResultType;	// only return object IDs
 	request.predicate = predicate;
@@ -197,41 +200,43 @@
 	return nil;
 }
 
-+ (void) deleteObjectInEntityNamed:(NSString *)entityName withPrimaryKeyValue:(id)keyValue {
-	if (!entityName || !NSClassFromString(entityName))
++ (void)deleteObjectInEntityNamed:(NSString *)entityName withPrimaryKeyValue:(id)keyValue {
+    Class entityClass = (entityName != nil) ? NSClassFromString(entityName) : nil;
+	if (!entityClass)
 		return;
 	
-	RKManagedObject *object = [NSClassFromString(entityName) objectWithPrimaryKeyValue:keyValue];
+	NSManagedObject *object = [entityClass objectWithPrimaryKeyValue:keyValue];
 	if (object == nil) {
 		debug_NSLog(@"Can't Delete: There's no %@ objects matching ID: %@", entityName, keyValue);
 	}
 	else {
-		[[NSClassFromString(entityName) managedObjectContext] deleteObject:object];
+		[[entityClass rkManagedObjectContext] deleteObject:object];
 	}
 }
 
-+ (void) deleteAllObjectsInEntityNamed:(NSString*)entityName {
++ (void)deleteAllObjectsInEntityNamed:(NSString*)entityName
+{
+    Class entityClass = (entityName != nil) ? NSClassFromString(entityName) : nil;
+    if (!entityClass)
+        return;
+
 	debug_NSLog(@"I HOPE YOU REALLY WANT TO DO THIS ... DELETING ALL OBJECTS IN %@", entityName);
 	debug_NSLog(@"----------------------------------------------------------------------");
-	
-	if (!entityName || !NSClassFromString(entityName))
-		return;
 
-	NSArray *fetchedObjects = [NSClassFromString(entityName) allObjects];
+	NSArray *fetchedObjects = [entityClass allObjects];
 	if (fetchedObjects == nil) {
 		debug_NSLog(@"There's no objects to delete ???");
 	}
 	for (NSManagedObject *object in fetchedObjects) {
-		[[NSClassFromString(entityName) managedObjectContext] deleteObject:object];
+		[[entityClass rkManagedObjectContext] deleteObject:object];
 	}
 }
 
-+ (void)initRestKitObjects {
-	
-	RKObjectManager* objectManager = [RKObjectManager objectManagerWithBaseURL:RESTKIT_BASE_URL];
-    RKClient *client = objectManager.client;
-    if (client)
-    {
++ (NSString *)userAgent
+{
+    static NSString *userAgent = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         NSDictionary *bundleInfo = [NSBundle mainBundle].infoDictionary;
         NSString *appName = (bundleInfo[@"CFBundleName"]) ?: @"TexLege";
         NSString *version = bundleInfo[@"CFBundleShortVersionString"];
@@ -245,51 +250,165 @@
         }
         UIDevice *deviceInfo = [UIDevice currentDevice];
         NSString *systemVersion = [deviceInfo.systemVersion stringByReplacingOccurrencesOfString:@"." withString:@"_"];
-        client.HTTPHeaders[@"User-Agent"] = [NSString stringWithFormat:@"%@/%@ (%@; CPU OS %@ like Mac OS X)", appName, version, deviceInfo.model, systemVersion];
+        userAgent = [NSString stringWithFormat:@"%@/%@ (%@; CPU OS %@ like Mac OS X)", appName, version, deviceInfo.model, systemVersion];
+    });
+    return userAgent;
+}
+
++ (BOOL)isDaylightSavingTime
+{
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    NSCalendarUnit units = NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;;
+
+    NSDate *now = [NSDate date];
+    NSDateComponents *nowComponents = [calendar components:units fromDate:now];
+
+    NSDateComponents *beginComponents = [nowComponents copy];
+    beginComponents.month = 3; // second Sunday of March
+    beginComponents.hour = 2;
+    beginComponents.minute = 0;
+
+    NSDateComponents *endComponents = [nowComponents copy];
+    endComponents.month = 11; // first Sunday of November
+    endComponents.hour = 2;
+    endComponents.minute = 0;
+
+    NSInteger year = nowComponents.year;
+    switch (year) {
+        case 2016:
+            beginComponents.day = 13;
+            endComponents.day = 6;
+            break;
+        case 2017:
+            beginComponents.day = 12;
+            endComponents.day = 5;
+            break;
+        case 2018:
+            beginComponents.day = 11;
+            endComponents.day = 4;
+            break;
+        case 2019:
+            beginComponents.day = 10;
+            endComponents.day = 3;
+            break;
+        case 2020:
+            beginComponents.day = 8; // leap year?
+            endComponents.day = 1;
+            break;
+        case 2021:
+            beginComponents.day = 14;
+            endComponents.day = 7;
+            break;
+        case 2022:
+            beginComponents.day = 13;
+            endComponents.day = 6;
+            break;
+        case 2023:
+            beginComponents.day = 12;
+            endComponents.day = 5;
+            break;
+        case 2024:
+            beginComponents.day = 11;
+            endComponents.day = 4;
+            break;
+        case 2025:
+            beginComponents.day = 10;
+            endComponents.day = 3;
+            break;
+        default:
+            NSAssert(NO, @"Make adjustments for a new year");
+            break;
     }
-	RKObjectMapper* mapper = objectManager.mapper;
-	// Initialize object store
-	NSString *modelPath = [[NSBundle mainBundle] pathForResource:@"TexLege" ofType:@"momd"];
-	NSURL *momURL = [NSURL fileURLWithPath:modelPath];
-	NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
-		
+
+    NSComparisonResult beginToNow = [[beginComponents date] compare:now];
+    NSComparisonResult nowToEnd = [now compare:[endComponents date]];
+    BOOL onOrAfterStart = (beginToNow == NSOrderedSame || beginToNow == NSOrderedAscending);
+    BOOL onOrBeforeEnd = (nowToEnd == NSOrderedSame || nowToEnd == NSOrderedAscending);
+    return (onOrAfterStart && onOrBeforeEnd);
+}
+
++ (void)registerObjectMappingWithProvider:(RKObjectMappingProvider *)provider
+{
+    NSString *abbreviation = ([self isDaylightSavingTime]) ? @"CDT" : @"CST";
+    NSTimeZone *centralTime = [NSTimeZone timeZoneWithAbbreviation:abbreviation];
+
+    [RKManagedObjectMapping addDefaultDateFormatterForString:@"yyyy-MM-dd HH:mm:ss" inTimeZone:centralTime];
+    [RKManagedObjectMapping addDefaultDateFormatterForString:@"E MMM d HH:mm:ss Z y" inTimeZone:centralTime];
+    [RKManagedObjectMapping addDefaultDateFormatterForString:@"yyyy-MM-dd" inTimeZone:centralTime];
+    [RKManagedObjectMapping addDefaultDateFormatterForString:@"HH:mm:ss" inTimeZone:centralTime];
+
+    RKManagedObjectMapping *committeeMap = [CommitteeObj attributeMapping];
+    RKManagedObjectMapping *legislatorMap = [LegislatorObj attributeMapping];
+    RKManagedObjectMapping *positionMap = [CommitteePositionObj attributeMapping];
+    RKManagedObjectMapping *mapMap = [DistrictMapObj attributeMapping];
+    RKManagedObjectMapping *officeMap = [DistrictOfficeObj attributeMapping];
+    RKManagedObjectMapping *stafferMap = [StafferObj attributeMapping];
+    RKManagedObjectMapping *wnomMap = [WnomObj attributeMapping];
+    RKManagedObjectMapping *linkMap = [LinkObj attributeMapping];
+
+    [positionMap hasOne:@"committee" withMapping:committeeMap];
+    [positionMap hasOne:@"legislator" withMapping:legislatorMap];
+
+    [committeeMap hasMany:@"committeePositions" withMapping:positionMap];
+
+    [mapMap hasOne:@"legislator" withMapping:legislatorMap];
+
+    [stafferMap hasOne:@"legislator" withMapping:legislatorMap];
+    [wnomMap hasOne:@"legislator" withMapping:legislatorMap];
+
+    [legislatorMap hasOne:@"districtMap" withMapping:mapMap];
+    [legislatorMap hasMany:@"committeePositions" withMapping:positionMap];
+    [legislatorMap hasMany:@"staffers" withMapping:stafferMap];
+    [legislatorMap hasMany:@"districtOffices" withMapping:officeMap];
+    [legislatorMap hasMany:@"wnomScores" withMapping:wnomMap];
+
+    [positionMap connectRelationship:@"legislator" withObjectForPrimaryKeyAttribute:@"legislatorID"];
+    [positionMap connectRelationship:@"committee" withObjectForPrimaryKeyAttribute:@"committeeId"];
+
+    [provider addObjectMapping:committeeMap];
+    [provider addObjectMapping:legislatorMap];
+    [provider addObjectMapping:positionMap];
+    [provider addObjectMapping:mapMap];
+    [provider addObjectMapping:officeMap];
+    [provider addObjectMapping:stafferMap];
+    [provider addObjectMapping:wnomMap];
+    [provider addObjectMapping:linkMap];
+}
+
++ (void)initRestKitObjects
+{
+    NSURL *url = [NSURL URLWithString:RESTKIT_BASE_URL];
+	RKObjectManager* objectManager = [RKObjectManager objectManagerWithBaseURL:url];
+    RKClient *client = objectManager.client;
+    NSString *userAgent = [self userAgent];
+    if (client && userAgent)
+        client.HTTPHeaders[@"User-Agent"] = userAgent;
+
 	//objectManager.client.username = RESTKIT_USERNAME;
 	//objectManager.client.password = RESTKIT_PASSWORD;
-	
-	[RKRequestQueue sharedQueue].showsNetworkActivityIndicatorWhenBusy = YES;
-	
-	// Add our element to object mappings
-	[mapper registerClass:[LegislatorObj class] forElementNamed:@"legislators"];
-	[mapper registerClass:[CommitteeObj class] forElementNamed:@"committees"];
-	[mapper registerClass:[CommitteePositionObj class] forElementNamed:@"committeePositions"];
-	[mapper registerClass:[DistrictMapObj class] forElementNamed:@"districtMaps"];
-	[mapper registerClass:[DistrictOfficeObj class] forElementNamed:@"districtOffices"];
-	[mapper registerClass:[LinkObj class] forElementNamed:@"links"];
-	[mapper registerClass:[StafferObj class] forElementNamed:@"staffers"];
-	[mapper registerClass:[WnomObj class] forElementNamed:@"wnomScores"];
-	
-	// Update date format so that we can parse twitter dates properly
-	// Wed Sep 29 15:31:08 +0000 2010
-	NSMutableArray* dateFormats = [mapper.dateFormats mutableCopy];
-	[dateFormats addObject:@"E MMM d HH:mm:ss Z y"];
-	[dateFormats addObject:[NSDate dateFormatString]];
-	[dateFormats addObject:[NSDate timeFormatString]];
-	[dateFormats addObject:[NSDate timestampFormatString]];
-	mapper.dateFormats = dateFormats;
-		
+    
+	[RKClient sharedClient].requestQueue.showsNetworkActivityIndicatorWhenBusy = YES;
+
+//GREG here was registerObjectMapping
+
 	// Database seeding is configured as a copied target of the main application. There are only two differences
     // between the main application target and the 'Generate Seed Database' target:
     //  1) RESTKIT_GENERATE_SEED_DB is defined in the 'Preprocessor Macros' section of the build setting for the target
     //      This is what triggers the conditional compilation to cause the seed database to be built
     //  2) Source JSON files are added to the 'Generate Seed Database' target to be copied into the bundle. This is required
     //      so that the object seeder can find the files when run in the simulator.
-	
-#ifdef RESTKIT_GENERATE_SEED_DB
-	// Initialize object store
-    objectManager.objectStore = [RKManagedObjectStore objectStoreWithStoreFilename:SEED_DB_NAME 
-															 usingSeedDatabaseName:nil /// this is stupid ... we can't supply it yet.
-																managedObjectModel:mom];
-	
+
+#if 0
+#if defined(RESTKIT_GENERATE_SEED_DB) && RESTKIT_GENERATE_SEED_DB == 1
+    NSString *modelPath = [[NSBundle mainBundle] pathForResource:@"TexLege" ofType:@"momd"];
+    NSURL *momURL = [NSURL fileURLWithPath:modelPath];
+    NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
+
+    objectManager.objectStore = [RKManagedObjectStore objectStoreWithStoreFilename:SEED_DB_NAME
+                                                                       inDirectory:[self applicationCacheDirectory] usingSeedDatabaseName:nil managedObjectModel:mom delegate:self
+                                                             usingSeedDatabaseName:nil /// this is stupid ... we can't supply it yet.
+                                                                managedObjectModel:mom];
+
     RKManagedObjectSeeder* seeder = [RKManagedObjectSeeder objectSeederWithObjectManager:objectManager];
     [seeder seedObjectsFromFile:@"LegislatorObj.json" toClass:[LegislatorObj class] keyPath:nil];
     [seeder seedObjectsFromFile:@"DistrictMapObj.json" toClass:[DistrictMapObj class] keyPath:nil];
@@ -309,11 +428,12 @@
     // NOTE: If all of your mapped objects use element -> class registration, you can perform seeding in one line of code:
     // [RKManagedObjectSeeder generateSeedDatabaseWithObjectManager:objectManager fromFiles:@"users.json", nil];
 #endif
-    objectManager.objectStore = [RKManagedObjectStore objectStoreWithStoreFilename:APP_DB_NAME
-                                                                       inDirectory:[self applicationCacheDirectory]
-                                                             usingSeedDatabaseName:SEED_DB_NAME
-                                                                managedObjectModel:mom
-                                                                          delegate:[self sharedInstance]];
+#endif
+
+    objectManager.objectStore = [[self sharedInstance] attemptLoadObjectStoreAndFlushIfNeeded];
+
+    RKObjectMappingProvider *provider = [objectManager mappingProvider];
+    [self registerObjectMappingWithProvider:provider];
 
 	//objectManager.objectStore.managedObjectCache = [[TexLegeObjectCache new] autorelease];
 	
@@ -327,7 +447,51 @@
 #endif
 }
 
-+ (NSString *)applicationCacheDirectory {
+- (RKManagedObjectStore *)attemptLoadObjectStore
+{
+    RKManagedObjectStore *objectStore = nil;
+    @try {
+        NSString *modelPath = [[NSBundle mainBundle] pathForResource:@"TexLege" ofType:@"momd"];
+        NSURL *momURL = [NSURL fileURLWithPath:modelPath];
+        NSManagedObjectModel *mom = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
+
+        NSString *seedDatabase = nil; // SEED_DB_NAME;
+        objectStore = [RKManagedObjectStore objectStoreWithStoreFilename:APP_DB_NAME
+                                                             inDirectory:[self applicationCacheDirectory]
+                                                   usingSeedDatabaseName:seedDatabase
+                                                      managedObjectModel:mom
+                                                                delegate:self];
+    }
+    @catch (NSException *exception) {
+        RKLogError(@"An exception ocurred while attempting to load/build the Core Data store file: %@", exception);
+    }
+    return objectStore;
+}
+
+- (RKManagedObjectStore *)attemptLoadObjectStoreAndFlushIfNeeded
+{
+    RKManagedObjectStore *objectStore = [self attemptLoadObjectStore];
+    if (!objectStore)
+    {
+        RKLogWarning(@"Attempting to delete and recreate the Core Data store file.");
+        NSString *basePath = [self applicationCacheDirectory];
+        NSString *storeFilePath = [basePath stringByAppendingPathComponent:APP_DB_NAME];
+        NSURL* storeUrl = [NSURL fileURLWithPath:storeFilePath];
+        NSError* error = nil;
+        @try {
+            if (![[NSFileManager defaultManager] removeItemAtPath:storeUrl.path error:&error]) {
+                [self managedObjectStore:objectStore didFailToDeletePersistentStore:storeFilePath error:error];
+            }
+        }
+        @catch (NSException *exception) {
+            RKLogError(@"An exception ocurred while attempting to delete the Core Data store file: %@", exception);
+        }
+        objectStore = [self attemptLoadObjectStore];
+    }
+    return objectStore;
+}
+
+- (NSString *)applicationCacheDirectory {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *basePath = (paths.count > 0) ? paths[0] : nil;
     return basePath;
@@ -337,7 +501,8 @@
 	return [RKObjectManager sharedManager].objectStore.managedObjectModel.entitiesByName.allKeys;
 }
 
-+ (void) resetSavedDatabase {
++ (void)resetSavedDatabase
+{
 	[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"DATABASE_RESET"];
 	[[RKObjectManager sharedManager].objectStore deletePersistantStoreUsingSeedDatabaseName:SEED_DB_NAME];
 	
@@ -347,7 +512,8 @@
 		[map resetRelationship:self];
 	[[RKObjectManager sharedManager].objectStore save];
 
-	for (NSString *className in [TexLegeCoreDataUtils registeredDataModels]) {
+	for (NSString *className in [TexLegeCoreDataUtils registeredDataModels])
+    {
 		NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", className.uppercaseString];
 		[[NSNotificationCenter defaultCenter] postNotificationName:notification object:nil];
 	}

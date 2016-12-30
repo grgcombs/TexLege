@@ -12,7 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <EventKit/EventKit.h>
-#import <RestKit/RestKit.h>
+#import <SLFRestKit/SLFRestKit.h>
 #import "Kal.h"
 
 #define kCalendarEventsNotifyError	@"CALENDAR_EVENTS_ERROR"

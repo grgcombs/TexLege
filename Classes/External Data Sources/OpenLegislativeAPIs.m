@@ -16,12 +16,12 @@
 #import "StateMetaLoader.h"
 
 
-NSString * const osApiHost =		@"openstates.org";
-NSString * const osApiBaseURL =		@"http://openstates.org/api/v1";
-NSString * const transApiBaseURL =	@"http://transparencydata.com/api/1.0";
-NSString * const vsApiBaseURL =		@"http://api.votesmart.org";
-NSString * const tloApiHost =		@"www.legis.state.tx.us";
-NSString * const tloApiBaseURL =	@"http://www.legis.state.tx.us";
+NSString * const osApiHost = @"openstates.org";
+NSString * const osApiBaseURL = @"http://openstates.org/api/v1";
+NSString * const transApiBaseURL = @"http://transparencydata.com/api/1.0";
+NSString * const vsApiBaseURL = @"http://api.votesmart.org";
+NSString * const tloApiHost = @"www.legis.state.tx.us";
+NSString * const tloApiBaseURL = @"http://www.legis.state.tx.us";
 NSString * const followTheMoneyApiHost = @"api.followthemoney.org";
 NSString * const followTheMoneyApiBaseURL = @"http://api.followthemoney.org";
 
@@ -37,26 +37,27 @@ NSString * const followTheMoneyApiBaseURL = @"http://api.followthemoney.org";
 }
 
 
-- (instancetype)init {
-	if ((self=[super init])) {
-		_osApiClient = [RKClient clientWithBaseURL:osApiBaseURL];
-		_transApiClient = [RKClient clientWithBaseURL:transApiBaseURL];
-		_vsApiClient = [RKClient clientWithBaseURL:vsApiBaseURL];
-		_tloApiClient = [RKClient clientWithBaseURL:tloApiBaseURL];
-        _followTheMoneyApiClient = [RKClient clientWithBaseURL:followTheMoneyApiBaseURL];
+- (instancetype)init
+{
+	if ((self=[super init]))
+    {
+		_osApiClient = [RKClient clientWithBaseURL:[NSURL URLWithString:osApiBaseURL]];
+        _transApiClient = [RKClient clientWithBaseURL: [NSURL URLWithString:transApiBaseURL]];
+		_vsApiClient = [RKClient clientWithBaseURL:[NSURL URLWithString:vsApiBaseURL]];
+		_tloApiClient = [RKClient clientWithBaseURL:[NSURL URLWithString:tloApiBaseURL]];
+        _followTheMoneyApiClient = [RKClient clientWithBaseURL:[NSURL URLWithString:followTheMoneyApiBaseURL]];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
-
-
-
-
-
-    
+    [[_osApiClient requestQueue] cancelRequestsWithDelegate:self];
+    [[_transApiClient requestQueue] cancelRequestsWithDelegate:self];
+    [[_vsApiClient requestQueue] cancelRequestsWithDelegate:self];
+    [[_tloApiClient requestQueue] cancelRequestsWithDelegate:self];
+    [[_followTheMoneyApiClient requestQueue] cancelRequestsWithDelegate:self];
+	[[[RKClient sharedClient] requestQueue] cancelRequestsWithDelegate:self];
 }
 
 - (void)queryOpenStatesBillWithID:(NSString *)billID session:(NSString *)session delegate:(id)sender {

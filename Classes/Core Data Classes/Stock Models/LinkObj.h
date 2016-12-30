@@ -11,13 +11,10 @@
 //
 
 #import "TexLege.h"
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData.h>
+#import <CoreData/CoreData.h>
 
 
-@interface LinkObj :  RKManagedObject  
-{
-}
+@interface LinkObj :  NSManagedObject
 
 @property (nonatomic, strong) NSString * label;
 @property (nonatomic, strong) NSNumber * section;

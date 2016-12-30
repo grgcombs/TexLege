@@ -10,26 +10,19 @@
 //
 //
 
-#import "TexLege.h"
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData.h>
+#import <CoreData/CoreData.h>
 
 @class CommitteeObj;
 @class LegislatorObj;
 
-@interface CommitteePositionObj :  RKManagedObject  
-{
-}
+@interface CommitteePositionObj :  NSManagedObject  
 
-@property (nonatomic, strong) NSString * updatedDate;
-@property (nonatomic, strong) NSNumber * position;
-@property (nonatomic, strong) NSNumber * legislatorID;
 @property (nonatomic, strong) NSNumber * committeePositionID;
+@property (nonatomic, strong) NSNumber * position;
+@property (nonatomic, strong) NSString * updatedDate;
+@property (nonatomic, strong) NSNumber * legislatorID;
 @property (nonatomic, strong) NSNumber * committeeId;
 @property (nonatomic, strong) CommitteeObj * committee;
 @property (nonatomic, strong) LegislatorObj * legislator;
 
 @end
-
-
-

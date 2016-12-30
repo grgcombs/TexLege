@@ -13,8 +13,8 @@
 #import "TableDataSourceProtocol.h"
 #import "CapitolMap.h"
 
-@interface CapitolMapsDataSource : NSObject <TableDataSource> {
-}
+@interface CapitolMapsDataSource : NSObject <TableDataSource>
+
 @property (nonatomic,strong) NSMutableArray *sectionList;
 
 @end

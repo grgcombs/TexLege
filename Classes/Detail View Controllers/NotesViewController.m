@@ -18,6 +18,7 @@
 #import "TexLegeCoreDataUtils.h"
 #import "TexLegeAppDelegate.h"
 #import "TXLDetailProtocol.h"
+#import <SLFRestKit/NSManagedObject+RestKit.h>
 
 @implementation NotesViewController
 

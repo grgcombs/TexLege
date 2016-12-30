@@ -11,7 +11,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <RestKit/RestKit.h>
+#import <SLFRestKit/SLFRestKit.h>
 
 #define kBillFavoritesStorageFile @"FavoriteBills.plist"
 

@@ -22,27 +22,27 @@
 
 // these properties are used by the view controller
 // for the navigation and tab bar
-@property (readonly) NSString *name;
-@property (readonly) NSString *navigationBarName;
-@property (readonly) UIImage *tabBarImage;
+@property (NS_NONATOMIC_IOSONLY,readonly) NSString *name;
+@property (NS_NONATOMIC_IOSONLY,readonly) NSString *navigationBarName;
+@property (NS_NONATOMIC_IOSONLY,readonly) UIImage *tabBarImage;
 
 // this property determines the style of table view displayed
-@property (readonly) UITableViewStyle tableViewStyle;
-@property (readonly) BOOL usesCoreData;
-@property (readonly) BOOL canEdit;
+@property (NS_NONATOMIC_IOSONLY,readonly) UITableViewStyle tableViewStyle;
+@property (NS_NONATOMIC_IOSONLY,readonly) BOOL usesCoreData;
+@property (NS_NONATOMIC_IOSONLY,readonly) BOOL canEdit;
 
 @property (NS_NONATOMIC_IOSONLY, readonly) BOOL showDisclosureIcon;
 
 @optional
-@property (NS_NONATOMIC_IOSONLY, readonly, strong) Class dataClass;
+@property (NS_NONATOMIC_IOSONLY, readonly) Class dataClass;
 
-@property (nonatomic, readonly) BOOL hasFilter;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL hasFilter;
 - (void) setFilterByString:(NSString *)filter;
 - (void) removeFilter;
 
-@property (nonatomic) NSInteger filterChamber;		// 0 means don't filter
-@property (nonatomic, retain) UISearchDisplayController *searchDisplayController;
-@property (nonatomic, retain) NSFetchedResultsController *fetchedResultsController;
+@property (NS_NONATOMIC_IOSONLY, assign) NSInteger filterChamber;		// 0 means don't filter
+@property (NS_NONATOMIC_IOSONLY, strong) UISearchDisplayController *searchDisplayController;
+@property (NS_NONATOMIC_IOSONLY, strong) NSFetchedResultsController *fetchedResultsController;
 
 - (void)initializeDatabase;
 
@@ -59,9 +59,8 @@
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 // set this on when you don't want to see the index, ala keyboard active
-@property (nonatomic) BOOL hideTableIndex;
+@property (NS_NONATOMIC_IOSONLY,assign) BOOL hideTableIndex;
 
 - (void)resetData:(NSNotification *)notification;
-
 
 @end

@@ -10,8 +10,7 @@
 //
 //
 
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData.h>
+#import <SLFRestKit/SLFRestKit.h>
 #import <MapKit/MapKit.h>
 
 #import "DistrictOfficeObj.h"
@@ -19,8 +18,8 @@
 @interface DistrictOfficeObj (MapKit)
 
 // MKAnnotation protocol
-@property (nonatomic, readonly) MKCoordinateRegion		region;
-@property (nonatomic, readonly) MKCoordinateSpan		span;
+@property (NS_NONATOMIC_IOSONLY, readonly) MKCoordinateRegion region;
+@property (NS_NONATOMIC_IOSONLY, readonly) MKCoordinateSpan span;
 
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *title;
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *subtitle;

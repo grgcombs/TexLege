@@ -66,10 +66,7 @@
 }
 
 
-
-#pragma mark -
 #pragma mark UITableViewDataSource methods
-
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -174,7 +171,6 @@
     return cell;
 }
 
-#pragma mark -
 #pragma mark Data Query
 
 - (void)initiateQueryWithQueryID:(NSString *)aQuery type:(NSNumber *)type cycle:(NSString *)cycle parameter:(NSString *)parameter
@@ -276,7 +272,7 @@
     }
 }
 
-#if 0
+#if CONTRIBUTIONS_API == TRANSPARENCY_DATA_API
 
 - (void)parseJSONObject:(id)jsonDeserialized
 {
@@ -523,7 +519,7 @@
     }
 }
 
-#else
+#elif CONTRIBUTIONS_API == FOLLOW_THE_MONEY_API
 
 - (void)parseJSONObject:(id)jsonDeserialized
 {
@@ -578,125 +574,6 @@
             if (groupByOffice || groupByYear)
                 self.queryType = @(kContributionQueryElectionYear);
         }
-#if 0
-        else if (([self.queryType integerValue] == kContributionQueryTop10Donors) ||
-                 ([self.queryType integerValue] == kContributionQueryTop10Recipients))
-        {
-            NSArray *jsonArray = jsonDeserialized;
-
-            // only one section right now
-            [self.sectionList removeAllObjects];
-
-            NSMutableArray *thisSection = [[NSMutableArray alloc] init];
-
-            for (NSDictionary *dict in jsonArray) {
-                double tempDouble = [[dict objectForKey:@"total_amount"] doubleValue];
-                NSNumber *amount = [NSNumber numberWithDouble:tempDouble];
-
-                TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
-                NSString *name = [[dict objectForKey:@"name"] capitalizedString];
-
-                id dataID = [dict objectForKey:@"id"];
-
-                cellInfo.title = name;
-                cellInfo.subtitle = [numberFormatter stringFromNumber:amount];
-                cellInfo.entryValue = dataID;
-                cellInfo.entryType = [self.queryType integerValue];
-                cellInfo.isClickable = YES;
-                cellInfo.parameter = self.queryCycle;
-                if ([self.queryType integerValue] == kContributionQueryTop10Donors)
-                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryDonor];
-                else
-                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryRecipient];
-
-                if (!dataID || [[NSNull null] isEqual:dataID] || ![dataID isKindOfClass:[NSString class]]) {
-                    NSLog(@"ERROR - Contribution results have an empty entity ID for: %@", name);
-                    if ([[name uppercaseString] isEqualToString:@"BOB PERRY HOMES"])	// ala Bob Perry Homes
-                        name = @"Perry Homes";
-                    else if ([[name uppercaseString] hasPrefix:@"BOB PERRY"])	// ala Bob Perry Homes
-                        name = @"Bob Perry";
-                    else if ([[name uppercaseString] hasPrefix:@"HUMAN RIGHTS CAMPAIGN TEXAS FAMILIES"])
-                        name = @"HRC TEXAS FAMILIES PAC";
-                    else if ([[name uppercaseString] hasPrefix:@"TEXANS FOR RICK PERRY"])
-                        name = @"RICK PERRY";
-
-                    NSString *nameSearch = [name stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-                    cellInfo.entryValue = nameSearch;
-                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryEntitySearch];
-                }
-                [thisSection addObject:cellInfo];
-                [cellInfo release];
-            }
-
-            [self.sectionList addObject:thisSection];
-            [thisSection release];
-        }
-        else if ([self.queryType integerValue] == kContributionQueryRecipient ||
-                 [self.queryType integerValue] == kContributionQueryDonor ||
-                 [self.queryType integerValue] == kContributionQueryIndividual )
-        {
-            NSDictionary *jsonDict = jsonDeserialized;
-
-            [self.sectionList removeAllObjects];
-            NSMutableArray *thisSection = nil;
-
-            NSDictionary *totals = [jsonDict objectForKey:@"totals"];
-            NSArray *yearKeys = [totals allKeys];
-            yearKeys = [yearKeys sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-
-            TableCellDataObject *cellInfo = [[TableCellDataObject alloc] init];
-            cellInfo.title = [[jsonDict objectForKey:@"name"] capitalizedString];
-            cellInfo.subtitle = [[jsonDict objectForKey:@"type"] capitalizedString];
-            cellInfo.entryValue = [jsonDict objectForKey:@"id"];
-            cellInfo.entryType = [self.queryType integerValue];
-            cellInfo.isClickable = NO;
-            cellInfo.action = nil;
-            cellInfo.parameter = self.queryCycle;
-
-            thisSection = [NSMutableArray arrayWithObject:cellInfo];
-            [self.sectionList addObject:thisSection];
-            [cellInfo release];
-
-            thisSection = [[NSMutableArray alloc] init];
-            NSString *amountKey = ([self.queryType integerValue] == kContributionQueryRecipient) ? @"recipient_amount" : @"contributor_amount";
-
-            for (NSString *yearKey in [yearKeys reverseObjectEnumerator]) {
-                NSDictionary *dict = [totals objectForKey:yearKey];
-
-                double tempDouble = [[dict objectForKey:amountKey] doubleValue];
-                NSNumber *amount = [NSNumber numberWithDouble:tempDouble];
-
-                cellInfo = [[TableCellDataObject alloc] init];
-                cellInfo.subtitle = yearKey;
-                cellInfo.title = [numberFormatter stringFromNumber:amount];
-                cellInfo.entryValue = [jsonDict objectForKey:@"id"];
-                cellInfo.entryType = [self.queryType integerValue];
-                cellInfo.isClickable = YES;
-                cellInfo.parameter = yearKey;
-
-                if ([self.queryType integerValue] == kContributionQueryRecipient)
-                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryTop10Donors];
-                else if ([self.queryType integerValue] == kContributionQueryIndividual)
-                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryTop10RecipientsIndiv];
-                else
-                    cellInfo.action = [NSNumber numberWithInteger:kContributionQueryTop10Recipients];
-
-                if ([yearKey isEqualToString:@"-1"]) {
-                    cellInfo.subtitle = NSLocalizedStringFromTable(@"Total", @"DataTableUI", @"Total contributions for a political campaign");
-                    //cellInfo.entryType = kContributionTotal;
-                    //cellInfo.isClickable = NO;
-                }
-                
-                [thisSection addObject:cellInfo];
-                [cellInfo release];
-            }
-            
-            [self.sectionList addObject:thisSection];
-            [thisSection release];
-        }
-        
-        [numberFormatter release];
-#endif
     }
 }
 
@@ -818,7 +695,6 @@
     return cellInfo;
 }
 
-#pragma mark -
 #pragma mark Data Object Methods
 
 - (id)dataObjectForIndexPath:(NSIndexPath *)indexPath
@@ -855,8 +731,7 @@
 }
 
 
-#pragma mark -
-#pragma mark RestKit:RKObjectLoaderDelegate
+#pragma mark RKObjectLoaderDelegate
 
 - (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
 {
@@ -880,5 +755,29 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:kContributionsDataNotifyLoaded object:self];
     }
 }
+
+#ifdef DEBUG
+
+- (void)requestDidStartLoad:(RKRequest *)request
+{
+    NSLog(@"starting request: %@", request.URL);
+}
+
+- (void)request:(RKRequest*)request didReceivedData:(NSInteger)bytesReceived totalBytesReceived:(NSInteger)totalBytesReceived totalBytesExectedToReceive:(NSInteger)totalBytesExpectedToReceive
+{
+    NSLog(@"receiving data for request: %@", request.URL);
+}
+
+- (void)requestDidCancelLoad:(RKRequest *)request
+{
+    NSLog(@"cancelled request: %@", request.URL);
+}
+
+- (void)requestDidTimeout:(RKRequest *)request
+{
+    NSLog(@"timeout for request: %@", request.URL);
+}
+
+#endif
 
 @end

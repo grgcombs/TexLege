@@ -20,26 +20,28 @@
 #import "UIDevice-Hardware.h"
 #import "TexLegeAppDelegate.h"
 
-@interface LegislatorsDataSource (Private)
-- (void)dataSourceReceivedMemoryWarning:(id)sender;
+@interface LegislatorsDataSource ()
+@property (nonatomic,copy) NSMutableString *filterString;
 @end
 
 
 @implementation LegislatorsDataSource
+@synthesize filterChamber = _filterChamber;
+@synthesize hideTableIndex = _hideTableIndex;
+@synthesize fetchedResultsController = _fetchedResultsController;
+@synthesize searchDisplayController = _searchDisplayController;
 
-@synthesize fetchedResultsController;
-@synthesize hideTableIndex;
-@synthesize filterChamber, filterString, searchDisplayController;
-
-- (Class)dataClass {
+- (Class)dataClass
+{
 	return [LegislatorObj class];
 }
 
-- (instancetype)init {
-	if ((self = [super init])) {
-	
-		self.filterChamber = 0;
-		self.filterString = [NSMutableString stringWithString:@""];
+- (instancetype)init
+{
+	if ((self = [super init]))
+    {
+		_filterChamber = 0;
+		_filterString = [NSMutableString stringWithString:@""];
 
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(dataSourceReceivedMemoryWarning:)
@@ -54,12 +56,14 @@
 - (void)resetCoreData:(NSNotification *)notification
 {
     // You've got to delete the cache, or disable caching before you modify the predicate...
-    [NSFetchedResultsController deleteCacheWithName:(self.fetchedResultsController).cacheName];
-    (self.fetchedResultsController.fetchRequest).predicate = [self getFilterPredicate];
-    (self.fetchedResultsController.fetchRequest).sortDescriptors = [self sortDescriptors];
+    NSFetchedResultsController *frc = self.fetchedResultsController;
+    [NSFetchedResultsController deleteCacheWithName:frc.cacheName];
+    NSFetchRequest *fetchRequest = frc.fetchRequest;
+    fetchRequest.predicate = [self getFilterPredicate];
+    fetchRequest.sortDescriptors = [self sortDescriptors];
 
     NSError *error = nil;
-    if (![self.fetchedResultsController performFetch:&error]) {
+    if (![frc performFetch:&error]) {
         // Handle error
         debug_NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
     }
@@ -67,13 +71,13 @@
 
 - (void)dealloc {	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-
-	
 }
 
--(void)dataSourceReceivedMemoryWarning:(id)sender {
+- (void)dataSourceReceivedMemoryWarning:(id)sender
+{
 	// let's give this a swinging shot....	
-	for (NSManagedObject *object in self.fetchedResultsController.fetchedObjects) {
+	for (NSManagedObject *object in self.fetchedResultsController.fetchedObjects)
+    {
 		[object.managedObjectContext refreshObject:object mergeChanges:NO];
 	}
 }
@@ -109,29 +113,41 @@
 	return UITableViewStylePlain;
 };
 
+- (id)safeObjectForIndexPath:(NSIndexPath *)indexPath
+{
+    NSFetchedResultsController *frc = self.fetchedResultsController;
+    LegislatorObj *object = nil;
+    NSArray *sections = frc.sections;
+    if (sections.count > indexPath.section)
+    {
+        id<NSFetchedResultsSectionInfo> section = sections[indexPath.section];
+        if ([section numberOfObjects] > indexPath.row)
+        {
+            object = [frc objectAtIndexPath:indexPath];
+        }
+    }
+    return object;
+}
 
 // return the legislator at the index in the sorted by symbol array
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath
+- (id)dataObjectForIndexPath:(NSIndexPath *)indexPath
 {
-	LegislatorObj *tempEntry = nil;
-	@try {
-		tempEntry = [self.fetchedResultsController objectAtIndexPath:indexPath];
-	}
-	@catch (NSException * e) {
+    LegislatorObj *object = [self safeObjectForIndexPath:indexPath];
+    if (!object)
+    {
 		// Perhaps we're returning from a search and we've got a wacked out indexPath.  Let's reset the search and see what happens.
 		debug_NSLog(@"DirectoryDataSource.m -- legislatorDataForIndexPath:  indexPath must be out of bounds.  %@", [indexPath description]); 
 		[self removeFilter];
-        @try {
-            tempEntry = [self.fetchedResultsController objectAtIndexPath:indexPath];
-        }
-        @catch (NSException *exception) {
-            return nil;
-        }
+        object = [self safeObjectForIndexPath:indexPath];
 	}
-	return tempEntry;	
+	return object;
 }
 
-- (NSIndexPath *)indexPathForDataObject:(id)dataObject {
+- (NSIndexPath *)indexPathForDataObject:(id)dataObject
+{
+    if (!dataObject)
+        return nil;
+
 	NSIndexPath *tempIndex = nil;
 	@try {
 		tempIndex = [self.fetchedResultsController indexPathForObject:dataObject];
@@ -175,12 +191,12 @@
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {	
-	return (self.fetchedResultsController).sections.count;		
+	return self.fetchedResultsController.sections.count;
 }
 
 // This is for the little index along the right side of the table ... use nil if you don't want it.
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
-	return  hideTableIndex ? nil : (self.fetchedResultsController).sectionIndexTitles ;
+	return  _hideTableIndex ? nil : self.fetchedResultsController.sectionIndexTitles ;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
@@ -310,34 +326,27 @@
     return @[last, first];
 }
 
-/*
- Set up the fetched results controller.
- */
 - (NSFetchedResultsController *)fetchedResultsController
 {
-    
-    if (fetchedResultsController != nil) {
-        return fetchedResultsController;
+    if (_fetchedResultsController != nil) {
+        return _fetchedResultsController;
     }    
 	// Create the fetch request for the entity.
-	NSFetchRequest *fetchRequest = [LegislatorObj fetchRequest];
-	
+	NSFetchRequest *fetchRequest = [LegislatorObj rkFetchRequest];
     fetchRequest.sortDescriptors = [self sortDescriptors];
 	
-	
 	NSString * sectionString = nil;
+
 	// we don't want sections when searching, change to hasFilter if you don't want it for toolbarAction either...
     // nil for section name key path means "no sections".
 	if (self.filterString.length == 0)
 		sectionString = @"lastnameInitial";
-	
-	fetchedResultsController = [[NSFetchedResultsController alloc] 
-															 initWithFetchRequest:fetchRequest 
-															 managedObjectContext:[LegislatorObj managedObjectContext] 
-															 sectionNameKeyPath:sectionString cacheName:@"Legislators"];
-    fetchedResultsController.delegate = self;
-	
-	return fetchedResultsController;
+
+    NSString *cacheName = nil; // @"Legislators"
+	NSFetchedResultsController *frc = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:[LegislatorObj rkManagedObjectContext] sectionNameKeyPath:sectionString cacheName:cacheName];
+    frc.delegate = self;
+    _fetchedResultsController = frc;
+	return frc;
 }    
 
 @end

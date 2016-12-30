@@ -19,7 +19,8 @@
 @implementation DistrictOfficeObj (MapKit)
 
 // we're overriding what's stored in core data ... is this a good idea?
-- (NSNumber *) pinColorIndex {
+- (NSNumber *)pinColorIndex
+{
 	/*	if (self.legislator) {
 	 if ([self.legislator.party_id integerValue] == REPUBLICAN)
 	 return [NSNumber numberWithInteger:TexLegePinAnnotationColorRed];
@@ -36,7 +37,8 @@
 
 - (NSString *)title
 {
-	if (!self.legislator) {
+	if (!self.legislator)
+    {
 		return NSLocalizedStringFromTable(@"District Office", @"DataTableUI", @"The actual office building/address");
 	}
 
@@ -46,7 +48,8 @@
 			[self.legislator partyShortName]];
 }
 
-- (UIImage *)image {
+- (UIImage *)image
+{
 	NSString *imageFile = @"silverstar.png";
 	if (self.legislator) {
 		if (DEMOCRAT == (self.legislator.party_id).integerValue) {
@@ -59,27 +62,31 @@
 	return [UIImage imageNamed:imageFile];
 }
 
-// optional
 - (NSString *)subtitle
 {	
-	if (NO == IsEmpty(self.formattedAddress)) {
+	if (NO == IsEmpty(self.formattedAddress))
+    {
 		return self.formattedAddress;
 	}
-	else if (NO == IsEmpty(self.address)){
+	else if (NO == IsEmpty(self.address))
+    {
 		return self.address;
 	}
 	return nil;
 }
 
-- (MKCoordinateSpan) span {
+- (MKCoordinateSpan)span
+{
 	return MKCoordinateSpanMake((self.spanLat).doubleValue, (self.spanLon).doubleValue);
 }
 
-- (MKCoordinateRegion)region {
+- (MKCoordinateRegion)region
+{
 	return MKCoordinateRegionMake(self.coordinate, self.span);
 }
 
-- (NSString *)cellAddress {
+- (NSString *)cellAddress
+{
 	NSString *crAddress = [self.address stringByReplacingOccurrencesOfString:@", " withString:@"\n"];
 	NSString *tempString = [NSString stringWithFormat:@"%@\n%@, %@\n%@", 
 							crAddress, 

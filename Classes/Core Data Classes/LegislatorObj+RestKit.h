@@ -12,26 +12,31 @@
 
 #import "LegislatorObj.h"
 
+@class RKManagedObjectMapping;
+
 @interface LegislatorObj (RestKit)
 
-@property (nonatomic, readonly) NSString * districtMapURL;
-@property (nonatomic, readonly) WnomObj *latestWnomScore;
-@property (nonatomic, readonly) CGFloat latestWnomFloat;
-
++ (NSString*)primaryKeyProperty;
++ (RKManagedObjectMapping *)attributeMapping;
 - (NSComparisonResult)compareMembersByName:(LegislatorObj *)p;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *partyShortName;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *legTypeShortName;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *chamberName;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *legProperName;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *districtPartyString;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *fullName;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *fullNameLastFirst;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *website;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *shortNameForButtons;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *labelSubText;
+
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString * districtMapURL;
+@property (NS_NONATOMIC_IOSONLY, readonly) WnomObj *latestWnomScore;
+@property (NS_NONATOMIC_IOSONLY, readonly) double latestWnomFloat;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *partyShortName;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *legTypeShortName;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *chamberName;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *legProperName;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *districtPartyString;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *fullName;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *fullNameLastFirst;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *website;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *shortNameForButtons;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *labelSubText;
 @property (NS_NONATOMIC_IOSONLY, readonly) NSInteger numberOfDistrictOffices;
 @property (NS_NONATOMIC_IOSONLY, readonly) NSInteger numberOfStaffers;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *tenureString;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *sortedCommitteePositions;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *sortedStaffers;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSString *tenureString;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSArray<CommitteePositionObj *> *sortedCommitteePositions;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSArray<StafferObj *> *sortedStaffers;
+
 @end

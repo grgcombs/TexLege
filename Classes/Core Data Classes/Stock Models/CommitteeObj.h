@@ -10,15 +10,11 @@
 //
 //
 
-#import "TexLege.h"
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData.h>
+#import <CoreData/CoreData.h>
 
 @class CommitteePositionObj;
 
-@interface CommitteeObj :  RKManagedObject  
-{
-}
+@interface CommitteeObj :  NSManagedObject  
 
 @property (nonatomic, strong) NSString * clerk_email;
 @property (nonatomic, strong) NSString * phone;
@@ -40,6 +36,7 @@
 
 
 @interface CommitteeObj (CoreDataGeneratedAccessors)
+
 - (void)addCommitteePositionsObject:(CommitteePositionObj *)value;
 - (void)removeCommitteePositionsObject:(CommitteePositionObj *)value;
 - (void)addCommitteePositions:(NSSet *)value;

@@ -15,21 +15,9 @@
 #import "LegislatorObj.h"
 
 
-@interface LegislatorsDataSource : NSObject <TableDataSource>  {
-	NSFetchedResultsController *fetchedResultsController;
-	
-	NSInteger filterChamber;		// 0 means don't filter
-	NSMutableString *filterString;	// @"" means don't filter
-	BOOL hasFilter;
-}
+@interface LegislatorsDataSource : NSObject <TableDataSource>
 
-@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
-
-@property (nonatomic) NSInteger filterChamber;		// 0 means don't filter
-@property (nonatomic,strong) NSMutableString *filterString;	// @"" means don't filter
-@property (nonatomic, readonly) BOOL hasFilter;
-
-- (void) setFilterByString:(NSString *)filter;
-- (void) removeFilter;
+- (void)setFilterByString:(NSString *)filter;
+- (void)removeFilter;
 
 @end

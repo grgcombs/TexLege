@@ -10,15 +10,13 @@
 //
 //
 
-#import "TexLege.h"
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData.h>
+#import <CoreData/CoreData.h>
 #import <MapKit/MapKit.h>
 #import "LegislatorAnnotation.h"
 
 @class LegislatorObj;
 
-@interface DistrictOfficeObj :  RKManagedObject  <MKAnnotation, LegislatorAnnotation>
+@interface DistrictOfficeObj :  NSManagedObject  <MKAnnotation, LegislatorAnnotation>
 
 @property (nonatomic, strong) NSNumber * chamber;
 @property (nonatomic, strong) NSNumber * spanLat;
@@ -41,6 +39,3 @@
 @property (nonatomic, strong) LegislatorObj * legislator;
 
 @end
-
-
-

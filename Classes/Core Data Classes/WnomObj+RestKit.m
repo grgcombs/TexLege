@@ -13,38 +13,42 @@
 #import "WnomObj+RestKit.h"
 #import "LegislatorObj.h"
 #import "TexLegeCoreDataUtils.h"
+#import <SLFRestKit/SLFRestKit.h>
+
+static RKManagedObjectMapping *wnomAttributeMapping = nil;
 
 @implementation WnomObj (RestKit)
 
-
-#pragma mark RKObjectMappable methods
-
-+ (NSDictionary*)elementToPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"wnomID", @"wnomID",
-			@"legislatorID", @"legislatorID",
-			@"wnomAdj", @"wnomAdj",
-			@"session", @"session",
-			@"wnomStderr", @"wnomStderr",
-			@"adjMean", @"adjMean",
-			@"updated", @"updatedDate",
-			nil];
-}
-
-+ (NSDictionary*)relationshipToPrimaryKeyPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"legislator", @"legislatorID",
-			nil];
-}
-
-+ (NSString*)primaryKeyProperty {
++ (NSString*)primaryKeyProperty
+{
 	return @"wnomID";
 }
 
++ (RKManagedObjectMapping *)attributeMapping
+{
+    if (wnomAttributeMapping)
+        return wnomAttributeMapping;
 
-#pragma mark Custom Accessors
+    RKManagedObjectMapping *mapping = [RKManagedObjectMapping mappingForClass:[self class] inManagedObjectStore:[RKObjectManager sharedManager].objectStore];
+    mapping.primaryKeyAttribute = @"wnomID";
+    [mapping mapAttributesFromArray:@[
+                                      @"wnomID",
+                                      @"legislatorID",
+                                      @"wnomAdj",
+                                      @"session",
+                                      @"wnomStderr",
+                                      @"adjMean",
+                                      ]];
+    [mapping mapKeyPath:@"updated" toAttribute:@"updatedDate"];
+    [mapping connectRelationship:@"legislator" withObjectForPrimaryKeyAttribute:@"legislatorID"];
 
-- (NSNumber *) year {
+    wnomAttributeMapping = mapping;
+
+    return mapping;
+}
+
+- (NSNumber *)year
+{
 	return @(1847+(2*(self.session).integerValue));
 }
 

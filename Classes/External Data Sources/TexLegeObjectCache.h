@@ -11,11 +11,9 @@
 //
 
 @import Foundation;
-#import <RestKit/RKManagedObjectCache.h>
+#import <SLFRestKit/RKManagedObjectCache.h>
 
 
-@interface TexLegeObjectCache : NSObject <RKManagedObjectCache>{
-
-}
+@interface TexLegeObjectCache : NSObject <RKManagedObjectCache>
 
 @end

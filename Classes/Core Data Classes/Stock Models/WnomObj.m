@@ -11,7 +11,6 @@
 //
 
 #import "WnomObj.h"
-
 #import "LegislatorObj.h"
 
 @implementation WnomObj 

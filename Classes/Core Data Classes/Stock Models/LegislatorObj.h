@@ -10,9 +10,7 @@
 //
 //
 
-#import "TexLege.h"
-#import <RestKit/RestKit.h>
-#import <RestKit/CoreData.h>
+#import <CoreData/CoreData.h>
 
 @class CommitteePositionObj;
 @class DistrictMapObj;
@@ -20,7 +18,7 @@
 @class StafferObj;
 @class WnomObj;
 
-@interface LegislatorObj :  RKManagedObject  
+@interface LegislatorObj :  NSManagedObject
 
 @property (nonatomic, strong) NSString * transDataContributorID;
 @property (nonatomic, strong) NSNumber * legislatorID;
@@ -59,16 +57,17 @@
 @property (nonatomic, strong) NSNumber * nextElection;
 @property (nonatomic, strong) NSNumber * legtype;
 @property (nonatomic, strong) NSNumber * votesmartID;
-@property (nonatomic, strong) NSSet* districtOffices;
-@property (nonatomic, strong) DistrictMapObj * districtMap;
 @property (nonatomic, strong) NSSet* wnomScores;
 @property (nonatomic, strong) NSSet* staffers;
 @property (nonatomic, strong) NSSet* committeePositions;
+@property (nonatomic, strong) NSSet* districtOffices;
+@property (nonatomic, strong) DistrictMapObj * districtMap;
 
 @end
 
 
 @interface LegislatorObj (CoreDataGeneratedAccessors)
+
 - (void)addDistrictOfficesObject:(DistrictOfficeObj *)value;
 - (void)removeDistrictOfficesObject:(DistrictOfficeObj *)value;
 - (void)addDistrictOffices:(NSSet *)value;

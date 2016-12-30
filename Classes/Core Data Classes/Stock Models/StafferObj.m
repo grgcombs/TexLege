@@ -11,7 +11,6 @@
 //
 
 #import "StafferObj.h"
-
 #import "LegislatorObj.h"
 
 @implementation StafferObj 

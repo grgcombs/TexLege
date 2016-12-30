@@ -10,44 +10,50 @@
 //
 //
 
-#import "DistrictOfficeObj.h"
+#import "DistrictOfficeObj+RestKit.h"
+#import <SLFRestKit/SLFRestKit.h>
+
+static RKManagedObjectMapping *officeMapping = nil;
 
 @implementation DistrictOfficeObj (RestKit)
 
-#pragma mark RKObjectMappable methods
-
-+ (NSDictionary*)elementToPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"districtOfficeID", @"districtOfficeID",
-			@"district", @"district",
-			@"chamber", @"chamber",
-			@"pinColorIndex", @"pinColorIndex",
-			@"spanLat", @"spanLat",
-			@"spanLon", @"spanLon",
-			@"longitude", @"longitude",
-			@"latitude", @"latitude",
-			@"formattedAddress", @"formattedAddress",
-			@"stateCode", @"stateCode",
-			@"address", @"address",
-			@"city", @"city",
-			@"county", @"county",
-			@"phone", @"phone",
-			@"fax", @"fax",
-			@"zipCode", @"zipCode",
-			@"legislatorID", @"legislatorID",
-			@"updated", @"updatedDate",
-			nil];
-}
-
-+ (NSDictionary*)relationshipToPrimaryKeyPropertyMappings {
-	return [NSDictionary dictionaryWithKeysAndObjects:
-			@"legislator", @"legislatorID",
-			nil];
-}
-
-+ (NSString*)primaryKeyProperty {
++ (NSString*)primaryKeyProperty
+{
 	return @"districtOfficeID";
 }
 
++ (RKManagedObjectMapping *)attributeMapping
+{
+    if (officeMapping)
+        return officeMapping;
+
+    RKManagedObjectMapping *mapping = [RKManagedObjectMapping mappingForClass:[self class] inManagedObjectStore:[RKObjectManager sharedManager].objectStore];
+    mapping.primaryKeyAttribute = @"districtOfficeID";
+    [mapping mapAttributesFromArray:@[
+                                      @"districtOfficeID",
+                                      @"legislatorID",
+                                      @"district",
+                                      @"chamber",
+                                      @"address",
+                                      @"city",
+                                      @"county",
+                                      @"stateCode",
+                                      @"zipCode",
+                                      @"phone",
+                                      @"fax",
+                                      @"formattedAddress",
+                                      @"latitude",
+                                      @"longitude",
+                                      @"spanLat",
+                                      @"spanLon",
+                                      @"pinColorIndex",
+                                      ]];
+    [mapping mapKeyPath:@"updated" toAttribute:@"updatedDate"];
+    //[mapping connectRelationship:@"legislator" withObjectForPrimaryKeyAttribute:@"legislatorID"];
+
+    officeMapping = mapping;
+
+    return mapping;
+}
 
 @end

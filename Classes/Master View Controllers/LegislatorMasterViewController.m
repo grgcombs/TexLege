@@ -18,6 +18,8 @@
 #import "TexLegeTheme.h"
 #import "UIDevice-Hardware.h"
 #import "LegislatorMasterCell.h"
+#import <SLFRestKit/NSManagedObject+RestKit.h>
+
 
 @interface LegislatorMasterViewController (Private)
 - (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar;
@@ -152,7 +154,7 @@
 	if (!dataObject)
 		return;
 	
-	if ([dataObject isKindOfClass:[RKManagedObject class]])
+	if ([dataObject isKindOfClass:[NSManagedObject class]])
 		[appDelegate setSavedTableSelection:[dataObject primaryKeyValue] forKey:NSStringFromClass([self class])];
 	else
 		[appDelegate setSavedTableSelection:newIndexPath forKey:NSStringFromClass([self class])];

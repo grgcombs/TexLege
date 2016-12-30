@@ -24,9 +24,7 @@
 
 @property (nonatomic, strong)			NSFetchedResultsController *fetchedResultsController;
 
-@property (nonatomic)			NSInteger filterChamber;		// 0 means don't filter
 @property (nonatomic,strong)	NSMutableString *filterString;	// @"" means don't filter
-@property (nonatomic, readonly) BOOL hasFilter;
 @property (nonatomic)			BOOL byDistrict;
 
 - (void) setFilterByString:(NSString *)filter;
