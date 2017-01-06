@@ -16,12 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SLToastView : UIView
 
-+ (instancetype)showToastInView:(UIView *)parentView
-                          toast:(SLToast *)toast;
++ (nullable instancetype)showToastInView:(UIView *)parentView
+                                   toast:(SLToast *)toast;
 
-+ (instancetype)showToastInWindow:(UIWindow *)parentWindow
-                   statusBarFrame:(CGRect)statusBarFrame
-                            toast:(SLToast *)toast;
++ (nullable instancetype)showToastInWindow:(UIWindow *)parentWindow
+                            statusBarFrame:(CGRect)statusBarFrame
+                                     toast:(SLToast *)toast;
 
 - (BOOL)showToast:(SLToast *)toast;
 

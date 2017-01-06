@@ -15,8 +15,6 @@
 		37CF0B631E05DC0E00323E1C /* SLToastManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CF0B551E05DC0E00323E1C /* SLToastManager.m */; };
 		37CF0B641E05DC0E00323E1C /* SLToastView.h in Headers */ = {isa = PBXBuildFile; fileRef = 37CF0B561E05DC0E00323E1C /* SLToastView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37CF0B651E05DC0E00323E1C /* SLToastView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CF0B571E05DC0E00323E1C /* SLToastView.m */; };
-		37CF0B671E05DC0E00323E1C /* SLObjectQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 37CF0B591E05DC0E00323E1C /* SLObjectQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		37CF0B681E05DC0E00323E1C /* SLObjectQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CF0B5A1E05DC0E00323E1C /* SLObjectQueue.m */; };
 		37CF0B691E05DC0E00323E1C /* SLTypeCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 37CF0B5B1E05DC0E00323E1C /* SLTypeCheck.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37CF0B6C1E07210200323E1C /* SLToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CF0B531E05DC0E00323E1C /* SLToast.m */; };
 		37CF0BBC1E088A1100323E1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37CF0BBB1E088A1100323E1C /* Assets.xcassets */; };
@@ -46,8 +44,6 @@
 		37CF0B551E05DC0E00323E1C /* SLToastManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SLToastManager.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		37CF0B561E05DC0E00323E1C /* SLToastView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLToastView.h; sourceTree = "<group>"; };
 		37CF0B571E05DC0E00323E1C /* SLToastView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SLToastView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		37CF0B591E05DC0E00323E1C /* SLObjectQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLObjectQueue.h; sourceTree = "<group>"; };
-		37CF0B5A1E05DC0E00323E1C /* SLObjectQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLObjectQueue.m; sourceTree = "<group>"; };
 		37CF0B5B1E05DC0E00323E1C /* SLTypeCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTypeCheck.h; sourceTree = "<group>"; };
 		37CF0BBB1E088A1100323E1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		37D326331E0E5D60002867B3 /* SLToastObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLToastObserver.h; sourceTree = "<group>"; };
@@ -101,8 +97,6 @@
 				37CF0B521E05DC0E00323E1C /* SLToast.h */,
 				37CF0B531E05DC0E00323E1C /* SLToast.m */,
 				37CF0B5B1E05DC0E00323E1C /* SLTypeCheck.h */,
-				37CF0B591E05DC0E00323E1C /* SLObjectQueue.h */,
-				37CF0B5A1E05DC0E00323E1C /* SLObjectQueue.m */,
 				37D326331E0E5D60002867B3 /* SLToastObserver.h */,
 				37CF0B3A1E05D8DD00323E1C /* Info.plist */,
 				37CF0BA81E08888900323E1C /* Assets */,
@@ -137,7 +131,6 @@
 				37CF0B691E05DC0E00323E1C /* SLTypeCheck.h in Headers */,
 				37CF0B641E05DC0E00323E1C /* SLToastView.h in Headers */,
 				37D326341E0E5D60002867B3 /* SLToastObserver.h in Headers */,
-				37CF0B671E05DC0E00323E1C /* SLObjectQueue.h in Headers */,
 				37CF0B601E05DC0E00323E1C /* SLToast.h in Headers */,
 				37CF0B471E05D8DD00323E1C /* SLToastKit.h in Headers */,
 				37CF0B621E05DC0E00323E1C /* SLToastManager.h in Headers */,
@@ -245,7 +238,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				37CF0B6C1E07210200323E1C /* SLToast.m in Sources */,
-				37CF0B681E05DC0E00323E1C /* SLObjectQueue.m in Sources */,
 				37CF0B631E05DC0E00323E1C /* SLToastManager.m in Sources */,
 				37CF0B651E05DC0E00323E1C /* SLToastView.m in Sources */,
 			);

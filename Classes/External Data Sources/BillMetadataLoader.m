@@ -47,7 +47,7 @@
 
 - (void)dealloc
 {
-	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
+	[[RKClient sharedClient].requestQueue cancelRequestsWithDelegate:self];
 }
 
 - (void)loadMetadata:(id)sender {

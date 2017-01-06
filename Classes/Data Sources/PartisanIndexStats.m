@@ -101,8 +101,8 @@
     if (!_partisanIndexAggregates || !_partisanIndexAggregates.count)
     {
         NSMutableDictionary *tempAggregates = [NSMutableDictionary dictionaryWithCapacity:4];
-        NSInteger chamber = HOUSE;
-        NSInteger party = kUnknownParty;
+        int chamber = HOUSE;
+        int party = kUnknownParty;
 
 		for (chamber = HOUSE; chamber <= SENATE; chamber++)
         {
@@ -113,18 +113,18 @@
                 {
 					NSNumber *avgIndex = aggregatesArray[0];
 					if (avgIndex)
-						tempAggregates[[NSString stringWithFormat:@"AvgC%d+P%d", (int)chamber, (int)party]] = avgIndex;
+						tempAggregates[[NSString stringWithFormat:@"AvgC%d+P%d", chamber, party]] = avgIndex;
 					
 					NSNumber *maxIndex = aggregatesArray[1];
 					if (maxIndex)
-						tempAggregates[[NSString stringWithFormat:@"MaxC%d+P%d", (int)chamber, (int)party]] = maxIndex;
+						tempAggregates[[NSString stringWithFormat:@"MaxC%d+P%d", chamber, party]] = maxIndex;
 					
 					NSNumber *minIndex = aggregatesArray[2];
 					if (minIndex)
-						tempAggregates[[NSString stringWithFormat:@"MinC%d+P%d", (int)chamber, (int)party]] = minIndex;
+						tempAggregates[[NSString stringWithFormat:@"MinC%d+P%d", chamber, party]] = minIndex;
 				}
 				else
-					NSLog(@"PartisanIndexStates: Error pulling aggregate dictionary.");
+					NSLog(@"PartisanIndexStates: Error processing aggregate partisanship dictionary.  Expected three aggregated score calculations for (chamber=%d; party=%d): %@", chamber, party, aggregatesArray);
 			}
 		}
 		_partisanIndexAggregates = [tempAggregates copy];
@@ -156,7 +156,6 @@
 
 
 - (CGFloat) partyPartisanIndexUsingChamber:(NSInteger)chamber andPartyID:(NSInteger)party {
-#warning GREG - here
 	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"AvgC%ld+P%ld", (long)chamber, (long)party]] floatValue];
 };
 

@@ -86,6 +86,9 @@ NSUInteger SLValueHash(NSUInteger hash, NSUInteger hashIndex) {
     struct SLToastKeys keys = SLToastKeys;
     
     NSString *toastId = SLTypeNonEmptyStringOrNil(dictionary[keys.identifier]);
+    if (!toastId)
+        return nil;
+    
     NSString *title = SLTypeStringOrNil(dictionary[keys.title]);
     NSString *subtitle = SLTypeStringOrNil(dictionary[keys.subtitle]);
     UIImage *image = SLTypeImageOrNil(dictionary[keys.image]);
@@ -105,6 +108,8 @@ NSUInteger SLValueHash(NSUInteger hash, NSUInteger hashIndex) {
                            subtitle:subtitle
                               image:image
                            duration:duration];
+    if (self)
+        self.status = status;
 
     return self;
 }

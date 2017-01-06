@@ -8,7 +8,6 @@
 //
 
 #import "SLToastManager.h"
-#import "SLObjectQueue.h"
 #import "SLToast.h"
 #import "SLToastView.h"
 #import "SLTypeCheck.h"
@@ -16,7 +15,7 @@
 
 @interface SLToastManager()<SLToastObserver>
 @property (nonatomic,copy,nonnull) NSString *managerId;
-@property (nonatomic,copy) SLObjectQueue <SLToast *> *queue;
+@property (nonatomic,copy) NSMutableOrderedSet<SLToast *> *store;
 @property (nonatomic,strong) SLToastView *toastView;
 
 #if SLToast_Use_Nag_Limiter == 1
@@ -46,8 +45,7 @@
                                                          name:UIApplicationWillChangeStatusBarFrameNotification
                                                        object:nil];
         }
-        NSString *queueName = [managerId stringByAppendingString:@"-Queue"];
-        _queue = [[SLObjectQueue alloc] initWithName:queueName];
+        _store = [[NSMutableOrderedSet alloc] init];
     }
     return self;
 }
@@ -83,29 +81,17 @@
         [_nagLimitTimer invalidate];
     _nagLimitTimer = nil;
 #endif
-    
-    // Just in case consumers retained their toasts and need status updates...
-    
-    for (SLToast *toast in _queue)
-    {
-        if (toast.status != SLToastStatusQueued
-            && toast.status != SLToastStatusFinished
-            && toast.status != SLToastStatusSkipped)
-        {
-            toast.status = SLToastStatusUnknown;
-        }
-    }
 }
 
 - (NSUInteger)totalToastCount
 {
-    return self.queue.count;
+    return self.store.count;
 }
 
 - (NSUInteger)activeToastCount
 {
     NSUInteger toastCount = 0;
-    for (SLToast *toast in self.queue)
+    for (SLToast *toast in self.store)
     {
         switch (toast.status) {
             case SLToastStatusQueued:
@@ -139,7 +125,7 @@
     }
 
     SLToast *foundToast = nil;
-    for (SLToast *toast in self.queue)
+    for (SLToast *toast in self.store)
     {
         if (toast.status == SLToastStatusShowing)
         {
@@ -168,7 +154,8 @@
     if (!SLValueIfClass(SLToast, toast))
         return NO;
 
-    [self.queue push:toast];
+    [self.store addObject:toast];
+
     toast.status = SLToastStatusQueued;
     BOOL success = YES;
 
@@ -193,17 +180,45 @@
 {
     if (!SLValueIfClass(SLToast, toast))
         return NO;
-    BOOL success = [self.queue removeObject:toast];
+    NSUInteger index = [self.store indexOfObject:toast];
+    if (index == NSNotFound || self.store.count <= index)
+        return NO;
+    [self.store removeObjectAtIndex:index];
     if (toast.status == SLToastStatusQueued)
         toast.status = SLToastStatusUnknown;
-    return success;
+    return YES;
 }
 
 - (nullable SLToast *)pullNext
 {
-    SLToast *toast = [self.queue pop];
-    while (toast && toast.status == SLToastStatusSkipped)
-        toast = [self.queue pop];
+    __block SLToast *toast = nil;
+
+    if (self.store.count)
+    {
+        NSMutableArray<SLToast *> *toastsToRemove = [[NSMutableArray alloc] init];
+
+        //NSMutableIndexSet *toastsToRemove = [NSMutableIndexSet indexSet];
+        [self.store enumerateObjectsUsingBlock:^(SLToast * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (toast.status == SLToastStatusSkipped)
+            {
+                [toastsToRemove addObject:obj];
+                return;  // keep iterating until we find one that isn't skipped
+            }
+            else
+            {
+                toast = [obj copy];
+                [toastsToRemove addObject:obj];
+                *stop = YES;
+                return;
+            }
+        }];
+
+        if (!toastsToRemove.count)
+            return toast;
+
+        [self.store removeObjectsInArray:toastsToRemove];
+    }
+
     return toast;
 }
 
@@ -302,7 +317,7 @@
     
     self.dismissedRecently = YES;
 
-    SLObjectQueue *onlyEssential = [[SLObjectQueue alloc] init];
+    NSMutableOrderedSet *onlyEssential = [[NSMutableOrderedSet alloc] init];
     
     for (SLToast *toast in self.queue)
     {
@@ -314,7 +329,7 @@
         }
         
         if (toast.type >= SLToastTypeWarning)
-            [onlyEssential push:toast];
+            [onlyEssential addObject:toast];
         else
             toast.status = SLToastStatusSkipped;
     }
@@ -322,7 +337,7 @@
     if (self.nagLimitTimer)
         [self.nagLimitTimer invalidate];
 
-    self.queue = onlyEssential;
+    self.store = onlyEssential;
     
     __weak typeof(self) weakSelf = self;
     self.nagLimitTimer = [NSTimer scheduledTimerWithTimeInterval:7 repeats:NO block:^(NSTimer * _Nonnull timer) {

@@ -15,30 +15,27 @@
 #define OPENAPIS_DEFAULT_SESSION		@"85"
 #define WNOM_DEFAULT_LATEST_SESSION		84
 
-// Legislative Chamber / Legislator Type
-enum kChambers {
+typedef NS_ENUM(UInt8, TXLChamberType) {
     BOTH_CHAMBERS = 0,
     HOUSE,
     SENATE,
-	JOINT,
-	EXECUTIVE	// Used in open states / bill actions	
+    JOINT,
+    EXECUTIVE	// Used in open states / bill actions
 };
 
-// Political Party
-enum kParties {
+typedef NS_ENUM(UInt8, TXLPartyType) {
     kUnknownParty = 0,
     DEMOCRAT,
     REPUBLICAN
 };
 
-// Committe Position Roles
-typedef NS_ENUM(uint16_t, kPositions) {
+typedef NS_ENUM(UInt8, TXLCommitteePositionType) {
     POS_MEMBER = 0,
     POS_VICE,
     POS_CHAIR
 };
 
-typedef NS_ENUM(uint16_t, TLStringReturnType) {
+typedef NS_ENUM(UInt8, TLStringReturnType) {
     TLReturnFull = 0,		// Return the full string
     TLReturnAbbrev,			// Return an abbreviation
     TLReturnInitial,		// Return an initial
@@ -47,7 +44,7 @@ typedef NS_ENUM(uint16_t, TLStringReturnType) {
 	TLReturnTitle			// Return a member title like Senator or Representative
 };
 
-typedef NS_ENUM(uint16_t, TexLegeBillStages) {
+typedef NS_ENUM(UInt8, TexLegeBillStages) {
     BillStageUnknown = 0,
     BillStageFiled,
     BillStageOutOfCommittee,

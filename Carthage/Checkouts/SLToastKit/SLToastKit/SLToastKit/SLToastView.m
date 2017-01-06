@@ -50,7 +50,7 @@
     [parentView addSubview:toastView];
 
     NSTimeInterval duration = toast.duration;
-    if (duration > 0)
+    if (duration >= 0)
     {
         __weak SLToastView *wView = toastView;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -82,7 +82,7 @@
     [parentWindow addSubview:toastView];
 
     NSTimeInterval duration = toast.duration;
-    if (duration > 0)
+    if (duration >= 0)
     {
         __weak SLToastView *wView = toastView;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -110,7 +110,7 @@
     toast.status = SLToastStatusShowing;
 
     NSTimeInterval duration = toast.duration;
-    if (duration > 0)
+    if (duration >= 0)
     {
         __weak SLToastView *wView = self;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

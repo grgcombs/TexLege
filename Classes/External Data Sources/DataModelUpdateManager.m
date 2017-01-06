@@ -48,6 +48,7 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 @property (nonatomic,copy) NSCountedSet *activeUpdates;
 @property (nonatomic,strong) NSMutableOrderedSet *updateErrors;
 @property (nonatomic,strong) RKRequestQueue *requestQueue;
+@property (nonatomic,assign) BOOL didPostCompletionToast;
 
 // Someday we may opt to handle updating for this aggregate partisanship file.  Right now it's manually updated.
 // In the future, we might use a method like the following to get timestamps and update accordingly.
@@ -62,8 +63,6 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
     self = [super init];
 	if (self)
     {
-        //[[NSURLCache sharedURLCache] setMemoryCapacity:1024*1024]; // a more conservative value, 1MB
-
 		_requestQueue = [[RKRequestQueue alloc] init];
         _requestQueue.delegate = self;
 		_requestQueue.concurrentRequestsLimit = 1;
@@ -86,7 +85,6 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 	}
 	return self;
 }
-
 
 - (void)dealloc {
 	[[RKClient sharedClient].requestQueue cancelRequestsWithDelegate:self];
@@ -147,6 +145,8 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 {
     if (![TexLegeReachability texlegeReachable])
         return;
+
+    self.didPostCompletionToast = NO;
 
 	NSArray *knownObjectTypes = self.labelsForEntities.allKeys;
 
@@ -242,16 +242,9 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 - (void)didChangeUpdateActivity
 {
     UInt8 remainingCount = [self activeUpdateCount];
-	if (remainingCount > 0)
-    {
-#ifdef DEBUG
-        for (NSString *updateName in self.activeUpdates)
-        {
-            NSLog(@"Still remaining: %@", updateName);
-        }
-#endif
+	if (remainingCount > 0 || self.didPostCompletionToast)
         return;
-    }
+    self.didPostCompletionToast = YES;
 
     SLToastType type = (self.updateErrors.count ==  0) ? SLToastTypeSuccess : SLToastTypeWarning;
     SLToastManager *toastMgr = [SLToastManager txlSharedManager];
@@ -340,9 +333,7 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
             [[RKObjectManager sharedManager].objectStore save];
             [[NSNotificationCenter defaultCenter] postNotificationName:notification object:nil];
         }
-
-//        [self queryIDsForModel:className];	// THIS TRIGGERS A PRUNING
-    }			
+    }
 	@catch (NSException * e) {
 		NSLog(@"RestKit Load Error %@: %@", className, e.description);
 	}	
@@ -371,186 +362,5 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 
 	NSLog(@"RestKit Data error loading %@: %@", className, error.localizedDescription);
 }
-
-#if 0  // we rely on deleteCachedObjectsMissingFromResult to take care of deleted Core Data items
-
-- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response
-{
-    if (!request.isGET || ![response isOK])
-        return;
-
-    if (!request.userData)
-        return; // We've got no user data, can't prune anything from Core Data ...
-
-    NSString *objectTypeName = [request userData][TXLUPDMGR_CLASSKEY];
-
-
-    //  NSInteger queryType = numToInt((request.userData)[TXLUPDMGR_QUERYKEY]);
-    if (NO == queryIsComplete(queryType))  // we're only working with an array of IDs
-    {
-        NSError *error = nil;
-        NSArray *resultIDs = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
-
-        if (resultIDs && resultIDs.count)
-        {
-            if (queryType == QUERYTYPE_IDS_NEW)
-            {
-                // DO SOMETHING
-            }
-            else if (queryType == QUERYTYPE_IDS_ALL_PRUNE)
-            {
-                [self pruneModel:className forUpstreamIDs:resultIDs];
-            }
-        }
-    }
-}
-
-// This scans the core data entity looking for "stale" objects, ones that were deleted on the server database
-- (void)pruneModel:(NSString *)className forUpstreamIDs:(NSArray *)upstreamIDs
-{
-    Class entityClass = NSClassFromString(className);
-
-    if (!entityClass || ![[TexLegeCoreDataUtils registeredDataModels] containsObject:className])
-        return;			// What do we do for PartyPartisanshipObj ???
-
-    RKObjectManager* objectManager = [RKObjectManager sharedManager];
-
-    BOOL changed = NO;
-
-    NSSet *existingSet = [NSSet setWithArray:[TexLegeCoreDataUtils allPrimaryKeyIDsInEntityNamed:className]];
-    NSSet *newSet = [NSSet setWithArray:upstreamIDs];
-
-    // Determine which items were removed
-    NSMutableSet *removedItems = [NSMutableSet setWithSet:existingSet];
-    [removedItems minusSet:newSet];
-
-    for (NSNumber *staleObjID in removedItems)
-    {
-        NSLog(@"DataUpdateManager: PRUNING OBJECT FROM %@: ID = %@", className, staleObjID);
-        [TexLegeCoreDataUtils deleteObjectInEntityNamed:className withPrimaryKeyValue:staleObjID];
-        changed = YES;
-    }
-
-    if (changed)
-    {
-        [objectManager.objectStore save];
-
-        NSString *notification = [NSString stringWithFormat:@"RESTKIT_LOADED_%@", className.uppercaseString];
-        [[NSNotificationCenter defaultCenter] postNotificationName:notification object:nil];
-    }
-}
-
-- (void)objectLoaderDidLoadUnexpectedResponse:(RKObjectLoader *)objectLoader
-{
-    NSString *className = NSStringFromClass(objectLoader.objectMapping.objectClass);
-    if (!className)
-    {
-        className = objectLoader.userData[TXLUPDMGR_CLASSKEY];
-    }
-    RKResponse *response = objectLoader.response;
-    if (response.isFailure || response.isError)
-        return;
-
-    BOOL isAcceptable = NO;
-    NSInteger statusCode = response.statusCode;
-    BOOL isSuccessful = response.isSuccessful;
-    BOOL shouldBeAcceptable = isAcceptable;
-    BOOL hasData = (response.body != nil);
-
-    if (isSuccessful)
-    {
-        shouldBeAcceptable = ([response isJSON]);
-        if (!shouldBeAcceptable)
-            shouldBeAcceptable = [response.MIMEType hasSuffix:@"json"];
-        if (!shouldBeAcceptable)
-            shouldBeAcceptable = ([response.MIMEType isEqualToString:@"text/plain"]
-                                  && [response.URL.pathExtension isEqualToString:@"json"]);
-    }
-
-    NSLog(@"Unexpected response for %@ -- %d: %d  (data: %d; success: %d; should be: %d;)",
-          objectLoader.URL.absoluteString,
-          (int)isAcceptable,
-          (int)statusCode,
-          (int)hasData,
-          (int)isSuccessful,
-          (int)shouldBeAcceptable);
-}
-
-- (NSString *)localDataTimestampForModel:(NSString *)classString
-{
-    if (!classString)
-        return nil;
-
-    Class modelClass = NSClassFromString(classString);
-	if (modelClass)
-    {
-		NSFetchRequest *request = [modelClass fetchRequest];
-		NSSortDescriptor *desc = [[NSSortDescriptor alloc] initWithKey:TXLUPDMGR_UPDATEDPROP ascending:NO];	// the most recent update will be the first item in the array (descending)
-		request.sortDescriptors = @[desc];
-
-        // This is necessary to limit it to specific properties during the fetch
-        request.resultType = NSDictionaryResultType;
-		request.propertiesToFetch = @[TXLUPDMGR_UPDATEDPROP];
-
-        NSManagedObject *object = [modelClass objectWithFetchRequest:request];
-        if (!object)
-            return nil;
-
-        // this relies on objectWithFetchRequest returning the object at index 0
-		return [object valueForKey:TXLUPDMGR_UPDATEDPROP];
-	}
-	else if ([classString isEqualToString:@"PartyPartisanshipObj"])
-    {
-#if WNOMAGGREGATES_UPDATING
-		NSError *error = nil;
-		NSString *path = [[UtilityMethods applicationDocumentsDirectory] stringByAppendingPathComponent:@"WnomAggregateObj.json"];
-		NSString *json = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
-		if (!error && json)
-        {
-			NSArray *aggregates = [json objectFromJSONString];
-			NSString *timestamp = [self localDataTimestampForArray:aggregates];
-		}
-		else
-        {
-			NSLog(@"DataModelUpdateManager:timestampForModel - error loading aggregates json - %@", path);
-		}
-#endif
-	}
-	
-	return nil;
-}
-
-#endif
-
-#if WNOMAGGREGATES_UPDATING
-- (NSString *)localDataTimestampForArray:(NSArray *)entityArray
-{
-    if (!entityArray || ![entityArray count])
-        return [[NSDate date] timestampString];
-
-    NSMutableArray *tempSorted = [[NSMutableArray alloc] initWithArray:entityArray];
-    NSSortDescriptor *desc = [[NSSortDescriptor alloc] initWithKey:JSONDATA_TIMESTAMPKEY ascending:NO];	// the most recent update will be the first item in the array (descending)
-    [tempSorted sortUsingDescriptors:desc];
-    [desc release];
-
-    NSString *timestamp = nil;
-    id object = [[tempSorted objectAtIndex:0] objectForKey:JSONDATA_TIMESTAMPKEY];
-    if (!object)
-    {
-        NSLog(@"DataModelUpdateManager:timestampForArray - no 'updated' timestamp key found.");
-    }
-    else if ([object isKindOfClass:[NSString class]])
-        timestamp = object;
-    else if ([object isKindOfClass:[NSDate class]])
-        timestamp = [object timestampString];
-    else
-    {
-        NSLog(@"DataModelUpdateManager:timestampForArray - Unexpected type in dictionary, wanted timestamp string, %@", [object description]);
-    }
-    
-    [tempSorted release];
-    return timestamp;
-}
-#endif
 
 @end

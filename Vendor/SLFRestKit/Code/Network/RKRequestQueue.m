@@ -163,6 +163,8 @@ static const NSTimeInterval kFlushDelay = 0.3;
     _loadingRequests = nil;
     [_requests release];
     _requests = nil;
+    [_name release];
+    _name = nil;
 
     [super dealloc];
 }
