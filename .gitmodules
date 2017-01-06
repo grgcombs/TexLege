@@ -4,9 +4,6 @@
 [submodule "Vendor/Kal"]
 	path = Vendor/Kal
 	url = https://github.com/grgcombs/Kal.git
-[submodule "Vendor/SVGeocoder"]
-	path = Vendor/SVGeocoder
-	url = https://github.com/grgcombs/SVGeocoder.git
 [submodule "Vendor/SVWebViewController"]
 	path = Vendor/SVWebViewController
 	url = https://github.com/grgcombs/SVWebViewController.git
