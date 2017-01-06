@@ -61,7 +61,7 @@ NSString * const followTheMoneyApiBaseURL = @"http://api.followthemoney.org";
 }
 
 - (void)queryOpenStatesBillWithID:(NSString *)billID session:(NSString *)session delegate:(id)sender {
-	StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
+	StateMetaLoader *meta = [StateMetaLoader instance];
 
 	if (!session && !IsEmpty(meta.currentSession)) {
 		session = meta.currentSession;

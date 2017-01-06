@@ -139,7 +139,7 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
 {
 	if ([TexLegeReachability openstatesReachable])
     {
-		StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
+		StateMetaLoader *meta = [StateMetaLoader instance];
 
 		if (IsEmpty(meta.selectedState))
 			return;

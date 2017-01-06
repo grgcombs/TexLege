@@ -40,17 +40,19 @@ NSString *abbreviateString(NSString *inString) {
 	return outString;
 }
 
-NSString *stringForChamber(NSInteger chamber, TLStringReturnType type) {	
-	NSDictionary *stateMeta = [[StateMetaLoader sharedStateMeta] stateMetadata];
-	
+NSString *stringForChamber(NSInteger chamber, TLStringReturnType type)
+{
+    struct StateMetadataKeys keys = StateMetadataKeys;
+	NSDictionary *stateMeta = [[StateMetaLoader instance] stateMetadata];
+    NSDictionary *chambers = (stateMeta != nil) ? stateMeta[keys.chambers.metaLookup] : nil;
+    struct StateMetadataChamberDetailKeys chamberKeys = (chamber == SENATE) ? keys.chambers.upper : keys.chambers.lower;
+    NSDictionary *chamberInfo = (chambers != nil) ? chambers[chamberKeys.metaLookup] : nil;
 	NSString *chamberName = nil;
-	if (NO == IsEmpty(stateMeta)) {
-		if (chamber == SENATE)
-			chamberName = stateMeta[kMetaUpperChamberNameKey];
-		else if (chamber == HOUSE) {
-			chamberName = stateMeta[kMetaLowerChamberNameKey];
-		}
-		if (NO == IsEmpty(chamberName)) {	// shorten the thing if its a couple of sentences long
+	if (NO == IsEmpty(stateMeta))
+    {
+        chamberName = chamberInfo[chamberKeys.name];
+
+        if (NO == IsEmpty(chamberName)) {	// shorten the thing if its a couple of sentences long
 			chamberName = abbreviateString(chamberName);	
 			// Just shortens it to the first word (at least that's how we set it up in the file
 			
@@ -87,16 +89,7 @@ NSString *stringForChamber(NSInteger chamber, TLStringReturnType type) {
 		return stringInitial(chamberName, YES);
 	
 	if (type == TLReturnAbbrev || type == TLReturnTitle ) {
-		NSString *title = nil;
-		
-		if (chamber == HOUSE || chamber == SENATE) {
-			if (NO == IsEmpty(stateMeta)) {
-				if (chamber == HOUSE)
-					title = stateMeta[kMetaLowerChamberTitleKey];
-				else if (chamber == SENATE)
-					title = stateMeta[kMetaUpperChamberTitleKey];
-			}
-		}			
+        NSString *title = (chamberInfo != nil) ? chamberInfo[chamberKeys.title] : nil;
 		if (IsEmpty(title)) {
 			switch (chamber) {
 				case SENATE:

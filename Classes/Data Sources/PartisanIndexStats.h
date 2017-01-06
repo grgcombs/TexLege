@@ -16,6 +16,7 @@
 #define kPartisanIndexNotifyLoaded	@"PARTISAN_INDEX_LOADED"
 
 @class LegislatorObj;
+@class PartyPartisanshipObj;
 
 @interface PartisanIndexStats : NSObject <RKRequestDelegate>
 
@@ -26,7 +27,6 @@
 @property (NS_NONATOMIC_IOSONLY, readonly) BOOL hasData;
 
 + (PartisanIndexStats *)sharedPartisanIndexStats;
-- (void)loadPartisanIndex:(id)sender;
 
 - (CGFloat) minPartisanIndexUsingChamber:(NSInteger)chamber;
 - (CGFloat) maxPartisanIndexUsingChamber:(NSInteger)chamber;
@@ -35,5 +35,7 @@
 - (NSArray *) historyForParty:(NSInteger)party chamber:(NSInteger)chamber;
 - (NSDictionary *)partisanshipDataForLegislatorID:(NSNumber*)legislatorID;
 - (NSDictionary *)partisanshipDataForLegislator:(LegislatorObj*)legislator;
+
+- (void)didUpdatePartyPartisanship:(NSArray<PartyPartisanshipObj *> *)partyPartisanship;
 
 @end

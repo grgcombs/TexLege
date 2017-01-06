@@ -467,7 +467,7 @@ NSInteger kNoSelection = -1;
 	self.appQuitting = NO;
     self.hasAlertedNotReachable = NO;
 
-	[[StateMetaLoader sharedStateMeta] setSelectedState:@"tx"];
+	[[StateMetaLoader instance] setSelectedState:@"tx"];
 	[PartisanIndexStats sharedPartisanIndexStats];
 	[[BillMetadataLoader sharedBillMetadataLoader] loadMetadata:self];
 	//[[CalendarEventsLoader sharedCalendarEventsLoader] loadEvents:self];

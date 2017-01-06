@@ -26,7 +26,7 @@ NSString * const RKRefreshResetGestureAnimationKey  = @"RKRefreshResetGestureAni
 static CGFloat const kFlipArrowAnimationTime = 0.18f;
 static CGFloat const kDefaultTriggerViewHeight = 64.f;
 
-@interface RKRefreshGestureRecognizer ()
+@interface RKRefreshGestureRecognizer ()<CAAnimationDelegate>
 
 - (CABasicAnimation *)triggeredAnimation;
 - (CABasicAnimation *)idlingAnimation;

@@ -315,7 +315,7 @@
 	NSMutableString *queryString = [NSMutableString stringWithString:@"/bills"];
 	
 	BOOL isBillID = NO;
-	StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
+	StateMetaLoader *meta = [StateMetaLoader instance];
 	if (IsEmpty(meta.selectedState) || IsEmpty(meta.currentSession))
 		return;
 
@@ -368,7 +368,7 @@
 
 - (void)startSearchForSubject:(NSString *)searchSubject chamber:(NSInteger)chamber
 {
-	StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
+	StateMetaLoader *meta = [StateMetaLoader instance];
 	if (IsEmpty(meta.selectedState))
 		return;
 	
@@ -397,7 +397,7 @@
 {
 	if (NO == IsEmpty(searchSponsorID))
     {
-		StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
+		StateMetaLoader *meta = [StateMetaLoader instance];
 		if (IsEmpty(meta.selectedState))
 			return;
 		

@@ -389,6 +389,9 @@
 		37BA166813B2FCFA0088057B /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
 		37BA166913B2FCFB0088057B /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
 		37BF251211D64B5400B71688 /* LegislatorDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */; };
+		37C4C0FD1E1DACE800EBE66B /* SLAbstractCodableObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C0FC1E1DACE800EBE66B /* SLAbstractCodableObject.m */; };
+		37C4C1051E1DAD4200EBE66B /* PartyPartisanshipObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C1041E1DAD4200EBE66B /* PartyPartisanshipObj.m */; };
+		37C4C12E1E1EB1A900EBE66B /* PartyPartisanshipObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C1041E1DAD4200EBE66B /* PartyPartisanshipObj.m */; };
 		37C7845914D30444006BBEDE /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C7845814D30444006BBEDE /* LocalyticsDatabase.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37C7845A14D30444006BBEDE /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C7845814D30444006BBEDE /* LocalyticsDatabase.m */; };
 		37C7845C14D304B2006BBEDE /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845B14D304B2006BBEDE /* libsqlite3.dylib */; };
@@ -866,6 +869,10 @@
 		37B64233120FE9FF0076B196 /* LegislatorMasterCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LegislatorMasterCell.m; path = "Classes/Custom Cells and Views/LegislatorMasterCell.m"; sourceTree = SOURCE_ROOT; };
 		37B8A0CE1DCE5EFC0073BFB0 /* TabBarController~iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "TabBarController~iPad.xib"; path = "Resources-iPad/TabBarController~iPad.xib"; sourceTree = "<group>"; };
 		37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "LegislatorDetailViewController~ipad.xib"; path = "Resources-iPad/LegislatorDetailViewController~ipad.xib"; sourceTree = "<group>"; };
+		37C4C0FB1E1DACE800EBE66B /* SLAbstractCodableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAbstractCodableObject.h; sourceTree = "<group>"; };
+		37C4C0FC1E1DACE800EBE66B /* SLAbstractCodableObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAbstractCodableObject.m; sourceTree = "<group>"; };
+		37C4C1031E1DAD4200EBE66B /* PartyPartisanshipObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PartyPartisanshipObj.h; sourceTree = "<group>"; };
+		37C4C1041E1DAD4200EBE66B /* PartyPartisanshipObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PartyPartisanshipObj.m; sourceTree = "<group>"; };
 		37C7845714D30444006BBEDE /* LocalyticsDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalyticsDatabase.h; sourceTree = "<group>"; };
 		37C7845814D30444006BBEDE /* LocalyticsDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalyticsDatabase.m; sourceTree = "<group>"; };
 		37C7845B14D304B2006BBEDE /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
@@ -1674,12 +1681,14 @@
 				378A1CD91007FF4600BEC4ED /* LegislatorObj+RestKit.m */,
 				378A1CDA1007FF4600BEC4ED /* LinkObj+RestKit.h */,
 				378A1CDB1007FF4600BEC4ED /* LinkObj+RestKit.m */,
-				379D0CC1122D49000021969C /* TexLegeCoreDataUtils.h */,
-				379D0CC2122D49000021969C /* TexLegeCoreDataUtils.m */,
 				372D5CBE11E9983A005A21E2 /* CapitolMap.h */,
 				372D5CBF11E9983A005A21E2 /* CapitolMap.m */,
 				372FAB5812147B2000AEF237 /* ChamberCalendarObj.h */,
 				372FAB5912147B2000AEF237 /* ChamberCalendarObj.m */,
+				37C4C1031E1DAD4200EBE66B /* PartyPartisanshipObj.h */,
+				37C4C1041E1DAD4200EBE66B /* PartyPartisanshipObj.m */,
+				379D0CC1122D49000021969C /* TexLegeCoreDataUtils.h */,
+				379D0CC2122D49000021969C /* TexLegeCoreDataUtils.m */,
 			);
 			name = "Data Model Classes";
 			path = "Core Data Classes";
@@ -1730,6 +1739,8 @@
 				3763ED6E1354E0F4000E524C /* UIImage+ResolutionIndependent.m */,
 				37E208B61E11934C00D95154 /* SLToastManager+TexLege.h */,
 				37E208B31E117CCD00D95154 /* SLToastManager+TexLege.m */,
+				37C4C0FB1E1DACE800EBE66B /* SLAbstractCodableObject.h */,
+				37C4C0FC1E1DACE800EBE66B /* SLAbstractCodableObject.m */,
 			);
 			path = "Utility Classes";
 			sourceTree = "<group>";
@@ -2623,6 +2634,7 @@
 				37AD57BB11DA651700D68934 /* CommitteeDetailViewController.m in Sources */,
 				3747C25D11E7B15300A6D8C6 /* PartisanIndexStats.m in Sources */,
 				372D5CC011E9983A005A21E2 /* CapitolMap.m in Sources */,
+				37C4C0FD1E1DACE800EBE66B /* SLAbstractCodableObject.m in Sources */,
 				3737803B11F8082500E36500 /* WnomObj+RestKit.m in Sources */,
 				370F7AA911FEAF730004AC50 /* PolygonMath.m in Sources */,
 				377ACE4811FFA30E002C7E49 /* CalendarDataSource.m in Sources */,
@@ -2693,6 +2705,7 @@
 				37D0D1F71357A198003DA1BB /* DistrictMapObj.m in Sources */,
 				37D0D20B1357A534003DA1BB /* DistrictOfficeObj+RestKit.m in Sources */,
 				37D0D2111357A685003DA1BB /* DistrictMapObj+RestKit.m in Sources */,
+				37C4C1051E1DAD4200EBE66B /* PartyPartisanshipObj.m in Sources */,
 				37FE46301357BF1600E8C038 /* CommitteePositionObj.m in Sources */,
 				37FE46311357BF1900E8C038 /* LinkObj.m in Sources */,
 				37FE46321357BF2100E8C038 /* LegislatorObj.m in Sources */,
@@ -2820,6 +2833,7 @@
 				37D0D1EB1357A198003DA1BB /* CommitteePositionObj.m in Sources */,
 				37D0D1EC1357A198003DA1BB /* StafferObj.m in Sources */,
 				37D0D1ED1357A198003DA1BB /* DistrictOfficeObj.m in Sources */,
+				37C4C12E1E1EB1A900EBE66B /* PartyPartisanshipObj.m in Sources */,
 				37D0D1EE1357A198003DA1BB /* WnomObj.m in Sources */,
 				37D0D1EF1357A198003DA1BB /* DistrictMapObj.m in Sources */,
 				37D0D20A1357A534003DA1BB /* DistrictOfficeObj+RestKit.m in Sources */,

@@ -7,6 +7,7 @@
 //
 
 #import "NSDate+Helper.h"
+#import <SLToastKit/SLTypeCheck.h>
 
 @implementation TexLegeDateHelper
 @synthesize formatter = t_formatter, calendar = t_calendar, modFormatter = t_modFormatter;
@@ -60,16 +61,11 @@
 }
 
 // This is lengthy, for the sake of getting a known weekday string (Sunday, Monday, Tuesday ...) no matter where this NSDate is located.
-- (NSString *)localWeekdayString {
-	NSCalendar *gregorian = [TexLegeDateHelper sharedTexLegeDateHelper].calendar;
-	NSDateFormatter *weekdayFormatter = [TexLegeDateHelper sharedTexLegeDateHelper].modFormatter;
-	NSLocale *usLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
-	weekdayFormatter.calendar = gregorian;
-	weekdayFormatter.locale = usLocale;
-	weekdayFormatter.dateFormat = @"EEEE";
-	NSString *weekday = [weekdayFormatter stringFromDate:self];
-	if (usLocale) usLocale = nil;
-	
+- (NSString *)localWeekdayString
+{
+    NSString *format = @"EEEE";
+    NSDateFormatter *formatter = [NSDateFormatter dateFormatterWithID:format format:format];
+	NSString *weekday = [formatter stringFromDate:self];
 	return weekday;
 }
 
@@ -86,11 +82,12 @@
 	return components.day;
 }
 
-- (NSUInteger)daysAgoAgainstMidnight {
+- (NSUInteger)daysAgoAgainstMidnight
+{
 	// get a midnight version of ourself:
-	NSDateFormatter *mdf = [TexLegeDateHelper sharedTexLegeDateHelper].modFormatter;
-	mdf.dateFormat = @"yyyy-MM-dd";
-	NSDate *midnight = [mdf dateFromString:[mdf stringFromDate:self]];
+    NSString *format = @"yyyy-MM-dd";
+    NSDateFormatter *formatter = [NSDateFormatter dateFormatterWithID:format format:format];
+	NSDate *midnight = [formatter dateFromString:[formatter stringFromDate:self]];
 	
 	return (int)midnight.timeIntervalSinceNow / (60*60*24) *-1;
 }
@@ -131,10 +128,10 @@
 	return [NSDate dateFromString:string withFormat:[NSDate dbFormatString]];
 }
 
-+ (NSDate *)dateFromString:(NSString *)string withFormat:(NSString *)format {
-	NSDateFormatter *inputFormatter = [TexLegeDateHelper sharedTexLegeDateHelper].modFormatter;
-	inputFormatter.dateFormat = format;
-	NSDate *date = [inputFormatter dateFromString:string];
++ (NSDate *)dateFromString:(NSString *)string withFormat:(NSString *)format
+{
+    NSDateFormatter *formatter = [NSDateFormatter dateFormatterWithID:format format:format];
+	NSDate *date = [formatter dateFromString:string];
 	return date;
 }
 
@@ -161,15 +158,16 @@
 	
 	NSDate *midnight = [calendar dateFromComponents:offsetComponents];
 	
-	NSDateFormatter *displayFormatter = [TexLegeDateHelper sharedTexLegeDateHelper].modFormatter;
 	NSString *displayString = nil;
 	
 	// comparing against midnight
+    NSString *format = nil;
+
 	if ([date compare:midnight] == NSOrderedDescending) {
 		if (prefixed) {
-			displayFormatter.dateFormat = @"'at' h:mm a"; // at 11:30 am
+            format = @"'at' h:mm a"; // at 11:30 am;
 		} else {
-			displayFormatter.dateFormat = @"h:mm a"; // 11:30 am
+            format = @"h:mm a"; // 11:30 am;
 		}
 	} else {
 		// check if date is within last 7 days
@@ -177,7 +175,7 @@
 		componentsToSubtract.day = -7;
 		NSDate *lastweek = [calendar dateByAddingComponents:componentsToSubtract toDate:today options:0];
 		if ([date compare:lastweek] == NSOrderedDescending) {
-			displayFormatter.dateFormat = @"EEEE"; // Tuesday
+            format = @"EEEE"; // Tuesday;
 		} else {
 			// check if same calendar year
 			NSInteger thisYear = offsetComponents.year;
@@ -186,20 +184,23 @@
 														   fromDate:date];
 			NSInteger thatYear = dateComponents.year;			
 			if (thatYear >= thisYear) {
-				displayFormatter.dateFormat = @"MMM d";
+                format = @"MMM d";
 			} else {
-				displayFormatter.dateFormat = @"MMM d, yyyy";
+                format =  @"MMM d, yyyy";
 			}
 		}
 		if (prefixed) {
-			NSString *dateFormat = displayFormatter.dateFormat;
 			NSString *prefix = @"'on' ";
-			displayFormatter.dateFormat = [prefix stringByAppendingString:dateFormat];
+			format = [prefix stringByAppendingString:format];
 		}
 	}
+
+    if (!format)
+        return nil;
+    NSDateFormatter *formatter = [NSDateFormatter dateFormatterWithID:format format:format];
 	
 	// use display formatter to return formatted date string
-	displayString = [displayFormatter stringFromDate:date];
+	displayString = [formatter stringFromDate:date];
 	return displayString;
 }
 
@@ -208,9 +209,8 @@
 }
 
 - (NSString *)stringWithFormat:(NSString *)format {
-	NSDateFormatter *outputFormatter = [TexLegeDateHelper sharedTexLegeDateHelper].modFormatter;
-	outputFormatter.dateFormat = format;
-	NSString *timestamp_str = [outputFormatter stringFromDate:self];
+    NSDateFormatter *formatter = [NSDateFormatter dateFormatterWithID:format format:format];
+	NSString *timestamp_str = [formatter stringFromDate:self];
 	return timestamp_str;
 }
 
@@ -232,7 +232,7 @@
 	
 	NSCalendar *calendar = [TexLegeDateHelper sharedTexLegeDateHelper].calendar;
 	NSDate *beginningOfWeek = nil;
-	BOOL ok = [calendar rangeOfUnit:NSWeekCalendarUnit startDate:&beginningOfWeek
+	BOOL ok = [calendar rangeOfUnit:NSCalendarUnitWeekOfYear startDate:&beginningOfWeek
 						   interval:NULL forDate:self];
 	if (ok) {
 		return beginningOfWeek;
@@ -340,6 +340,174 @@
 	NSTimeInterval interval = destinationGMTOffset - sourceGMTOffset;
 	
 	return [sourceDate dateByAddingTimeInterval:interval];	
+}
+
+@end
+
+/**
+ *  Added by Greg Combs
+ **/
+@implementation NSDateFormatter(SLHelper)
+
++ (NSTimeZone *)gmtTimeZone
+{
+    return [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
+}
+
++ (NSLocale *)posixLocale
+{
+    static NSLocale *posix = nil;
+    if (!posix) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+        });
+    }
+    return posix;
+}
+
++ (NSCalendar *)gregorianPosixCalendar
+{
+    static NSCalendar *gregorianCalendar = nil;
+    if (!gregorianCalendar) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            NSLocale *usLocale = [self posixLocale];
+            gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+            gregorianCalendar.locale = usLocale;
+        });
+    }
+    gregorianCalendar.timeZone = [self gmtTimeZone];
+    return gregorianCalendar;
+}
+
+/**
+ *  Create or load from thread local storage a date formatter with the given key and format string.
+ *
+ *  @param formatterId  A unique identifier to use when re-loading this date formatter.
+ *  @param formatString The format string to use for this date formatter.
+ *
+ *  @return A date formatter instance.
+ */
++ (NSDateFormatter *)dateFormatterWithID:(NSString *)formatterId format:(NSString *)formatString
+{
+    if (!SLTypeNonEmptyStringOrNil(formatterId))
+        formatterId = @"DEFAULT";
+    NSMutableDictionary *threadDict = [[NSThread currentThread] threadDictionary];
+    NSMutableDictionary *formatters = threadDict[@"SLDateFormatters"];
+    if (!formatters)
+    {
+        formatters = [@{} mutableCopy];
+        threadDict[@"SLDateFormatters"] = formatters;
+    }
+    NSDateFormatter *dateFormatter = formatters[formatterId];
+    if (dateFormatter == nil)
+    {
+        NSTimeZone *timezone = [self gmtTimeZone];
+        NSCalendar *calendar = [self gregorianPosixCalendar];
+        calendar.timeZone = timezone;
+
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.calendar = calendar;
+        dateFormatter.locale = [self posixLocale];
+        dateFormatter.timeZone = timezone;
+        dateFormatter.dateFormat = formatString;
+
+        formatters[formatterId] = dateFormatter;
+    }
+    else if (dateFormatter.dateFormat &&
+             !formatString)
+    {
+        dateFormatter.dateFormat = nil;
+    }
+    else if (!dateFormatter.dateFormat &&
+             formatString)
+    {
+        dateFormatter.dateFormat = formatString;
+    }
+    else if (dateFormatter.dateFormat &&
+             formatString &&
+             ![dateFormatter.dateFormat isEqualToString:formatString])
+    {
+        dateFormatter.dateFormat = formatString;
+    }
+    return dateFormatter;
+}
+
+@end
+
+@implementation NSDate (SLHelper)
+
+- (BOOL)isDaylightSavingTime
+{
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    NSCalendarUnit units = NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;;
+
+    NSDate *now = self;
+    NSDateComponents *nowComponents = [calendar components:units fromDate:now];
+
+    NSDateComponents *beginComponents = [nowComponents copy];
+    beginComponents.month = 3; // second Sunday of March
+    beginComponents.hour = 2;
+    beginComponents.minute = 0;
+
+    NSDateComponents *endComponents = [nowComponents copy];
+    endComponents.month = 11; // first Sunday of November
+    endComponents.hour = 2;
+    endComponents.minute = 0;
+
+    NSInteger year = nowComponents.year;
+    switch (year) {
+        case 2016:
+            beginComponents.day = 13;
+            endComponents.day = 6;
+            break;
+        case 2017:
+            beginComponents.day = 12;
+            endComponents.day = 5;
+            break;
+        case 2018:
+            beginComponents.day = 11;
+            endComponents.day = 4;
+            break;
+        case 2019:
+            beginComponents.day = 10;
+            endComponents.day = 3;
+            break;
+        case 2020:
+            beginComponents.day = 8; // leap year?
+            endComponents.day = 1;
+            break;
+        case 2021:
+            beginComponents.day = 14;
+            endComponents.day = 7;
+            break;
+        case 2022:
+            beginComponents.day = 13;
+            endComponents.day = 6;
+            break;
+        case 2023:
+            beginComponents.day = 12;
+            endComponents.day = 5;
+            break;
+        case 2024:
+            beginComponents.day = 11;
+            endComponents.day = 4;
+            break;
+        case 2025:
+            beginComponents.day = 10;
+            endComponents.day = 3;
+            break;
+        default:
+            NSAssert(NO, @"Make adjustments for a new year");
+            break;
+    }
+
+    NSComparisonResult beginToNow = [[beginComponents date] compare:now];
+    NSComparisonResult nowToEnd = [now compare:[endComponents date]];
+    BOOL onOrAfterStart = (beginToNow == NSOrderedSame || beginToNow == NSOrderedAscending);
+    BOOL onOrBeforeEnd = (nowToEnd == NSOrderedSame || nowToEnd == NSOrderedAscending);
+    return (onOrAfterStart && onOrBeforeEnd);
 }
 
 @end

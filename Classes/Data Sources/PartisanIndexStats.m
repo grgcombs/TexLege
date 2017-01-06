@@ -18,10 +18,14 @@
 #import "NSDate+Helper.h"
 #import "DataModelUpdateManager.h"
 #import "TexLegeAppDelegate.h"
+#import "PartyPartisanshipObj.h"
+#import <SLFRestKit/SLFRestKit.h>
+@import SLToastKit;
+#import <SLToastKit/SLToastKit.h>
 
 @interface PartisanIndexStats ()
 @property (NS_NONATOMIC_IOSONLY, copy) NSDictionary *partisanIndexAggregates;
-@property (NS_NONATOMIC_IOSONLY, copy) NSMutableArray *rawPartisanIndexAggregates;
+@property (NS_NONATOMIC_IOSONLY, copy) NSArray *partyPartisanship;
 @property (NS_NONATOMIC_IOSONLY, copy) NSDate *updated;
 @end
 
@@ -44,14 +48,14 @@
 		_fresh = NO;
 		_loading = NO;
 		_partisanIndexAggregates = nil;
-		_rawPartisanIndexAggregates = nil;
+		_partyPartisanship = nil;
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(resetData:) name:@"RESTKIT_LOADED_LEGISLATOROBJ" object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(resetData:) name:@"RESTKIT_LOADED_WNOMOBJ" object:nil];
 
-		[self loadPartisanIndex:nil];
+		[self loadPartisanIndex];
 		
 		// initialize these
 		[self partisanIndexAggregates];
@@ -64,30 +68,42 @@
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[RKClient sharedClient].requestQueue cancelRequestsWithDelegate:self];
-	if (_updated)
-		_updated = nil;
-		
-	if (_rawPartisanIndexAggregates) _rawPartisanIndexAggregates = nil;
-	if (_partisanIndexAggregates) _partisanIndexAggregates = nil;
-	
+	_updated = nil;
+	_partyPartisanship = nil;
+	_partisanIndexAggregates = nil;
 }
 
 - (void)resetData:(NSNotification *)notification
 {
-    if (_partisanIndexAggregates) _partisanIndexAggregates = nil;
+    _partisanIndexAggregates = nil;
 	[self partisanIndexAggregates];
 }
 
 #pragma mark -
 #pragma mark Statistics for Partisan Sliders
 
+- (void)setPartyPartisanship:(NSArray *)partyPartisanship
+{
+    if (partyPartisanship.count)
+    {
+        NSSortDescriptor *sortBySession = [NSSortDescriptor sortDescriptorWithKey:PartyPartisanshipKeys.session ascending:YES];
+        NSSortDescriptor *sortByChamber = [NSSortDescriptor sortDescriptorWithKey:PartyPartisanshipKeys.chamber ascending:YES];
+        NSSortDescriptor *sortByParty = [NSSortDescriptor sortDescriptorWithKey:PartyPartisanshipKeys.party ascending:YES];
+
+        partyPartisanship = [partyPartisanship sortedArrayUsingDescriptors:@[sortBySession,sortByChamber,sortByParty]];
+    }
+    _partyPartisanship = partyPartisanship;
+}
+
 /* This collects the calculations of partisanship across members in each chamber and party, then caches the results*/
 - (NSDictionary *)partisanIndexAggregates
 {
     if (!_partisanIndexAggregates || !_partisanIndexAggregates.count)
     {
-		NSMutableDictionary *tempAggregates = [NSMutableDictionary dictionaryWithCapacity:4];
-		NSInteger chamber, party;
+        NSMutableDictionary *tempAggregates = [NSMutableDictionary dictionaryWithCapacity:4];
+        NSInteger chamber = HOUSE;
+        NSInteger party = kUnknownParty;
+
 		for (chamber = HOUSE; chamber <= SENATE; chamber++)
         {
 			for (party = kUnknownParty; party <= REPUBLICAN; party++)
@@ -97,23 +113,23 @@
                 {
 					NSNumber *avgIndex = aggregatesArray[0];
 					if (avgIndex)
-						tempAggregates[[NSString stringWithFormat:@"AvgC%ld+P%ld", (long)chamber, (long)party]] = avgIndex;
+						tempAggregates[[NSString stringWithFormat:@"AvgC%d+P%d", (int)chamber, (int)party]] = avgIndex;
 					
 					NSNumber *maxIndex = aggregatesArray[1];
 					if (maxIndex)
-						tempAggregates[[NSString stringWithFormat:@"MaxC%ld+P%ld", (long)chamber, (long)party]] = maxIndex;
+						tempAggregates[[NSString stringWithFormat:@"MaxC%d+P%d", (int)chamber, (int)party]] = maxIndex;
 					
 					NSNumber *minIndex = aggregatesArray[2];
 					if (minIndex)
-						tempAggregates[[NSString stringWithFormat:@"MinC%ld+P%ld", (long)chamber, (long)party]] = minIndex;
+						tempAggregates[[NSString stringWithFormat:@"MinC%d+P%d", (int)chamber, (int)party]] = minIndex;
 				}
 				else
 					NSLog(@"PartisanIndexStates: Error pulling aggregate dictionary.");
 			}
 		}
-		_partisanIndexAggregates = [NSDictionary dictionaryWithDictionary:tempAggregates];
+		_partisanIndexAggregates = [tempAggregates copy];
 	}
-	
+
 	return _partisanIndexAggregates;
 }
 
@@ -140,6 +156,7 @@
 
 
 - (CGFloat) partyPartisanIndexUsingChamber:(NSInteger)chamber andPartyID:(NSInteger)party {
+#warning GREG - here
 	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"AvgC%ld+P%ld", (long)chamber, (long)party]] floatValue];
 };
 
@@ -163,7 +180,7 @@
 		debug_NSLog(@"aggregatePartisanIndexForChamber: ... cannot be BOTH chambers");
 		return nil;
 	}
-	
+
 	NSNumber *tempNum = [self maxWnomSession];
 	NSInteger maxWnomSession = WNOM_DEFAULT_LATEST_SESSION;
 	if (tempNum)
@@ -245,9 +262,7 @@
             WnomObj *wnom = ([obj isKindOfClass:[WnomObj class]]) ? (WnomObj *)obj : nil;
             if (!wnom)
                 break;
-
         }
-
     }
 	
 	return allResults;
@@ -256,27 +271,25 @@
 #pragma mark -
 #pragma mark Statistics for Historical Chart
 
-#define	kPartisanIndexPath @"WnomAggregateObj"
-#define kPartisanIndexFile @"WnomAggregateObj.json"
-
 /* This gathers our pre-calculated overall aggregate scores for parties and chambers, from JSON		
 	We use this for our red/blue lines in our historical partisanship chart.*/
-- (NSArray *) historyForParty:(NSInteger)party chamber:(NSInteger)chamber
+- (NSArray *)historyForParty:(NSInteger)party chamber:(NSInteger)chamber
 {
-	if (IsEmpty(_rawPartisanIndexAggregates) || !self.isFresh || !_updated ||
+    if (IsEmpty(_partyPartisanship) || !self.isFresh || !_updated ||
 		([[NSDate date] timeIntervalSinceDate:_updated] > (3600*24*2)))
 	{	// if we're over 2 days old, let's refresh
 		if (!self.isLoading)
         {
-			[self loadPartisanIndex:nil];
+			[self loadPartisanIndex];
 		}
 	}
-	
-	if (!IsEmpty(_rawPartisanIndexAggregates))
+
+	if (_partyPartisanship.count)
 	{
-		NSArray *chamberArray = [_rawPartisanIndexAggregates findAllWhereKeyPath:@"chamber" equals:@(chamber)];
+        struct PartyPartisanshipKeys keys = PartyPartisanshipKeys;
+		NSArray *chamberArray = [_partyPartisanship findAllWhereKeyPath:keys.chamber equals:@(chamber)];
 		if (chamberArray) {
-			NSArray *partyArray = [chamberArray findAllWhereKeyPath:@"party" equals:@(party)];
+			NSArray *partyArray = [chamberArray findAllWhereKeyPath:keys.party equals:@(party)];
 			return partyArray;
 		}
 	}
@@ -292,7 +305,9 @@
     if (!legislator || ![legislator isKindOfClass:[LegislatorObj class]])
         return nil;
 
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"session" ascending:YES];
+    struct PartyPartisanshipKeys keys = PartyPartisanshipKeys;
+
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:keys.session ascending:YES];
     NSArray *descriptors = [[NSArray alloc] initWithObjects:sortDescriptor,nil];
     NSArray *scores = legislator.wnomScores.allObjects;
 
@@ -312,12 +327,22 @@
     NSMutableArray *memberScores = [[NSMutableArray alloc] init];
     NSMutableArray *dates = [[NSMutableArray alloc] init];
 
+    NSString *aggregateScoreKey = @"wnom";
+    if (democHistory.count)
+    {
+        id item = [democHistory firstObject];
+        if ([item isKindOfClass:[PartyPartisanshipObj class]]) {
+            aggregateScoreKey = keys.score;
+        }
+    }
+
     for ( i = 0; i < countOfScores ; i++)
     {
         WnomObj *wnomObj = sortedScores[i];
         NSDate *date = [NSDate dateFromString:[wnomObj year].stringValue withFormat:@"yyyy"];
-        NSNumber *democY = [democHistory findWhereKeyPath:@"session" equals:wnomObj.session][@"wnom"];
-        NSNumber *repubY = [repubHistory findWhereKeyPath:@"session" equals:wnomObj.session][@"wnom"];
+        
+        NSNumber *democY = ([democHistory findWhereKeyPath:keys.session equals:wnomObj.session])[aggregateScoreKey];
+        NSNumber *repubY = ([repubHistory findWhereKeyPath:keys.session equals:wnomObj.session])[aggregateScoreKey];
         if (!democY)
             democY = @0.0f;
         if (!repubY)
@@ -353,15 +378,70 @@
     return [self partisanshipDataForLegislator:legislator];
 }
 
-- (void)loadPartisanIndexFromCache:(id)sender
+- (void)loadPartisanIndexFromBundle
 {
+    _partyPartisanship = nil;
+    NSArray *aggregateObjects = nil;
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:@"PartyPartisanshipObj.plist"];
+
+    if ([fileManager fileExistsAtPath:localPath isDirectory:NO])
+    {
+        aggregateObjects = [NSKeyedUnarchiver unarchiveObjectWithFile:localPath];
+
+        if (!aggregateObjects)
+        {
+            NSURL *fileURL = [NSURL fileURLWithPath:localPath isDirectory:NO];
+            //NSAssert(fileURL != nil, @"Should have a URL to PartyPartisanshipObj.plist");
+
+            aggregateObjects = [[NSArray alloc] initWithContentsOfURL:fileURL];
+        }
+    }
+
+    if (!aggregateObjects.count)
+    {
+        NSError *jsonError = nil;
+        NSString *bundledPath = [[NSBundle mainBundle] pathForResource:@"WnomAggregateObj" ofType:@"json"];
+        //[fileManager copyItemAtPath:defaultPath toPath:localPath error:&jsonError];
+        NSAssert(bundledPath != nil, @"Should have a bundled WnomAggregateObj.json");
+
+        NSData *jsonData = [NSData dataWithContentsOfFile:bundledPath options:NSDataReadingMappedIfSafe error:&jsonError];
+        NSArray<NSDictionary *> *jsonObjects = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:&jsonError];
+
+        NSMutableArray *aggregates = [[NSMutableArray alloc] init];
+        [jsonObjects enumerateObjectsUsingBlock:^(NSDictionary * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (!SLTypeDictionaryOrNil(obj))
+            {
+                NSLog(@"Unable to map the aggregate object to PartyPartisanshipObj: %@", obj);
+                return;
+            }
+            PartyPartisanshipObj *newObject = [[PartyPartisanshipObj alloc] initWithDictionary:obj];
+            if (!newObject)
+            {
+                NSLog(@"Unable to map the aggregate object to PartyPartisanshipObj: %@", obj);
+                return;
+            }
+            [aggregates addObject:newObject];
+        }];
+
+        if (aggregates.count)
+            aggregateObjects = [aggregates copy];
+    }
+
+    if (aggregateObjects.count)
+    {
+        self.partyPartisanship = aggregateObjects;
+    }
+
+#if 0
 	// We had trouble loading the metadata online, so pull it up from the one in the documents folder (or the app bundle)
 	NSError *newError = nil;
-	NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kPartisanIndexFile];
-	NSFileManager *fileManager = [NSFileManager defaultManager];
+	//NSString *jsonPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:@"WnomAggregateObj.json"];
+
 	if (![fileManager fileExistsAtPath:localPath])
     {
-		NSString *defaultPath = [[NSBundle mainBundle] pathForResource:kPartisanIndexPath ofType:@"json"];
+		NSString *defaultPath = [[NSBundle mainBundle] pathForResource:@"WnomAggregateObj" ofType:@"json"];
 		[fileManager copyItemAtPath:defaultPath toPath:localPath error:&newError];
 		debug_NSLog(@"PartisanIndex: copied metadata from the app bundle's original.");
 	}
@@ -381,9 +461,9 @@
     }
     else
     {
-        if (_rawPartisanIndexAggregates)
+        if (_partyPartisanship)
         {
-            _rawPartisanIndexAggregates = nil;
+            _partyPartisanship = nil;
         }
 
         @try {
@@ -397,31 +477,33 @@
                 && [aggregates isKindOfClass:[NSArray class]]
                 && aggregates.count)
             {
-                _rawPartisanIndexAggregates = [aggregates mutableCopy];
+                self.partyPartisanship = [aggregates copy];
             }
         } @catch (NSException *exception) {
             NSLog(@"Exception while attempting to parse and consume aggregate partisan scores from the bundled JSON: %@", exception);
         }
     }
+#endif
 
-	if (_rawPartisanIndexAggregates)
+	if (_partyPartisanship.count)
     {
-		[self resetData:nil];
+		//[self resetData:nil];
 		[[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyLoaded object:nil];
 	}
 }
 
-- (void)loadPartisanIndex:(id)sender
+- (void)loadPartisanIndex
 {
 	if ([TexLegeReachability texlegeReachable])
     {
-		if (IsEmpty(_rawPartisanIndexAggregates))
+		if (IsEmpty(_partyPartisanship))
         {
-			[self loadPartisanIndexFromCache:nil];		// we do this automatically if we're not reachable
+			[self loadPartisanIndexFromBundle];		// we do this automatically if we're not reachable
 		}
 		
 		_loading = YES;
-		[[RKClient sharedClient] get:[NSString stringWithFormat:@"/%@", kPartisanIndexFile] delegate:self];
+
+		//[[RKClient sharedClient] get:[NSString stringWithFormat:@"/%@", @"WnomAggregateObj.json"] delegate:self];
 	}
 	else
     {
@@ -442,8 +524,10 @@
 		[[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyError object:nil];
 	}
 	
-	[self loadPartisanIndexFromCache:nil];
+	[self loadPartisanIndexFromBundle];
 }
+
+#if 0
 
 - (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response
 {
@@ -453,10 +537,7 @@
         return;
 
     // Success! Let's take a look at the data
-    if (_rawPartisanIndexAggregates)
-    {
-        _rawPartisanIndexAggregates = nil;
-    }
+    __partyPartisanship = nil;
 
     NSError *error = nil;
 
@@ -472,13 +553,11 @@
         return;
     }
 
-    _rawPartisanIndexAggregates = [aggregates mutableCopy];
-    if (_updated)
-        ;
+    self.partyPartisanship = aggregates;
     _updated = [NSDate date];
     
-    NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kPartisanIndexFile];
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_rawPartisanIndexAggregates options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:@"WnomAggregateObj.json"];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_partyPartisanship options:NSJSONWritingPrettyPrinted error:&error];
     if (![jsonData writeToFile:localPath atomically:YES])
     {
         NSLog(@"PartisanIndex: error writing cache to file: %@", localPath);
@@ -487,6 +566,29 @@
     [self resetData:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyLoaded object:nil];
     debug_NSLog(@"PartisanIndex network download successful, archiving for others.");
+}
+
+#endif
+
+- (void)didUpdatePartyPartisanship:(NSArray<PartyPartisanshipObj *> *)partyPartisanship
+{
+    if (!partyPartisanship || !partyPartisanship.count)
+        return;
+
+    _loading = NO;
+    _updated = [NSDate date];
+    _fresh = YES;
+
+    NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:@"PartyPartisanshipObj.plist"];
+
+    if (![NSKeyedArchiver archiveRootObject:partyPartisanship toFile:localPath])
+    {
+        NSLog(@"Could not write the PartyPartisanshipObj to %@", localPath);
+    }
+
+    self.partyPartisanship = partyPartisanship;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:kPartisanIndexNotifyLoaded object:nil];
 }
 
 @end

@@ -58,7 +58,7 @@
     {
         texasCentricParser = NO;
 
-        StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
+        StateMetaLoader *meta = [StateMetaLoader instance];
         if (NO == IsEmpty(meta.selectedState) && [meta.selectedState isEqualToString:@"tx"])
         {
             texasCentricParser = YES;

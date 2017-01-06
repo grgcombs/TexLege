@@ -51,7 +51,7 @@
 	[super viewWillAppear:animated];
 	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];
 
-	StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
+	StateMetaLoader *meta = [StateMetaLoader instance];
 	if (IsEmpty(meta.selectedState))
 		return;
 	

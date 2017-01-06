@@ -248,7 +248,7 @@
 	if ([TexLegeReachability openstatesReachable]) {
 		self.loadingStatus = LOADING_ACTIVE;
 		OpenLegislativeAPIs *api = [OpenLegislativeAPIs sharedOpenLegislativeAPIs];
-		StateMetaLoader *meta = [StateMetaLoader sharedStateMeta];
+		StateMetaLoader *meta = [StateMetaLoader instance];
 		if (IsEmpty(meta.selectedState) || IsEmpty(meta.currentSession))
 			return;
 		

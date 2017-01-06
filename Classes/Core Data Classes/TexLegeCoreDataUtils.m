@@ -20,6 +20,7 @@
 #import "StafferObj+RestKit.h"
 #import "WnomObj+RestKit.h"
 #import "LinkObj+RestKit.h"
+#import "PartyPartisanshipObj.h"
 
 #import "TexLegeAppDelegate.h"
 #import "NSDate+Helper.h"
@@ -255,87 +256,25 @@
     return userAgent;
 }
 
-+ (BOOL)isDaylightSavingTime
-{
-    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
-    NSCalendarUnit units = NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;;
-
-    NSDate *now = [NSDate date];
-    NSDateComponents *nowComponents = [calendar components:units fromDate:now];
-
-    NSDateComponents *beginComponents = [nowComponents copy];
-    beginComponents.month = 3; // second Sunday of March
-    beginComponents.hour = 2;
-    beginComponents.minute = 0;
-
-    NSDateComponents *endComponents = [nowComponents copy];
-    endComponents.month = 11; // first Sunday of November
-    endComponents.hour = 2;
-    endComponents.minute = 0;
-
-    NSInteger year = nowComponents.year;
-    switch (year) {
-        case 2016:
-            beginComponents.day = 13;
-            endComponents.day = 6;
-            break;
-        case 2017:
-            beginComponents.day = 12;
-            endComponents.day = 5;
-            break;
-        case 2018:
-            beginComponents.day = 11;
-            endComponents.day = 4;
-            break;
-        case 2019:
-            beginComponents.day = 10;
-            endComponents.day = 3;
-            break;
-        case 2020:
-            beginComponents.day = 8; // leap year?
-            endComponents.day = 1;
-            break;
-        case 2021:
-            beginComponents.day = 14;
-            endComponents.day = 7;
-            break;
-        case 2022:
-            beginComponents.day = 13;
-            endComponents.day = 6;
-            break;
-        case 2023:
-            beginComponents.day = 12;
-            endComponents.day = 5;
-            break;
-        case 2024:
-            beginComponents.day = 11;
-            endComponents.day = 4;
-            break;
-        case 2025:
-            beginComponents.day = 10;
-            endComponents.day = 3;
-            break;
-        default:
-            NSAssert(NO, @"Make adjustments for a new year");
-            break;
-    }
-
-    NSComparisonResult beginToNow = [[beginComponents date] compare:now];
-    NSComparisonResult nowToEnd = [now compare:[endComponents date]];
-    BOOL onOrAfterStart = (beginToNow == NSOrderedSame || beginToNow == NSOrderedAscending);
-    BOOL onOrBeforeEnd = (nowToEnd == NSOrderedSame || nowToEnd == NSOrderedAscending);
-    return (onOrAfterStart && onOrBeforeEnd);
-}
-
 + (void)registerObjectMappingWithProvider:(RKObjectMappingProvider *)provider
 {
-    NSString *abbreviation = ([self isDaylightSavingTime]) ? @"CDT" : @"CST";
+    NSString *abbreviation = ([[NSDate date] isDaylightSavingTime]) ? @"CDT" : @"CST";
     NSTimeZone *centralTime = [NSTimeZone timeZoneWithAbbreviation:abbreviation];
 
-    [RKManagedObjectMapping addDefaultDateFormatterForString:@"yyyy-MM-dd HH:mm:ss" inTimeZone:centralTime];
-    [RKManagedObjectMapping addDefaultDateFormatterForString:@"E MMM d HH:mm:ss Z y" inTimeZone:centralTime];
-    [RKManagedObjectMapping addDefaultDateFormatterForString:@"yyyy-MM-dd" inTimeZone:centralTime];
-    [RKManagedObjectMapping addDefaultDateFormatterForString:@"HH:mm:ss" inTimeZone:centralTime];
+    NSArray<NSString *> *formats = @[
+                                     @"yyyy-MM-dd HH:mm:ss",
+                                     @"E MMM d HH:mm:ss Z y",
+                                     @"yyyy-MM-dd",
+                                     @"HH:mm:ss",
+                                     ];
+
+    for (NSString *format in formats)
+    {
+        NSDateFormatter *formatter = [NSDateFormatter dateFormatterWithID:format format:format];
+        NSAssert(formatter != nil, @"Should have a date formatter for %@", format);
+        formatter.timeZone = centralTime;
+        [RKManagedObjectMapping addDefaultDateFormatter:formatter];
+    }
 
     RKManagedObjectMapping *committeeMap = [CommitteeObj attributeMapping];
     RKManagedObjectMapping *legislatorMap = [LegislatorObj attributeMapping];
@@ -345,6 +284,7 @@
     RKManagedObjectMapping *stafferMap = [StafferObj attributeMapping];
     RKManagedObjectMapping *wnomMap = [WnomObj attributeMapping];
     RKManagedObjectMapping *linkMap = [LinkObj attributeMapping];
+    RKObjectMapping *aggregateMap = [PartyPartisanshipObj attributeMapping];
 
     [positionMap hasOne:@"committee" withMapping:committeeMap];
     [positionMap hasOne:@"legislator" withMapping:legislatorMap];
@@ -373,6 +313,8 @@
     [provider addObjectMapping:stafferMap];
     [provider addObjectMapping:wnomMap];
     [provider addObjectMapping:linkMap];
+    [provider addObjectMapping:aggregateMap];
+
 }
 
 + (void)initRestKitObjects

@@ -133,3 +133,28 @@ To use it in your Cocoa project, import the header and implementation files, and
 + (NSDate *)dateFromDate:(NSDate *)sourceDate fromTimeZone:(NSString *)tzAbbrev;
 
 @end
+
+
+/** 
+ *  Added by Greg Combs
+ **/
+
+@interface NSDateFormatter(SLHelper)
+
+/**
+ *  Create or load from thread local storage a date formatter with the given key and format string.
+ *
+ *  @param formatterId  A unique identifier to use when re-loading this date formatter.
+ *  @param formatString The format string to use for this date formatter.
+ *
+ *  @return A date formatter instance.
+ */
++ (NSDateFormatter *)dateFormatterWithID:(NSString *)formatterId format:(NSString *)formatString;
+
+@end
+
+@interface NSDate(SLHelper)
+
+- (BOOL)isDaylightSavingTime;
+
+@end

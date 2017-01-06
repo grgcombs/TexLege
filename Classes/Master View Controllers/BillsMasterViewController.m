@@ -24,6 +24,8 @@
 #import "BillSearchDataSource.h"
 #import "OpenLegislativeAPIs.h"
 #import "LocalyticsSession.h"
+#import "StateMetaLoader.h"
+#import "NSDate+Helper.h"
 
 #import <objc/message.h>
 
@@ -42,7 +44,6 @@
 
 - (void) dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-
 }
 
 - (NSString *)nibName {

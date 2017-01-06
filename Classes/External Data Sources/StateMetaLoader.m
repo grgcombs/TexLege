@@ -17,6 +17,56 @@
 #import "TexLegeLibrary.h"
 #import "NSDate+Helper.h"
 
+const struct StateMetadataKeys StateMetadataKeys = {
+    .selectedState = @"selected_state",
+    .abbreviation = @"abbreviation",
+    .name = @"name",
+    .timezone = @"capitol_timezone",
+    .chambers = {
+        .metaLookup = @"chambers",
+        .lower = {
+            .metaLookup = @"lower",
+            .name = @"name",
+            .title = @"title",
+//            .name = @"lower_chamber_name" ,
+//            .title = @"lower_chamber_title",
+//            .termLength = @"lower_chamber_term",
+        },
+        .upper = {
+            .metaLookup = @"upper",
+            .name = @"name",
+            .title = @"title",
+            //.name = @"upper_chamber_name" ,
+            //.title = @"upper_chamber_title",
+            //.termLength = @"upper_chamber_term",
+        }
+    },
+    .features = {
+        .metaLookup = @"feature_flags",
+        .events = @"events",
+        .subjects = @"subjects",
+    },
+    .terms = {
+        .metaLookup = @"terms",
+        .name = @"name",
+        .sessions = @"sessions",
+        .startYear = @"start_year",
+        .endYear = @"end_year",
+    },
+    .sessionDetails = {
+        .metaLookup = @"session_details",
+        .name = @"display_name",
+        .type = @"type",
+        .startDate = @"start_date",
+        .endDate = @"end_date",
+    }
+};
+
+const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
+    .primary = @"primary",
+    .special = @"special",
+};
+
 @interface StateMetaLoader ()
 
 @property (NS_NONATOMIC_IOSONLY,copy) NSMutableDictionary *metadata;
@@ -27,7 +77,7 @@
 
 @implementation StateMetaLoader
 
-+ (id)sharedStateMeta
++ (instancetype)instance
 {
 	static dispatch_once_t pred;
 	static StateMetaLoader *foo = nil;
@@ -42,14 +92,16 @@
 	// prepare to make some assumptions
 	if (chamber == HOUSE || chamber == SENATE)
     {
-		NSDictionary *stateMeta = [[StateMetaLoader sharedStateMeta] stateMetadata];
-		if (NO == IsEmpty(stateMeta)) {
-			if (chamber == SENATE)
-				name = stateMeta[kMetaUpperChamberNameKey];
-			else {
-				name = stateMeta[kMetaLowerChamberNameKey];
-			}
-			if (NO == IsEmpty(name)) {
+		NSDictionary *stateMeta = [[StateMetaLoader instance] stateMetadata];
+		if (NO == IsEmpty(stateMeta))
+        {
+            struct StateMetadataKeys keys = StateMetadataKeys;
+            struct StateMetadataChamberDetailKeys chamberKeys = (chamber == SENATE) ? keys.chambers.upper : keys.chambers.lower;
+            NSDictionary *chambers = stateMeta[keys.chambers.metaLookup];
+            name = chambers[chamberKeys.metaLookup][chamberKeys.name];
+
+            if (NO == IsEmpty(name))
+            {
 				NSArray *words = [name componentsSeparatedByString:@" "];
 				if (words.count > 1 && [words[0] length] > 4) { // just to make sure we have a decent, single name
 					name = words[0];
@@ -71,7 +123,7 @@
 		_loadingStates = [[NSMutableArray alloc] init];
 		
 		[[NSUserDefaults standardUserDefaults] synchronize];
-		NSString *tempState = [[NSUserDefaults standardUserDefaults] objectForKey:kMetaSelectedStateKey];
+		NSString *tempState = [[NSUserDefaults standardUserDefaults] stringForKey:StateMetadataKeys.selectedState];
 		if (tempState) {
 			_selectedState = [tempState copy];
 		}
@@ -96,7 +148,7 @@
     {
 		_selectedState= [stateID copy];
 
-		[[NSUserDefaults standardUserDefaults] setObject:stateID forKey:kMetaSelectedStateKey];
+		[[NSUserDefaults standardUserDefaults] setObject:stateID forKey:StateMetadataKeys.selectedState];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		[self loadMetadataForState:stateID];
@@ -105,7 +157,7 @@
 
 - (NSDictionary *)metadataFromCache
 {
-    self.metadata = nil;
+    _metadata = nil;
 
 	NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kStateMetaFile];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -133,7 +185,7 @@
 	NSString *method = [NSString stringWithFormat:@"/metadata/%@", stateID];
 	request = [osApiClient get:method queryParams:queryParams delegate:self];	
 	if (request) {
-		request.userData = @{kMetaSelectedStateKey: stateID};
+		request.userData = @{StateMetadataKeys.selectedState: stateID};
 	}
 	else {
 		[self request:nil didFailLoadWithError:nil];
@@ -165,33 +217,57 @@
 	return stateMeta;
 }
 
+- (NSArray<NSDictionary *> *)sortedTerms
+{
+    struct StateMetadataKeys keys = StateMetadataKeys;
+
+    NSString *selectedState = self.selectedState;
+    if (!selectedState)
+        return nil;
+    NSDictionary *stateMeta = self.metadata[selectedState];
+    if (!stateMeta)
+        return nil;
+
+    struct StateMetadataTermKeys termKeys = keys.terms;
+    NSArray *terms = stateMeta[termKeys.metaLookup];
+    if (!terms || ![terms isKindOfClass:[NSArray class]])
+        return nil;
+    NSSortDescriptor *sortByDescendingYear = [NSSortDescriptor sortDescriptorWithKey:termKeys.startYear ascending:NO];
+    terms = [terms sortedArrayUsingDescriptors:@[sortByDescendingYear]];
+    return terms;
+}
+
 - (NSString *)currentSession
 {
-	if (NO == IsEmpty(_currentSession) || !self.selectedState)
+	if (!IsEmpty(_currentSession))
 		return _currentSession;
-	NSDictionary *stateMeta = self.metadata[self.selectedState];
-	
-	NSMutableArray *terms = [[NSMutableArray alloc] initWithArray:stateMeta[kMetaSessionsAltKey]];
-	NSSortDescriptor *sortDesc = [NSSortDescriptor sortDescriptorWithKey:@"start_year" ascending:NO];
-	[terms sortUsingDescriptors:@[sortDesc]];
-			
+
+    NSArray *terms = [self sortedTerms];
+    if (!terms.count)
+        return _currentSession;
+
+    struct StateMetadataKeys keys = StateMetadataKeys;
+    struct StateMetadataTermKeys termKeys = keys.terms;
+
 	NSInteger maxyear = -1;
 	NSString *foundSession = nil;
 	
 	for (NSDictionary *term in terms)
     {
-		NSNumber *startYear = term[@"start_year"];
-		//NSNumber *endYear = [term objectForKey:@"end_year"];
-		NSInteger thisYear = [[NSDate date] year];
-		if (startYear) {
+		NSNumber *startYear = term[termKeys.startYear];
+
+        NSInteger thisYear = [[NSDate date] year];
+		if (startYear)
+        {
 			NSInteger startInt = startYear.integerValue;
-			if (startInt > thisYear) {
+			if (startInt > thisYear)
 				continue;
-			}
-			else if (startInt > maxyear) {
+			else if (startInt > maxyear)
+            {
 				maxyear = startInt;
-				NSArray *sessions = term[@"sessions"];
-				if (!IsEmpty(sessions)) {
+				NSArray *sessions = term[termKeys.sessions];
+				if (!IsEmpty(sessions))
+                {
 					id latest = sessions.lastObject; 
 					if ([latest isKindOfClass:[NSString class]])
 						foundSession = latest;
@@ -242,16 +318,18 @@
 			[self request:request didFailLoadWithError:nil];
 			return;
 		}
-		
+
+        struct StateMetadataKeys keys = StateMetadataKeys;
+
 		NSString *wantedStateID = nil;
 		if (request.userData) {	// try getting our new state id from our initial query info
-			wantedStateID = (request.userData)[kMetaSelectedStateKey];
+			wantedStateID = (request.userData)[keys.selectedState];
 			if (!IsEmpty(wantedStateID) && [_loadingStates containsObject:wantedStateID]) {
 				[_loadingStates removeObject:wantedStateID];
 			}			
 		}
 		
-		NSString *gotStateID = stateMeta[kMetaStateAbbrevKey];
+		NSString *gotStateID = stateMeta[keys.abbreviation];
 				
 		if (IsEmpty(wantedStateID) || IsEmpty(gotStateID) || NO == [wantedStateID isEqualToString:gotStateID]) {
 			NSLog(@"StateMetaDataLoader: requested metadata for %@, but incoming data is for %@", wantedStateID, gotStateID);

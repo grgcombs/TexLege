@@ -120,11 +120,11 @@
         <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="RKSearchableManagedObject" representedClassName="RKSearchableManagedObject" isAbstract="YES" syncable="YES">
-        <relationship name="searchWords" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="RKSearchWord" indexed="YES" syncable="YES"/>
+        <relationship name="searchWords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RKSearchWord" inverseName="searchableManagedObjects" inverseEntity="RKSearchWord" indexed="YES" syncable="YES"/>
     </entity>
     <entity name="RKSearchWord" representedClassName="RKSearchWord" syncable="YES">
         <attribute name="word" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
-        <relationship name="searchableManagedObjects" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="RKSearchableManagedObject" indexed="YES" syncable="YES"/>
+        <relationship name="searchableManagedObjects" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RKSearchableManagedObject" inverseName="searchWords" inverseEntity="RKSearchableManagedObject" indexed="YES" syncable="YES"/>
     </entity>
     <entity name="StafferObj" representedClassName="StafferObj" syncable="YES">
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
@@ -153,9 +153,9 @@
         <element name="DistrictOfficeObj" positionX="549" positionY="486" width="128" height="330"/>
         <element name="LegislatorObj" positionX="16" positionY="-18" width="128" height="675"/>
         <element name="LinkObj" positionX="484" positionY="24" width="128" height="120"/>
-        <element name="StafferObj" positionX="27" positionY="693" width="128" height="165"/>
-        <element name="WnomObj" positionX="187" positionY="9" width="128" height="165"/>
         <element name="RKSearchableManagedObject" positionX="225" positionY="135" width="128" height="60"/>
         <element name="RKSearchWord" positionX="234" positionY="144" width="128" height="75"/>
+        <element name="StafferObj" positionX="27" positionY="693" width="128" height="165"/>
+        <element name="WnomObj" positionX="187" positionY="9" width="128" height="165"/>
     </elements>
 </model>

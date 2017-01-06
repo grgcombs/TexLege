@@ -21,7 +21,7 @@
 
 @interface StateMetaLoader : NSObject <RKRequestDelegate>
 
-+ (id)sharedStateMeta;	// Singleton
++ (instancetype)instance;	// Singleton
 
 // Oftentimes, we just need a quick and dirty answer from our singleton
 + (NSString *)nameForChamber:(NSInteger)chamber;
@@ -34,18 +34,57 @@
 @property (NS_NONATOMIC_IOSONLY,copy) NSString *currentSession;
 @property (NS_NONATOMIC_IOSONLY,copy,readonly) NSDictionary *stateMetadata;
 @property (NS_NONATOMIC_IOSONLY,copy,readonly) NSArray *loadingStates;
+- (NSArray<NSDictionary *> *)sortedTerms;
 
 @end
 
-#define kMetaSelectedStateKey		@"selected_state"
+struct StateMetadataChamberDetailKeys {
+    __unsafe_unretained NSString *metaLookup;
+    __unsafe_unretained NSString *name;
+    __unsafe_unretained NSString *title;
+    __unsafe_unretained NSString *termLength;
+};
 
-#define kMetaLowerChamberNameKey @"lower_chamber_name"			// House of Representatives
-#define kMetaUpperChamberNameKey @"upper_chamber_name"			// Senate
-#define kMetaLowerChamberTitleKey @"lower_chamber_title"		// Representative
-#define kMetaUpperChamberTitleKey @"upper_chamber_title"		// Senator
-#define kMetaSessionsKey @"session_details"						// "811":{"type": "special","start_date": "2009-07-01 00:00:00", "end_date": "2009-07-10 00:00:00"}
-#define kMetaSessionsAltKey @"terms"		
-#define kMetaStateAbbrevKey @"abbreviation"						// tx
-#define kMetaStateNameKey @"name"								// Texas
-#define kMetaLowerChamberElectionTermKey @"lower_chamber_term"	// 2	[years/integer]
-#define kMetaUpperChamberElectionTermKey @"upper_chamber_term"	// 4	[years/integer] 
+struct StateMetadataChamberKeys {
+    __unsafe_unretained NSString *metaLookup;
+    const struct StateMetadataChamberDetailKeys upper;
+    const struct StateMetadataChamberDetailKeys lower;
+};
+
+struct StateMetadataSessionDetailKeys {
+    __unsafe_unretained NSString *metaLookup;
+    __unsafe_unretained NSString *name;
+    __unsafe_unretained NSString *type;
+    __unsafe_unretained NSString *startDate;
+    __unsafe_unretained NSString *endDate;
+};
+
+struct StateMetadataTermKeys {
+    __unsafe_unretained NSString *metaLookup;
+    __unsafe_unretained NSString *name;
+    __unsafe_unretained NSString *sessions;
+    __unsafe_unretained NSString *startYear;
+    __unsafe_unretained NSString *endYear;
+};
+
+struct StateMetadataFeatureKeys {
+    __unsafe_unretained NSString *metaLookup;
+    __unsafe_unretained NSString *events;
+    __unsafe_unretained NSString *subjects;
+};
+
+extern const struct StateMetadataSessionTypeKeys {
+    __unsafe_unretained NSString *primary;
+    __unsafe_unretained NSString *special;
+} StateMetadataSessionTypeKeys;
+
+extern const struct StateMetadataKeys {
+    __unsafe_unretained NSString * selectedState;
+    __unsafe_unretained NSString * abbreviation;
+    __unsafe_unretained NSString * name;
+    __unsafe_unretained NSString * timezone;
+    const struct StateMetadataChamberKeys chambers;
+    const struct StateMetadataFeatureKeys features;
+    const struct StateMetadataTermKeys terms;
+    const struct StateMetadataSessionDetailKeys sessionDetails;
+} StateMetadataKeys;
