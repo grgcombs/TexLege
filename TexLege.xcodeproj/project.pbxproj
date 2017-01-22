@@ -349,6 +349,7 @@
 		378E1242130F4D6100C425D4 /* BillsMenuDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F4A815130CAA4F00705EDD /* BillsMenuDataSource.m */; };
 		378E1247130F4D7900C425D4 /* BillsMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CFBA0312FE8936007C3808 /* BillsMasterViewController.m */; };
 		379393FE123B1A82003103B3 /* CommitteeMemberCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 379393FD123B1A82003103B3 /* CommitteeMemberCellView.m */; };
+		3795B5041E1FFE6B008F6FD9 /* SLToastKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3795B4FF1E1FFE42008F6FD9 /* SLToastKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		379B9CD11250FE7E0032E616 /* TexLegeReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 379B9CD01250FE7E0032E616 /* TexLegeReachability.m */; };
 		379C1EEA1012DF28007844B5 /* NotesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 379C1EE81012DF28007844B5 /* NotesViewController.m */; };
 		379C1F031012E0CD007844B5 /* NotesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 379C1F021012E0CD007844B5 /* NotesView.xib */; };
@@ -445,8 +446,6 @@
 		37E207C81220779B00103D76 /* bluestar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C41220779B00103D76 /* bluestar@2x.png */; };
 		37E207C91220779B00103D76 /* redstar.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C51220779B00103D76 /* redstar.png */; };
 		37E207CA1220779B00103D76 /* redstar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C61220779B00103D76 /* redstar@2x.png */; };
-		37E208B01E10DBFE00D95154 /* SLToastKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E208AF1E10DBFE00D95154 /* SLToastKit.framework */; };
-		37E208B11E10DC2200D95154 /* SLToastKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 37E208AF1E10DBFE00D95154 /* SLToastKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		37E208B51E11933800D95154 /* SLToastManager+TexLege.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E208B31E117CCD00D95154 /* SLToastManager+TexLege.m */; };
 		37E208C31E13226500D95154 /* SLFRestKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 37E208C01E1321D700D95154 /* SLFRestKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		37E36CF1139E695C00917F40 /* BillsRecentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36CF0139E695C00917F40 /* BillsRecentViewController.m */; };
@@ -543,6 +542,27 @@
 			remoteGlobalIDString = 00733A4C1BC487C000A5A117;
 			remoteInfo = "WebImage tvOS";
 		};
+		3795B4FE1E1FFE42008F6FD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3795B4F91E1FFE42008F6FD9 /* SLToastKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 37CF0B361E05D8DD00323E1C;
+			remoteInfo = SLToastKit;
+		};
+		3795B5001E1FFE42008F6FD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3795B4F91E1FFE42008F6FD9 /* SLToastKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 37CF0B3F1E05D8DD00323E1C;
+			remoteInfo = SLToastKitTests;
+		};
+		3795B5021E1FFE56008F6FD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3795B4F91E1FFE42008F6FD9 /* SLToastKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 37CF0B351E05D8DD00323E1C;
+			remoteInfo = SLToastKit;
+		};
 		37B8A0D61DCE5EFD0073BFB0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
@@ -594,8 +614,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				3795B5041E1FFE6B008F6FD9 /* SLToastKit.framework in Embed Frameworks */,
 				37E208C31E13226500D95154 /* SLFRestKit.framework in Embed Frameworks */,
-				37E208B11E10DC2200D95154 /* SLToastKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -815,6 +835,7 @@
 		379393FC123B1A82003103B3 /* CommitteeMemberCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommitteeMemberCellView.h; path = "Classes/Custom Cells and Views/CommitteeMemberCellView.h"; sourceTree = SOURCE_ROOT; };
 		379393FD123B1A82003103B3 /* CommitteeMemberCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CommitteeMemberCellView.m; path = "Classes/Custom Cells and Views/CommitteeMemberCellView.m"; sourceTree = SOURCE_ROOT; };
 		3794A692131CABF900D0B648 /* TexLege 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "TexLege 4.xcdatamodel"; sourceTree = "<group>"; };
+		3795B4F91E1FFE42008F6FD9 /* SLToastKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SLToastKit.xcodeproj; path = Carthage/Checkouts/SLToastKit/SLToastKit/SLToastKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		379B9CCF1250FE7E0032E616 /* TexLegeReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TexLegeReachability.h; sourceTree = "<group>"; };
 		379B9CD01250FE7E0032E616 /* TexLegeReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TexLegeReachability.m; sourceTree = "<group>"; };
 		379BF884181F90D0006CD8FD /* LegislatorCellProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegislatorCellProtocol.h; sourceTree = "<group>"; };
@@ -1067,7 +1088,6 @@
 		37E207C41220779B00103D76 /* bluestar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bluestar@2x.png"; sourceTree = "<group>"; };
 		37E207C51220779B00103D76 /* redstar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redstar.png; sourceTree = "<group>"; };
 		37E207C61220779B00103D76 /* redstar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "redstar@2x.png"; sourceTree = "<group>"; };
-		37E208AF1E10DBFE00D95154 /* SLToastKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SLToastKit.framework; path = Carthage/Build/iOS/SLToastKit.framework; sourceTree = SOURCE_ROOT; };
 		37E208B31E117CCD00D95154 /* SLToastManager+TexLege.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLToastManager+TexLege.m"; sourceTree = "<group>"; };
 		37E208B61E11934C00D95154 /* SLToastManager+TexLege.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLToastManager+TexLege.h"; sourceTree = "<group>"; };
 		37E208BA1E1321D700D95154 /* RestKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RestKit.xcodeproj; path = Vendor/SLFRestKit/RestKit.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -1162,7 +1182,6 @@
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				1D3623EC0D0F72F000981E51 /* CoreGraphics.framework in Frameworks */,
 				3729EC2910077F83000AD804 /* CoreData.framework in Frameworks */,
-				37E208B01E10DBFE00D95154 /* SLToastKit.framework in Frameworks */,
 				370298CE11F97C7A00D65FCB /* MapKit.framework in Frameworks */,
 				37413B1712114D09003CA7E8 /* MessageUI.framework in Frameworks */,
 				378B58FB1219BB9C00F7ED0B /* CoreLocation.framework in Frameworks */,
@@ -1329,9 +1348,9 @@
 		3721EA4F11D6E6EA00CA33DA /* Vendor Modules */ = {
 			isa = PBXGroup;
 			children = (
-				37E208AF1E10DBFE00D95154 /* SLToastKit.framework */,
 				37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */,
 				37E208BA1E1321D700D95154 /* RestKit.xcodeproj */,
+				3795B4F91E1FFE42008F6FD9 /* SLToastKit.xcodeproj */,
 				37FE1D9413CB8E3300655550 /* AppendingFlowView */,
 				375E5ACA133D6F9E0070EA64 /* s7graphview */,
 				37E635F7139B4B3200A9CC27 /* TTTOrdinalNumberFormatter */,
@@ -1645,10 +1664,10 @@
 			isa = PBXGroup;
 			children = (
 				37A720B3122ECD3B0015AAE0 /* TexLegeInfo~iphone.htm */,
+				3732A0F711DB203F009E8957 /* TabBarController~iPhone.xib */,
 				3739DBE4123355EF00D4F7D2 /* LegislatorDetailViewController~iphone.xib */,
 				37B3CEB312493D3100FB3F94 /* MapMiniDetailViewController~iphone.xib */,
 				37A2CCF5122C173B00339495 /* MapViewController~iphone.xib */,
-				3732A0F711DB203F009E8957 /* TabBarController~iPhone.xib */,
 				3735DD3C12087CEF0000AF5A /* CalendarDetailViewController~iphone.xib */,
 				37AD57BA11DA651700D68934 /* CommitteeDetailViewController~iphone.xib */,
 				37F4926E1311C556005D5DE1 /* BillsDetailViewController~iphone.xib */,
@@ -1692,6 +1711,15 @@
 			);
 			name = "Data Model Classes";
 			path = "Core Data Classes";
+			sourceTree = "<group>";
+		};
+		3795B4FA1E1FFE42008F6FD9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3795B4FF1E1FFE42008F6FD9 /* SLToastKit.framework */,
+				3795B5011E1FFE42008F6FD9 /* SLToastKitTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		379C8C7C139A02F90035C321 /* GrabThumb */ = {
@@ -2208,6 +2236,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3795B5031E1FFE56008F6FD9 /* PBXTargetDependency */,
 				37E208C21E13222D00D95154 /* PBXTargetDependency */,
 			);
 			name = TexLege;
@@ -2268,6 +2297,10 @@
 					ProductGroup = 37E9C9FE16A227CC005C7CCE /* Products */;
 					ProjectRef = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
 				},
+				{
+					ProductGroup = 3795B4FA1E1FFE42008F6FD9 /* Products */;
+					ProjectRef = 3795B4F91E1FFE42008F6FD9 /* SLToastKit.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -2290,6 +2323,20 @@
 			fileType = wrapper.framework;
 			path = SDWebImage.framework;
 			remoteRef = 374915311DCBAB4B00C3B765 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3795B4FF1E1FFE42008F6FD9 /* SLToastKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SLToastKit.framework;
+			remoteRef = 3795B4FE1E1FFE42008F6FD9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3795B5011E1FFE42008F6FD9 /* SLToastKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SLToastKitTests.xctest;
+			remoteRef = 3795B5001E1FFE42008F6FD9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		37B8A0D71DCE5EFD0073BFB0 /* libSDWebImage watchOS static.a */ = {
@@ -2870,6 +2917,11 @@
 			isa = PBXTargetDependency;
 			name = SDWebImage;
 			targetProxy = 3701B63719AD34E400A9F631 /* PBXContainerItemProxy */;
+		};
+		3795B5031E1FFE56008F6FD9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SLToastKit;
+			targetProxy = 3795B5021E1FFE56008F6FD9 /* PBXContainerItemProxy */;
 		};
 		37E208C21E13222D00D95154 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
