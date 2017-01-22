@@ -28,6 +28,8 @@
 #import "UIColor-Expanded.h"
 
 #import "TexLegeMapPins.h"
+#import <SLToastKit/SLTypeCheck.h>
+
 #import "DistrictPinAnnotationView.h"
 #import <CoreLocation/CoreLocation.h>
 
@@ -59,13 +61,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 
 - (void)dealloc
 {
-	//[self invalidateDistrictView:BOTH_CHAMBERS];
-	
-	/*if (self.mapView) {
-		[self.mapView removeAnnotations:self.mapView.annotations];
-		[self.mapView removeOverlays:self.mapView.overlays];
-	}*/
-
     if (self.clGeocoder) {
         [self.clGeocoder cancelGeocode];
     }
@@ -122,7 +117,18 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	
 	UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
 	longPressRecognizer.delegate = self;
-	[self.mapView addGestureRecognizer:longPressRecognizer];        
+	[self.mapView addGestureRecognizer:longPressRecognizer];
+
+    id<MKAnnotation> annotation = self.detailAnnotation;
+    if (annotation)
+    {
+        [self setDetailAnnotation:annotation]; // now that the view is loaded, apply annotation and animate stuff
+    }
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
 }
 
 - (void)viewDidUnload
@@ -143,7 +149,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-		
+
 	NSURL *tempURL = [NSURL URLWithString:[UtilityMethods texLegeStringWithKeyPath:@"ExternalURLs.googleMapsWeb"]];		
 	if (![TexLegeReachability canReachHostWithURL:tempURL])// do we have a good URL/connection?
 		return;
@@ -156,10 +162,39 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	[super viewDidDisappear:animated];
 }
 
+- (void)setDetailAnnotation:(id<MKAnnotation>)detailAnnotation
+{
+    _detailAnnotation = detailAnnotation;
+
+    if (!self.isViewLoaded)
+        return;
+
+    MKMapView *mapView = self.mapView;
+    if (!mapView)
+        return;
+
+    [self clearAnnotationsAndOverlays];
+
+    [mapView addAnnotation:detailAnnotation];
+    [self moveMapToAnnotation:detailAnnotation];
+
+    DistrictMapObj *map = SLValueIfClass(DistrictMapObj, detailAnnotation);
+    if (!map)
+        return;
+
+    MKPolygon *polygon = map.polygon;
+    if (polygon)
+    {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [mapView addOverlay:polygon];
+        });
+    }
+}
+
 #pragma mark -
 #pragma mark Animation and Zoom
 
-- (void) clearAnnotationsAndOverlays
+- (void)clearAnnotationsAndOverlays
 {
 	[self.mapView removeOverlays:self.mapView.overlays];
 	[self.mapView removeAnnotations:self.mapView.annotations];

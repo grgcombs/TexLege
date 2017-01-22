@@ -42,14 +42,15 @@
 @property (nonatomic,strong) MKPolygonRenderer *senateDistrictView, *houseDistrictView;
 @property (nonatomic,strong) NSOperationQueue *genericOperationQueue;
 @property (nonatomic,assign) NSInteger colorIndex;
+@property (nonatomic,strong) id<MKAnnotation> detailAnnotation;
 
 #if 0 // can't get custom objects while using propertiesToFetch: anymore
 - (IBAction) showAllDistricts:(id)sender;
 #endif
 
 //- (IBAction) showAllDistrictOffices:(id)sender;
-- (IBAction) changeMapType:(id)sender;
-- (IBAction) locateUser:(id)sender;
+- (IBAction)changeMapType:(id)sender;
+- (IBAction)locateUser:(id)sender;
 - (void)clearAnnotationsAndOverlays;
 - (void)resetMapViewWithAnimation:(BOOL)animated;
 - (void)moveMapToAnnotation:(id<MKAnnotation>)annotation;
