@@ -32,7 +32,7 @@
 #define LIVE_SEARCHING 1
 
 @interface BillsMasterViewController (Private)
-- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar;
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar;
 @end
 
 @implementation BillsMasterViewController
@@ -42,7 +42,8 @@
 	return @"openstatesConnectionStatus";
 }
 
-- (void) dealloc {
+- (void)dealloc
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -65,7 +66,8 @@
 											 selector:@selector(reloadData:) name:kBillSearchNotifyDataLoaded object:self.billSearchDS];
 	
 	searchController.searchBar.tintColor = [TexLegeTheme accent];
-	
+
+    //NSArray *sessions = [self billScopeSessions];
 	searchController.searchBar.scopeButtonTitles = @[stringForChamber(BOTH_CHAMBERS, TLReturnFull),
 																stringForChamber(HOUSE, TLReturnFull),
 																stringForChamber(SENATE, TLReturnFull)];
@@ -81,23 +83,52 @@
 		}
 	}
 #endif
-		
-/*	for (id subview in self.searchDisplayController.searchBar.subviews )
-	{
-		if([subview isMemberOfClass:[UISegmentedControl class]])
-		{
-			UISegmentedControl *scopeBar=(UISegmentedControl *) subview;
-			scopeBar.segmentedControlStyle = UISegmentedControlStyleBar; //required for color change
-			scopeBar.tintColor =  [TexLegeTheme accent];         
-		}
-	}
-*/	
+}
+
+- (NSArray<NSDictionary *> *)recentSessions
+{
+    StateMetaLoader *metaLoader = [StateMetaLoader instance];
+    NSArray *terms = [metaLoader sortedTerms];
+    if (terms.count < 2)
+        return nil;
+
+    struct StateMetadataKeys keys = StateMetadataKeys;
+    struct StateMetadataSessionDetailKeys detailKeys = keys.sessionDetails;
+    NSDictionary *sessionDetails = [metaLoader stateMetadata][detailKeys.metaLookup];
+    NSString *currentSession = (metaLoader.currentSession) ?: OPENAPIS_DEFAULT_SESSION;
+
+    NSArray *recentTerms = @[terms[0],terms[1]];
+    NSMutableArray<NSDictionary *> *recentSessions = [[NSMutableArray alloc] init];
+
+    for (NSDictionary *term in recentTerms)
+    {
+        NSArray<NSString *> *sessionIDs = term[keys.terms.sessions];
+        if (IsEmpty(sessionIDs))
+            continue;
+        for (NSString *sessionID in sessionIDs)
+        {
+            NSDictionary *sessionInfo = sessionDetails[sessionID];
+            if (!sessionInfo)
+                continue;
+            NSMutableDictionary *mutableSession = [sessionInfo mutableCopy];
+            mutableSession[@"id"] = sessionID;
+            if ([currentSession isEqualToString:sessionID])
+            {
+                mutableSession[@"isCurrent"] = @YES;
+            }
+            sessionInfo = [mutableSession copy];
+            [recentSessions addObject:sessionInfo];
+        }
+    }
+    if (!recentSessions.count)
+        return nil;
+    return [recentSessions copy];
 }
 
 - (void)viewDidUnload {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	self.billSearchDS = nil;
-	
+
 	[super viewDidUnload];
 }
 
@@ -143,10 +174,46 @@
 		[self.tableView reloadData];
 }
 
+#if 0 // If we want to use current/recent legislative sessions to filter bill searches
+
+- (NSArray<NSString *> *)billScopeSessionNames
+{
+    struct StateMetadataSessionDetailKeys infoKeys = StateMetadataKeys.sessionDetails;
+
+    NSMutableArray *sessionNames = [@[] mutableCopy];
+    for (NSDictionary *sessionInfo in [self recentSessions])
+    {
+        NSString *type = sessionInfo[infoKeys.type];
+        BOOL isPrimary = (type && [StateMetadataSessionTypeKeys.primary isEqual:type]);
+        BOOL isSpecial = (type && [StateMetadataSessionTypeKeys.special isEqual:type]);
+        NSString *sessionID = sessionInfo[@"id"];
+        //BOOL isCurrent = [sessionInfo[@"isCurrent"] boolValue];
+        NSString *name = sessionInfo[infoKeys.name];
+        int sessionNumber = sessionID.intValue;
+        if (sessionNumber > 0)
+        {
+            int callNumber = 0;
+            if (!isPrimary && isSpecial && sessionNumber > 100)
+            {
+                callNumber = sessionNumber % 10;
+                sessionNumber = sessionNumber / 10;
+            }
+            name = [@(sessionNumber) stringValue];
+            if (callNumber > 0)
+                name = [name stringByAppendingFormat:@"-%d", callNumber];
+            [sessionNames addObject:name];
+        }
+    }
+    if (!sessionNames.count)
+        return nil;
+    return sessionNames;
+}
+
+#endif
+
 #pragma -
 #pragma UITableViewDelegate
 
-// the user selected a row in the table.
 - (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath withAnimation:(BOOL)animated
 {
 	TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
@@ -164,10 +231,11 @@
 
     UISearchDisplayController *searchController = self.searchDisplayController;
 
-//	IF WE'RE CLICKING ON SOME SEARCH RESULTS ... PULL UP THE BILL DETAIL VIEW CONTROLLER
 	if (aTableView == searchController.searchResultsTableView)
     {
-		dataObject = [self.billSearchDS dataObjectForIndexPath:newIndexPath];
+        /* Bill Search Results Selection */
+
+        dataObject = [self.billSearchDS dataObjectForIndexPath:newIndexPath];
 		//[self searchBarCancelButtonClicked:nil];
 		
 		if (dataObject) {
@@ -191,39 +259,39 @@
 			}
 			else if (changingDetails)
 				[[TexLegeAppDelegate appDelegate].detailNavigationController setViewControllers:@[self.detailViewController] animated:NO];
-		}			
-	}
-//	WE'RE CLICKING ON ONE OF OUR STANDARD MENU ITEMS
-	else {
-		dataObject = [self.dataSource dataObjectForIndexPath:newIndexPath];
-	
-		// save off this item's selection to our AppDelegate
-		[appDelegate setSavedTableSelection:newIndexPath forKey:NSStringFromClass([self class])];
-	
-		if (!dataObject || ![dataObject isKindOfClass:[NSDictionary class]])
-			return;
-
-		NSString *theClass = dataObject[@"class"];
-		if (!theClass || !NSClassFromString(theClass))
-			return;
-		
-		UITableViewController *tempVC = [[NSClassFromString(theClass) alloc] initWithStyle:UITableViewStylePlain];	// we don't want a nib for this one
-		
-		if (aTableView == searchController.searchResultsTableView)
-        {
-            [self searchBarCancelButtonClicked:nil];
 		}
-		
-		NSDictionary *tagMenu = [[NSDictionary alloc] initWithObjectsAndKeys:theClass, @"FEATURE", nil];
-		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"BILL_MENU" attributes:tagMenu];
-		
-		// push the detail view controller onto the navigation stack to display it				
-		[self.navigationController pushViewController:tempVC animated:YES];
+        return;
 	}
+
+    /* Bills Menu Selection */
+
+    dataObject = [self.dataSource dataObjectForIndexPath:newIndexPath];
+
+    // save off this item's selection to our AppDelegate
+    [appDelegate setSavedTableSelection:newIndexPath forKey:NSStringFromClass([self class])];
+
+    if (!dataObject || ![dataObject isKindOfClass:[NSDictionary class]])
+        return;
+
+    NSString *theClass = dataObject[@"class"];
+    if (!theClass || !NSClassFromString(theClass))
+        return;
+
+    UITableViewController *tempVC = [[NSClassFromString(theClass) alloc] initWithStyle:UITableViewStylePlain];	// we don't want a nib for this one
+
+    if (aTableView == searchController.searchResultsTableView)
+    {
+        [self searchBarCancelButtonClicked:nil];
+    }
+
+    NSDictionary *tagMenu = [[NSDictionary alloc] initWithObjectsAndKeys:theClass, @"FEATURE", nil];
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"BILL_MENU" attributes:tagMenu];
+
+    // push the detail view controller onto the navigation stack to display it
+    [self.navigationController pushViewController:tempVC animated:YES];
 }
 
-#pragma mark -
-#pragma mark Search Distplay Controller
+#pragma mark - Search Distplay Controller
 
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
