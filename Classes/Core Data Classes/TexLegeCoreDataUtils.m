@@ -11,6 +11,7 @@
 //
 
 #import "TexLegeCoreDataUtils.h"
+@import os.log;
 
 #import "LegislatorObj+RestKit.h"
 #import "CommitteeObj+RestKit.h"
@@ -42,7 +43,14 @@
 #define APP_DB_NAME @"TexLege.sqlite"
 //#define APP_DB_NAME @"TexLege-2.8.sqlite"
 
+static os_log_t txlCoreDataUtilsLog;
+
 @implementation TexLegeCoreDataUtils
+
++ (void)initialize {
+    // We want to use a custom logging component for our model, so we need to set it up before its first use.
+    txlCoreDataUtilsLog = os_log_create("com.texlege.texlege", "TexLegeCoreDataUtils");
+}
 
 + (instancetype)sharedInstance
 {
@@ -86,7 +94,9 @@
 		fetchedVal = [results[0] valueForKey:calculatedPropertyKey];
     }
 	else
-		NSLog(@"CoreData Error while fetching calc (%@) of property (%@) on entity (%@).", calc, prop, entityName);
+    {
+        os_log_error(txlCoreDataUtilsLog, "Error while performing a CoreData fetched calculation: Calc = %{public}s; Property = %{public}s; Entity = %{public}s", calc, prop, entityName);
+    }
 	
 	return fetchedVal;
 }
@@ -107,7 +117,7 @@
 {
 	if (chamber == BOTH_CHAMBERS)
     {
-		debug_NSLog(@"allMembersByChamber: ... cannot be BOTH chambers");
+        os_log_debug(txlCoreDataUtilsLog, "allMembersByChamber: ... cannot determine aggregate partisanship when the chamber setting is 'BOTH_CHAMBERS'");
 		return nil;
 	}
 	
@@ -207,8 +217,12 @@
 		return;
 	
 	NSManagedObject *object = [entityClass objectWithPrimaryKeyValue:keyValue];
-	if (object == nil) {
-		debug_NSLog(@"Can't Delete: There's no %@ objects matching ID: %@", entityName, keyValue);
+	if (object == nil)
+    {
+        SInt32 primaryKey = -1;
+        if ([keyValue respondsToSelector:@selector(intValue)])
+            primaryKey = [keyValue intValue];
+        os_log_debug(txlCoreDataUtilsLog, "Can't delete Core Data object: There's no (Entity = %{public}s) objects matching this primary key: %d", entityName, primaryKey);
 	}
 	else {
 		[[entityClass rkManagedObjectContext] deleteObject:object];
@@ -221,13 +235,9 @@
     if (!entityClass)
         return;
 
-	debug_NSLog(@"I HOPE YOU REALLY WANT TO DO THIS ... DELETING ALL OBJECTS IN %@", entityName);
-	debug_NSLog(@"----------------------------------------------------------------------");
+    os_log_debug(txlCoreDataUtilsLog, "DELETING ALL OBJECTS where Entity = %{public}s", entityName);
 
 	NSArray *fetchedObjects = [entityClass allObjects];
-	if (fetchedObjects == nil) {
-		debug_NSLog(@"There's no objects to delete ???");
-	}
 	for (NSManagedObject *object in fetchedObjects) {
 		[[entityClass rkManagedObjectContext] deleteObject:object];
 	}
@@ -405,7 +415,7 @@
                                                                 delegate:self];
     }
     @catch (NSException *exception) {
-        RKLogError(@"An exception ocurred while attempting to load/build the Core Data store file: %@", exception);
+        os_log_fault(txlCoreDataUtilsLog, "Exception while attempting to load/build the Core Data store file: %{public}s", exception.description);
     }
     return objectStore;
 }
@@ -415,7 +425,7 @@
     RKManagedObjectStore *objectStore = [self attemptLoadObjectStore];
     if (!objectStore)
     {
-        RKLogWarning(@"Attempting to delete and recreate the Core Data store file.");
+        debug_NSLog(@"Attempting to delete and recreate the Core Data store file.");
         NSString *basePath = [self applicationCacheDirectory];
         NSString *storeFilePath = [basePath stringByAppendingPathComponent:APP_DB_NAME];
         NSURL* storeUrl = [NSURL fileURLWithPath:storeFilePath];
@@ -426,7 +436,7 @@
             }
         }
         @catch (NSException *exception) {
-            RKLogError(@"An exception ocurred while attempting to delete the Core Data store file: %@", exception);
+            os_log_fault(txlCoreDataUtilsLog, "An exception ocurred while attempting to delete the Core Data store file (%{public}s): %{public}s", storeFilePath, exception.description);
         }
         objectStore = [self attemptLoadObjectStore];
     }
@@ -465,17 +475,17 @@
 
 - (void)managedObjectStore:(RKManagedObjectStore *)objectStore didFailToCreatePersistentStoreCoordinatorWithError:(NSError *)error
 {
-    NSLog(@"Failed to create persistent store coordinator: %@", error);
+    os_log_error(txlCoreDataUtilsLog, "Failed to create persistent store coordinator: %{public}s", error.description);
 }
 
 - (void)managedObjectStore:(RKManagedObjectStore *)objectStore didFailToDeletePersistentStore:(NSString *)pathToStoreFile error:(NSError *)error
 {
-    NSLog(@"Failed to delete persistent store at '%@': %@", pathToStoreFile, error);
+    os_log_error(txlCoreDataUtilsLog, "Failed to delete persistent store at %{public}s: %{public}s", pathToStoreFile, error.description);
 }
 
 - (void)managedObjectStore:(RKManagedObjectStore *)objectStore didFailToCopySeedDatabase:(NSString *)seedDatabase error:(NSError *)error
 {
-    NSLog(@"Failed to copy seed database '%@': %@", seedDatabase, error);
+    os_log_error(txlCoreDataUtilsLog, "Failed to copy seed database %{public}s: %{public}s", seedDatabase, error.description);
 }
 
 - (void)managedObjectStore:(RKManagedObjectStore *)objectStore didFailToSaveContext:(NSManagedObjectContext *)context error:(NSError *)error exception:(NSException *)exception
@@ -498,94 +508,22 @@
         @try {
             if ([context save:&newError])
                 return; // successful save
-            NSLog(@"Couldn't save even after deleting corrupt legislator and wnomScores! %@", newError);
+            os_log_error(txlCoreDataUtilsLog, "Couldn't save even after deleting corrupt legislator and wnomScores: %{public}s: %{public}s", newError.description);
         }
         @catch (NSException *exception) {
-            NSLog(@"Couldn't save even after deleting corrupt legislator and wnomScores! %@; exception=%@", newError, exception);
+            os_log_error(txlCoreDataUtilsLog, "Couldn't save even after deleting corrupt legislator and wnomScores: %{public}s -- Error: %{public}s; Exception: %{public}s;", exception.description);
         }
     }
 
-    NSLog(@"Failed to save context -- error: %@, exception: %@", error, exception);
+    os_log_error(txlCoreDataUtilsLog, "Failed to save context: Error: %{public}s; Exception: %{public}s", error.description, exception.description);
+
     NSString *path = objectStore.pathToStoreFile;
     if (!path.length)
         return;
     if (![[NSFileManager defaultManager] removeItemAtPath:path error:&error])
     {
-        NSLog(@"Could not delete the persistent store file '%@': %@", path, error);
+        os_log_error(txlCoreDataUtilsLog, "Could not delete the persistent store file %{public}s:  %{public}s", path, error.description);
     }
 }
 
 @end
-
-/*
-
- @interface TexLegeDataMaintenance()
-- (void)informDelegateOfFailureWithMessage:(NSString *)message failOption:(TexLegeDataMaintenanceFailOption)failOption;
-- (void)informDelegateOfSuccess;
-@end
-
-
-@implementation TexLegeDataMaintenance
-
-@synthesize delegate;
-
-- (id) initWithDelegate:(id<TexLegeDataMaintenanceDelegate>)newDelegate {
-	if (self = [super init]) {
-		if (newDelegate)
-			delegate = newDelegate;
-	}
-	return self;
-}
-
-- (void) dealloc {
-	delegate = nil;
-	[super dealloc];
-}
-
-- (void)informDelegateOfFailureWithMessage:(NSString *)message failOption:(TexLegeDataMaintenanceFailOption)failOption;
-{
-    if ([delegate respondsToSelector:@selector(dataMaintenanceDidFail:errorMessage:option:)])
-    {
-        NSInvocation *invocation = [NSInvocation invocationWithTarget:delegate 
-                                                             selector:@selector(dataMaintenanceDidFail:errorMessage:option:) 
-                                                      retainArguments:YES, self, message, failOption];
-        [invocation invokeOnMainThreadWaitUntilDone:YES];
-    } 
-}
-
-- (void)informDelegateOfSuccess
-{
-    if ([delegate respondsToSelector:@selector(dataMaintenanceDidFinishSuccessfully:)])
-    {
-        [delegate performSelectorOnMainThread:@selector(dataMaintenanceDidFinishSuccessfully:) 
-                                   withObject:self 
-                                waitUntilDone:NO];
-    }
-}
-
-#pragma mark -
-- (void)main 
-{	
-	BOOL success = NO;
-    @try 
-    {		
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		for (DistrictMapObj *map in [DistrictMapObj allObjects])
-			[map resetRelationship:self];
-		
-		[[[RKObjectManager sharedManager] objectStore] save];
-		success = YES;
-		[pool drain];
-    }
-    @catch (NSException * e) 
-    {
-        debug_NSLog(@"Exception: %@", e);
-    }
-	if (success)
-		[self informDelegateOfSuccess];
-	else
-		[self informDelegateOfFailureWithMessage:@"Could not reset core data relationships." failOption:TexLegeDataMaintenanceFailOptionLog];
-}
-
-@end
-*/

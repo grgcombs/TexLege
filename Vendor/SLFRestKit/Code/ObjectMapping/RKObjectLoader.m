@@ -30,6 +30,7 @@
 #import "RKParser.h"
 #import "RKNotifications.h"
 #import "RKRequest_Internals.h"
+#import "RKLog.h"
 
 // Set Logging Component
 #undef RKLogComponent

@@ -23,6 +23,7 @@
 #import "RKManagedObjectStore.h"
 #import "RKManagedObjectLoader.h"
 #import "Support.h"
+#import "RKLog.h"
 #import "RKErrorMessage.h"
 
 NSString* const RKObjectManagerDidBecomeOfflineNotification = @"RKDidEnterOfflineModeNotification";

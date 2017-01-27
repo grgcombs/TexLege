@@ -24,7 +24,6 @@
 // Load shared support code
 #import <SLFRestKit/RKError.h>
 #import <SLFRestKit/RKMIMETypes.h>
-#import <SLFRestKit/RKLog.h>
 
 // Load our categories
 #import <SLFRestKit/NSDictionary+RKAdditions.h>
