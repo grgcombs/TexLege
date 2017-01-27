@@ -22,7 +22,7 @@
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tabBarController id="10">
+        <tabBarController autoresizesArchivedViewToFullSize="NO" id="10">
             <extendedEdge key="edgesForExtendedLayout"/>
             <nil key="simulatedBottomBarMetrics"/>
             <tabBar key="tabBar" contentMode="scaleToFill" selectedItem="99" id="11">
@@ -51,7 +51,7 @@
                         </viewController>
                     </viewControllers>
                 </navigationController>
-                <navigationController id="26" userLabel="Committees">
+                <navigationController title="Committees" id="26" userLabel="Committees">
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <tabBarItem key="tabBarItem" tag="1" title="Committees" image="60-signpost-inv.png" id="27"/>
                     <toolbarItems/>
@@ -80,7 +80,7 @@
                         <color key="tintColor" red="0.30588235289999999" green="0.36078431370000003" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
                     <viewControllers>
-                        <viewController nibName="DistrictMapMasterViewController" modalPresentationStyle="currentContext" hidesBottomBarWhenPushed="YES" id="98" userLabel="District Map Master View Controller (District Offices)" customClass="DistrictMapMasterViewController">
+                        <viewController nibName="DistrictMapMasterViewController" modalPresentationStyle="currentContext" id="98" userLabel="District Map Master View Controller (District Offices)" customClass="DistrictMapMasterViewController">
                             <extendedEdge key="edgesForExtendedLayout"/>
                             <toolbarItems/>
                             <navigationItem key="navigationItem" title="Districts" id="100">
