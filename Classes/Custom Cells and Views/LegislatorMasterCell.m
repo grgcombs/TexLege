@@ -21,13 +21,14 @@
 @end
 
 @implementation LegislatorMasterCell
+@synthesize legislator = _legislator;
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
 	
 	if ((self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier])) {
-		CGFloat endX = self.contentView.bounds.size.width - 53.f;
-		CGRect tzvFrame = CGRectMake(53.f, 0.0, endX, self.contentView.bounds.size.height);
+		CGFloat endX = CGRectGetWidth(self.contentView.bounds) - 53.f;
+		CGRect tzvFrame = CGRectMake(53.f, 0.0, endX, CGRectGetHeight(self.contentView.bounds));
 		_cellView = [[LegislatorMasterCellView alloc] initWithFrame:tzvFrame];
 		_cellView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleRightMargin;
 		[self.contentView addSubview:_cellView];
@@ -67,6 +68,10 @@
 
 - (void)setLegislator:(LegislatorObj *)value
 {
+    if (![value isKindOfClass:[LegislatorObj class]])
+        value = nil;
+    _legislator = value;
+    
     NSURL *photoURL = nil;
     if (value && value.photo_url)
     {
@@ -79,10 +84,13 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
+
     [self setLegislator:nil];
 }
 
-- (void)redisplay {
+- (void)redisplay
+{
+    [self.cellView setLegislator:self.legislator];
 	[self.cellView setNeedsDisplay];
 }
 

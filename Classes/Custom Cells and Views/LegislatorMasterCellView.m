@@ -95,12 +95,12 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 
 - (void)setUseDarkBackground:(BOOL)flag
 {
-	if (self.highlighted)
+	if (self.isHighlighted)
 		return;
 	
 	_useDarkBackground = flag;
 	
-	UIColor *labelBGColor = (_useDarkBackground) ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
+	UIColor *labelBGColor = (flag) ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
 	self.backgroundColor = labelBGColor;
 	[self setNeedsDisplay];
 }

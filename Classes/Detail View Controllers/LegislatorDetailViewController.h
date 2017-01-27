@@ -38,7 +38,7 @@
 @property (nonatomic,strong) IBOutlet PartisanScaleView *indivSlider, *partySlider, *allSlider;
 
 @property (nonatomic,strong) UIPopoverController *notesPopover;
-@property (nonatomic,strong) LegislatorObj *legislator;
+@property (nonatomic,assign) LegislatorObj *legislator;
 @property (nonatomic,strong) LegislatorDetailDataSource *dataSource;
 
 @end

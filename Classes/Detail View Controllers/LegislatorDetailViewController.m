@@ -51,6 +51,8 @@
 #import "OpenLegislativeAPIs.h"
 #import "TexLegeTheme.h"
 
+#import <SLToastKit/SLTypeCheck.h>
+
 #import <SafariServices/SFSafariViewController.h>
 
 @interface LegislatorDetailViewController ()
@@ -59,9 +61,9 @@
 
 
 @implementation LegislatorDetailViewController
+
 @synthesize masterPopover = _masterPopover;
 @synthesize dataSource = _dataSource;
-@synthesize legislator = _legislator;
 @synthesize dataObject = _dataObject;
 
 #pragma mark -
@@ -100,8 +102,12 @@
 	self.clearsSelectionOnViewWillAppear = NO;
 				
 	VotingRecordDataSource *votingDS = [[VotingRecordDataSource alloc] init];
+    self.votingDataSource = votingDS;
 	[votingDS prepareVotingRecordView:self.chartView];
-	self.votingDataSource = votingDS;
+
+    LegislatorObj *legislator = self.legislator;
+    if (legislator)
+        [self configureWithLegislator:legislator];
 }
 
 - (void)viewDidUnload
@@ -128,18 +134,6 @@
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
-	self.dataSource = nil;
-    _legislator = nil;
-}
-
-- (void)setDataObject:(id)newObj
-{
-    if (!newObj || ![newObj isKindOfClass:[LegislatorObj class]])
-        newObj = nil;
-
-    _dataObject = newObj;
-	_legislator = newObj;
 }
 
 - (NSString *)chamberPartyAbbrev
@@ -174,7 +168,8 @@
 	}
 }
 
-- (void)setupHeader {
+- (void)setupHeader
+{
 	LegislatorObj *member = self.legislator;
 	
 	NSString *legName = [NSString stringWithFormat:@"%@ %@",  [member legTypeShortName], [member legProperName]];
@@ -233,76 +228,87 @@
 	self.chartView.hidden = !hasScores;
 }
 
-- (LegislatorDetailDataSource *)dataSource
+- (LegislatorDetailDataSource *)dataSourceWithLegislator:(LegislatorObj *)legislator
 {
-    if (_dataSource
-        && _legislator
-        && [_dataSource.legislator isEqual:_legislator])
-    {
-        return _dataSource;
-    }
-    else if (_legislator)
-    {
-        _dataSource = [[LegislatorDetailDataSource alloc] initWithLegislator:_legislator];
-    }
-    return _dataSource;
-}
+    legislator = SLValueIfClass(LegislatorObj, legislator);
+    LegislatorDetailDataSource *dataSource = _dataSource;
 
-- (void)setDataSource:(LegislatorDetailDataSource *)newObj
-{
-	if (newObj == _dataSource)
-		return;
-    if (![newObj isKindOfClass:[LegislatorDetailDataSource class]])
-        newObj = nil;
-    _dataSource = newObj;
+    if (dataSource
+        && legislator
+        && [dataSource.legislator isEqual:legislator])
+    {
+        return dataSource;
+    }
+
+    dataSource = (legislator) ? [[LegislatorDetailDataSource alloc] initWithLegislator:legislator] : nil;
+    self.dataSource = dataSource;
+
+    return dataSource;
 }
 
 - (LegislatorObj *)legislator
 {
-	LegislatorObj *anObject = nil;
-	if (self.dataObjectID)
-    {
-		@try {
-			anObject = [LegislatorObj objectWithPrimaryKeyValue:self.dataObjectID];
-		}
-		@catch (NSException * e) {
-		}
-	}
-	return anObject;
+    LegislatorObj *legislator = SLValueIfClass(LegislatorObj, self.dataObject);
+    if (legislator)
+        return legislator;
+
+    NSNumber *objectId = self.dataObjectID;
+    if (!objectId)
+        return nil;
+
+    @try {
+        legislator = SLValueIfClass(LegislatorObj, [LegislatorObj objectWithPrimaryKeyValue:objectId]);
+    }
+    @catch (NSException * e) {
+        debug_NSLog(@"Exception while fetching legislator (ID = %@) from Core Data: %@", objectId, e);
+    }
+    return legislator;
 }
 
-- (void)setLegislator:(LegislatorObj *)anObject
+- (void)setDataObject:(id)newObj
 {
-    _legislator = anObject;
+    LegislatorObj *existingData = SLValueIfClass(LegislatorObj, _dataObject);
+    LegislatorObj *newData = SLValueIfClass(LegislatorObj, newObj);
 
-	if (!anObject)
+    _dataObject = newData;
+    self.dataObjectID = (newData) ? newData.legislatorID : nil;
+    self.votingDataSource.legislator = newData;
+
+    if (!newData)
     {
         self.dataSource = nil;
-        self.dataObjectID = nil;
+    }
 
+    if (!self.isViewLoaded)
         return;
-    }
 
-    NSNumber *legislatorID = anObject.legislatorID;
-    self.dataObjectID = legislatorID;
+    if (existingData == newData || [newData isEqual:existingData])
+        return;
 
-    LegislatorDetailDataSource *dataSource = [self dataSource];
+    [self configureWithLegislator:newData];
+}
+
+- (void)setLegislator:(LegislatorObj *)legislator
+{
+    [self setDataObject:legislator];
+}
+
+- (void)configureWithLegislator:(LegislatorObj *)legislator
+{
+    if (!self.isViewLoaded)
+        return;
+
+    LegislatorDetailDataSource *dataSource = [self dataSourceWithLegislator:legislator];
     if (dataSource)
-    {
         [dataSource createSectionList];
-    }
     self.tableView.dataSource = dataSource;
+
+    self.votingDataSource.legislator = legislator;
 
     [self setupHeader];
 
-    self.votingDataSource.legislator = anObject;
-
-    if (self.masterPopover != nil)
-        [self.masterPopover dismissPopoverAnimated:YES];
-
     [self.tableView reloadData];
     [self.chartView reloadData];
-    [self.view setNeedsDisplay];
 }
 
 #pragma mark -
@@ -310,10 +316,8 @@
 
 - (IBAction)resetTableData:(id)sender
 {
-	// this will force our datasource to renew everything
-	self.dataSource.legislator = self.legislator;
-	[self.tableView reloadData];	
-	[self.chartView reloadData];
+    LegislatorObj *legislator = self.legislator;
+    [self configureWithLegislator:legislator];
 }
 
 // Called on the delegate when the user has taken action to dismiss the popover. This is not called when -dismissPopoverAnimated: is called directly.
@@ -339,10 +343,24 @@
 		legislator = [TexLegeAppDelegate appDelegate].legislatorMasterVC.initialObjectToSelect;
         self.legislator = legislator;
     }
-	
-	if (legislator)
-		[self setupHeader];
+
+    if (self.splitViewController.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = self.splitViewController.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:animated];
+    }
 }
+
+- (void)splitViewController:(UISplitViewController *)svc willChangeToDisplayMode:(UISplitViewControllerDisplayMode)displayMode
+{
+    if (svc.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = svc.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:YES];
+    }
+}
+
+#if 0
 
 #pragma mark -
 #pragma mark Split view support
@@ -381,18 +399,25 @@
 	}
 }
 
-#pragma mark -
-#pragma mark orientations
+#endif
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+#pragma mark - orientations
+
+- (BOOL)shouldAutorotate
 {
-    // Override to allow orientations other than the default portrait orientation.
     return YES;
 }
 
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration 
+- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-	[self.chartView reloadData];	
+    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+
+    [coordinator notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+        if ([context percentComplete] >= 1.0)
+        {
+            [self.chartView reloadData];
+        }
+    }];
 }
 
 #pragma mark -

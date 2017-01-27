@@ -17,30 +17,30 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 
 @implementation CommitteeMemberCell
-@synthesize cellView;
-
+@synthesize cellView = _cellView;
+@synthesize legislator = _legislator;
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
 	
 	if ((self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier])) {
 		
-		// Create a time zone view and add it as a subview of self's contentView.
-
-		//UIImage *tempImage = [UIImage imageNamed:@"anchia.png"];
-		//self.imageView.image = tempImage;
-		
 		DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
-		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
 		self.accessoryView = qv;
-		//[iv release];
-		
-		CGFloat endX = self.contentView.bounds.size.width - 53.f;
-		CGRect tzvFrame = CGRectMake(53.f, 0.0, endX, self.contentView.bounds.size.height);
-		cellView = [[CommitteeMemberCellView alloc] initWithFrame:tzvFrame];
-		cellView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-		[self.contentView addSubview:cellView];
+
+		CGFloat endX = CGRectGetWidth(self.contentView.bounds) - 53.f;
+		CGRect tzvFrame = CGRectMake(53.f, 0.0, endX, CGRectGetHeight(self.contentView.bounds));
+		_cellView = [[CommitteeMemberCellView alloc] initWithFrame:tzvFrame];
+		_cellView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		[self.contentView addSubview:_cellView];
 	}
 	return self;
+}
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+
+    [self setLegislator:nil];
 }
 
  - (void)setHighlighted:(BOOL)val animated:(BOOL)animated {               // animate between regular and highlighted state
@@ -57,6 +57,10 @@
 
 - (void)setLegislator:(LegislatorObj *)value
 {
+    if (![value isKindOfClass:[LegislatorObj class]])
+        value = nil;
+    _legislator = value;
+
     NSURL *photoURL = nil;
     if (value && value.photo_url)
     {
@@ -77,20 +81,10 @@
     self.cellView.frame = contentRect;
 }
 
-- (void)redisplay {
-	[cellView setNeedsDisplay];
-}
-
-- (void)prepareForReuse
+- (void)redisplay
 {
-    [super prepareForReuse];
-    [self setLegislator:nil];
-}
-
-- (void)dealloc {
-	if (cellView)
-		cellView = nil;
-	
+    [self.cellView setLegislator:self.legislator];
+	[self.cellView setNeedsDisplay];
 }
 
 @end

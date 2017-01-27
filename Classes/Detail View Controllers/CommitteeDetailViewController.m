@@ -32,21 +32,21 @@
 #import "LegislatorObj+RestKit.h"
 #import "CommitteePositionObj+RestKit.h"
 #import "CommitteeObj+RestKit.h"
+#import <SLToastKit/SLTypeCheck.h>
 #import <SafariServices/SFSafariViewController.h>
 
 @implementation CommitteeDetailViewController
 
-//@synthesize dataObjectID, masterPopover;
-//@synthesize partisanSlider, membershipLab, infoSectionArray;
+@synthesize dataObject = _dataObject;
 
-enum Sections {
+typedef NS_ENUM(UInt16, TXLCommitteeSections) {
     //kHeaderSection = 0,
-	kInfoSection = 0,
-    kChairSection,
-    kViceChairSection,
-	kMembersSection,
-    NUM_SECTIONS
+    TXLCommitteeInfoSection = 0,
+    TXLCommitteeChairSection,
+    TXLCommitteeViceChairSection,
+    TXLCommitteeMembersSection,
 };
+UInt16 const TXLCommitteeSectionMax = (TXLCommitteeMembersSection + 1);
 
 typedef NS_ENUM(NSInteger, CommitteeInfoRow) {
     CommitteeInfoRowName = 0,
@@ -59,6 +59,10 @@ typedef NS_ENUM(NSInteger, CommitteeInfoRow) {
 
 CGFloat quartzRowHeight = 73.f;
 
+NSString * const TXLCommitteeClickableInfoCellReuse = @"CommitteeInfo";
+NSString * const TXLCommitteeUnclickableInfoCellReuse = @"Committee-NoDisclosure";
+NSString * const TXLCommitteeMemberCellReuse = @"CommitteeMember";
+
 - (NSString *)nibName
 {
 	if ([UtilityMethods isIPadDevice])
@@ -66,9 +70,6 @@ CGFloat quartzRowHeight = 73.f;
 	else
 		return @"CommitteeDetailViewController~iphone";	
 }
-
-#pragma mark -
-#pragma mark View lifecycle
 
 - (void)dealloc
 {
@@ -78,7 +79,15 @@ CGFloat quartzRowHeight = 73.f;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	
+
+    [self.tableView registerClass:[TXLClickableSubtitleCell class] forCellReuseIdentifier:TXLCommitteeClickableInfoCellReuse];
+    [self.tableView registerClass:[TXLUnclickableSubtitleCell class] forCellReuseIdentifier:TXLCommitteeUnclickableInfoCellReuse];
+
+    if ([UtilityMethods isIPadDevice])
+        [self.tableView registerClass:[CommitteeMemberCell class] forCellReuseIdentifier:TXLCommitteeMemberCellReuse];
+    else
+        [self.tableView registerClass:[LegislatorMasterCell class] forCellReuseIdentifier:TXLCommitteeMemberCellReuse];
+
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(resetTableData:) name:@"RESTKIT_LOADED_LEGISLATOROBJ" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self
@@ -108,229 +117,216 @@ CGFloat quartzRowHeight = 73.f;
     {
 		self.committee = [TexLegeAppDelegate appDelegate].committeeMasterVC.initialObjectToSelect;		
 	}
+
+    if (self.splitViewController.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = self.splitViewController.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:animated];
+    }
 }
 
-#pragma mark -
-#pragma mark Memory management
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+- (void)splitViewController:(UISplitViewController *)svc willChangeToDisplayMode:(UISplitViewControllerDisplayMode)displayMode
+{
+    if (svc.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = svc.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:YES];
+    }
+}
+
+- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [self willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+
+    [coordinator notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+        if ([context percentComplete] >= 1.0)
+        {
+            NSArray *visibleCells = self.tableView.visibleCells;
+            for (id<LegislatorCellProtocol> cell in visibleCells)
+            {
+                if ([cell conformsToProtocol:@protocol(LegislatorCellProtocol)])
+                {
+                    [cell redisplay];
+                }
+            }
+        }
+    }];
+}
 
 - (void)didReceiveMemoryWarning
 {
     // Releases the view if it doesn't have a superview.
 	UINavigationController *nav = self.navigationController;
-	if (nav && (nav.viewControllers).count>3)
+	if (nav && (nav.viewControllers).count > 3)
 		[nav popToRootViewControllerAnimated:YES];
 	
     [super didReceiveMemoryWarning];
-    // Relinquish ownership any cached data, images, etc that aren't in use.
-}
-
-/*
- - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
- [self showPopoverMenus:UIDeviceOrientationIsPortrait(toInterfaceOrientation)];
- }
- */
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-	//[self showPopoverMenus:UIDeviceOrientationIsPortrait(toInterfaceOrientation)];
-	//[[TexLegeAppDelegate appDelegate] resetPopoverMenus];
-	
-	NSArray *visibleCells = self.tableView.visibleCells;
-	for (id<LegislatorCellProtocol> cell in visibleCells)
-    {
-		if ([cell conformsToProtocol:@protocol(LegislatorCellProtocol)])
-        {
-            [cell redisplay];
-        }
-	}
-	
-}
-
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return YES;
-}
-
-#pragma mark -
-#pragma mark Data Objects
-
-- (id)dataObject
-{
-	return self.committee;
-}
-
-- (void)setDataObject:(id)newObj
-{
-	self.committee = newObj;
-}
-
-- (void)resetTableData:(NSNotification *)notification
-{
-	if (self.dataObject)
-    {
-		self.dataObject = self.dataObject;
-	}
 }
 
 - (CommitteeObj *)committee
 {
-	CommitteeObj *anObject = nil;
-	if (self.dataObjectID)
-    {
-		@try {
-			anObject = [CommitteeObj objectWithPrimaryKeyValue:self.dataObjectID];
-		}
-		@catch (NSException * e) {
-		}
-	}
-	return anObject;
+    CommitteeObj *committee = SLValueIfClass(CommitteeObj, self.dataObject);
+    if (committee)
+        return committee;
+
+    NSNumber *objectId = self.dataObjectID;
+    if (!objectId)
+        return nil;
+
+    @try {
+        committee = SLValueIfClass(CommitteeObj, [CommitteeObj objectWithPrimaryKeyValue:objectId]);
+    }
+    @catch (NSException * e) {
+        debug_NSLog(@"Exception while fetching committee (ID = %@) from Core Data: %@", objectId, e);
+    }
+    return committee;
 }
 
-- (void)setCommittee:(CommitteeObj *)newObj
+- (void)setDataObject:(id)newObj
 {
-	self.dataObjectID = nil;
-	if (newObj)
-    {
-        if (!self.isViewLoaded)
-            [self loadView];
+    CommitteeObj *existingData = SLValueIfClass(CommitteeObj, _dataObject);
+    CommitteeObj *newData = SLValueIfClass(CommitteeObj, newObj);
 
-		if (self.masterPopover)
-			[self.masterPopover dismissPopoverAnimated:YES];
+    _dataObject = newData;
+    self.dataObjectID = (newData) ? newData.committeeId : nil;
 
-		self.dataObjectID = newObj.committeeId;
-		
-		[self buildInfoSectionArray];
-		self.navigationItem.title = newObj.committeeName;
-		
-		[self calcCommitteePartisanship];
-		
-		[self.tableView reloadData];
-		[self.view setNeedsDisplay];
-	}
+    if (!self.isViewLoaded)
+        return;
+
+    if (existingData == newData || [newData isEqual:existingData])
+        return;
+
+    [self configureWithCommittee:newData];
 }
 
-#pragma mark -
-#pragma mark Popover Support
-
-- (void)splitViewController: (UISplitViewController*)svc willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem*)barButtonItem forPopoverController: (UIPopoverController*)pc
+- (void)setCommittee:(CommitteeObj *)committee
 {
-	//debug_NSLog(@"Entering portrait, showing the button: %@", [aViewController class]);
-    barButtonItem.title = @"Committees";
-    [self.navigationItem setRightBarButtonItem:barButtonItem animated:YES];
-    self.masterPopover = pc;
+    [self setDataObject:committee];
 }
 
-
-// Called when the view is shown again in the split view, invalidating the button and popover controller.
-- (void)splitViewController: (UISplitViewController*)svc willShowViewController:(UIViewController *)aViewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
+- (void)configureWithCommittee:(CommitteeObj *)committee
 {
-	//debug_NSLog(@"Entering landscape, hiding the button: %@", [aViewController class]);
-    [self.navigationItem setRightBarButtonItem:nil animated:YES];
-    self.masterPopover = nil;
+    if (!self.isViewLoaded)
+        return;
+
+    [self buildInfoSectionArray];
+    self.navigationItem.title = committee.committeeName;
+
+    [self calcCommitteePartisanship];
+
+    [self.tableView reloadData];
 }
 
-- (void) splitViewController:(UISplitViewController *)svc popoverController: (UIPopoverController *)pc
-   willPresentViewController: (UIViewController *)aViewController
+- (IBAction)resetTableData:(id)sender
 {
-	if ([UtilityMethods isLandscapeOrientation])
-    {
-		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"ERR_POPOVER_IN_LANDSCAPE"];
-	}		 
-}	
-
-#pragma mark -
-#pragma mark View Setup
+    CommitteeObj *committee = self.committee;
+    [self configureWithCommittee:committee];
+}
 
 - (void)buildInfoSectionArray
 {
-	BOOL clickable = NO;
-	
-	NSMutableArray *tempArray = [[NSMutableArray alloc] initWithCapacity:12]; // arbitrary
+	BOOL isClickable = NO;
+
+    CommitteeObj *committee = self.committee;
+
+    NSMutableArray *tempArray = [@[] mutableCopy];
 	NSDictionary *infoDict = nil;
 	TableCellDataObject *cellInfo = nil;
+
 //case CommitteeInfoRowName:
-	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-				NSLocalizedStringFromTable(@"Committee", @"DataTableUI", @"Cell title listing a legislative committee"), @"subtitle",
-				self.committee.committeeName, @"title",
-				@NO, @"isClickable",
-				nil, @"entryValue",
-				nil];
-	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
-	[tempArray addObject:cellInfo];
+    NSString *text = SLTypeStringOrNil(committee.committeeName);
+    if (!text)
+        text = @"";
+
+    infoDict = @{
+                 @"title": text,
+                 @"subtitle": NSLocalizedStringFromTable(@"Committee", @"DataTableUI", @"Cell title listing a legislative committee"),
+                 @"isClickable": @NO,
+                 @"entryValue": [NSNull null],
+                 };
+    cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
+    if (cellInfo)
+        [tempArray addObject:cellInfo];
 
 //case CommitteeInfoRowClerk:
-	NSString *text = self.committee.clerk;
-	id val = self.committee.clerk_email;
-	clickable = (text && text.length && val && [val length]);
-	if (!text)
-		text = @"";
-	if (!val)
-		val = @"";
-	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-				NSLocalizedStringFromTable(@"Clerk", @"DataTableUI", @"Cell title listing a committee's assigned clerk"), @"subtitle",
-				text, @"title",
-				@(clickable), @"isClickable",
-				val, @"entryValue",
-				nil];
+	text = SLTypeStringOrNil(committee.clerk);
+    if (!text)
+        text = @"";
+	NSString *email = SLTypeStringOrNil(committee.clerk_email);
+    if (!email)
+        email = @"";
+	isClickable = (text.length && email.length);
+
+    infoDict = @{
+                 @"title": text,
+                 @"subtitle": NSLocalizedStringFromTable(@"Clerk", @"DataTableUI", @"Cell title listing a committee's assigned clerk"),
+                 @"isClickable": @(isClickable),
+                 @"entryValue": email,
+                 };
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
-	[tempArray addObject:cellInfo];
+    if (cellInfo)
+        [tempArray addObject:cellInfo];
 	
 //case CommitteeInfoRowPhone:	// dial the number
-	text = self.committee.phone;
-	clickable = (text && text.length && [UtilityMethods canMakePhoneCalls]);
-	if (!text)
-		text = @"";
-	if (clickable)
-		val = [NSURL URLWithString:[NSString stringWithFormat:@"tel:%@",text]];
-	else
-		val = @"";
-	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-				NSLocalizedStringFromTable(@"Phone", @"DataTableUI", @"Cell title listing a phone number"), @"subtitle",
-				text, @"title",
-				@(clickable), @"isClickable",
-				val, @"entryValue",
-				nil];
+	text = SLTypeStringOrNil(committee.phone);
+    if (!text)
+        text = @"";
+	isClickable = (text.length && [UtilityMethods canMakePhoneCalls]);
+    NSURL *url = (isClickable) ? [NSURL URLWithString:[@"tel:" stringByAppendingString:text]] : nil;
+
+    infoDict = @{
+                 @"title": text,
+                 @"subtitle": NSLocalizedStringFromTable(@"Phone", @"DataTableUI", @"Cell title listing a phone number"),
+                 @"isClickable": @(isClickable && url),
+                 @"entryValue": (url) ? url : [NSNull null],
+                 };
+
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
-	[tempArray addObject:cellInfo];
+    if (cellInfo)
+        [tempArray addObject:cellInfo];
 	
 	//case CommitteeInfoRowLocation: // open the office map
-	text = self.committee.office;
-	clickable = (text && text.length);
-	if (!text)
-		text = @"";
-	if (clickable)
-		val = [CapitolMap mapFromOfficeString:self.committee.office];
-	else
-		val = @"";
-	
-	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-				NSLocalizedStringFromTable(@"Location", @"DataTableUI", @"Cell title listing an office location (office number or stree address)"), @"subtitle",
-				text, @"title",
-				@(clickable), @"isClickable",
-				val, @"entryValue",
-				nil];
+	text = SLTypeStringOrNil(committee.office);
+    if (!text)
+        text = @"";
+
+	isClickable = (text.length);
+    CapitolMap *map = (isClickable) ? [CapitolMap mapFromOfficeString:text] : nil;
+
+    infoDict = @{
+                 @"title": text,
+                 @"subtitle": NSLocalizedStringFromTable(@"Location", @"DataTableUI", @"Cell title listing an office location (office number or stree address)"),
+                 @"isClickable": @(isClickable && map),
+                 @"entryValue": (map) ? map : [NSNull null],
+                 };
+
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
-	[tempArray addObject:cellInfo];
+    if (cellInfo)
+        [tempArray addObject:cellInfo];
 	
 //case CommitteeInfoRowWebsite:	 // open the web page
-	clickable = (text && text.length);
-	if (clickable)
-		val = [UtilityMethods safeWebUrlFromString:self.committee.url];
-	else
-		val = @"";
-	infoDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-				NSLocalizedStringFromTable(@"Web", @"DataTableUI", @"Cell title listing a web address"), @"subtitle",
-				NSLocalizedStringFromTable(@"Website & Meetings", @"DataTableUI", @"Cell title for a website link detailing committee meetings"), @"title",
-				@(clickable), @"isClickable",
-				val, @"entryValue",
-				nil];
+    NSString *website = SLTypeStringOrNil(committee.url);
+    if (!website)
+        website = @"";
+	isClickable = (website.length);
+    url = (isClickable) ? [UtilityMethods safeWebUrlFromString:website] : nil;
+
+    infoDict = @{
+                 @"title": NSLocalizedStringFromTable(@"Website & Meetings", @"DataTableUI", @"Cell title for a website link detailing committee meetings"),
+                 @"subtitle": NSLocalizedStringFromTable(@"Web", @"DataTableUI", @"Cell title listing a web address"),
+                 @"isClickable": @(isClickable && url),
+                 @"entryValue": (url) ? url : [NSNull null],
+                 };
 	cellInfo = [[TableCellDataObject alloc] initWithDictionary:infoDict];
-	[tempArray addObject:cellInfo];
+    if (cellInfo)
+        [tempArray addObject:cellInfo];
 	
-	if (self.infoSectionArray)
-		self.infoSectionArray = nil;
-	self.infoSectionArray = tempArray;
+	self.infoSectionArray = [tempArray copy];
 }
 
 - (void)calcCommitteePartisanship
@@ -394,37 +390,64 @@ CGFloat quartzRowHeight = 73.f;
 	self.partisanSlider.sliderValue = avg;
 }
 
-#pragma mark -
-#pragma mark Table View
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return NUM_SECTIONS;
+    CommitteeObj *committee = self.committee;
+    if (!committee)
+        return 0;
+
+    UInt16 sectionCount = 0;
+
+    for (TXLCommitteeSections section = TXLCommitteeInfoSection; section < TXLCommitteeSectionMax; section++)
+    {
+        switch (section) {
+            case TXLCommitteeInfoSection:
+                if (self.infoSectionArray.count > 0)
+                    sectionCount++;
+                break;
+
+            case TXLCommitteeChairSection:
+                if (committee.chair)
+                    sectionCount++;
+                break;
+
+            case TXLCommitteeViceChairSection:
+                if (committee.vicechair)
+                    sectionCount++;
+                break;
+
+            case TXLCommitteeMembersSection:
+                if (committee.sortedMembers.count > 0)
+                    sectionCount++;
+                break;
+        }
+    }
+
+    return sectionCount;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView  numberOfRowsInSection:(NSInteger)section
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     CommitteeObj *committee = self.committee;
-
-	NSInteger rows = 0;	
+	UInt16 rows = 0;
 	switch (section)
     {
-		case kChairSection:
-			if ([committee chair] != nil)
+        case TXLCommitteeInfoSection:
+            rows = self.infoSectionArray.count;
+            break;
+
+		case TXLCommitteeChairSection:
+			if (committee.chair)
 				rows = 1;
 			break;
-		case kViceChairSection:
-			if ([committee vicechair] != nil)
+
+		case TXLCommitteeViceChairSection:
+			if (committee.vicechair)
 				rows = 1;
 			break;
-		case kMembersSection:
-			rows = committee.sortedMembers.count ;
-			break;
-		case kInfoSection:
-			rows = COMMITTEE_INFO_ROW_COUNT;
-			break;
-		default:
-			rows = 0;
+
+		case TXLCommitteeMembersSection:
+			rows = committee.sortedMembers.count;
 			break;
 	}
 	
@@ -434,149 +457,139 @@ CGFloat quartzRowHeight = 73.f;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	NSInteger row = indexPath.row;
-	NSInteger section = indexPath.section;
+	UInt16 section = indexPath.section;
+    NSParameterAssert(section >= 0 || section < TXLCommitteeSectionMax);
 
+    TXLCommitteeSections detailSection = section;
 
-	NSInteger InfoSectionEnd = ([UtilityMethods canMakePhoneCalls]) ? CommitteeInfoRowClerk : CommitteeInfoRowPhone;
-	
-    NSString *CellIdentifier = nil;
-	if (section > kInfoSection)
-		CellIdentifier = @"CommitteeMember";
-	else if (row > InfoSectionEnd)
-		CellIdentifier = @"CommitteeInfo";
-	else // the non-clickable / no disclosure items
-		CellIdentifier = @"Committee-NoDisclosure";
-	
-	UITableViewCellStyle style = section > kInfoSection ? UITableViewCellStyleSubtitle : UITableViewCellStyleValue2;
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    NSString *reuseIdentifier = nil;
+    UITableViewCellStyle style = UITableViewCellStyleValue2;
+    CommitteeObj *committee = self.committee;
+    LegislatorObj *legislator = nil;
+    TableCellDataObject *infoObject = nil;
 
+    switch (detailSection)
+    {
+        case TXLCommitteeChairSection:
+            reuseIdentifier = TXLCommitteeMemberCellReuse;
+            style = UITableViewCellStyleSubtitle;
+            legislator = [committee chair];
+            break;
+
+        case TXLCommitteeViceChairSection:
+            reuseIdentifier = TXLCommitteeMemberCellReuse;
+            style = UITableViewCellStyleSubtitle;
+            legislator = [committee vicechair];
+            break;
+
+        case TXLCommitteeMembersSection:
+        {
+            reuseIdentifier = TXLCommitteeMemberCellReuse;
+            style = UITableViewCellStyleSubtitle;
+            NSArray * memberList = [committee sortedMembers];
+            legislator = (memberList.count > row) ? memberList[row] : nil;
+            break;
+        }
+
+        case TXLCommitteeInfoSection:
+        {
+            NSArray *rows = self.infoSectionArray;
+            infoObject = (rows.count > row) ? [[TableCellDataObject alloc] initWithDictionary:rows[row]] : nil;
+            if (infoObject.isClickable)
+                reuseIdentifier = TXLCommitteeClickableInfoCellReuse;
+            else
+                reuseIdentifier = TXLCommitteeUnclickableInfoCellReuse;
+            break;
+        }
+    }
+
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier forIndexPath:indexPath];
+    
+    UITableViewCell<LegislatorCellProtocol> *legislatorCell = nil;
+    if ([cell conformsToProtocol:@protocol(LegislatorCellProtocol)] && [cell respondsToSelector:@selector(setLegislator:)])
+        legislatorCell = (UITableViewCell<LegislatorCellProtocol> *)cell;
+
+    UITableViewCell<TexLegeGroupCellProtocol> *infoCell = nil;
+    if ([cell conformsToProtocol:@protocol(TexLegeGroupCellProtocol)] && [cell respondsToSelector:@selector(setCellInfo:)])
+        infoCell = (UITableViewCell<TexLegeGroupCellProtocol> *)cell;
+
+#if 0
 	if (cell == nil)
     {
-		if ([CellIdentifier isEqualToString:@"CommitteeMember"])
+		if ([reuseIdentifier isEqualToString:@"CommitteeMember"])
         {
 			if (![UtilityMethods isIPadDevice])
             {
-				LegislatorMasterCell *newcell = [[LegislatorMasterCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+				LegislatorMasterCell *newcell = [[LegislatorMasterCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
 				newcell.frame = CGRectMake(0.0, 0.0, 234.0, quartzRowHeight);		
 				newcell.cellView.useDarkBackground = NO;
 				newcell.accessoryView.hidden = NO;
+                legislatorCell = newcell;
 				cell = newcell;
 			}
 			else
             {
-				CommitteeMemberCell *newcell = [[CommitteeMemberCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+				CommitteeMemberCell *newcell = [[CommitteeMemberCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier];
 				newcell.frame = CGRectMake(0.0, 0.0, kCommitteeMemberCellViewWidth, quartzRowHeight);		
 				newcell.accessoryView.hidden = NO;
+                legislatorCell = newcell;
 				cell = newcell;
 			}
 		}
 		else
         {
-			cell = (UITableViewCell *)[[TexLegeStandardGroupCell alloc] initWithStyle:style reuseIdentifier:CellIdentifier];			
+            infoCell = [[TexLegeStandardGroupCell alloc] initWithStyle:style reuseIdentifier:reuseIdentifier];
+            cell = infoCell;
 		}
 
 		cell.backgroundColor = [TexLegeTheme backgroundLight];
-		
 	}    
+#endif
 
-    CommitteeObj *committee = self.committee;
-	LegislatorObj *legislator = nil;
-	
-	switch (section)
-    {
-		case kChairSection:
-			legislator = [committee chair];
-			break;
-
-		case kViceChairSection:
-			legislator = [committee vicechair];
-			break;
-
-		case kMembersSection:
-        {
-			NSArray * memberList = [committee sortedMembers];
-			if (memberList.count > row)
-				legislator = memberList[row];
-            break;
-        }
-
-        case kInfoSection:
-        {
-            NSArray *rows = self.infoSectionArray;
-			if (rows.count > row)
-            {
-				NSDictionary *cellInfo = rows[row];
-				if ([cell respondsToSelector:@selector(setCellInfo:)])
-					[cell performSelector:@selector(setCellInfo:) withObject:cellInfo];
-			}
-            break;
-		}
-
-		default:
-			cell.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-			cell.hidden = YES;
-			cell.frame  = CGRectMake(cell.frame.origin.x, cell.frame.origin.y, 0.01f, 0.01f);
-			cell.tag = 999; //EMPTY
-			[cell sizeToFit];
-			cell.selectionStyle = UITableViewCellSelectionStyleNone;
-			return cell;
-			break;
-	}
-	
-	if (legislator && [cell respondsToSelector:@selector(setLegislator:)])
-    {
-        [cell performSelector:@selector(setLegislator:) withObject:legislator];
-	}	
+    if (infoCell)
+        [infoCell setCellInfo:infoObject];
+	if (legislatorCell)
+        [legislatorCell setLegislator:legislator];
 	
 	return cell;
 }
-
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return NO;
 }
 
-
-
-#pragma mark -
-#pragma mark Table view delegate
-
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	NSString * sectionName;
-	
-	switch (section)
+	NSString * sectionName = nil;
+    BOOL isJointCommittee = (self.committee.committeeType.integerValue == JOINT);
+    NSString *committeeType = SLTypeStringOrNil(self.committee.typeString) ?: @"";
+
+    NSParameterAssert(section >= 0 || section < TXLCommitteeSectionMax);
+    TXLCommitteeSections detailSection = section;
+	switch (detailSection)
     {
-		case kChairSection:
-        {
-			if ((self.committee.committeeType).integerValue == JOINT)
+		case TXLCommitteeChairSection:
+			if (isJointCommittee)
 				sectionName = NSLocalizedStringFromTable(@"Co-Chair", @"DataTableUI", @"For joint committees, House and Senate leaders are co-chair persons");
 			else
 				sectionName = NSLocalizedStringFromTable(@"Chair", @"DataTableUI", @"Cell title for a person who leads a given committee, an abbreviation for Chairperson");
             break;
-		}
 
-		case kViceChairSection:
-        {
-			if ((self.committee.committeeType).integerValue == JOINT)
+		case TXLCommitteeViceChairSection:
+            if (isJointCommittee)
 				sectionName = NSLocalizedStringFromTable(@"Co-Chair", @"DataTableUI", @"For joint committees, House and Senate leaders are co-chair persons");
 			else
 				sectionName = NSLocalizedStringFromTable(@"Vice Chair", @"DataTableUI", @"Cell title for a person who is second in command of a given committee, behind the Chairperson");
             break;
-		}
-		case kMembersSection:
-			sectionName = @"Members";
+
+		case TXLCommitteeMembersSection:
+			sectionName = NSLocalizedStringFromTable(@"Members", @"DataTableUI", nil);
 			break;
 
-		case kInfoSection:
-		default:
-			if (self.committee.parentId.integerValue == -1) 
-				sectionName = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ Committee Info",@"DataTableUI", @"Information for a given legislative committee"),
-							   [self.committee typeString]];
-			else
-				sectionName = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ Subcommittee Info",@"DataTableUI", @"Information for a given legislative subcommittee"),
-							   [self.committee typeString]];			
+		case TXLCommitteeInfoSection:
+            sectionName = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ Committee Info", @"DataTableUI", nil),
+							   committeeType];
 			break;
 	}
 	return sectionName;
@@ -584,7 +597,7 @@ CGFloat quartzRowHeight = 73.f;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if (indexPath.section > kInfoSection)
+	if (indexPath.section > TXLCommitteeInfoSection)
 		return quartzRowHeight;
 	
 	return 44.0f;
@@ -599,24 +612,23 @@ CGFloat quartzRowHeight = 73.f;
 
 - (void)pushInternalBrowserWithURL:(NSURL *)url
 {
-	if ([TexLegeReachability canReachHostWithURL:url])
+	if (!SLTypeURLOrNil(url) || ![TexLegeReachability canReachHostWithURL:url])
+        return;
+
+    UIViewController *webController = nil;
+
+    if ([url.scheme hasPrefix:@"http"])
+        webController = [[SFSafariViewController alloc] initWithURL:url];
+    else // can't use anything except http: or https: with SFSafariViewControllers
     {
-		NSString *urlString = url.absoluteString;
-		
-        NSURL *url = [NSURL URLWithString:urlString];
-        if (!url)
-            return;
-        
-        UIViewController *webController = nil;
-        
-        if ([url.scheme hasPrefix:@"http"])
-            webController = [[SFSafariViewController alloc] initWithURL:url];
-        else // can't use anything except http: or https: with SFSafariViewControllers
+        NSString *urlString = url.absoluteString;
+        if (urlString.length)
             webController = [[SVWebViewController alloc] initWithAddress:urlString];
-        
-        webController.modalPresentationStyle = UIModalPresentationPageSheet;
-        [self presentViewController:webController animated:YES completion:nil];
-	}
+    }
+    if (!webController)
+        return;
+    webController.modalPresentationStyle = UIModalPresentationPageSheet;
+    [self presentViewController:webController animated:YES completion:nil];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath
@@ -627,10 +639,9 @@ CGFloat quartzRowHeight = 73.f;
 	NSInteger section = newIndexPath.section;
     CommitteeObj *committee = self.committee;
 
-	if (section == kInfoSection)
+	if (section == TXLCommitteeInfoSection)
     {
         NSArray *rows = self.infoSectionArray;
-
         if (rows.count <= row)
             return;
 
@@ -640,31 +651,34 @@ CGFloat quartzRowHeight = 73.f;
 		
 		switch (row)
         {
-			case CommitteeInfoRowClerk:	
-				[[TexLegeEmailComposer sharedTexLegeEmailComposer] presentMailComposerTo:cellInfo.entryValue 
-																				 subject:@""
-                                                                                    body:@""
-                                                                               commander:self];
+			case CommitteeInfoRowClerk:
+            {
+                NSString *email = SLTypeNonEmptyStringOrNil(cellInfo.entryValue);
+                if (email)
+                    [[TexLegeEmailComposer sharedTexLegeEmailComposer] presentMailComposerTo:email subject:@"" body:@"" commander:self];
 				break;
+            }
 			case CommitteeInfoRowPhone:
             {
-				if ([UtilityMethods canMakePhoneCalls])
+                NSURL *url = SLTypeURLOrNil(cellInfo.entryValue);
+				if (url && [UtilityMethods canMakePhoneCalls])
                 {
-					NSURL *myURL = cellInfo.entryValue;
-					[UtilityMethods openURLWithoutTrepidation:myURL];
+                    [UtilityMethods openURLWithoutTrepidation:url];
 				}
                 break;
 			}
             case CommitteeInfoRowLocation:
             {
-				CapitolMap *capMap = cellInfo.entryValue;
-				[self pushMapViewWithMap:capMap];
+				CapitolMap *capMap = SLValueIfClass(CapitolMap, cellInfo.entryValue);
+                if (capMap)
+                    [self pushMapViewWithMap:capMap];
                 break;
 			}
 			case CommitteeInfoRowWebsite:
             {
-				NSURL *myURL = cellInfo.entryValue;
-				[self pushInternalBrowserWithURL:myURL];
+                NSURL *url = SLTypeURLOrNil(cellInfo.entryValue);
+                if (url)
+                    [self pushInternalBrowserWithURL:url];
                 break;
 			}
 			default:
@@ -678,13 +692,13 @@ CGFloat quartzRowHeight = 73.f;
 		
 		switch (section)
         {
-			case kChairSection:
+			case TXLCommitteeChairSection:
 				subDetailController.legislator = [committee chair];
 				break;
-			case kViceChairSection:
+			case TXLCommitteeViceChairSection:
 				subDetailController.legislator = [committee vicechair];
 				break;
-			case kMembersSection:
+			case TXLCommitteeMembersSection:
             {
                 NSArray *members = committee.sortedMembers;
                 if (members.count > row)

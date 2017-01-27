@@ -405,6 +405,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
             MKMapView *mapView = sself.mapView;
             if (!mapView)
                 return;
+            [mapView setCenterCoordinate:op.searchCoordinate animated:YES];
 
             NSMutableArray *polygons = [[NSMutableArray alloc] init];
             for (DistrictMapObj *district in districts)

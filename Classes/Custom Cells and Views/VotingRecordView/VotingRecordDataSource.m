@@ -96,6 +96,9 @@
 	
 	PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
     NSNumber *legType = self.legType;
+    if (!indexStats || !legType)
+        return nil;
+    
 	CGFloat sliderMin = [indexStats minPartisanIndexUsingChamber:(legType).integerValue];
 	CGFloat sliderMax = [indexStats maxPartisanIndexUsingChamber:(legType).integerValue];
 

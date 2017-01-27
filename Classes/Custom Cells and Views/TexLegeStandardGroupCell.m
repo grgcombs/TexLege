@@ -16,65 +16,136 @@
 #import "DisclosureQuartzView.h"
 
 @implementation TexLegeStandardGroupCell
-@synthesize cellInfo;
+@synthesize cellInfo = _cellInfo;
 
-+ (NSString *)cellIdentifier {
-	return @"TexLegeStandardGroupCell";
++ (NSString *)cellIdentifier
+{
+	return NSStringFromClass([self class]);
 }
 
-+ (UITableViewCellStyle)cellStyle {
-	return UITableViewCellStyleValue2;
-	//return UITableViewCellStyleSubtitle;
++ (UITableViewCellStyle)cellStyle
+{
+    return [self preferredStyle];
 }
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
-        // Initialization code
-		self.selectionStyle = UITableViewCellSelectionStyleBlue;
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    style = [self.class preferredStyle];
+
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self)
+    {
 		self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;	
 
-		self.detailTextLabel.font =			[TexLegeTheme boldTwelve];
-		self.textLabel.font =				[TexLegeTheme boldTen];
-		self.detailTextLabel.textColor = 	[TexLegeTheme textDark];
-		self.textLabel.textColor =			[TexLegeTheme accent];
+        UILabel *titleLabel = self.detailTextLabel;
+        UIFont *titleFont = [TexLegeTheme boldTwelve];
+		titleLabel.font = titleFont;
+        titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        titleLabel.adjustsFontSizeToFitWidth = YES;
+        titleLabel.minimumScaleFactor = (12.0 / titleFont.pointSize);
+        titleLabel.textColor = [TexLegeTheme textDark];
 
-		self.textLabel.adjustsFontSizeToFitWidth =	YES;
+        UILabel *subtitleLabel = self.textLabel;
+        UIFont *subtitleFont = [TexLegeTheme boldTen];
+        subtitleLabel.font = subtitleFont;
+        subtitleLabel.textColor = [TexLegeTheme accent];
+        subtitleLabel.adjustsFontSizeToFitWidth = YES;
 
-		self.detailTextLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-		self.detailTextLabel.adjustsFontSizeToFitWidth = YES;
-        self.detailTextLabel.minimumScaleFactor = (12.0 / self.detailTextLabel.font.pointSize); // 12.f = deprecated minimumFontSize
-
-		//cell.accessoryView = [TexLegeTheme disclosureLabel:YES];
-		//self.accessoryView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure"]] autorelease];
-		DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
-		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
-		self.accessoryView = qv;
-		//[iv release];
-		
-		self.backgroundColor = [TexLegeTheme backgroundLight];
-		
+        [self configure];
     }
     return self;
 }
 
+- (void)setCellInfo:(TableCellDataObject *)cellInfo
+{
+    if (![cellInfo isKindOfClass:[TableCellDataObject class]])
+        cellInfo = nil;
+    _cellInfo = cellInfo;
 
+    self.detailTextLabel.text = cellInfo.title;
+    self.textLabel.text = cellInfo.subtitle;
+    if (!cellInfo.isClickable)
+    {
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        self.accessoryType = UITableViewCellAccessoryNone;
+        self.accessoryView = nil;
+    }
+}
 
-- (void)setCellInfo:(TableCellDataObject *)newCellInfo {	
-	if (cellInfo)
-		cellInfo = nil;
-	
-	if (newCellInfo) {
-		cellInfo = newCellInfo;
-		self.detailTextLabel.text = cellInfo.title;
-		self.textLabel.text = cellInfo.subtitle;
-		if (!cellInfo.isClickable) {
-			self.selectionStyle = UITableViewCellSelectionStyleNone;
-			self.accessoryType = UITableViewCellAccessoryNone;
-			self.accessoryView = nil;
-		}
-	}
-		
++ (BOOL)forceUnclickable
+{
+    return NO;
+}
+
++ (UITableViewCellStyle)preferredStyle
+{
+    return UITableViewCellStyleValue2;
+}
+
+- (void)configure
+{
+    _cellInfo = nil;
+    self.detailTextLabel.text = nil;
+    self.textLabel.text = nil;
+
+    if ([[self class] forceUnclickable])
+    {
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        self.accessoryType = UITableViewCellAccessoryNone;
+        self.accessoryView = nil;
+    }
+    else
+    {
+        self.selectionStyle = UITableViewCellSelectionStyleBlue;
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        if (!self.accessoryView || ![self.accessoryView isKindOfClass:[DisclosureQuartzView class]])
+        {
+            DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
+            self.accessoryView = qv;
+        }
+    }
+}
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    [self configure];
+}
+
+@end
+
+@implementation TXLUnclickableGroupCell
+
++ (BOOL)forceUnclickable
+{
+    return YES;
+}
+
+@end
+
+@implementation TXLClickableGroupCell
+
++ (BOOL)forceUnclickable
+{
+    return NO;
+}
+
+@end
+
+@implementation TXLUnclickableSubtitleCell
+
++ (UITableViewCellStyle)preferredStyle
+{
+    return UITableViewCellStyleSubtitle;
+}
+
+@end
+
+@implementation TXLClickableSubtitleCell
+
++ (UITableViewCellStyle)preferredStyle
+{
+    return UITableViewCellStyleSubtitle;
 }
 
 @end

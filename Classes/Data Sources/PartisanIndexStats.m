@@ -384,8 +384,8 @@
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:@"PartyPartisanshipObj.plist"];
-
-    if ([fileManager fileExistsAtPath:localPath isDirectory:NO])
+    BOOL isDirectory = NO;
+    if ([fileManager fileExistsAtPath:localPath isDirectory:&isDirectory] && !isDirectory)
     {
         aggregateObjects = [NSKeyedUnarchiver unarchiveObjectWithFile:localPath];
 

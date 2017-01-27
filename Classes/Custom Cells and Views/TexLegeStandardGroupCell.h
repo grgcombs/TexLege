@@ -14,7 +14,18 @@
 #import "TexLegeGroupCellProtocol.h"
 
 @class TableCellDataObject;
-@interface TexLegeStandardGroupCell : UITableViewCell <TexLegeGroupCellProtocol> {
 
-}
+@interface TexLegeStandardGroupCell : UITableViewCell <TexLegeGroupCellProtocol>
+@end
+
+@interface TXLClickableGroupCell : TexLegeStandardGroupCell
+@end
+
+@interface TXLUnclickableGroupCell : TexLegeStandardGroupCell
+@end
+
+@interface TXLClickableSubtitleCell : TXLClickableGroupCell
+@end
+
+@interface TXLUnclickableSubtitleCell : TXLUnclickableGroupCell
 @end

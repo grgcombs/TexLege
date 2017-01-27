@@ -77,14 +77,8 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 
 - (void)dealloc
 {
-	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
+	[[RKClient sharedClient].requestQueue cancelRequestsWithDelegate:self];
     self.bill = nil;
-    //[super dealloc];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Override to allow orientations other than the default portrait orientation.
-    return YES;
 }
 
 #pragma mark -
@@ -130,6 +124,7 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
 	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];
 
 	if (NO == [UtilityMethods isLandscapeOrientation]
@@ -143,10 +138,29 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 	
 	if (self.starButton)
 		self.starButton.enabled = (self.bill != nil);
+
+    if (self.splitViewController.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = self.splitViewController.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:animated];
+    }
 }
 
-#pragma mark -
-#pragma mark Data Objects
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+- (void)splitViewController:(UISplitViewController *)svc willChangeToDisplayMode:(UISplitViewControllerDisplayMode)displayMode
+{
+    if (svc.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = svc.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:YES];
+    }
+}
+
+#pragma mark - Data Objects
 
 - (id)dataObject
 {
@@ -370,38 +384,6 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 	// Reset action picker
 	//		[self.actionHeader shrinkActionPicker];
 	
-}
-
-#pragma mark -
-#pragma mark Split view support
-
-- (void)splitViewController: (UISplitViewController*)svc 
-	 willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem*)barButtonItem 
-	   forPopoverController: (UIPopoverController*)pc
-{
-	//debug_NSLog(@"Entering portrait, showing the button: %@", [aViewController class]);
-	barButtonItem.title = @"Bills";
-	[self.navigationItem setRightBarButtonItem:barButtonItem animated:YES];
-	self.masterPopover = pc;
-}
-
-// Called when the view is shown again in the split view, invalidating the button and popover controller.
-- (void)splitViewController: (UISplitViewController*)svc 
-	 willShowViewController:(UIViewController *)aViewController 
-  invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
-{
-	//debug_NSLog(@"Entering landscape, hiding the button: %@", [aViewController class]);
-	[self.navigationItem setRightBarButtonItem:nil animated:YES];
-	self.masterPopover = nil;
-}
-
-- (void) splitViewController:(UISplitViewController *)svc popoverController: (UIPopoverController *)pc
-   willPresentViewController: (UIViewController *)aViewController
-{
-	if ([UtilityMethods isLandscapeOrientation])
-    {
-		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"ERR_POPOVER_IN_LANDSCAPE"];
-	}	
 }
 
 #pragma mark -

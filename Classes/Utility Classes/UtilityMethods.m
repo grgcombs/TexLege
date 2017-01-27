@@ -283,7 +283,7 @@ BOOL IsEmpty(id thing) {
 }
 
 // Determine if we have network access, if not then throw up an alert.
-+ (BOOL) openURLWithTrepidation:(NSURL *)url
++ (BOOL)openURLWithTrepidation:(NSURL *)url
 {
 	BOOL canOpenURL = NO;
 	

@@ -11,6 +11,6 @@
 @class LegislatorObj;
 
 @protocol LegislatorCellProtocol <NSObject>
-- (void)setLegislator:(LegislatorObj *)value;
+@property (nonatomic,strong) LegislatorObj *legislator;
 - (void)redisplay;
 @end
