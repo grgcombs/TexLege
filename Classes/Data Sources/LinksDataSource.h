@@ -12,10 +12,11 @@
 
 #import "TableDataSourceProtocol.h"
 
-@interface LinksDataSource : NSObject <TableDataSource>  {
-}
+@interface LinksDataSource : NSObject <TableDataSource>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 
 @end
- 
+
+extern NSString * const TXLLinksHeaderCellId;
+extern NSString * const TXLLinksLinkCellId;

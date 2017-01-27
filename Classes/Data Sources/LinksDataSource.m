@@ -19,15 +19,19 @@
 #import <SLFRestKit/SLFRestKit.h>
 #import <SLFRestKit/NSManagedObject+RestKit.h>
 
+NSString * const TXLLinksHeaderCellId = @"LinksHeader";
+NSString * const TXLLinksLinkCellId =  @"LinksBodyLink";
+
 @implementation LinksDataSource
 
-enum Sections {
-    kHeaderSection = 0,
-    kBodySection,
-    NUM_SECTIONS
+typedef NS_ENUM(UInt8, TXLLinkSection) {
+    TXLLinkHeaderSection = 0,
+    TXLLinkBodySection,
 };
 
-@synthesize fetchedResultsController;
+UInt8 TXLLinkSectionCount = TXLLinkBodySection + 1;
+
+@synthesize fetchedResultsController = _fetchedResultsController;
 
 #pragma mark -
 #pragma mark TableDataSourceProtocol methods
@@ -76,7 +80,8 @@ enum Sections {
 	return self;
 }
 
-- (void)resetCoreData:(NSNotification *)notification {
+- (void)resetCoreData:(NSNotification *)notification
+{
 	[NSFetchedResultsController deleteCacheWithName:(self.fetchedResultsController).cacheName];
 	self.fetchedResultsController = nil;
 	NSError *error = nil;
@@ -96,9 +101,8 @@ enum Sections {
 	}
 }
 
-#pragma mark -
-#pragma mark UITableViewDataSource methods
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
 	return (self.fetchedResultsController.sections).count;
 }
 
@@ -118,15 +122,27 @@ enum Sections {
     return sectionInfo.numberOfObjects;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-	
-	if (section == kHeaderSection)
-		return NSLocalizedStringFromTable(@"This Application", @"DataTableUI", @"Table section listing resources for this application");
-	else
-		return NSLocalizedStringFromTable(@"Web Resources", @"DataTableUI", @"Table section listing resources on the web");		
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if (section < TXLLinkHeaderSection)
+        return nil;
+    if (section >= TXLLinkSectionCount)
+        return nil;
+    TXLLinkSection linkSection = section;
+    NSString *title = nil;
+    switch(linkSection) {
+        case TXLLinkHeaderSection:
+            title = NSLocalizedStringFromTable(@"This Application", @"DataTableUI", @"Table section listing resources for this application");
+            break;
+        case TXLLinkBodySection:
+            title = NSLocalizedStringFromTable(@"Web Resources", @"DataTableUI", @"Table section listing resources on the web");
+            break;
+    }
+    return title;
 }
 
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
+- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath
+{
     id object = nil;
     @try {
         object = [self.fetchedResultsController objectAtIndexPath:indexPath];
@@ -151,37 +167,34 @@ enum Sections {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSInteger section = indexPath.section;
-	
-	NSString *CellIdentifier = @"Cell";
+    TXLLinkSection linkSection = indexPath.section;
+    NSString *reuseIdentifier = nil;
+    switch(linkSection) {
+        case TXLLinkHeaderSection:
+            reuseIdentifier = TXLLinksHeaderCellId;
+            break;
+        case TXLLinkBodySection:
+            reuseIdentifier = TXLLinksLinkCellId;
+            break;
+    }
 
-	if (section == kHeaderSection)
-		CellIdentifier = @"LinksHeader";
-	else
-		CellIdentifier = @"LinksBodyLink";
-	
-	TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+	TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
 	if (cell == nil)
-	{		
-		cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Cell"];
-		if (section == kHeaderSection) {
-			cell.accessoryView = nil;
-			cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-		}		
-		
-		cell.textLabel.font = [TexLegeTheme boldFifteen];
-		cell.textLabel.textColor = [TexLegeTheme textDark];
-		cell.detailTextLabel.textColor = [TexLegeTheme indexText];
-	}
-	
+		cell = [[TXLClickableSubtitleCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
+
 	LinkObj *link = [self dataObjectForIndexPath:indexPath];
-	if (link) {
-		cell.textLabel.text = link.label;
-		
-		if (indexPath.section == kBodySection)
-			cell.detailTextLabel.text = link.url;
-	}
-	return cell;
+
+    switch(linkSection) {
+        case TXLLinkHeaderSection:
+            cell.detailTextLabel.text = link.label;
+            break;
+        case TXLLinkBodySection:
+            cell.detailTextLabel.text = link.url;
+            cell.textLabel.text = link.label;
+            break;
+    }
+
+    return cell;
 }
 	
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
@@ -193,12 +206,10 @@ enum Sections {
 	//    [self.tableView endUpdates];
 }
 
-
-#pragma mark -
-#pragma mark Fetched results controller
 - (NSFetchedResultsController *)fetchedResultsController
 {  
-	if (fetchedResultsController != nil) return fetchedResultsController;
+	if (_fetchedResultsController != nil)
+        return _fetchedResultsController;
 	
 	NSFetchRequest *fetchRequest = [LinkObj rkFetchRequest];
 	
@@ -207,15 +218,11 @@ enum Sections {
 	NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortSection, sortOrder, nil];  
 	fetchRequest.sortDescriptors = sortDescriptors;
 
-    NSString *cacheName = nil; // @"Links"
-
-	fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest 
+	_fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
 																   managedObjectContext:[LinkObj rkManagedObjectContext]
-																	 sectionNameKeyPath:@"section" cacheName:cacheName];
-	fetchedResultsController.delegate = self;
-	
-	
-	return fetchedResultsController;
+																	 sectionNameKeyPath:@"section" cacheName:nil];
+	_fetchedResultsController.delegate = self;
+	return _fetchedResultsController;
 }    
 
 @end

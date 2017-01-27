@@ -22,6 +22,7 @@
 #import "TexLegeEmailComposer.h"
 #import "TexLegeReachability.h"
 #import "LinkObj+RestKit.h"
+#import "TexLegeStandardGroupCell.h"
 #import <SafariServices/SFSafariViewController.h>
 
 @implementation LinksMasterViewController
@@ -50,7 +51,11 @@
 }
 
 - (void)viewDidLoad {
-	[super viewDidLoad];	
+    [super viewDidLoad];
+
+    [self.tableView registerClass:[TXLClickableSubtitleCell class] forCellReuseIdentifier:TXLLinksHeaderCellId];
+    [self.tableView registerClass:[TXLClickableSubtitleCell class] forCellReuseIdentifier:TXLLinksLinkCellId];
+
 	if (!self.initialObjectToSelect && [UtilityMethods isIPadDevice])
 		self.initialObjectToSelect = [self firstDataObject];
 }
@@ -162,6 +167,7 @@
                 webController = [[SVWebViewController alloc] initWithAddress:urlString];
             
             webController.hidesBottomBarWhenPushed = YES;
+            webController.title = link.label;
             [self.navigationController pushViewController:webController animated:YES];
 		}
 		else if (self.detailViewController)

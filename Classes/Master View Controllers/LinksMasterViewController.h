@@ -15,7 +15,6 @@
 #import "TableDataSourceProtocol.h"
 #import "GeneralTableViewController.h"
 
-@interface LinksMasterViewController : GeneralTableViewController {
-}
+@interface LinksMasterViewController : GeneralTableViewController
 
 @end
