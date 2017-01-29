@@ -176,8 +176,16 @@ NSString *RKPathAppendQueryParams(NSString *resourcePath, NSDictionary *queryPar
     self.serviceUnavailableAlertTitle = nil;
     self.serviceUnavailableAlertMessage = nil;
     self.requestCache = nil;
+    self.OAuth1AccessToken = nil;
+    self.OAuth1AccessTokenSecret = nil;
+    self.OAuth1ConsumerKey = nil;
+    self.OAuth1ConsumerSecret = nil;
+    self.OAuth2AccessToken = nil;
+    self.OAuth2RefreshToken = nil;
     [_HTTPHeaders release];
+    _HTTPHeaders = nil;
     [_additionalRootCertificates release];
+    _additionalRootCertificates = nil;
 
     [super dealloc];
 }

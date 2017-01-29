@@ -117,12 +117,12 @@
 }
 
 - (void)dealloc {
-    [_text release];
-    [_detailText release];
-    [_image release];
-    [_cellMapping release];
-    [_userData release];
-    
+    self.text = nil;
+    self.detailText = nil;
+    self.image = nil;
+    self.cellMapping = nil;
+    self.userData = nil;
+    self.URL = nil;
     [super dealloc];
 }
 

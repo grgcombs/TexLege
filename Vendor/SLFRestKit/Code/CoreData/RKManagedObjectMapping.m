@@ -84,7 +84,11 @@
 
 - (void)dealloc {
     [_entity release];
+    _entity = nil;
     [_relationshipToPrimaryKeyMappings release];
+    _relationshipToPrimaryKeyMappings = nil;
+    [_primaryKeyAttribute release];
+    _primaryKeyAttribute = nil;
     [super dealloc];
 }
 

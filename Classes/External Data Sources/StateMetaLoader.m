@@ -178,7 +178,8 @@ const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
 		return;
 	
 	self.fresh = NO;
-	[_loadingStates addObject:stateID];	// add it to our list of active loads
+    if (stateID)
+        [_loadingStates addObject:stateID];	// add it to our list of active loads
 	
 	RKClient *osApiClient = [OpenLegislativeAPIs sharedOpenLegislativeAPIs].osApiClient;
 	NSDictionary *queryParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:SUNLIGHT_APIKEY, @"apikey",nil];

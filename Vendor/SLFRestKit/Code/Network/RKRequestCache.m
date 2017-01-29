@@ -178,7 +178,6 @@ static NSDateFormatter* __rfc1123DateFormatter;
 }
 
 - (NSDate*)cacheDateForRequest:(RKRequest*)request {
-	NSDate* date = nil;
     NSString* dateString = nil;
 
     NSDictionary* responseHeaders = [self headersForRequest:request];
@@ -189,7 +188,9 @@ static NSDateFormatter* __rfc1123DateFormatter;
             }
         }
     }
-    date = [[RKRequestCache rfc1123DateFormatter] dateFromString:dateString];
+    if (!dateString)
+        return nil;
+    NSDate* date = [[RKRequestCache rfc1123DateFormatter] dateFromString:dateString];
     RKLogDebug(@"Found cached date '%@' for '%@'", date, request);
 	return date;
 }

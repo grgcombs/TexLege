@@ -80,7 +80,8 @@
                                      errorMessage, NSLocalizedDescriptionKey,
                                      @"RKObjectMapperKeyPath", keyPath ? keyPath : (NSString*) [NSNull null],
                                      nil];
-    [userInfo addEntriesFromDictionary:otherInfo];
+    if (otherInfo)
+        [userInfo addEntriesFromDictionary:otherInfo];
     NSError* error = [NSError errorWithDomain:RKErrorDomain code:errorCode userInfo:userInfo];
     [self addError:error];
 }

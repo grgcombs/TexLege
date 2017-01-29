@@ -24,6 +24,12 @@
 
 @synthesize control;
 
+- (void)dealloc
+{
+    self.control = nil;
+    [super dealloc];
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     

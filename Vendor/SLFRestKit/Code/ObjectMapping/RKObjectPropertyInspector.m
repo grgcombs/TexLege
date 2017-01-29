@@ -102,9 +102,15 @@ static RKObjectPropertyInspector* sharedInspector = nil;
 		free(propList);
 		currentClass = [currentClass superclass];
 	}
-	
-	[_cachedPropertyNamesAndTypes setObject:propertyNames forKey:NSStringFromClass(theClass)];
-    RKLogDebug(@"Cached property names and types for Class '%@': %@", NSStringFromClass(theClass), propertyNames);
+
+	if (!theClass)
+        return nil;
+    NSString *className = NSStringFromClass(theClass);
+    if (!className)
+        return nil;
+
+	[_cachedPropertyNamesAndTypes setObject:propertyNames forKey:className];
+    RKLogDebug(@"Cached property names and types for Class '%@': %@", className, propertyNames);
 	return propertyNames;
 }
 

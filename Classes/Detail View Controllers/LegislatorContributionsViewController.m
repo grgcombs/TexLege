@@ -72,6 +72,7 @@
 - (void)viewDidUnload {
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:kContributionsDataNotifyLoaded object:self.dataSource];	
 	self.dataSource = nil;
+    [super viewDidUnload];
 }
 
 - (void)didReceiveMemoryWarning {

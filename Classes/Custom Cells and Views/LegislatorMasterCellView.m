@@ -263,7 +263,7 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
             // StarGroup
 
             // Setup for Shadow Effect
-            color = [UIColor colorWithWhite:0.0f alpha:0.5f];
+            //color = [UIColor colorWithWhite:0.0f alpha:0.5f];
             CGContextSaveGState(context);
             {
                 // Star

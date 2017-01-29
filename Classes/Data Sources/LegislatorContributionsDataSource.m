@@ -619,6 +619,7 @@
     if ([electionYear isKindOfClass:[NSNumber class]])
         electionYear = ((NSNumber *)electionYear).stringValue;
 
+#if 0
     NSString *chamber = record[@"General_Office"][@"id"];
     if (!chamber || ![chamber isKindOfClass:[NSString class]])
         return nil;
@@ -626,7 +627,8 @@
         chamber = stringForChamber(SENATE, TLReturnFull);
     else
         chamber = stringForChamber(HOUSE, TLReturnFull);
-
+#endif
+    
     NSNumber *amount = record[@"Total_$"][@"Total_$"];
     if (!amount)
         return nil;

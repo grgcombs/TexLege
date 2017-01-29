@@ -91,7 +91,6 @@ static os_log_t txlCoreDataUtilsLog;
     {
         NSDictionary *resultDictionary = results[0];
         fetchedVal = resultDictionary[calculatedPropertyKey];
-		fetchedVal = [results[0] valueForKey:calculatedPropertyKey];
     }
 	else
     {

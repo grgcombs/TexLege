@@ -64,6 +64,7 @@ static CGFloat const kDefaultTriggerViewHeight = 64.f;
     if (self.triggerView)
         [self.triggerView removeFromSuperview];
     self.triggerView = nil;
+    self.dateFormatter = nil;
     [super dealloc];
 }
 

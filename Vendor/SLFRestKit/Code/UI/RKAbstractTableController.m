@@ -347,7 +347,7 @@ static NSString* lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 - (UITableViewCell *)cellForObjectAtIndexPath:(NSIndexPath *)indexPath {
     RKTableSection* section = [self sectionAtIndex:indexPath.section];
     if (!section) {
-        return [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+        return [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
     }
     id mappableObject = [section objectAtIndex:indexPath.row];
     RKTableViewCellMapping* cellMapping = [self.cellMappings cellMappingForObject:mappableObject];

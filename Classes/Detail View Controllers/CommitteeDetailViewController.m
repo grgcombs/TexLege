@@ -472,20 +472,20 @@ NSString * const TXLCommitteeMemberCellReuse = @"CommitteeMember";
     {
         case TXLCommitteeChairSection:
             reuseIdentifier = TXLCommitteeMemberCellReuse;
-            style = UITableViewCellStyleSubtitle;
+            //style = UITableViewCellStyleSubtitle;
             legislator = [committee chair];
             break;
 
         case TXLCommitteeViceChairSection:
             reuseIdentifier = TXLCommitteeMemberCellReuse;
-            style = UITableViewCellStyleSubtitle;
+            //style = UITableViewCellStyleSubtitle;
             legislator = [committee vicechair];
             break;
 
         case TXLCommitteeMembersSection:
         {
             reuseIdentifier = TXLCommitteeMemberCellReuse;
-            style = UITableViewCellStyleSubtitle;
+            //style = UITableViewCellStyleSubtitle;
             NSArray * memberList = [committee sortedMembers];
             legislator = (memberList.count > row) ? memberList[row] : nil;
             break;

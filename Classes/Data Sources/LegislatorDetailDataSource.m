@@ -229,10 +229,13 @@
 	if (storedNotesDict) {
 		tempString = [storedNotesDict valueForKey:(legislator.legislatorID).stringValue];
 	}
-	if (IsEmpty(tempString)) {
+	if (IsEmpty(tempString) || !tempString) {
 		tempString = kStaticNotes;
 	}
-    entryDict = @{@"subtitle": NSLocalizedStringFromTable(@"Notes", @"DataTableUI", @"Title for the cell indicating custom notes option"),
+    NSString *notes = NSLocalizedStringFromTable(@"Notes", @"DataTableUI", @"Title for the cell indicating custom notes option");
+    if (!notes)
+        notes = @"Notes";
+    entryDict = @{@"subtitle": notes,
                   @"entryValue": tempString,
                   @"title": tempString,
                   @"isClickable": @YES,

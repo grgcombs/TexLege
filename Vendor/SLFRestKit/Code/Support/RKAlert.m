@@ -28,7 +28,7 @@
 #import "RKLog.h"
 
 void RKAlert(NSString* message) {
-    RKAlertWithTitle(message, @"Alert");
+    RKAlertWithTitle(message, NSLocalizedString(@"Alert", nil));
 }
 
 void RKAlertWithTitle(NSString* message, NSString* title) {

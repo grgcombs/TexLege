@@ -62,6 +62,9 @@
 
 - (void)dealloc {
     [_matchers release];
+    _matchers = nil;
+    [_objectMappingForDataBlock release];
+    _objectMappingForDataBlock = nil;
     [super dealloc];
 }
 

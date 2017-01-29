@@ -901,7 +901,7 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
         return aView;
     }
 	
-	return nil;
+    return [[MKOverlayRenderer alloc] init]; // we have to return something
 }
 
 

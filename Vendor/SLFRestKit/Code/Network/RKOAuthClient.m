@@ -53,18 +53,21 @@
 }
 
 - (void)dealloc {
-    [_clientID release];
-    [_clientSecret release];
+    self.clientID = nil;
+    self.clientSecret = nil;
     [_accessToken release];
-    
+    _accessToken = nil;
+    self.authorizationCode = nil;
+    self.authorizationURL = nil;
+    self.callbackURL = nil;
     [super dealloc];
 }
 
 - (void)validateAuthorizationCode {
     NSString *httpBody = [NSString stringWithFormat:@"client_id=%@&client_secret=%@&code=%@&redirect_uri=%@&grant_type=authorization_code",
                           _clientID, _clientSecret, _authorizationCode, _callbackURL];
-    NSURL *url = [[NSURL alloc] initWithString:_authorizationURL];
-    RKClient *requestClient = [RKClient clientWithBaseURL:url];
+    NSURL *url = [NSURL URLWithString:_authorizationURL];
+    RKClient *requestClient = [[RKClient clientWithBaseURL:url] autorelease];
     RKRequest *theRequest = [requestClient requestWithResourcePath:@"" delegate:self];
     [theRequest setHTTPBodyString:httpBody];
     [theRequest setMethod:RKRequestMethodPOST];

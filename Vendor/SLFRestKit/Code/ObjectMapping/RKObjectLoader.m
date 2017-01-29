@@ -96,7 +96,9 @@
     _result = nil;
     [_serializationMIMEType release];
     [_serializationMapping release];
-
+    [_mappingProvider release];
+    _mappingProvider = nil;
+    
 	[super dealloc];
 }
 
