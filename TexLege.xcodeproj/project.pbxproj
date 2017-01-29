@@ -26,6 +26,8 @@
 		370EAD311338029E007788BC /* OpenLegislativeAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAD301338029E007788BC /* OpenLegislativeAPIs.m */; };
 		370EAD321338029E007788BC /* OpenLegislativeAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAD301338029E007788BC /* OpenLegislativeAPIs.m */; };
 		370F7AA911FEAF730004AC50 /* PolygonMath.m in Sources */ = {isa = PBXBuildFile; fileRef = 370F7AA811FEAF730004AC50 /* PolygonMath.m */; };
+		3714574E1E3D8AA700AEE449 /* TexLegeObjectCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAC361337E3CF007788BC /* TexLegeObjectCache.m */; };
+		371457551E3D8AAA00AEE449 /* TexLegeObjectCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAC361337E3CF007788BC /* TexLegeObjectCache.m */; };
 		37155728100859E700FA57DB /* CommitteeObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37155727100859E700FA57DB /* CommitteeObj+RestKit.m */; };
 		3718895C12EE917B00E3300D /* NSDate+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3718895B12EE917B00E3300D /* NSDate+Helper.m */; };
 		371A442E1346597000DFDBB8 /* VoteNay.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A44281346597000DFDBB8 /* VoteNay.png */; };
@@ -2698,6 +2700,7 @@
 				374C37051215EB2D006B6ADA /* LinksMasterViewController.m in Sources */,
 				378B57AA1219913400F7ED0B /* MapViewController.m in Sources */,
 				378B57BE121994C400F7ED0B /* UIDevice-Hardware.m in Sources */,
+				3714574E1E3D8AA700AEE449 /* TexLegeObjectCache.m in Sources */,
 				37EAE54F121A6D9A00BF4277 /* UserPinAnnotation.m in Sources */,
 				37E2068412204D5000103D76 /* DistrictOfficeObj+MapKit.m in Sources */,
 				37E2068512204D5000103D76 /* DistrictMapObj+MapKit.m in Sources */,
@@ -2826,6 +2829,7 @@
 				37735B7D1323104A0033F343 /* LinksMasterViewController.m in Sources */,
 				37735B7E1323104A0033F343 /* MapViewController.m in Sources */,
 				37735B7F1323104A0033F343 /* UIDevice-Hardware.m in Sources */,
+				371457551E3D8AAA00AEE449 /* TexLegeObjectCache.m in Sources */,
 				37735B841323104A0033F343 /* UserPinAnnotation.m in Sources */,
 				37735B851323104A0033F343 /* DistrictOfficeObj+MapKit.m in Sources */,
 				37735B861323104A0033F343 /* DistrictMapObj+MapKit.m in Sources */,

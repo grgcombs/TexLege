@@ -25,56 +25,25 @@
 
 @implementation TexLegeObjectCache
 
+- (NSFetchRequest *)fetchRequestForResourcePath:(NSString*)resourcePath
+{
 
-- (NSArray*)fetchRequestsForResourcePath:(NSString*)resourcePath {
-	
-	//BOOL onlyID = NO;
-	if (YES == [resourcePath hasPrefix:@"/rest_ids.php"]) {	//??????
-		//resourcePath = [resourcePath substringFromIndex:[@"/rest_ids.php/" length]];
-		//onlyID = YES;
-		return nil;			/// ???????????
-	}
-	else
-		resourcePath = [resourcePath substringFromIndex:(@"/rest.php/").length];		
-					
-	NSArray* components = [resourcePath componentsSeparatedByString:@"/"];
-	NSInteger count = components.count;
-	NSString *modelString = components[0];
-	Class modelClass = NSClassFromString(modelString);
-	if (!modelClass)
-		return nil;
-	
-	NSString *primaryKey = [modelClass primaryKeyProperty];
+    if (![resourcePath hasSuffix:@".json"])
+        return nil;
 
-	if (count > 1) {
-		NSString *params = components[1];
-		if ([params hasPrefix:@"?"]) {
-			NSDictionary *paramsDict = [UtilityMethods parametersOfQuery:params];	// chop off the ?
+    NSString *filename = resourcePath.lastPathComponent;
+    NSString *modelString = [filename stringByDeletingPathExtension];
+    Class modelClass = NSClassFromString(modelString);
+    if (!modelClass)
+        return nil;
 
-			if ([paramsDict.allKeys containsObject:@"updated_since"]) {
-				NSString* updatedString = [paramsDict[@"updated_since"] stringByReplacingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
-				NSDate *updatedDate = [NSDate dateFromString:updatedString];
-				NSFetchRequest* request = [modelClass fetchRequest];
-				NSPredicate* predicate = [NSPredicate predicateWithFormat:@"updatedDate >= %@", updatedDate, nil];
-				request.predicate = predicate;
-				NSSortDescriptor* sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:primaryKey ascending:YES];
-				request.sortDescriptors = @[sortDescriptor];
-				return @[request];
-			}
-		}
-		else {
-			NSNumber* ID = @(params.intValue);
-			NSFetchRequest* request = [modelClass fetchRequest];
-			NSPredicate* predicate = [NSPredicate predicateWithFormat:@"%@ = %@", primaryKey, ID, nil];
-			request.predicate = predicate;
-			NSSortDescriptor *one = [NSSortDescriptor sortDescriptorWithKey:primaryKey ascending:YES] ;
-			request.sortDescriptors = @[one];
-			return @[request];
-			
-		}
-
-	}	
-	return nil;
+    NSFetchRequest* request = [modelClass fetchRequest];
+    NSString *primaryKeyName = [modelClass primaryKeyProperty];
+    //NSPredicate* predicate = [NSPredicate predicateWithFormat:@"%@ = %@", primaryKey, ID, nil];
+    //request.predicate = predicate;
+    NSSortDescriptor *sortByPrimaryKey = [NSSortDescriptor sortDescriptorWithKey:primaryKeyName ascending:YES] ;
+    request.sortDescriptors = @[sortByPrimaryKey];
+    return request;
 }
 
 @end

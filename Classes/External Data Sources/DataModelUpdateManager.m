@@ -50,10 +50,6 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
 @property (nonatomic,strong) RKRequestQueue *requestQueue;
 @property (nonatomic,assign) BOOL didPostCompletionToast;
 
-// Someday we may opt to handle updating for this aggregate partisanship file.  Right now it's manually updated.
-// In the future, we might use a method like the following to get timestamps and update accordingly.
-#define WNOMAGGREGATES_UPDATING 0
-
 @end
 
 @implementation DataModelUpdateManager
@@ -178,7 +174,8 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
         {
             resourcePath = @"/WnomAggregateObj.json";
             loader = [RKObjectLoader loaderWithResourcePath:resourcePath objectManager:objectManager delegate:self];
-            loader.cachePolicy = RKRequestCachePolicyDefault; // does eTag but loads only from cache within a timeout
+            loader.cachePolicy = RKRequestCachePolicyDefault | RKRequestCachePolicyLoadIfOffline;
+            loader.cacheTimeoutInterval = 60 * 60 * 3; // don't abuse the network for it since this isn't updated often
         }
         else
         {
@@ -312,7 +309,7 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
                                                                           title:NSLocalizedString(@"Data Update", @"")
                                                                        subtitle:statusString
                                                                           image:nil
-                                                                       duration:2];
+                                                                       duration:1];
 
                 [infoManager addToast:infoItem];
 

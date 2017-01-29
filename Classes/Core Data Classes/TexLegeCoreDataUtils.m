@@ -26,7 +26,7 @@
 #import "TexLegeAppDelegate.h"
 #import "NSDate+Helper.h"
 #import "LocalyticsSession.h"
-//#import "TexLegeObjectCache.h"
+#import "TexLegeObjectCache.h"
 #import "UtilityMethods.h"
 
 #import <SLFRestKit/NSManagedObject+RestKit.h>
@@ -382,13 +382,14 @@ static os_log_t txlCoreDataUtilsLog;
 #endif
 #endif
 
-    objectManager.objectStore = [[self sharedInstance] attemptLoadObjectStoreAndFlushIfNeeded];
+    RKManagedObjectStore *objectStore = [[self sharedInstance] attemptLoadObjectStoreAndFlushIfNeeded];
+    TexLegeObjectCache *objectCache = [[TexLegeObjectCache alloc] init];
+    objectStore.managedObjectCache = objectCache;
+    objectManager.objectStore = objectStore;
 
     RKObjectMappingProvider *provider = [objectManager mappingProvider];
     [self registerObjectMappingWithProvider:provider];
 
-	//objectManager.objectStore.managedObjectCache = [[TexLegeObjectCache new] autorelease];
-	
 #ifdef VERIFYCOMMITTEES
 	JSONDataImporter *importer = [[JSONDataImporter alloc] init];
 	[importer verifyCommitteeAssignmentsByChamber:HOUSE];
