@@ -293,6 +293,7 @@
                 </navigationBar>
                 <viewControllers>
                     <viewController autoresizesArchivedViewToFullSize="NO" id="62" customClass="SVWebViewController">
+                        <extendedEdge key="edgesForExtendedLayout"/>
                         <navigationItem key="navigationItem" id="63">
                             <nil key="title"/>
                         </navigationItem>
