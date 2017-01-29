@@ -7,9 +7,6 @@
 [submodule "Vendor/SVWebViewController"]
 	path = Vendor/SVWebViewController
 	url = https://github.com/grgcombs/SVWebViewController.git
-[submodule "Vendor/IntelligentSplitViewController"]
-	path = Vendor/IntelligentSplitViewController
-	url = https://github.com/grgcombs/IntelligentSplitViewController.git
 [submodule "Vendor/AppendingFlowView"]
 	path = Vendor/AppendingFlowView
 	url = https://github.com/grgcombs/AppendingFlowView.git
