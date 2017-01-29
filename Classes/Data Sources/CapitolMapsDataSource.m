@@ -117,17 +117,17 @@
 #pragma mark UITableViewDataSource methods
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{		
-	static NSString *CellIdentifier = @"Cell";
+{
+	NSString *CellIdentifier = [TXLClickableSubtitleCell cellIdentifier];
 	
 	/* Look up cell in the table queue */
-    TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    TXLClickableSubtitleCell *cell = (TXLClickableSubtitleCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	
 	/* Not found in queue, create a new cell object */
     if (cell == nil) {
-        cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-		cell.textLabel.textColor =	[TexLegeTheme textDark];
-		cell.textLabel.font = [TexLegeTheme boldFifteen];
+        cell = [[TXLClickableSubtitleCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+		//cell.textLabel.textColor =	[TexLegeTheme textDark];
+		//cell.textLabel.font = [TexLegeTheme boldFifteen];
     }
 	BOOL useDark = (indexPath.row % 2 == 0);
 
@@ -135,7 +135,7 @@
 
     CapitolMap *map = [self dataObjectForIndexPath:indexPath];
     if (map)
-        cell.textLabel.text = map.name;
+        cell.detailTextLabel.text = map.name;
 				 
 	return cell;
 }

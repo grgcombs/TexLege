@@ -51,7 +51,7 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
 
 @interface CalendarEventsLoader()
 
-@property (nonatomic,copy) NSMutableArray *events;
+@property (nonatomic,copy) NSArray *events;
 @property (nonatomic,copy) NSDate *updated;
 @property (nonatomic,strong) EKEventStore *eventStore;
 @property (nonatomic,getter=isFresh) BOOL fresh;
@@ -160,17 +160,24 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
 
 - (NSArray*)events
 {
-	if (self.loadingStatus > LOADING_NO_NET
+    LoadingStatusCodes status = self.loadingStatus;
+
+	if (status > LOADING_NO_NET
         || !_events
         || !self.isFresh
         || !self.updated
         || ([[NSDate date] timeIntervalSinceDate:self.updated] > 1800))
     {
-        // if we're over a half-hour old, let's refresh
-		self.fresh = NO;
-        // debug_NSLog(@"CalendarEventsLoader is stale, need to refresh");
+        if (status != LOADING_NO_NET && status != LOADING_ACTIVE)
+        {
+            // if we're over a half-hour old, let's refresh
+            self.fresh = NO;
+            // debug_NSLog(@"CalendarEventsLoader is stale, need to refresh");
 
-		[self loadEvents:nil];
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                [self loadEvents:nil];
+            }];
+        }
 	}
 	return _events;
 }
@@ -186,7 +193,7 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
 	}
 
 	self.fresh = NO;
-    self.events = nil;
+    _events = nil;
 
 	// We had trouble loading the events online, so pull up the cache from the one in the documents folder, if possible
 	NSString *thePath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kCalendarEventsCacheFile];
@@ -194,12 +201,11 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
 	if ([fileManager fileExistsAtPath:thePath])
     {
 		debug_NSLog(@"EventsLoader: using cached events in the documents folder.");
-		self.events = [NSMutableArray arrayWithContentsOfFile:thePath];
+		_events = [NSMutableArray arrayWithContentsOfFile:thePath];
 	}
-	if (!self.events)
-    {
-		_events = [[NSMutableArray alloc] init];
-    }
+
+	if (!_events)
+		_events = @[];
 
 	if (self.loadingStatus != LOADING_NO_NET)
     {
@@ -213,21 +219,24 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
     if (![request isGET] || ![response isOK])
         return;
 
-    // Success! Let's take a look at the data
     self.loadingStatus = LOADING_IDLE;
-
-    self.events = nil;
+    self.fresh = YES;
+    self.updated = [NSDate date];
 
     NSError *error = nil;
-    NSArray *allEvents = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
+    NSArray *allEvents = [NSJSONSerialization JSONObjectWithData:response.body options:0 error:&error];
 
     if (IsEmpty(allEvents))
+    {
+        self.events = @[];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCalendarEventsNotifyLoaded object:nil];
         return;
+    }
 
     allEvents = [allEvents findAllWhereKeyPath:kCalendarEventsTypeKey equals:kCalendarEventsTypeCommitteeValue];
     if (allEvents)
     {
-        _events = [[NSMutableArray alloc] init];
+        NSMutableArray *events = [[NSMutableArray alloc] init];
         for (NSDictionary *event in allEvents)
         {
             NSString *when = event[kCalendarEventsWhenKey];
@@ -244,19 +253,18 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
                         [newEvent removeObjectForKey:key];
                     }
                 }
-                [_events addObject:newEvent];
+                [events addObject:newEvent];
             }
         }
-        [_events sortUsingFunction:sortByDate context:nil];
+        [events sortUsingFunction:sortByDate context:nil];
 
         NSString *thePath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kCalendarEventsCacheFile];
-        if (![_events writeToFile:thePath atomically:YES])
+        if (![events writeToFile:thePath atomically:YES])
         {
             NSLog(@"CalendarEventsLoader: Error writing event cache to file: %@", thePath);
         }
 
-        self.fresh = YES;
-        self.updated = [NSDate date];
+        self.events = [events copy];
 
         [[NSNotificationCenter defaultCenter] postNotificationName:kCalendarEventsNotifyLoaded object:nil];
         debug_NSLog(@"EventsLoader network download successful, archiving for others.");
@@ -264,7 +272,6 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
     else
     {
         [self request:request didFailLoadWithError:nil];
-        return;
     }
 }
 
@@ -323,13 +330,14 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
 
 - (NSArray *)commiteeeMeetingsForChamber:(NSInteger)chamber
 {
-	if (IsEmpty(self.events))
+    NSArray *events = self.events;
+	if (IsEmpty(events))
 		return nil;
 
 	if (chamber == BOTH_CHAMBERS)
-		return _events;
+		return events;
 	else
-		return [_events findAllWhereKeyPath:kCalendarEventsTypeChamberValue equals:@(chamber)];
+		return [events findAllWhereKeyPath:kCalendarEventsTypeChamberValue equals:@(chamber)];
 }
 
 

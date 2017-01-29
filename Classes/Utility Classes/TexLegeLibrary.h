@@ -68,8 +68,8 @@ typedef NS_ENUM(UInt8, TexLegeBillStages) {
 NSString *stringInitial(NSString *inString, BOOL parens);
 NSString *abbreviateString(NSString *inString);
 
-NSInteger chamberFromOpenStatesString(NSString *chamberString);
-NSString *stringForChamber(NSInteger chamber, TLStringReturnType type);
+TXLChamberType chamberFromOpenStatesString(NSString *chamberString);
+NSString *stringForChamber(TXLChamberType chamber, TLStringReturnType type);
 NSString *stringForParty(NSInteger party, TLStringReturnType type);
 NSString *billTypeStringFromBillID(NSString *billID);
 BOOL billTypeRequiresGovernor(NSString *billType);

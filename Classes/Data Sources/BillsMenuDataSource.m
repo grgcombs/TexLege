@@ -109,14 +109,14 @@ enum _menuOrder {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {		
-	static NSString *CellIdentifier = @"Cell";
+	NSString *CellIdentifier = [TXLClickableSubtitleCell cellIdentifier];
 	
 	/* Look up cell in the table queue */
-    TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    TXLClickableSubtitleCell *cell = (TXLClickableSubtitleCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	
 	/* Not found in queue, create a new cell object */
     if (cell == nil) {
-        cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[TXLClickableSubtitleCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		cell.textLabel.textColor =	[TexLegeTheme textDark];
 		cell.textLabel.font = [TexLegeTheme boldFifteen];				
     }
@@ -127,7 +127,7 @@ enum _menuOrder {
 	NSDictionary *dataObject = [self dataObjectForIndexPath:indexPath];
     if (dataObject)
     {
-        cell.textLabel.text = dataObject[@"title"];
+        cell.detailTextLabel.text = dataObject[@"title"];
         cell.imageView.image = [UIImage imageNamed:dataObject[@"icon"]];
     }
 	return cell;

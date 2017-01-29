@@ -40,56 +40,59 @@ NSString *abbreviateString(NSString *inString) {
 	return outString;
 }
 
-NSString *stringForChamber(NSInteger chamber, TLStringReturnType type)
+NSString *stringForChamber(TXLChamberType chamber, TLStringReturnType type)
 {
     struct StateMetadataKeys keys = StateMetadataKeys;
 	NSDictionary *stateMeta = [[StateMetaLoader instance] stateMetadata];
     NSDictionary *chambers = (stateMeta != nil) ? stateMeta[keys.chambers.metaLookup] : nil;
-    struct StateMetadataChamberDetailKeys chamberKeys = (chamber == SENATE) ? keys.chambers.upper : keys.chambers.lower;
-    NSDictionary *chamberInfo = (chambers != nil) ? chambers[chamberKeys.metaLookup] : nil;
-	NSString *chamberName = nil;
-	if (NO == IsEmpty(stateMeta))
-    {
-        chamberName = chamberInfo[chamberKeys.name];
+    NSDictionary *chamberInfo = nil;
+    NSString *chamberName = nil;
+    NSString *title = nil;
+    struct StateMetadataChamberDetailKeys chamberKeys;
 
-        if (NO == IsEmpty(chamberName)) {	// shorten the thing if its a couple of sentences long
-			chamberName = abbreviateString(chamberName);	
-			// Just shortens it to the first word (at least that's how we set it up in the file
-			
-			/*
-			NSArray *words = [chamberName componentsSeparatedByString:@" "];
-			if ([words count] > 1 && [[words objectAtIndex:0] length] > 4) { // just to make sure we have a decent, single name
-				chamberName = [words objectAtIndex:0];
-			}*/
-		}
-	}
-	
-	
-	if (IsEmpty(chamberName)) {	// in case we didn't get it already
+    if (chamber == SENATE || chamber == HOUSE)
+    {
+        chamberKeys = (chamber == SENATE) ? keys.chambers.upper : keys.chambers.lower;
+        chamberInfo = (chambers != nil) ? chambers[chamberKeys.metaLookup] : nil;
+        chamberName = chamberInfo[chamberKeys.name];
+        title = chamberInfo[chamberKeys.title];
+
+        if (!IsEmpty(stateMeta) && !IsEmpty(chamberName))
+        {
+            // Just shortens it to the first word (at least that's how we set it up in the file)
+            chamberName = abbreviateString(chamberName);
+        }
+    }
+
+
+	if (IsEmpty(chamberName))
+    {
 		switch (chamber) {
 			case HOUSE:
-				chamberName = NSLocalizedStringFromTable(@"House", @"DataTableUI", @"House of Representatives");
+				chamberName = NSLocalizedStringFromTable(@"House", @"DataTableUI", nil);
 				break;
 			case SENATE:
-				chamberName = NSLocalizedStringFromTable(@"Senate", @"DataTableUI", @"");
+				chamberName = NSLocalizedStringFromTable(@"Senate", @"DataTableUI", nil);
 				break;
 			case JOINT:
-				chamberName = NSLocalizedStringFromTable(@"Joint", @"DataTableUI", @"As in a joint committee");
+				chamberName = NSLocalizedStringFromTable(@"Joint", @"DataTableUI", nil);
 				break;
 			case BOTH_CHAMBERS:
-				chamberName = NSLocalizedStringFromTable(@"All", @"DataTableUI", @"As in all chambers");
+				chamberName = NSLocalizedStringFromTable(@"All", @"DataTableUI", nil);
 				break;
+            case EXECUTIVE:
+                chamberName = NSLocalizedStringFromTable(@"Executive", @"DataTableUI", nil);
 		}
 	}
-	
+
 	if (type == TLReturnFull)
 		return chamberName;
 	
 	if (type == TLReturnInitial)
 		return stringInitial(chamberName, YES);
 	
-	if (type == TLReturnAbbrev || type == TLReturnTitle ) {
-        NSString *title = (chamberInfo != nil) ? chamberInfo[chamberKeys.title] : nil;
+	if (type == TLReturnAbbrev || type == TLReturnTitle )
+    {
 		if (IsEmpty(title)) {
 			switch (chamber) {
 				case SENATE:
@@ -98,10 +101,14 @@ NSString *stringForChamber(NSInteger chamber, TLStringReturnType type)
 				case HOUSE:
 					title = NSLocalizedStringFromTable(@"Representative", @"DataTableUI", @"");
 					break;
-				case BOTH_CHAMBERS:
-				case JOINT:
-					title = NSLocalizedStringFromTable(@"Joint", @"DataTableUI", @"As in a joint committee");
-					break;
+                case EXECUTIVE:
+                    title = NSLocalizedStringFromTable(@"Governor", @"DataTableUI", nil);
+                    break;
+                case BOTH_CHAMBERS:
+                case JOINT:
+                    // We need to know when this condition triggers --- so we can fix it, it's dumb.
+                    title = NSLocalizedStringFromTable(@"Member", @"DataTableUI", nil);
+                    break;
 			}
 		}
 		
@@ -109,7 +116,6 @@ NSString *stringForChamber(NSInteger chamber, TLStringReturnType type)
 			title = abbreviateString(title);			
 		
 		return title;
-	
 	}			
 
 	if (type == TLReturnOpenStates) {
@@ -135,7 +141,7 @@ NSString *stringForChamber(NSInteger chamber, TLStringReturnType type)
 	return chamberName;
 }
 
-NSInteger chamberFromOpenStatesString(NSString *chamberString) {	// upper, lower, joint ...	
+TXLChamberType chamberFromOpenStatesString(NSString *chamberString) {	// upper, lower, joint ...
 	NSInteger chamber = BOTH_CHAMBERS;
 	
 	if (NO == IsEmpty(chamberString)) {
@@ -150,7 +156,6 @@ NSInteger chamberFromOpenStatesString(NSString *chamberString) {	// upper, lower
 	}
 	
 	return chamber;
-	
 }
 
 

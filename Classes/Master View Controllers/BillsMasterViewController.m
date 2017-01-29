@@ -26,7 +26,7 @@
 #import "LocalyticsSession.h"
 #import "StateMetaLoader.h"
 #import "NSDate+Helper.h"
-
+#import "TexLegeStandardGroupCell.h"
 #import <objc/message.h>
 
 #define LIVE_SEARCHING 1
@@ -58,6 +58,8 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 
+    [self.tableView registerClass:[TXLClickableSubtitleCell class] forCellReuseIdentifier:[TXLClickableSubtitleCell cellIdentifier]];
+    
     UISearchDisplayController *searchController = self.searchDisplayController;
 	if (!self.billSearchDS)
 		self.billSearchDS = [[BillSearchDataSource alloc] initWithSearchDisplayController:searchController];

@@ -19,6 +19,7 @@
 #import "CapitolMapsDetailViewController.h"
 #import "TexLegeAppDelegate.h"
 #import "TableDataSourceProtocol.h"
+#import "TexLegeStandardGroupCell.h"
 
 #import "TexLegeTheme.h"
 
@@ -31,6 +32,8 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
+    [self.tableView registerClass:[TXLClickableSubtitleCell class] forCellReuseIdentifier:[TXLClickableSubtitleCell cellIdentifier]];
+
 	if (!self.initialObjectToSelect && [UtilityMethods isIPadDevice])
 		self.initialObjectToSelect = [self firstDataObject];
 }
