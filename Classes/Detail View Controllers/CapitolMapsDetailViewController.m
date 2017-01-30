@@ -16,123 +16,95 @@
 #import "UtilityMethods.h"
 #import "TexLegeAppDelegate.h"
 #import "LocalyticsSession.h"
+#import <SLToastKit/SLTypeCheck.h>
 
 @implementation CapitolMapsDetailViewController
 
-@synthesize map, webView, masterPopover;
-
-
-#pragma mark -
-#pragma mark Intialization and Memory Management
-
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
 	[super viewDidLoad];
 	self.hidesBottomBarWhenPushed = YES;
 	
-	(self.webView).backgroundColor = [UIColor darkGrayColor];
-	[self.webView setOpaque:YES];
+	self.webView.backgroundColor = [UIColor darkGrayColor];
+    self.webView.opaque = YES;
 	self.view.backgroundColor = [UIColor darkGrayColor];
 	
-	if (self.map) {
-		self.navigationItem.title = self.map.name;
-		[self.webView loadRequest:[NSURLRequest requestWithURL:self.map.url]];
+    CapitolMap *map = self.map;
+	if (map)
+    {
+		self.navigationItem.title = map.name;
+        NSURL *url = map.url;
+        if (url)
+            [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
 	}
-	else {
+	else
+    {
 		self.navigationItem.title = NSLocalizedStringFromTable(@"Capitol Maps", @"StandardUI", @"The short title for buttons and tabs related to maps of the building");
 	}
 }
 
-- (void)viewDidUnload {
-	[super viewDidUnload];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
 	[super viewWillAppear:animated];
 	
-	if ([UtilityMethods isIPadDevice] && !self.map && ![UtilityMethods isLandscapeOrientation])  {
+	if ([UtilityMethods isIPadDevice] && !self.map && ![UtilityMethods isLandscapeOrientation])
+    {
 		TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
-		
-		self.map = appDelegate.capitolMapsMasterVC.initialObjectToSelect;		
-
-	}	
+		self.map = appDelegate.capitolMapsMasterVC.initialObjectToSelect;
+	}
+    
+    if (self.splitViewController.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = self.splitViewController.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:animated];
+    }
 }
 
-- (void)dealloc {
+- (void)splitViewController:(UISplitViewController *)svc willChangeToDisplayMode:(UISplitViewControllerDisplayMode)displayMode
+{
+    if (svc.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = svc.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:YES];
+    }
+}
+
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+- (void)dealloc
+{
 	self.map = nil;
 }
 
-- (void)didReceiveMemoryWarning {
-	UINavigationController *nav = self.navigationController;
-	if (nav) {
-		[nav popToRootViewControllerAnimated:YES];
-	}
-	
-    [super didReceiveMemoryWarning]; // Releases the view if it doesn't have a superview
-    // Release anything that's not essential, such as cached data
-}
-
-- (id)dataObject {
+- (id)dataObject
+{
 	return self.map;
 }
 
-- (void)setDataObject:(id)newObj {
+- (void)setDataObject:(id)newObj
+{
 	self.map = newObj;
 }
 
-
-- (void)setMap:(CapitolMap *)newObj {
-	
-	if (map) map = nil;
-	if (newObj) {
-		if (masterPopover) {
-			[masterPopover dismissPopoverAnimated:YES];
-		}
-		
-		map = newObj;
-
-		self.navigationItem.title = map.name;
-		[self.webView loadRequest:[NSURLRequest requestWithURL:map.url]];
-		[self.view setNeedsDisplay];
-	}
-}
-
-
-#pragma mark -
-#pragma mark Popover Support
-
-- (void)splitViewController: (UISplitViewController*)svc willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem*)barButtonItem forPopoverController: (UIPopoverController*)pc {
-	//debug_NSLog(@"Entering portrait, showing the button: %@", [aViewController class]);
-    barButtonItem.title = NSLocalizedStringFromTable(@"Capitol Maps", @"StandardUI", @"The short title for buttons and tabs related to maps of the building");
-    [self.navigationItem setRightBarButtonItem:barButtonItem animated:YES];
-    self.masterPopover = pc;
-}
-
-
-// Called when the view is shown again in the split view, invalidating the button and popover controller.
-- (void)splitViewController: (UISplitViewController*)svc willShowViewController:(UIViewController *)aViewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem {
-	//debug_NSLog(@"Entering landscape, hiding the button: %@", [aViewController class]);
-    [self.navigationItem setRightBarButtonItem:nil animated:YES];
-    self.masterPopover = nil;
-}
-
-- (void) splitViewController:(UISplitViewController *)svc popoverController: (UIPopoverController *)pc
-   willPresentViewController: (UIViewController *)aViewController
+- (void)setMap:(CapitolMap *)newObj
 {
-	if ([UtilityMethods isLandscapeOrientation]) {
-		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"ERR_POPOVER_IN_LANDSCAPE"];
-	}		 
-}	
-
-#pragma mark -
-#pragma mark Orientation
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation { // Override to allow rotation. Default returns YES only for UIDeviceOrientationPortrait
-	return YES;
+    _map = SLValueIfClass(CapitolMap, newObj);
+    if (!_map)
+        return;
+    self.navigationItem.title = newObj.name;
+    NSURL *url = newObj.url;
+    if (!url)
+        return;
+    [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [self.view setNeedsDisplay];
 }
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
 	[self.webView reload];
 }
-
 
 @end

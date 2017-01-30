@@ -23,11 +23,9 @@
 #import <SafariServices/SFSafariViewController.h>
 
 @interface CalendarDetailViewController()
-	
 @end
 
 @implementation CalendarDetailViewController
-@synthesize masterPopover = _masterPopover;
 
 + (NSString *)nibName
 {
@@ -52,9 +50,6 @@
 
 	self.selectedRowRect = CGRectZero;
 	
-	
-	//self.navigationItem.title = @"Upcoming Committee Meetings";
-
     UISearchDisplayController *searchController = self.searchDisplayController;
 
     UIColor *navBarColor = [TexLegeTheme navbar];
@@ -127,8 +122,13 @@
 	
 	if (self.chamberCalendar)
 		self.searchDisplayController.searchBar.placeholder = self.chamberCalendar.title;
-}
 
+    if (self.splitViewController.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = self.splitViewController.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:animated];
+    }
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
@@ -138,15 +138,22 @@
 		return UIInterfaceOrientationIsPortrait(interfaceOrientation);
 }
 
-#pragma mark -
-#pragma mark Data Objects
+- (void)splitViewController:(UISplitViewController *)svc willChangeToDisplayMode:(UISplitViewControllerDisplayMode)displayMode
+{
+    if (svc.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = svc.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:YES];
+    }
+}
 
 - (void)reloadEvents:(NSNotification*)notification
 {
 	[self reloadData];
 }
 
-- (id)dataObject {
+- (id)dataObject
+{
 	return self.chamberCalendar;
 }
 
@@ -172,56 +179,15 @@
 	if (!newObj)
         return;
 
-    if (self.masterPopover)
-        [self.masterPopover dismissPopoverAnimated:YES];
-
     if (!self.isViewLoaded)
         [self loadView];
 		
     self.delegate = self;
-    self.dataSource = _chamberCalendar;
-    self.searchDisplayController.searchResultsDataSource = _chamberCalendar;
+    self.dataSource = newObj;
+    self.searchDisplayController.searchResultsDataSource = newObj;
 				
     [self showAndSelectDate:[NSDate date]];
 }
-
-#pragma mark -
-#pragma mark Popover Support
-
-- (void)splitViewController:(UISplitViewController*)svc
-     willHideViewController:(UIViewController *)aViewController
-          withBarButtonItem:(UIBarButtonItem*)barButtonItem
-       forPopoverController:(UIPopoverController*)pc
-{
-	//debug_NSLog(@"Entering portrait, showing the button: %@", [aViewController class]);
-    barButtonItem.title =  NSLocalizedStringFromTable(@"Meetings", @"StandardUI", @"The short title for buttons and tabs related to committee meetings (or calendar events)");
-    [self.navigationItem setRightBarButtonItem:barButtonItem animated:YES];
-    self.masterPopover = pc;
-}
-
-
-// Called when the view is shown again in the split view, invalidating the button and popover controller.
-- (void)splitViewController:(UISplitViewController*)svc
-     willShowViewController:(UIViewController *)aViewController
-  invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
-{
-	//debug_NSLog(@"Entering landscape, hiding the button: %@", [aViewController class]);
-    [self.navigationItem setRightBarButtonItem:nil animated:YES];
-    self.masterPopover = nil;
-}
-
-- (void)splitViewController:(UISplitViewController *)svc
-          popoverController:(UIPopoverController *)pc
-  willPresentViewController:(UIViewController *)aViewController
-{
-	if ([UtilityMethods isLandscapeOrientation])
-    {
-		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"ERR_POPOVER_IN_LANDSCAPE"];
-	}		 
-}	
-
-#pragma -
-#pragma UITableViewDelegate
 
 - (void)tableView:(UITableView *)tv accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {

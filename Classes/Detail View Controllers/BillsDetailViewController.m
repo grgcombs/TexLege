@@ -51,8 +51,6 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 
 @implementation BillsDetailViewController
 
-@synthesize masterPopover = _masterPopover;
-
 - (NSString *)nibName
 {
 	if ([UtilityMethods isIPadDevice])
@@ -60,9 +58,6 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 	else
 		return @"BillsDetailViewController~iphone";
 }
-
-#pragma mark -
-#pragma mark Memory management
 
 - (void)didReceiveMemoryWarning
 {
@@ -74,15 +69,11 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
     [super didReceiveMemoryWarning];
 }
 
-
 - (void)dealloc
 {
 	[[RKClient sharedClient].requestQueue cancelRequestsWithDelegate:self];
     self.bill = nil;
 }
-
-#pragma mark -
-#pragma mark View lifecycle
 
 - (void)viewDidLoad
 {
@@ -93,11 +84,9 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
     
 	self.voteDataSource = nil;
 
-	//self.tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
 	self.clearsSelectionOnViewWillAppear = NO;
 
 	self.starButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//	[starButton addTarget:self action:@selector(itemAction:) forControlEvents:UIControlEventTouchUpInside];
     [_starButton addTarget:self action:@selector(starButtonToggle:) forControlEvents:UIControlEventTouchDown];
 	[self starButtonSetState:NO];
     _starButton.frame = CGRectMake(0.0f, 0.0f, 66.0f, 66.0f);
@@ -116,11 +105,8 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 - (void)viewDidUnload
 {
 	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
-
-    // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.	
 	self.starButton = nil;
     self.voteDataSource = nil;
-
 	[super viewDidUnload];
 }
 
@@ -162,8 +148,6 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
         [self.navigationItem setRightBarButtonItem:button animated:YES];
     }
 }
-
-#pragma mark - Data Objects
 
 - (id)dataObject
 {
@@ -333,27 +317,13 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
     if (self.starButton)
         [self starButtonSetState:[self isFavorite]];
 
-    if (self.masterPopover != nil)
-    {
-        [self.masterPopover dismissPopoverAnimated:YES];
-    }
-
     [self.tableView reloadData];
 }
-
-#pragma mark -
-#pragma mark Managing the popover
 
 - (IBAction)resetTableData:(id)sender
 {
 	// this will force our datasource to renew everything
 	[self.tableView reloadData];	
-}
-
-// Called on the delegate when the user has taken action to dismiss the popover. This is not called when -dismissPopoverAnimated: is called directly.
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
-{
-	[self.tableView reloadData];
 }
 
 - (void)starButtonSetState:(BOOL)isOn

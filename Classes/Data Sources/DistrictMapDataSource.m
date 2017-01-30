@@ -10,13 +10,15 @@
 //
 //
 
+#import "DistrictMapDataSource.h"
 #import "TexLegeTheme.h"
 #import "DistrictMapObj+RestKit.h"
-#import "DistrictMapDataSource.h"
 #import "DisclosureQuartzView.h"
 #import "TexLegeCoreDataUtils.h"
 #import "TexLegeAppDelegate.h"
 #import "LegislatorObj+RestKit.h"
+#import "TexLegeStandardGroupCell.h"
+#import <SLToastKit/SLTypeCheck.h>
 
 #if NEEDS_TO_PARSE_KMLMAPS == 1
 #import "DistrictOfficeObj.h"
@@ -26,8 +28,8 @@
 #import "TexLegeMapPins.h"
 #endif
 
-@interface DistrictMapDataSource (Private)
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *sortDescriptors;
+@interface DistrictMapDataSource()
+@property (nonatomic, readonly) NSArray *sortDescriptors;
 @end
 
 
@@ -37,19 +39,17 @@
 @synthesize filterChamber = _filterChamber;
 @synthesize searchDisplayController = _searchDisplayController;
 
-#if NEEDS_TO_PARSE_KMLMAPS == 1
-@synthesize importer;
-#endif
-
-- (Class)dataClass {
+- (Class)dataClass
+{
 	return [DistrictMapObj class];
 }
 
-- (instancetype)init {
+- (instancetype)init
+{
 	if ((self = [super init]))
     {
 		_filterChamber = 0;
-		_filterString = [NSMutableString stringWithString:@""];
+		_filterString = @"";
 		_fetchedResultsController = nil;
 		
 #if NEEDS_TO_PARSE_KMLMAPS == 1
@@ -58,7 +58,7 @@
 ///#warning hacky place to put this, but we need to initialize district offices i guess? ....
 		
 		mapCount = 0;
-		self.importer = [[[DistrictMapImporter alloc] initWithChamber:SENATE dataSource:self] autorelease];
+		_importer = [[[DistrictMapImporter alloc] initWithChamber:SENATE dataSource:self] autorelease];
 		
 		_byDistrict = NO;
 #endif
@@ -92,23 +92,22 @@
     }           
 }
 
--(void)dataSourceReceivedMemoryWarning:(id)sender {
+- (void)dataSourceReceivedMemoryWarning:(id)sender
+{
 	// let's give this a swinging shot....	
 	for (NSManagedObject *object in self.fetchedResultsController.fetchedObjects) {
         [object.managedObjectContext refreshObject:object mergeChanges:NO];
 	}
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
 #if NEEDS_TO_PARSE_KMLMAPS == 1
 	self.importer = nil;
 #endif
 }
-
-#pragma mark -
-#pragma mark TableDataSourceProtocol methods
 
 // return the data used by the navigation controller and tab bar item
 - (NSString *)name
@@ -131,75 +130,68 @@
 
 
 // atomic number is displayed in a plain style tableview
-- (UITableViewStyle)tableViewStyle {
+- (UITableViewStyle)tableViewStyle
+{
 	return UITableViewStylePlain;
 }
 
-#pragma mark -
-#pragma mark Data Object Methods
-// return the committee at the index in the sorted by symbol array
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
-	NSDictionary *tempEntry = nil;
-	@try {
-		tempEntry = [self.fetchedResultsController objectAtIndexPath:indexPath];
-	}
-	@catch (NSException * e) {
-		// Perhaps we're returning from a search and we've got a wacked out indexPath.  Let's reset the search and see what happens.
-		debug_NSLog(@"DistrictMapDataSource.m -- dataObjectForIndexPath must be out of bounds.  %@", [indexPath description]); 
-		[self removeFilter];
-        @try {
-            tempEntry = [self.fetchedResultsController objectAtIndexPath:indexPath];
+- (id)dataObjectForIndexPath:(NSIndexPath *)indexPath
+{
+    NSFetchedResultsController *frc = self.fetchedResultsController;
+    NSArray<id <NSFetchedResultsSectionInfo>> *sections = frc.sections;
+    
+    id dataObject = nil;
+    if (sections.count > indexPath.section)
+    {
+        id <NSFetchedResultsSectionInfo> section = sections[indexPath.section];
+        if ([section numberOfObjects] > indexPath.row)
+        {
+            dataObject = [frc objectAtIndexPath:indexPath];
         }
-        @catch (NSException *exception) {
-            return nil;
-        }
-	}
-	return tempEntry;
+    }
+    if (dataObject)
+        return dataObject;
+    
+    // possibly the predicate is filtering out what we need?
+    [self removeFilter];
+
+    @try {
+        dataObject = SLValueIfClass(DistrictMapObj, [frc objectAtIndexPath:indexPath]);
+    }
+    @catch (NSException *exception) {
+        return nil;
+    }
+
+    return dataObject;
 }
 
-- (NSIndexPath *)indexPathForDataObject:(id)dataObject {
-	NSIndexPath *tempIndex = nil;
+- (NSIndexPath *)indexPathForDataObject:(id)dataObject
+{
+    if (!dataObject)
+        return nil;
+	NSIndexPath *indexPath = nil;
 	@try {
-		tempIndex = [self.fetchedResultsController indexPathForObject:dataObject];
+		indexPath = [self.fetchedResultsController indexPathForObject:dataObject];
 	}
 	@catch (NSException * e) {
+        indexPath = nil;
 	}
 	
-	return tempIndex;
+	return indexPath;
 }
-
-
-#pragma mark -
-#pragma UITableViewDataSource
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	BOOL useDark = (indexPath.row % 2 == 0);
-	
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Committees"];	// just steal the committees style?
-	if (cell == nil) {
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Committees"];
-		
-		cell.detailTextLabel.font = [TexLegeTheme boldFifteen];
-		cell.textLabel.font =		[TexLegeTheme boldTwelve];
-		cell.detailTextLabel.textColor = 	[TexLegeTheme textDark];
-		cell.textLabel.textColor =	[TexLegeTheme accent];
-		
-		cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-		cell.detailTextLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-		cell.detailTextLabel.adjustsFontSizeToFitWidth = YES;
-        cell.detailTextLabel.minimumScaleFactor = (12.0 / cell.detailTextLabel.font.pointSize); // 12.f = deprecated minimumFontSize
-		//cell.accessoryView = [TexLegeTheme disclosureLabel:YES];
-		//cell.accessoryView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure"]] autorelease];
-		DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
-		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
-		cell.accessoryView = qv;
-		//[iv release];
-	}
+    NSString *reuseId = [TXLClickableSubtitleCell cellIdentifier];
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseId];
+	if (cell == nil)
+		cell = [[TXLClickableSubtitleCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseId];
     
 	DistrictMapObj *tempEntry = [self dataObjectForIndexPath:indexPath];
 	
-	if (tempEntry == nil) {
+	if (tempEntry == nil)
+    {
 		debug_NSLog(@"Busted in DistrictMapDataSource.m: cellForRowAtIndexPath -> Couldn't get object data for row.");
 		return cell;
 	}
@@ -227,27 +219,26 @@
 }
 
 
-#pragma mark -
-#pragma mark Indexing / Sections
-
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {	
-	//debug_NSLog(@"%@", [self.fetchedResultsController.fetchRequest description]);
-	NSInteger count = (self.fetchedResultsController).sections.count;		
-	if (count > 0 && !self.hasFilter && !self.byDistrict)  {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+	NSInteger count = self.fetchedResultsController.sections.count;
+	if (count > 0
+        && !self.hasFilter
+        && !self.byDistrict)
+    {
 		return count; 
 	}
 	return 1;	
 }
 
-// This is for the little index along the right side of the table ... use nil if you don't want it.
-- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView {
-	//return  hideTableIndex ? nil : [self.fetchedResultsController sectionIndexTitles] ;
-	return nil ;
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+	return nil;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index {
-	return index; // index ..........
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
+{
+	return index;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -284,11 +275,9 @@
 	return @"";
 }
 
-#pragma mark -
-#pragma mark Filtering Functions
-
 // do we want to do a proper whichFilter sort of thing?
-- (BOOL) hasFilter {
+- (BOOL)hasFilter
+{
 	return (self.filterString.length > 0 || self.filterChamber > 0);
 }
 
@@ -314,12 +303,13 @@
 
     if (self.filterChamber > 0)	// do some chamber filtering
         [predString appendFormat:@"(chamber = %@)", @(self.filterChamber)];
-    if (self.filterString.length > 0) {		// do some string filtering
+    NSString *filterString = self.filterString;
+    if (filterString.length > 0) {		// do some string filtering
         if (predString.length > 0)	// we already have some predicate action, insert "AND"
             [predString appendString:@" AND "];
-        [predString appendFormat:@"((legislator.lastname CONTAINS[cd] '%@') OR (legislator.firstname CONTAINS[cd] '%@')", self.filterString, self.filterString];
-        [predString appendFormat:@" OR (legislator.middlename CONTAINS[cd] '%@') OR (legislator.nickname CONTAINS[cd] '%@')", self.filterString, self.filterString];
-        [predString appendFormat:@" OR (district CONTAINS[cd] '%@') OR (ANY legislator.districtOffices.formattedAddress CONTAINS [cd] '%@'))", self.filterString, self.filterString];
+        [predString appendFormat:@"((legislator.lastname CONTAINS[cd] '%@') OR (legislator.firstname CONTAINS[cd] '%@')", filterString, filterString];
+        [predString appendFormat:@" OR (legislator.middlename CONTAINS[cd] '%@') OR (legislator.nickname CONTAINS[cd] '%@')", filterString, filterString];
+        [predString appendFormat:@" OR (district CONTAINS[cd] '%@') OR (ANY legislator.districtOffices.formattedAddress CONTAINS [cd] '%@'))", filterString, filterString];
     }
     NSPredicate *predicate = (predString.length > 0) ? [NSPredicate predicateWithFormat:predString] : nil;
     return predicate;
@@ -330,31 +320,24 @@
     [self resetCoreData:nil];
 }
 
-// probably unnecessary, but we might as well validate the new info with our expectations...
-- (void) setFilterByString:(NSString *)filter {
-	if (!filter) filter = @"";
-	if (![self.filterString isEqualToString:filter]) {
-		self.filterString = [NSMutableString stringWithString:filter];
-	}
-	// we also get called on toolbar chamber switches, with or without a search string, so update anyway...
-	[self updateFilterPredicate];	
+- (void)setFilterByString:(NSString *)filter
+{
+    _filterString = [SLTypeNonEmptyStringOrNil(filter) copy];
+	[self updateFilterPredicate];
 }
 
-- (void) removeFilter {
-	// do we want to tell it to clear out our chamber selection too? Not really, the ViewController sets it for us.
-	// self.filterChamber = 0;
-	[self setFilterByString:@""]; // we updateFilterPredicate automatically
-	
-}	
+- (void)removeFilter
+{
+    self.filterString = nil;
+}
 
-- (IBAction) sortByType:(id)sender
+- (IBAction)sortByType:(id)sender
 {
     [self resetCoreData:nil];
 }
 
 #if NEEDS_TO_PARSE_KMLMAPS == 1
 #warning PARSE KML IS TURNED ON!!! MAKE SURE TO INCLUDE KMLs
-
 
 - (void)checkDistrictMaps {
 	
@@ -477,7 +460,8 @@
 /*
  Set up the fetched results controller.
  */
-- (NSArray *)sortDescriptors {
+- (NSArray *)sortDescriptors
+{
 	NSArray *descriptors = nil;
 	if (self.byDistrict) {
 		NSSortDescriptor *sort1 = [[NSSortDescriptor alloc] initWithKey:@"district" ascending:YES] ;

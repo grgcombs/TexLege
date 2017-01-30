@@ -114,8 +114,6 @@
 		3768E93B13B156F600BA5A67 /* SVWebViewController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3768E93813B156F600BA5A67 /* SVWebViewController.bundle */; };
 		3768E93C13B156F600BA5A67 /* SVWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3768E93613B156F600BA5A67 /* SVWebViewController.m */; };
 		3768E93E13B156F600BA5A67 /* SVWebViewController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3768E93813B156F600BA5A67 /* SVWebViewController.bundle */; };
-		376AE79D13445CA400825C4D /* BillsKeyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 376AE79C13445CA400825C4D /* BillsKeyViewController.m */; };
-		376AE79E13445CA400825C4D /* BillsKeyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 376AE79C13445CA400825C4D /* BillsKeyViewController.m */; };
 		376B5BE20FC1DC640094D80B /* Map.WheelchairAccess.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 376B5BDB0FC1DC640094D80B /* Map.WheelchairAccess.pdf */; };
 		376B5BE30FC1DC640094D80B /* Map.CapitolComplex.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 376B5BDC0FC1DC640094D80B /* Map.CapitolComplex.pdf */; };
 		376B5BE80FC1DC640094D80B /* Map.MonumentGuide.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 376B5BE10FC1DC640094D80B /* Map.MonumentGuide.pdf */; };
@@ -764,8 +762,6 @@
 		3768E93513B156F600BA5A67 /* SVWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVWebViewController.h; sourceTree = "<group>"; };
 		3768E93613B156F600BA5A67 /* SVWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVWebViewController.m; sourceTree = "<group>"; };
 		3768E93813B156F600BA5A67 /* SVWebViewController.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVWebViewController.bundle; sourceTree = "<group>"; };
-		376AE79B13445CA400825C4D /* BillsKeyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillsKeyViewController.h; sourceTree = "<group>"; };
-		376AE79C13445CA400825C4D /* BillsKeyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillsKeyViewController.m; sourceTree = "<group>"; };
 		376B5BDB0FC1DC640094D80B /* Map.WheelchairAccess.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Map.WheelchairAccess.pdf; path = Resources/Maps/Map.WheelchairAccess.pdf; sourceTree = "<group>"; };
 		376B5BDC0FC1DC640094D80B /* Map.CapitolComplex.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Map.CapitolComplex.pdf; path = Resources/Maps/Map.CapitolComplex.pdf; sourceTree = "<group>"; };
 		376B5BE10FC1DC640094D80B /* Map.MonumentGuide.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Map.MonumentGuide.pdf; path = Resources/Maps/Map.MonumentGuide.pdf; sourceTree = "<group>"; };
@@ -1648,8 +1644,6 @@
 				37F492751311C640005D5DE1 /* BillsDetailViewController.m */,
 				37D38B0D132ECFFA002F1730 /* BillsListViewController.h */,
 				37D38B0E132ECFFA002F1730 /* BillsListViewController.m */,
-				376AE79B13445CA400825C4D /* BillsKeyViewController.h */,
-				376AE79C13445CA400825C4D /* BillsKeyViewController.m */,
 				37E36CEF139E695C00917F40 /* BillsRecentViewController.h */,
 				37E36CF0139E695C00917F40 /* BillsRecentViewController.m */,
 				371A447113467C8C00DFDBB8 /* BillsTodayViewController.h */,
@@ -2742,7 +2736,6 @@
 				37094D97133B162E00B9693C /* TexLegeBadgeGroupCell.m in Sources */,
 				375E5ACF133D6F9E0070EA64 /* S7GraphView.m in Sources */,
 				37F2CA121343AE40001D9D7B /* DDActionHeaderView.m in Sources */,
-				376AE79E13445CA400825C4D /* BillsKeyViewController.m in Sources */,
 				377DC4AA1344D475000068E1 /* BillVotesDataSource.m in Sources */,
 				371A447413467C8C00DFDBB8 /* BillsTodayViewController.m in Sources */,
 				371A449D134682E100DFDBB8 /* XMLReader.m in Sources */,
@@ -2872,7 +2865,6 @@
 				37094D96133B162E00B9693C /* TexLegeBadgeGroupCell.m in Sources */,
 				375E5ACE133D6F9E0070EA64 /* S7GraphView.m in Sources */,
 				37F2CA111343AE40001D9D7B /* DDActionHeaderView.m in Sources */,
-				376AE79D13445CA400825C4D /* BillsKeyViewController.m in Sources */,
 				377DC4A91344D475000068E1 /* BillVotesDataSource.m in Sources */,
 				376C1CC31345A7EB009436B5 /* XMLReader.m in Sources */,
 				371A447313467C8C00DFDBB8 /* BillsTodayViewController.m in Sources */,

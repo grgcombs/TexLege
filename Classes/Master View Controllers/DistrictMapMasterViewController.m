@@ -19,6 +19,8 @@
 #import "TexLegeTheme.h"
 #import "DistrictMapObj.h"
 #import "TexLegeCoreDataUtils.h"
+#import "SLToastManager+TexLege.h"
+#import "TexLegeStandardGroupCell.h"
 
 @interface DistrictMapMasterViewController (Private)
 - (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar;
@@ -26,7 +28,6 @@
 
 
 @implementation DistrictMapMasterViewController
-@synthesize chamberControl, sortControl, filterControls;
 
 // Set this to non-nil whenever you want to automatically enable/disable the view controller based on network/host reachability
 - (NSString *)reachabilityStatusKey {
@@ -45,7 +46,8 @@
 #pragma mark -
 #pragma mark Initialization
 
-- (NSString *)nibName {
+- (NSString *)nibName
+{
 	return NSStringFromClass([self class]);
 }
 
@@ -53,46 +55,41 @@
 	return [DistrictMapDataSource class];
 }
 
-#pragma mark -
-#pragma mark View lifecycle
-
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 	
-	self.tableView.rowHeight = 44.0f;
+    UITableView *tableView = self.tableView;
+	tableView.rowHeight = 44.0f;
+    [tableView registerClass:[TXLClickableSubtitleCell class] forCellReuseIdentifier:[TXLClickableSubtitleCell cellIdentifier]];
 	
 	if ([UtilityMethods isIPadDevice])
 	    self.preferredContentSize = CGSizeMake(320.0, 600.0);
 
     UISearchDisplayController *searchController = self.searchDisplayController;
-
 	searchController.delegate = self;
 	searchController.searchResultsDelegate = self;
+    searchController.searchBar.tintColor = [TexLegeTheme accent];
 	//self.dataSource.searchDisplayController = self.searchDisplayController;
 	//self.searchDisplayController.searchResultsDataSource = self.dataSource;
 	
-	self.chamberControl.tintColor = [TexLegeTheme accent];
-	self.sortControl.tintColor = [TexLegeTheme accent];
-	searchController.searchBar.tintColor = [TexLegeTheme accent];
-	self.navigationItem.titleView = self.filterControls;
+    self.navigationItem.titleView = self.filterControls;
+    self.sortControl.tintColor = [TexLegeTheme accent];
+    UISegmentedControl *chamberControl = self.chamberControl;
+	chamberControl.tintColor = [TexLegeTheme accent];
 	
-	[self.chamberControl setTitle:stringForChamber(BOTH_CHAMBERS, TLReturnFull) forSegmentAtIndex:0];
-	[self.chamberControl setTitle:stringForChamber(HOUSE, TLReturnFull) forSegmentAtIndex:1];
-	[self.chamberControl setTitle:stringForChamber(SENATE, TLReturnFull) forSegmentAtIndex:2];
-		
+	[chamberControl setTitle:stringForChamber(BOTH_CHAMBERS, TLReturnFull) forSegmentAtIndex:0];
+	[chamberControl setTitle:stringForChamber(HOUSE, TLReturnFull) forSegmentAtIndex:1];
+	[chamberControl setTitle:stringForChamber(SENATE, TLReturnFull) forSegmentAtIndex:2];
 }
 
-- (void)viewDidUnload {
-	[super viewDidUnload];
-}
-
-
-
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
 
 	NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
-	if (segPrefs) {
+	if (segPrefs)
+    {
 		NSNumber *segIndex = segPrefs[@"DistrictMapChamberKey"];
 		if (segIndex)
 			self.chamberControl.selectedSegmentIndex = segIndex.integerValue;
@@ -101,7 +98,6 @@
 			self.sortControl.selectedSegmentIndex = segIndex.integerValue;
 		
 	}
-
     [self reapplyFiltersAndSort];
 }
 
@@ -124,85 +120,60 @@
 #pragma mark Table view delegate
 
 //START:code.split.delegate
-- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath withAnimation:(BOOL)animated {
+- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath withAnimation:(BOOL)animated
+{
 	TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
-	
-	//if (![UtilityMethods isIPadDevice])
-		[aTableView deselectRowAtIndexPath:newIndexPath animated:YES];
+    [aTableView deselectRowAtIndexPath:newIndexPath animated:YES];
 		
-	
-	id dataObject = [self.dataSource dataObjectForIndexPath:newIndexPath];
-	
-/*	if ([dataObject isKindOfClass:[NSManagedObject class]])
-		[appDelegate setSavedTableSelection:[dataObject objectID] forKey:NSStringFromClass([self class])];
-	else
-		[appDelegate setSavedTableSelection:newIndexPath forKey:NSStringFromClass([self class])];
-*/
+	DistrictMapObj *map = SLValueIfClass(DistrictMapObj, [self.dataSource dataObjectForIndexPath:newIndexPath]);
+    if (!map)
+        return;
+    
 	[appDelegate setSavedTableSelection:nil forKey:NSStringFromClass([self class])];
 	
-	DistrictMapObj *map = dataObject;
-
-	if (!self.detailViewController) {
-		MapViewController *tempVC = [[MapViewController alloc] init];
-		self.detailViewController = tempVC;
+    MapViewController *detailController = SLValueIfClass(MapViewController,self.detailViewController);
+	if (!detailController)
+    {
+		detailController = [[MapViewController alloc] init];
+		self.detailViewController = detailController;
 	}
-
-	if (map) {
-		MapViewController *mapVC = (MapViewController *)self.detailViewController;
-        mapVC.detailAnnotation = map;
-
-		if (aTableView == self.searchDisplayController.searchResultsTableView) { // we've clicked in a search table
-			[self searchBarCancelButtonClicked:nil];
-		}
-		
-		if (![UtilityMethods isIPadDevice]) {
-			// push the detail view controller onto the navigation stack to display it				
-			[self.navigationController pushViewController:self.detailViewController animated:YES];
-			self.detailViewController = nil;
-		}
-        [map.managedObjectContext refreshObject:map mergeChanges:YES];
-	}
-	
+    detailController.detailAnnotation = map;
+    
+    if (aTableView == self.searchDisplayController.searchResultsTableView)
+        [self searchBarCancelButtonClicked:nil];
+    
+    if (![UtilityMethods isIPadDevice])
+    {
+        // push the detail view controller onto the navigation stack to display it
+        [self.navigationController pushViewController:detailController animated:YES];
+        self.detailViewController = nil;
+    }
+    [map.managedObjectContext refreshObject:map mergeChanges:YES];
 }
-//END:code.split.delegate
-
-
-#pragma mark -
-#pragma mark Memory management
-
-
-
-#pragma mark -
-#pragma mark Filtering and Searching
 
 - (void)filterContentForSearchText:(NSString*)searchText scope:(NSInteger)scope
 {
-	/*
-	 Update the filtered array based on the search text and scope.
-	 */
-	if ([self.dataSource respondsToSelector:@selector(setFilterChamber:)])
-		(self.dataSource).filterChamber = scope;
+    DistrictMapDataSource *dataSource = SLValueIfClass(DistrictMapDataSource, self.dataSource);
+    if (!dataSource)
+        return;
+    dataSource.filterChamber = scope;
 	
-	// start filtering names...
-	if (searchText.length > 0) {
-		if ([self.dataSource respondsToSelector:@selector(setFilterByString:)])
-			[self.dataSource performSelector:@selector(setFilterByString:) withObject:searchText];
-	}	
-	else {
-		if ([self.dataSource respondsToSelector:@selector(removeFilter)])
-			[self.dataSource performSelector:@selector(removeFilter)];
-	}
-	
+	if (searchText.length > 0)
+        dataSource.filterString = searchText;
+	else
+        [dataSource removeFilter];
 }
 
 - (IBAction) filterChamber:(id)sender
 {
-	if (sender != self.chamberControl)
+    UISegmentedControl *chamberControl = self.chamberControl;
+    if (sender != chamberControl)
         return;
 
     NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
-    if (segPrefs) {
-        NSNumber *segIndex = @(self.chamberControl.selectedSegmentIndex);
+    if (segPrefs)
+    {
+        NSNumber *segIndex = @(chamberControl.selectedSegmentIndex);
         NSMutableDictionary *newDict = [segPrefs mutableCopy];
         newDict[@"DistrictMapChamberKey"] = segIndex;
         [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];
@@ -211,14 +182,15 @@
     [self reapplyFiltersAndSort];
 }
 
-- (IBAction) sortType:(id)sender
+- (IBAction)sortType:(id)sender
 {
-	if (sender != self.sortControl)
+    UISegmentedControl *sortControl = self.sortControl;
+	if (sender != sortControl)
         return;
 
     NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
     if (segPrefs) {
-        NSNumber *segIndex = @(self.sortControl.selectedSegmentIndex);
+        NSNumber *segIndex = @(sortControl.selectedSegmentIndex);
         NSMutableDictionary *newDict = [segPrefs mutableCopy];
         newDict[@"DistrictMapSortTypeKey"] = segIndex;
         [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:kSegmentControlPrefKey];

@@ -28,7 +28,7 @@ typedef NS_ENUM(uint16_t, ContributionQueryType) {
 
 @interface LegislatorContributionsDataSource : NSObject <RKRequestDelegate, UITableViewDataSource>
 
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath;
+- (id)dataObjectForIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *) indexPathForDataObject:(id)dataObject;
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *title;
 

@@ -360,49 +360,6 @@
     }
 }
 
-#if 0
-
-#pragma mark -
-#pragma mark Split view support
-
-- (void)splitViewController: (UISplitViewController*)svc 
-	 willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem*)barButtonItem 
-	   forPopoverController: (UIPopoverController*)pc
-{
-	//debug_NSLog(@"Entering portrait, showing the button: %@", [aViewController class]);
-	barButtonItem.title = NSLocalizedStringFromTable(@"Legislators", @"StandardUI", @"The short title for buttons and tabs related to legislators");
-	[self.navigationItem setRightBarButtonItem:barButtonItem animated:YES];
-	self.masterPopover = pc;
-}
-
-// Called when the view is shown again in the split view, invalidating the button and popover controller.
-- (void)splitViewController: (UISplitViewController*)svc 
-	 willShowViewController:(UIViewController *)aViewController 
-  invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
-{
-	//debug_NSLog(@"Entering landscape, hiding the button: %@", [aViewController class]);
-	[self.navigationItem setRightBarButtonItem:nil animated:YES];
-	self.masterPopover = nil;
-}
-
-- (void)splitViewController:(UISplitViewController *)svc popoverController: (UIPopoverController *)pc
-   willPresentViewController: (UIViewController *)aViewController
-{
-	if ([UtilityMethods isLandscapeOrientation])
-    {
-		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"ERR_POPOVER_IN_LANDSCAPE"];
-	}
-	if (self.notesPopover)
-    {
-		[self.notesPopover dismissPopoverAnimated:YES];
-		self.notesPopover = nil;
-	}
-}
-
-#endif
-
-#pragma mark - orientations
-
 - (BOOL)shouldAutorotate
 {
     return YES;
@@ -434,168 +391,168 @@
 	if (!cellInfo.isClickable)
 		return;
 	
-		if (cellInfo.entryType == DirectoryTypeNotes)
+    if (cellInfo.entryType == DirectoryTypeNotes)
+    {
+        NotesViewController *nextViewController = nil;
+        if ([UtilityMethods isIPadDevice])
+            nextViewController = [[NotesViewController alloc] initWithNibName:@"NotesView~ipad" bundle:nil];
+        else
+            nextViewController = [[NotesViewController alloc] initWithNibName:@"NotesView" bundle:nil];
+        
+        // If we got a new view controller, push it .
+        if (nextViewController)
         {
-			NotesViewController *nextViewController = nil;
-			if ([UtilityMethods isIPadDevice])
-				nextViewController = [[NotesViewController alloc] initWithNibName:@"NotesView~ipad" bundle:nil];
-			else
-				nextViewController = [[NotesViewController alloc] initWithNibName:@"NotesView" bundle:nil];
-			
-			// If we got a new view controller, push it .
-			if (nextViewController)
+            nextViewController.legislator = member;
+            nextViewController.backViewController = self;
+            
+            if ([UtilityMethods isIPadDevice])
             {
-				nextViewController.legislator = member;
-				nextViewController.backViewController = self;
-				
-				if ([UtilityMethods isIPadDevice])
-                {
-					self.notesPopover = [[UIPopoverController alloc] initWithContentViewController:nextViewController];
-					self.notesPopover.delegate = self;
-					CGRect cellRect = [aTableView rectForRowAtIndexPath:newIndexPath];
-					[self.notesPopover presentPopoverFromRect:cellRect inView:aTableView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-				}
-				else
-                {
-					[self.navigationController pushViewController:nextViewController animated:YES];
-				}
-				
-			}
-		}
-		else if (cellInfo.entryType == DirectoryTypeCommittee)
-        {
-			CommitteeDetailViewController *subDetailController = [[CommitteeDetailViewController alloc] initWithNibName:@"CommitteeDetailViewController" bundle:nil];
-			subDetailController.committee = cellInfo.entryValue;
-			[self.navigationController pushViewController:subDetailController animated:YES];
-		}
-		else if (cellInfo.entryType == DirectoryTypeContributions)
-        {
-#if CONTRIBUTIONS_API == TRANSPARENCY_DATA_API
-            if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:transApiBaseURL]])
-            {
-                LegislatorContributionsViewController *subDetailController = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
-                [subDetailController setQueryEntityID:cellInfo.entryValue type:@(kContributionQueryRecipient) cycle:@"-1"];
-                [self.navigationController pushViewController:subDetailController animated:YES];
-                [subDetailController release];
+                self.notesPopover = [[UIPopoverController alloc] initWithContentViewController:nextViewController];
+                self.notesPopover.delegate = self;
+                CGRect cellRect = [aTableView rectForRowAtIndexPath:newIndexPath];
+                [self.notesPopover presentPopoverFromRect:cellRect inView:aTableView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
             }
+            else
+            {
+                [self.navigationController pushViewController:nextViewController animated:YES];
+            }
+            
+        }
+    }
+    else if (cellInfo.entryType == DirectoryTypeCommittee)
+    {
+        CommitteeDetailViewController *subDetailController = [[CommitteeDetailViewController alloc] initWithNibName:@"CommitteeDetailViewController" bundle:nil];
+        subDetailController.committee = cellInfo.entryValue;
+        [self.navigationController pushViewController:subDetailController animated:YES];
+    }
+    else if (cellInfo.entryType == DirectoryTypeContributions)
+    {
+#if CONTRIBUTIONS_API == TRANSPARENCY_DATA_API
+        if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:transApiBaseURL]])
+        {
+            LegislatorContributionsViewController *subDetailController = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+            [subDetailController setQueryEntityID:cellInfo.entryValue type:@(kContributionQueryRecipient) cycle:@"-1"];
+            [self.navigationController pushViewController:subDetailController animated:YES];
+            [subDetailController release];
+        }
 
 #elif CONTRIBUTIONS_API == FOLLOW_THE_MONEY_API
-            if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:followTheMoneyApiBaseURL]])
-            {
-                LegislatorContributionsViewController *subDetailController = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
-                [subDetailController setQueryEntityID:cellInfo.entryValue type:@(kContributionQueryElectionYear) cycle:nil parameter:cellInfo.parameter];
-                [self.navigationController pushViewController:subDetailController animated:YES];
-            }
+        if ([TexLegeReachability canReachHostWithURL:[NSURL URLWithString:followTheMoneyApiBaseURL]])
+        {
+            LegislatorContributionsViewController *subDetailController = [[LegislatorContributionsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+            [subDetailController setQueryEntityID:cellInfo.entryValue type:@(kContributionQueryElectionYear) cycle:nil parameter:cellInfo.parameter];
+            [self.navigationController pushViewController:subDetailController animated:YES];
+        }
 #endif
-		}
-		else if (cellInfo.entryType == DirectoryTypeBills)
+    }
+    else if (cellInfo.entryType == DirectoryTypeBills)
+    {
+        if ([TexLegeReachability openstatesReachable])
         {
-			if ([TexLegeReachability openstatesReachable])
+            BillsListViewController *subDetailController = [[BillsListViewController alloc] initWithStyle:UITableViewStylePlain];
+            subDetailController.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Bills Authored by %@", @"DataTableUI", @"Title for cell, the legislative bills authored by someone."), 
+                                         [member shortNameForButtons]];
+            [subDetailController.dataSource startSearchForBillsAuthoredBy:cellInfo.entryValue];
+            [self.navigationController pushViewController:subDetailController animated:YES];
+        }
+    }
+    else if (cellInfo.entryType == DirectoryTypeOfficeMap)
+    {
+        CapitolMap *capMap = cellInfo.entryValue;			
+        CapitolMapsDetailViewController *detailController = [[CapitolMapsDetailViewController alloc] initWithNibName:@"CapitolMapsDetailViewController" bundle:nil];
+        detailController.map = capMap;
+        
+        [self.navigationController pushViewController:detailController animated:YES];
+    }
+    else if (cellInfo.entryType == DirectoryTypeMail)
+    {
+        [[TexLegeEmailComposer sharedTexLegeEmailComposer] presentMailComposerTo:cellInfo.entryValue 
+                                                                         subject:@"" body:@"" commander:self];			
+    }
+    // Switch to the appropriate application for this url...
+    else if (cellInfo.entryType == DirectoryTypeMap)
+    {
+        if ([cellInfo.entryValue isKindOfClass:[DistrictOfficeObj class]]
+            || [cellInfo.entryValue isKindOfClass:[DistrictMapObj class]])
+        {		
+            MapMiniDetailViewController *mapViewController = [[MapMiniDetailViewController alloc] init];
+            [mapViewController loadView];
+            
+            DistrictOfficeObj *districtOffice = nil;
+            if ([cellInfo.entryValue isKindOfClass:[DistrictOfficeObj class]])
+                districtOffice = cellInfo.entryValue;
+            
+            [mapViewController resetMapViewWithAnimation:NO];
+            BOOL isDistMap = NO;
+            id<MKAnnotation> theAnnotation = nil;
+            if (districtOffice)
             {
-				BillsListViewController *subDetailController = [[BillsListViewController alloc] initWithStyle:UITableViewStylePlain];
-				subDetailController.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Bills Authored by %@", @"DataTableUI", @"Title for cell, the legislative bills authored by someone."), 
-											 [member shortNameForButtons]];
-				[subDetailController.dataSource startSearchForBillsAuthoredBy:cellInfo.entryValue];
-				[self.navigationController pushViewController:subDetailController animated:YES];
-			}
-		}
-		else if (cellInfo.entryType == DirectoryTypeOfficeMap)
-        {
-			CapitolMap *capMap = cellInfo.entryValue;			
-			CapitolMapsDetailViewController *detailController = [[CapitolMapsDetailViewController alloc] initWithNibName:@"CapitolMapsDetailViewController" bundle:nil];
-			detailController.map = capMap;
-			
-			[self.navigationController pushViewController:detailController animated:YES];
-		}
-		else if (cellInfo.entryType == DirectoryTypeMail)
-        {
-			[[TexLegeEmailComposer sharedTexLegeEmailComposer] presentMailComposerTo:cellInfo.entryValue 
-																			 subject:@"" body:@"" commander:self];			
-		}
-		// Switch to the appropriate application for this url...
-		else if (cellInfo.entryType == DirectoryTypeMap)
-        {
-			if ([cellInfo.entryValue isKindOfClass:[DistrictOfficeObj class]]
-                || [cellInfo.entryValue isKindOfClass:[DistrictMapObj class]])
-			{		
-				MapMiniDetailViewController *mapViewController = [[MapMiniDetailViewController alloc] init];
-				[mapViewController loadView];
-				
-				DistrictOfficeObj *districtOffice = nil;
-				if ([cellInfo.entryValue isKindOfClass:[DistrictOfficeObj class]])
-					districtOffice = cellInfo.entryValue;
-				
-				[mapViewController resetMapViewWithAnimation:NO];
-				BOOL isDistMap = NO;
-				id<MKAnnotation> theAnnotation = nil;
-				if (districtOffice)
-                {
-					theAnnotation = districtOffice;
-					[mapViewController.mapView addAnnotation:theAnnotation];
-					[mapViewController moveMapToAnnotation:theAnnotation];
-				}
-				else
-                {
-					theAnnotation = member.districtMap;
-					[mapViewController.mapView addAnnotation:theAnnotation];
-					[mapViewController moveMapToAnnotation:theAnnotation];
-                    [mapViewController addDistrictOverlay:member.districtMap.polygon];
-					isDistMap = YES;
-				}
-				if (theAnnotation)
-                {
-					mapViewController.navigationItem.title = theAnnotation.title;
-				}
-
-				[self.navigationController pushViewController:mapViewController animated:YES];
-				
-				if (isDistMap)
-                {
-					[member.districtMap.managedObjectContext refreshObject:member.districtMap mergeChanges:NO];
-				}
-			}
-		}
-		else if (cellInfo.entryType > kDirectoryTypeIsURLHandler &&
-				 cellInfo.entryType < kDirectoryTypeIsExternalHandler)
-        {
-			NSURL *url = [cellInfo generateURL];
-            if (!url)
-                return;
-
-			if ([TexLegeReachability canReachHostWithURL:url])
+                theAnnotation = districtOffice;
+                [mapViewController.mapView addAnnotation:theAnnotation];
+                [mapViewController moveMapToAnnotation:theAnnotation];
+            }
+            else
             {
-
-				if ([url.scheme isEqualToString:@"twitter"])
-					[[UIApplication sharedApplication] openURL:url];
-				else {
-					NSString *urlString = url.absoluteString;
-                    
-                    UIViewController *webController = nil;
-                    
-                    if ([url.scheme hasPrefix:@"http"])
-                        webController = [[SFSafariViewController alloc] initWithURL:url];
-                    else // can't use anything except http: or https: with SFSafariViewControllers
-                        webController = [[SVWebViewController alloc] initWithAddress:urlString];
-                    
-                    webController.modalPresentationStyle = UIModalPresentationPageSheet;
-                    [self presentViewController:webController animated:YES completion:nil];
-				}
-			}
-		}
-		else if (cellInfo.entryType > kDirectoryTypeIsExternalHandler)		// tell the device to open the url externally
-		{
-			NSURL *myURL = [cellInfo generateURL];			
-			BOOL isPhone = ([UtilityMethods canMakePhoneCalls]);
-			
-			if ((cellInfo.entryType == DirectoryTypePhone) && (!isPhone))
+                theAnnotation = member.districtMap;
+                [mapViewController.mapView addAnnotation:theAnnotation];
+                [mapViewController moveMapToAnnotation:theAnnotation];
+                [mapViewController addDistrictOverlay:member.districtMap.polygon];
+                isDistMap = YES;
+            }
+            if (theAnnotation)
             {
-				debug_NSLog(@"Tried to make a phone call, but this isn't a phone: %@", myURL.description);
-				[UtilityMethods alertNotAPhone];
-				return;
-			}
-			
-			[UtilityMethods openURLWithoutTrepidation:myURL];
-		}
+                mapViewController.navigationItem.title = theAnnotation.title;
+            }
+
+            [self.navigationController pushViewController:mapViewController animated:YES];
+            
+            if (isDistMap)
+            {
+                [member.districtMap.managedObjectContext refreshObject:member.districtMap mergeChanges:NO];
+            }
+        }
+    }
+    else if (cellInfo.entryType > kDirectoryTypeIsURLHandler &&
+             cellInfo.entryType < kDirectoryTypeIsExternalHandler)
+    {
+        NSURL *url = [cellInfo generateURL];
+        if (!url)
+            return;
+
+        if ([TexLegeReachability canReachHostWithURL:url])
+        {
+
+            if ([url.scheme isEqualToString:@"twitter"])
+                [[UIApplication sharedApplication] openURL:url];
+            else {
+                NSString *urlString = url.absoluteString;
+                
+                UIViewController *webController = nil;
+                
+                if ([url.scheme hasPrefix:@"http"])
+                    webController = [[SFSafariViewController alloc] initWithURL:url];
+                else // can't use anything except http: or https: with SFSafariViewControllers
+                    webController = [[SVWebViewController alloc] initWithAddress:urlString];
+                
+                webController.modalPresentationStyle = UIModalPresentationPageSheet;
+                [self presentViewController:webController animated:YES completion:nil];
+            }
+        }
+    }
+    else if (cellInfo.entryType > kDirectoryTypeIsExternalHandler)		// tell the device to open the url externally
+    {
+        NSURL *myURL = [cellInfo generateURL];			
+        BOOL isPhone = ([UtilityMethods canMakePhoneCalls]);
+        
+        if ((cellInfo.entryType == DirectoryTypePhone) && (!isPhone))
+        {
+            debug_NSLog(@"Tried to make a phone call, but this isn't a phone: %@", myURL.description);
+            [UtilityMethods alertNotAPhone];
+            return;
+        }
+        
+        [UtilityMethods openURLWithoutTrepidation:myURL];
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)aTableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

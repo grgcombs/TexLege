@@ -27,9 +27,6 @@
 
 @implementation BillsListViewController
 
-#pragma mark -
-#pragma mark View lifecycle
-
 - (instancetype)initWithStyle:(UITableViewStyle)style
 {
 	if ((self = [super initWithStyle:style]))
@@ -59,7 +56,6 @@
 		if ([[TexLegeAppDelegate appDelegate].masterNavigationController.topViewController isKindOfClass:[BillsListViewController class]])
 			if ([self.navigationController isEqual:[TexLegeAppDelegate appDelegate].detailNavigationController])
 				[self.navigationController popToRootViewControllerAnimated:YES];
-		
 	}	
 }
 

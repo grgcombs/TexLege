@@ -37,14 +37,6 @@
 static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 
 @implementation MapMiniDetailViewController
-@synthesize mapView;
-@synthesize texasRegion;
-@synthesize districtView;
-@synthesize annotationActionCoord;
-@synthesize colorIndex = _colorIndex;
-
-#pragma mark -
-#pragma mark Initialization and Memory Management
 
 - (NSString *)nibName {
 	if ([UtilityMethods isIPadDevice])
@@ -54,21 +46,22 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 }
 
 
-- (void) didReceiveMemoryWarning {	
-
+- (void)didReceiveMemoryWarning
+{
 	[self clearOverlaysExceptRecent];
 
 	[super didReceiveMemoryWarning];
 }
 
-- (void) viewDidLoad {
+- (void)viewDidLoad
+{
 	[super viewDidLoad];
 	
 	_colorIndex = 0;
 	if (![UtilityMethods isIPadDevice])
 		self.hidesBottomBarWhenPushed = YES;
 	
-	(self.view).backgroundColor = [TexLegeTheme backgroundLight];
+	self.view.backgroundColor = [TexLegeTheme backgroundLight];
 	self.mapView.showsUserLocation = NO;
     self.mapView.delegate = self;
 	
@@ -85,26 +78,33 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
     }
 }
 
-- (void) viewDidUnload {
-	[super viewDidUnload];
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if (self.splitViewController.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = self.splitViewController.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:animated];
+    }
 }
 
-- (void) viewWillAppear:(BOOL)animated {
-	[super viewWillAppear:animated];
-	
-	NSURL *tempURL = [NSURL URLWithString:[UtilityMethods texLegeStringWithKeyPath:@"ExternalURLs.googleMapsWeb"]];		
-	if (![TexLegeReachability canReachHostWithURL:tempURL])// do we have a good URL/connection?
-		return;
-	
+- (void)splitViewController:(UISplitViewController *)svc willChangeToDisplayMode:(UISplitViewControllerDisplayMode)displayMode
+{
+    if (svc.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = svc.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:YES];
+    }
 }
 
-/*
- - (void) viewWillDisappear:(BOOL)animated {
-	[super viewWillDisappear:animated];	
+- (BOOL)shouldAutorotate
+{
+    return YES;
 }
- */
 
-- (void) viewDidDisappear:(BOOL)animated {
+- (void)viewDidDisappear:(BOOL)animated
+{
 	self.mapView.showsUserLocation = NO;
 		
 	//if (![self isEqual:[self.navigationController.viewControllers objectAtIndex:0]])
@@ -113,31 +113,33 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	[super viewDidDisappear:animated];
 }
 
-#pragma mark -
-#pragma mark Animation and Zoom
-
-
-- (void) clearAnnotationsAndOverlays {
-	self.mapView.showsUserLocation = NO;
-	[self.mapView removeOverlays:self.mapView.overlays];
-	[self.mapView removeAnnotations:self.mapView.annotations];
+- (void)clearAnnotationsAndOverlays
+{
+    if (!self.isViewLoaded)
+        return;
+    MKMapView *mapView = self.mapView;
+	mapView.showsUserLocation = NO;
+	[mapView removeOverlays:mapView.overlays];
+	[mapView removeAnnotations:mapView.annotations];
 }
 
 
-- (void) clearOverlaysExceptRecent {
-	self.mapView.showsUserLocation = NO;
+- (void)clearOverlaysExceptRecent
+{
+    if (!self.isViewLoaded)
+        return;
+    MKMapView *mapView = self.mapView;
+	mapView.showsUserLocation = NO;
 	
-	NSMutableArray *toRemove = [[NSMutableArray alloc] init];
-	if (toRemove) {
-		[toRemove setArray:self.mapView.overlays];
-		if (toRemove.count>1) {
-			[toRemove removeLastObject];
-			[self.mapView removeOverlays:toRemove];
-		}
-	}
+    NSArray *overlays = mapView.overlays;
+    if (overlays.count <= 1)
+        return;
+	NSMutableArray *toRemove = [overlays mutableCopy];
+    [toRemove removeLastObject];
+    [mapView removeOverlays:toRemove];
 }
 
-- (void) resetMapViewWithAnimation:(BOOL)animated {
+- (void)resetMapViewWithAnimation:(BOOL)animated {
 	[self clearAnnotationsAndOverlays];
 	if (animated)
 		[self.mapView setRegion:self.texasRegion animated:YES];
@@ -160,13 +162,34 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
     [self.mapView setRegion:region animated:YES];	
 }
 
-- (void)moveMapToAnnotation:(id<MKAnnotation>)annotation {	
-	if (![self region:self.mapView.region isEqualTo:self.texasRegion]) { // it's another region, let's zoom out/in
-		[self performSelector:@selector(animateToState) withObject:nil afterDelay:0.3];
-		[self performSelector:@selector(animateToAnnotation:) withObject:annotation afterDelay:1.7];        
-	}
-	else
-		[self performSelector:@selector(animateToAnnotation:) withObject:annotation afterDelay:0.7];	
+- (void)moveMapToAnnotation:(id<MKAnnotation>)annotation
+{
+    __weak typeof(self) wSelf = self;
+    if (![self region:self.mapView.region isEqualTo:self.texasRegion])
+    {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf || !sSelf.isViewLoaded || sSelf.view.isHidden)
+                return;
+            [sSelf animateToState];
+        });
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf || !annotation || !sSelf.isViewLoaded || sSelf.view.isHidden)
+                return;
+            [sSelf animateToAnnotation:annotation];
+        });
+    }
+    else
+    {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __strong typeof(wSelf) sSelf = wSelf;
+            if (!sSelf || !annotation || !sSelf.isViewLoaded || sSelf.view.isHidden)
+                return;
+            [sSelf animateToAnnotation:annotation];
+        });
+    }
 }
 
 - (void)addDistrictOverlay:(id<MKOverlay>)overlay
@@ -182,10 +205,8 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
     });
 }
 
-#pragma mark -
-#pragma mark Properties
-
-- (MKCoordinateRegion) texasRegion {
+- (MKCoordinateRegion) texasRegion
+{
 	// Set up the map's region to frame the state of Texas.
 	// Zoom = 6	
 	static CLLocationCoordinate2D texasCenter = {31.709476f, -99.997559f};
@@ -194,7 +215,8 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	return txreg;
 }
 
-- (BOOL) region:(MKCoordinateRegion)region1 isEqualTo:(MKCoordinateRegion)region2 {
+- (BOOL)region:(MKCoordinateRegion)region1 isEqualTo:(MKCoordinateRegion)region2
+{
 	MKMapPoint coord1 = MKMapPointForCoordinate(region1.center);
 	MKMapPoint coord2 = MKMapPointForCoordinate(region2.center);
 	BOOL coordsEqual = MKMapPointEqualToPoint(coord1, coord2);
@@ -245,10 +267,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 	}
 }
 
-
-#pragma mark -
-#pragma mark MapViewDelegate
-
 - (void)mapView:(MKMapView *)theMapView annotationView:(MKAnnotationView *)annotationView 
 									calloutAccessoryControlTapped:(UIControl *)control {
 	id <MKAnnotation> annotation = annotationView.annotation;
@@ -258,7 +276,6 @@ static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 		[self annotationActionSheet:control];		
 	}		
 }
-
 
 - (MKAnnotationView *)mapView:(MKMapView *)theMapView viewForAnnotation:(id <MKAnnotation>)annotation
 {

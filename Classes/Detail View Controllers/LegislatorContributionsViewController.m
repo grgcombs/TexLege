@@ -17,18 +17,13 @@
 #import "LocalyticsSession.h"
 #import "TexLegeTheme.h"
 
-@interface LegislatorContributionsViewController (Private)
+@interface LegislatorContributionsViewController ()
 @end
 
 @implementation LegislatorContributionsViewController
 
-#pragma mark -
-#pragma mark Initialization
-
-
 - (instancetype)initWithStyle:(UITableViewStyle)style
 {
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
     self = [super initWithStyle:style];
     if (self)
     {
@@ -44,17 +39,18 @@
 	[self.tableView reloadData];
 }
 
-#pragma mark -
-#pragma mark View lifecycle
-
-
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-	if (!self.dataSource)
-		self.dataSource = [[LegislatorContributionsDataSource alloc] init];
+    LegislatorContributionsDataSource *dataSource = self.dataSource;
+	if (!dataSource)
+    {
+		dataSource = [[LegislatorContributionsDataSource alloc] init];
+        self.dataSource = dataSource;
+    }
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contributionDataChanged:) name:kContributionsDataNotifyLoaded object:self.dataSource];
-	self.tableView.dataSource = self.dataSource;
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contributionDataChanged:) name:kContributionsDataNotifyLoaded object:dataSource];
+	self.tableView.dataSource = dataSource;
 	
 	UILabel *nimsp = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 66)];
 	nimsp.backgroundColor = [UIColor clearColor];
@@ -68,32 +64,35 @@
 	self.tableView.tableFooterView = nimsp;
 }
 
-
-- (void)viewDidUnload {
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:kContributionsDataNotifyLoaded object:self.dataSource];	
-	self.dataSource = nil;
-    [super viewDidUnload];
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    // Relinquish ownership any cached data, images, etc that aren't in use.
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if (self.splitViewController.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = self.splitViewController.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:animated];
+    }
 }
 
-- (void)dealloc {
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:kContributionsDataNotifyLoaded object:self.dataSource];	
-
+- (void)splitViewController:(UISplitViewController *)svc willChangeToDisplayMode:(UISplitViewControllerDisplayMode)displayMode
+{
+    if (svc.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
+    {
+        UIBarButtonItem *button = svc.displayModeButtonItem;
+        [self.navigationItem setRightBarButtonItem:button animated:YES];
+    }
 }
 
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Override to allow orientations other than the default portrait orientation.
+- (BOOL)shouldAutorotate
+{
     return YES;
 }
-
-#pragma mark -
-#pragma mark Data Objects
 
 - (void)setQueryEntityID:(NSString *)newObj type:(NSNumber *)newType cycle:(NSString *)newCycle
 {
@@ -128,10 +127,6 @@
 	[self.dataSource initiateQueryWithQueryID:newObj type:newType cycle:cycleOrNil parameter:parameterOrNil];
 	self.navigationItem.title = [self.dataSource title];
 }
-
-
-#pragma mark -
-#pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {

@@ -16,24 +16,20 @@
 @class DistrictMapImporter;
 #endif
 
-@interface DistrictMapDataSource : NSObject <TableDataSource> {
-#if NEEDS_TO_PARSE_KMLMAPS == 1
-	NSInteger mapCount;
-#endif
-}
+@interface DistrictMapDataSource : NSObject <TableDataSource>
 
-@property (nonatomic, strong)			NSFetchedResultsController *fetchedResultsController;
+@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 
-@property (nonatomic,strong)	NSMutableString *filterString;	// @"" means don't filter
-@property (nonatomic)			BOOL byDistrict;
+@property (nonatomic,copy) NSString *filterString;	// nil or empty means don't filter
+@property (nonatomic,assign) BOOL byDistrict;
 
-- (void) setFilterByString:(NSString *)filter;
-- (void) removeFilter;
-- (IBAction) sortByType:(id)sender;
+- (void)removeFilter;
+- (IBAction)sortByType:(id)sender;
 
 #if NEEDS_TO_PARSE_KMLMAPS == 1
 - (void)insertDistrictMaps:(NSArray *)districtMaps;
-@property (nonatomic, retain) DistrictMapImporter *importer;
+@property (nonatomic, strong) DistrictMapImporter *importer;
+@property (nonatomic, assign) SInt16 mapCount;
 #endif
 
 @end
