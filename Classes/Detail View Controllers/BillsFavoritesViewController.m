@@ -23,8 +23,8 @@
 @interface BillsFavoritesViewController ()
 - (void)configureCell:(TexLegeStandardGroupCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (IBAction)save:(id)sender;
-@property (nonatomic,copy) NSMutableArray *watchList;
-@property (nonatomic,copy) NSMutableDictionary *cachedBills;
+@property (nonatomic,copy) NSArray *watchList;
+@property (nonatomic,copy) NSDictionary *cachedBills;
 @end
 
 @implementation BillsFavoritesViewController
@@ -35,7 +35,7 @@
 - (instancetype)initWithStyle:(UITableViewStyle)style
 {
 	if ((self=[super initWithStyle:style])) {
-		_cachedBills = [[NSMutableDictionary alloc] init];
+		_cachedBills = [[NSDictionary alloc] init];
 	}
 	return self;	
 }
@@ -90,16 +90,15 @@
     self.watchList = nil;
 
 	NSString *thePath = [[UtilityMethods applicationDocumentsDirectory] stringByAppendingPathComponent:kBillFavoritesStorageFile];
-	_watchList = [[NSMutableArray alloc] initWithContentsOfFile:thePath];
-	if (!_watchList)
-    {
-		_watchList = [[NSMutableArray alloc] init];
-	}
+	NSArray *watchlist = [[NSArray alloc] initWithContentsOfFile:thePath];
+	if (!watchlist)
+		watchlist = @[];
 	
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-	[_watchList sortUsingDescriptors:@[sortDescriptor]];
-	
-	if (!_watchList.count)
+	NSSortDescriptor *sortByOrder = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+    watchlist = [watchlist sortedArrayUsingDescriptors:@[sortByOrder]];
+    self.watchList = watchlist;
+    
+	if (!watchlist.count)
     {
         NSString *title = NSLocalizedStringFromTable(@"No Watched Bills, Yet", @"AppAlerts", nil);
         NSString *message = NSLocalizedStringFromTable(@"To add a bill to this watch list, first search for one, open it, and then tap the star button in it's header.", @"AppAlerts", nil);
@@ -114,27 +113,30 @@
 	[self.tableView reloadData];
 }
 
-- (IBAction)loadBills:(id)sender {
-	/*
-	for (NSDictionary *item in _watchList) {
-		[[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:[item objectForKey:@"bill_id"] 
-																		   session:[item objectForKey:@"session"] 
-																		  delegate:self];
-	}*/	
+- (IBAction)loadBills:(id)sender
+{
+#if 0
+    OpenLegislativeAPIs *openStates = [OpenLegislativeAPIs sharedOpenLegislativeAPIs];
+	for (NSDictionary *bill in self.watchList)
+    {
+        if (!SLTypeDictionaryOrNil(bill))
+            continue;
+        NSString *billID = SLTypeStringOrNil(bill[@"bill_id"]);
+        NSString *session = SLTypeStringOrNil(bill[@"session"]);
+        if (!billID || !session)
+            continue;
+		[openStates queryOpenStatesBillWithID:billID session:session delegate:self];
+	}
+#endif
 }
 
 - (IBAction)save:(id)sender
 {
-	if (_watchList)
-    {
-		NSString *thePath = [[UtilityMethods applicationDocumentsDirectory] stringByAppendingPathComponent:kBillFavoritesStorageFile];
-		[_watchList writeToFile:thePath atomically:YES];		
-	}
-}
-
-- (void)viewDidUnload
-{
-	[super viewDidUnload];
+    NSArray<NSDictionary *> *watchList = self.watchList;
+	if (!watchList.count)
+        return;
+    NSString *thePath = [[UtilityMethods applicationDocumentsDirectory] stringByAppendingPathComponent:kBillFavoritesStorageFile];
+    [watchList writeToFile:thePath atomically:YES];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -144,10 +146,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if (!IsEmpty(_watchList))
-		return _watchList.count;
-	else
-		return 0;
+    return [SLTypeNonEmptyArrayOrNil(self.watchList) count];
 }
 
 - (void)configureCell:(TexLegeStandardGroupCell *)cell atIndexPath:(NSIndexPath *)indexPath
@@ -155,11 +154,15 @@
 	BOOL useDark = (indexPath.row % 2 == 0);
 	cell.backgroundColor = useDark ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
 	
-	NSString *bill_title = _watchList[indexPath.row][@"title"];
-	bill_title = [bill_title chopPrefix:@"Relating to " capitalizingFirst:YES];
+    NSDictionary *bill = nil;
+    if (_watchList.count > indexPath.row)
+        bill = SLTypeDictionaryOrNil(_watchList[indexPath.row]);
+    
+	NSString *title = SLTypeStringOrNil(bill[@"title"]);
+	title = [title chopPrefix:@"Relating to " capitalizingFirst:YES];
 
-	cell.textLabel.text = _watchList[indexPath.row][@"bill_id"];
-	cell.detailTextLabel.text = bill_title;		
+	cell.textLabel.text = SLTypeStringOrNil(bill[@"bill_id"]);
+	cell.detailTextLabel.text = title;
 }
 
 - (void)tableView:(UITableView *)aTableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -178,7 +181,7 @@
 									   reuseIdentifier:reuseId];
     }
 	
-	if (_watchList && _watchList.count)
+	if (self.watchList.count)
 		[self configureCell:cell atIndexPath:indexPath];		
 	
 	return cell;
@@ -186,19 +189,29 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_watchList.count <= indexPath.row)
+    NSArray<NSDictionary *> *watchList = self.watchList;
+    NSDictionary *bill = nil;
+    if (watchList.count > indexPath.row)
+        bill = SLTypeDictionaryOrNil(watchList[indexPath.row]);
+    if (!bill)
         return;
-
+    
 	if (editingStyle == UITableViewCellEditingStyleDelete)
 	{
-		NSDictionary *toRemove = _watchList[indexPath.row];
-		if (toRemove && _cachedBills)
+        NSDictionary<NSString *,NSDictionary *> *cachedBills = self.cachedBills;
+        NSString *watchID = SLTypeStringOrNil(bill[@"watchID"]);
+		if (cachedBills && watchID)
         {
-			NSString *watchID = toRemove[@"watchID"];
-			if (watchID)
-				[_cachedBills removeObjectForKey:watchID];
-		}
-		[_watchList removeObjectAtIndex:indexPath.row];
+            NSMutableDictionary<NSString *,NSDictionary *> *mutableCachedBills = [cachedBills mutableCopy];
+            [mutableCachedBills removeObjectForKey:watchID];
+            self.cachedBills = [mutableCachedBills copy];
+        }
+        
+        NSMutableArray<NSDictionary *> *mutableWatchList = [watchList mutableCopy];
+		[mutableWatchList removeObjectAtIndex:indexPath.row];
+        watchList = [mutableWatchList copy];
+        self.watchList = watchList;
+        
 		[self save:nil];		
 		[self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:YES];
 	}   
@@ -211,17 +224,28 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath 
       toIndexPath:(NSIndexPath *)destinationIndexPath;
-{  	
-	if (!_watchList || _watchList.count <= sourceIndexPath.row)
+{
+    NSArray<NSDictionary *> *watchList = self.watchList;
+	if (!watchList || watchList.count <= sourceIndexPath.row)
 		return;
-	NSDictionary *item = _watchList[sourceIndexPath.row];	
-	[_watchList removeObjectAtIndex:sourceIndexPath.row];
-	[_watchList insertObject:item atIndex:destinationIndexPath.row];	
-	
-	int i = 0;
-	for (NSMutableDictionary *anItem in _watchList)
-		[anItem setValue:@(i++) forKey:@"displayOrder"];
-	
+	NSDictionary *billToMove = SLTypeDictionaryOrNil(watchList[sourceIndexPath.row]);
+    if (!billToMove)
+        return;
+    NSMutableArray<NSDictionary *> *mutableList = [watchList mutableCopy];
+	[mutableList removeObjectAtIndex:sourceIndexPath.row];
+	[mutableList insertObject:billToMove atIndex:destinationIndexPath.row];
+    watchList = [mutableList copy];
+    
+    mutableList = [@[] mutableCopy];
+    [watchList enumerateObjectsUsingBlock:^(NSDictionary * bill, NSUInteger idx, BOOL * stop) {
+        if (!SLTypeDictionaryOrNil(bill))
+            return;
+        NSMutableDictionary *mutableBill = [bill mutableCopy];
+        mutableBill[@"displayOrder"] = @(idx);
+        [mutableList addObject:[mutableBill copy]];
+    }];
+    watchList = [mutableList copy];
+    self.watchList = watchList;
 	[self save:nil];
 }
 
@@ -230,10 +254,11 @@
 {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-	if (!_watchList || _watchList.count <= indexPath.row)
+    NSArray<NSDictionary *> *watchList = self.watchList;
+	if (!watchList || watchList.count <= indexPath.row)
 		return;
 
-	NSDictionary *item = _watchList[indexPath.row];
+	NSDictionary *bill = watchList[indexPath.row];
     //NSString *watchID = item[@"watchID"];
     //if (!watchID)
     //    return;
@@ -243,31 +268,26 @@
 
     BOOL changingViews = NO;
 
-    BillsDetailViewController *detailView = nil;
+    BillsDetailViewController *detailController = nil;
     if ([UtilityMethods isIPadDevice])
     {
-        id aDetail = detailNav.visibleViewController;
-        if ([aDetail isKindOfClass:[BillsDetailViewController class]])
-            detailView = aDetail;
+        detailController = SLValueIfClass(BillsDetailViewController, detailNav.visibleViewController);
     }
-    if (!detailView) {
-        detailView = [[BillsDetailViewController alloc]
+    if (!detailController) {
+        detailController = [[BillsDetailViewController alloc]
                       initWithNibName:@"BillsDetailViewController" bundle:nil];
         changingViews = YES;
     }
-    [[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:item[@"bill_id"]
-                                                                       session:item[@"session"]
-                                                                      delegate:detailView];
+    [[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:SLTypeStringOrNil(bill[@"bill_id"])
+                                                                       session:SLTypeStringOrNil(bill[@"session"])
+                                                                      delegate:detailController];
 
-    detailView.dataObject = item;
+    detailController.dataObject = bill;
     if (![UtilityMethods isIPadDevice])
-        [self.navigationController pushViewController:detailView animated:YES];
+        [self.navigationController pushViewController:detailController animated:YES];
     else if (changingViews)
-        [detailNav setViewControllers:@[detailView] animated:NO];
+        [detailNav setViewControllers:@[detailController] animated:NO];
 }
-
-#pragma mark -
-#pragma mark RestKit:RKObjectLoaderDelegate
 
 - (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
 {
@@ -283,37 +303,40 @@
 	if (![request isGET] || ![response isOK])
         return;
 
-    // Success! Let's take a look at the data
-
     NSError *error = nil;
-    NSMutableDictionary *object = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
-
-    if (!object || !self.cachedBills)
+    NSDictionary *bill = [NSJSONSerialization JSONObjectWithData:response.body options:0 error:&error];
+    if (!SLTypeDictionaryOrNil(bill))
         return;
+    NSMutableDictionary<NSString *,NSDictionary *> *cachedBills = [NSMutableDictionary dictionaryWithDictionary:self.cachedBills];
 
-    NSString *watchID = watchIDForBill(object);
-    if (!watchID)
+    NSString *watchIDtoFind = watchIDForBill(bill);
+    if (!watchIDtoFind)
         return;
-    _cachedBills[watchID] = object;
+    cachedBills[watchIDtoFind] = bill;
+    self.cachedBills = [cachedBills copy];
 
-    NSInteger row = 0;
-    NSInteger index = 0;
-    for (NSDictionary *search in self.watchList)
-    {
-        if (![search isKindOfClass:[NSDictionary class]])
-            continue;
-        if ([watchID isEqual:search[@"watchID"]])
+    __block NSInteger row = NSNotFound;
+    [self.watchList enumerateObjectsUsingBlock:^(NSDictionary *watchedBill, NSUInteger idx, BOOL * stop) {
+        if (!SLTypeDictionaryOrNil(watchedBill))
+            return;
+        NSString *itemID = SLTypeStringOrNil(watchedBill[@"watchID"]);
+        if ([watchIDtoFind isEqualToString:itemID])
         {
-            row = index;
-            break;
+            row = idx;
+            *stop = YES;
         }
-        index++;
+    }];
+    
+    if (!self.isViewLoaded)
+        return;
+    
+    if (self.watchList.count > row && row != NSNotFound)
+    {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
     }
-    NSIndexPath *rowPath = [NSIndexPath indexPathForRow:row inSection:0];
-    if ((row+1) > self.watchList.count)
-        [self.tableView reloadData];
     else
-        [self.tableView reloadRowsAtIndexPaths:@[rowPath] withRowAnimation:UITableViewRowAnimationNone];
+        [self.tableView reloadData];
 }
 
 @end

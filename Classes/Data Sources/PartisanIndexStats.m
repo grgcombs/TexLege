@@ -306,8 +306,8 @@
 
     struct PartyPartisanshipKeys keys = PartyPartisanshipKeys;
 
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:keys.session ascending:YES];
-    NSArray *descriptors = [[NSArray alloc] initWithObjects:sortDescriptor,nil];
+    NSSortDescriptor *sortBySession = [[NSSortDescriptor alloc] initWithKey:keys.session ascending:YES];
+    NSArray *descriptors = [[NSArray alloc] initWithObjects:sortBySession,nil];
     NSArray *scores = legislator.wnomScores.allObjects;
 
     NSArray *sortedScores = [scores sortedArrayUsingDescriptors:descriptors];

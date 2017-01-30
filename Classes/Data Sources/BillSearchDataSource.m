@@ -25,8 +25,8 @@
 #import "SLToastManager+TexLege.h"
 
 @interface BillSearchDataSource ()
-@property (NS_NONATOMIC_IOSONLY, copy) NSMutableArray *rows;
-@property (NS_NONATOMIC_IOSONLY, copy) NSMutableDictionary *sections;
+@property (NS_NONATOMIC_IOSONLY, copy) NSArray *rows;
+@property (NS_NONATOMIC_IOSONLY, copy) NSDictionary *sections;
 @property (NS_NONATOMIC_IOSONLY, assign) NSInteger loadingStatus;
 @property (NS_NONATOMIC_IOSONLY, strong) IBOutlet UISearchDisplayController *searchDisplayController;
 @property (NS_NONATOMIC_IOSONLY, strong) IBOutlet UITableViewController *delegateTVC;
@@ -41,8 +41,8 @@
     {
 		_loadingStatus = LOADING_IDLE;
 		_useLoadingDataCell = NO;
-        _rows = [[NSMutableArray alloc] init];
-        _sections = [[NSMutableDictionary alloc] init];
+        _rows = @[];
+        _sections = @{};
 
 		[OpenLegislativeAPIs sharedOpenLegislativeAPIs];
 	}
@@ -75,53 +75,49 @@
 
 - (void)dealloc
 {
-	[[RKClient sharedClient].requestQueue cancelRequestsWithDelegate:self];
+	[[RKRequestQueue sharedQueue] cancelRequestsWithDelegate:self];
     _delegateTVC = nil;
 }
 
 // This is just a short cut, we wind up using this array several times.  Perhaps we should remember it instead of recreating?
 - (NSArray *)billTypes
 {
-	return [self.sections.allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    return [self.sections.allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
 }
 
 // return the map at the index in the array
 - (id)dataObjectForIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *key = [self billTypes][indexPath.section];
-    if (!key)
+    NSArray *types = [self billTypes];
+    if (!types)
+        return nil;
+    NSString *type = (types.count > indexPath.section) ? types[indexPath.section] : nil;
+    if (!type)
         return nil;
 
-    NSArray *billSection = self.sections[key];
-    if (!billSection
-        || ![billSection respondsToSelector:@selector(objectAtIndex:)]
-        || ![billSection respondsToSelector:@selector(count)])
-    {
-        return nil;
-    }
-
-    if (billSection.count <= indexPath.row)
+    NSArray *billsForType = SLTypeArrayOrNil(self.sections[type]);
+    if (!billsForType)
         return nil;
 
-    NSDictionary *bill = billSection[indexPath.row];
-	return bill;
+    NSDictionary *bill = (billsForType.count > indexPath.row) ? billsForType[indexPath.row] : nil;
+	return SLTypeDictionaryOrNil(bill);
 }
 
 - (NSIndexPath *)indexPathForDataObject:(id)dataObject
 {
-    if (!dataObject || ![dataObject isKindOfClass:[NSDictionary class]])
+    if (!SLTypeDictionaryOrNil(dataObject))
         return nil;
 
-    NSString *billID = dataObject[@"bill_id"];
-    if (!billID || ![billID isKindOfClass:[NSString class]])
+    NSString *billID = SLTypeStringOrNil(dataObject[@"bill_id"]);
+    if (!billID)
         return nil;
 
-    NSString *typeString = billTypeStringFromBillID(billID);
-    if (IsEmpty(typeString))
+    NSString *typeString = SLTypeNonEmptyStringOrNil(billTypeStringFromBillID(billID));
+    if (!typeString)
         return nil;
 
-    NSArray *sectionRow = _sections[typeString];
-    if (IsEmpty(sectionRow))
+    NSArray *billsForType = SLTypeNonEmptyArrayOrNil(_sections[typeString]);
+    if (IsEmpty(billsForType))
         return nil;
 
     NSArray *sortedSections = [self billTypes];
@@ -129,80 +125,81 @@
         return nil;
 
     NSInteger section = [sortedSections indexOfObject:typeString];
-    NSInteger row = [sectionRow indexOfObject:dataObject];
+    NSInteger row = [billsForType indexOfObject:dataObject];
     if (section == NSNotFound || row == NSNotFound)
         return nil;
 
     return [NSIndexPath indexPathForRow:row inSection:section];
 }
 
-- (void)generateSections
+- (void)generateSectionsWithRows:(NSArray *)rows
 {
-    _sections = [[NSMutableDictionary alloc] init];
+    rows = SLTypeNonEmptyArrayOrNil(rows);
+    NSMutableDictionary *sections = [[NSMutableDictionary alloc] init];
 
-    [_rows enumerateObjectsUsingBlock:^(NSDictionary *bill, NSUInteger idx, BOOL * stop)
+    [rows enumerateObjectsUsingBlock:^(NSDictionary *bill, NSUInteger idx, BOOL * stop)
     {
-        if (![bill isKindOfClass:[NSDictionary class]])
+        if (!SLTypeDictionaryOrNil(bill))
             return;
 
-        NSString *billType = billTypeStringFromBillID(bill[@"bill_id"]);
-        if (!billType || ![billType isKindOfClass:[NSString class]] || IsEmpty(billType))
+        NSString *billID = SLTypeStringOrNil(bill[@"bill_id"]);
+        NSString *billType = SLTypeNonEmptyStringOrNil(billTypeStringFromBillID(billID));
+        if (!billType)
             return;
 
-        NSMutableArray *bills = self.sections[billType];
+        NSMutableArray *bills = sections[billType];
         if (!bills)
         {
-            bills = [NSMutableArray array];
-            _sections[billType] = bills;
+            bills = [@[] mutableCopy];
+            sections[billType] = bills;
         }
 
         [bills addObject:bill];
     }];
 
-	[_sections enumerateKeysAndObjectsUsingBlock:^(NSString *billType, NSMutableArray *bills, BOOL * stop) {
+    NSMutableDictionary *destination = [@{} mutableCopy];
+	[sections enumerateKeysAndObjectsUsingBlock:^(NSString *billType, NSMutableArray *bills, BOOL * stop) {
         [bills sortUsingComparator:^NSComparisonResult(NSDictionary *bill1, NSDictionary *bill2) {
-            NSString *bill_id1 = bill1[@"bill_id"];
-            NSString *bill_id2 = bill2[@"bill_id"];
+            NSString *bill_id1 = SLTypeStringOrNil(bill1[@"bill_id"]);
+            NSString *bill_id2 = SLTypeStringOrNil(bill2[@"bill_id"]);
             return [bill_id1 compare:bill_id2 options:NSNumericSearch];
         }];
+        destination[billType] = [bills copy];
     }];
+    self.sections = [destination copy];
 }
 
 #pragma mark UITableViewDataSource
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	if (IsEmpty(self.sections))
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    NSDictionary *sections = self.sections;
+	if (IsEmpty(sections))
 		return 1;
-	return self.sections.count;
+	return sections.count;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     NSArray *sortedSectionTitles = [self billTypes];
 	if (IsEmpty(sortedSectionTitles))
-		return @"";
+		return nil;
     if (sortedSectionTitles.count <= section)
-        return @"";
+        return nil;
 
-	NSString *billType = sortedSectionTitles[section];
-    if (![billType isKindOfClass:[NSString class]])
-        return @"";
+	NSString *billType = SLTypeStringOrNil(sortedSectionTitles[section]);
+    if (!billType)
+        return nil;
 
-    NSArray *typesMetadata = [BillMetadataLoader sharedBillMetadataLoader].metadata[@"types"];
-    NSDictionary *metadata = [typesMetadata findWhereKeyPath:@"title" equals:billType];
-
-	NSString *title = metadata[@"titleLong"];
-    if (![title isKindOfClass:[NSString class]] || IsEmpty(title))
-        return @"";
+    NSArray *typesMetadata = SLTypeArrayOrNil([BillMetadataLoader sharedBillMetadataLoader].metadata[@"types"]);
+    NSDictionary *metadata = SLTypeDictionaryOrNil([typesMetadata findWhereKeyPath:@"title" equals:billType]);
+	NSString *title = SLTypeNonEmptyStringOrNil(metadata[@"titleLong"]);
     return title;
 }
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-    NSArray *sortedSectionTitles = [self billTypes];
-	if (IsEmpty(sortedSectionTitles))
-		return nil;
-    return sortedSectionTitles;
+    return SLTypeNonEmptyArrayOrNil([self billTypes]);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -211,12 +208,12 @@
     if (sortedSectionTitles.count <= section)
         return 0;
 
-    NSString *sectionTitle = sortedSectionTitles[section];
-    if (![sectionTitle isKindOfClass:[NSString class]])
+    NSString *sectionTitle = SLTypeStringOrNil(sortedSectionTitles[section]);
+    if (!sectionTitle)
         return 0;
 
-    NSArray *bills = self.sections[sectionTitle];
-    if (!bills || ![bills isKindOfClass:[NSArray class]])
+    NSArray *bills = SLTypeArrayOrNil(self.sections[sectionTitle]);
+    if (!bills)
         return 0;
     if (IsEmpty(bills))
     {
@@ -306,75 +303,76 @@
 	
 	BOOL isBillID = NO;
 	StateMetaLoader *meta = [StateMetaLoader instance];
-	if (IsEmpty(meta.selectedState) || IsEmpty(meta.currentSession))
+    NSString *state = SLTypeNonEmptyStringOrNil(meta.selectedState);
+    NSString *session = SLTypeStringOrNil(meta.currentSession);
+    
+	if (!state || !session)
 		return;
-
+    
+    NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
     NSArray *typesMetadata = [BillMetadataLoader sharedBillMetadataLoader].metadata[kBillMetadataTypesKey];
-	for (NSDictionary *typeMetadata in typesMetadata)
+    for (NSDictionary *typeMetadata in typesMetadata)
     {
-		NSString *billType = typeMetadata[kBillMetadataTitleKey];
-	 
-		if (billType && [searchString hasPrefix:billType])
+        if (!SLTypeDictionaryOrNil(typeMetadata))
+            continue;
+        NSString *billType = SLTypeStringOrNil(typeMetadata[kBillMetadataTitleKey]);
+        
+        if (!billType || ![searchString hasPrefix:billType])
+            continue;
+        
+        NSString *tail = [searchString substringFromIndex:billType.length];
+        if (!tail)
+            continue;
+        tail = [tail stringByTrimmingCharactersInSet:whitespace];
+        if (tail.integerValue > 0)
         {
-			NSString *tail = [searchString substringFromIndex:billType.length];
-			if (tail)
-            {
-				tail = [tail stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-				
-				if (tail.integerValue > 0)
-                {
-					isBillID = YES;
-
-					NSNumber *billNumber = @(tail.integerValue);		// we specifically convolute this to ensure we're grabbing only the numerical of the string
-					[queryString appendFormat:@"/%@/%@/%@%%20%@", meta.selectedState, meta.currentSession, billType, billNumber];
-					
-					break;
-				}
-			}			
-		}
-	}
+            isBillID = YES;
+            
+            NSNumber *billNumber = @(tail.integerValue);		// we specifically convolute this to ensure we're grabbing only the numerical of the string
+            [queryString appendFormat:@"/%@/%@/%@%%20%@", state, session, billType, billNumber];
+            
+            break;
+        }
+    }
 	
-	NSMutableDictionary *queryParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-										@"session", @"search_window",
-										meta.selectedState, @"state",
-										SUNLIGHT_APIKEY, @"apikey",
-										nil];
+    NSMutableDictionary *queryParams = [@{
+                                          @"search_window": @"session",
+                                          @"state": state,
+                                          @"apikey": SUNLIGHT_APIKEY,
+                                          } mutableCopy];
 	
 	NSString *chamberString = stringForChamber(chamber, TLReturnOpenStates);
 	if (!IsEmpty(chamberString))
-    {
 		queryParams[@"chamber"] = chamberString;
-	}
 	if (IsEmpty(searchString))
 		searchString = @"";
-	
-	if (!isBillID){
+	if (!isBillID)
 		queryParams[@"q"] = searchString;
-	}
 	
 	[self startSearchWithQueryString:queryString params:queryParams];
-		
 }
 
 - (void)startSearchForSubject:(NSString *)searchSubject chamber:(NSInteger)chamber
 {
 	StateMetaLoader *meta = [StateMetaLoader instance];
-	if (IsEmpty(meta.selectedState))
+    NSString *state = SLTypeNonEmptyStringOrNil(meta.selectedState);
+	if (!state)
 		return;
 	
-	NSMutableDictionary *queryParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-								 @"session", @"search_window",
-								 meta.selectedState, @"state",
-								 SUNLIGHT_APIKEY, @"apikey",
-								 nil];
+    NSMutableDictionary *queryParams = [@{
+                                          @"search_window": @"session",
+                                          @"state": state,
+                                          @"apikey": SUNLIGHT_APIKEY,
+                                          } mutableCopy];
 	
-	NSString *chamberString = stringForChamber(chamber, TLReturnOpenStates);
-	if (!IsEmpty(chamberString)) {
+	NSString *chamberString = SLTypeNonEmptyStringOrNil(stringForChamber(chamber, TLReturnOpenStates));
+	if (!chamberString)
 		queryParams[@"chamber"] = chamberString;
-	}
-	if (IsEmpty(searchSubject))
+
+	if (!SLTypeNonEmptyStringOrNil(searchSubject))
 		searchSubject = @"";
-	else {
+	else
+    {
 		NSDictionary *tagSubject = @{@"subject": searchSubject};
 		[[LocalyticsSession sharedLocalyticsSession] tagEvent:@"BILL_SUBJECTS" attributes:tagSubject];	
 	}
@@ -385,60 +383,58 @@
 
 - (void)startSearchForBillsAuthoredBy:(NSString *)searchSponsorID
 {
-	if (NO == IsEmpty(searchSponsorID))
-    {
-		StateMetaLoader *meta = [StateMetaLoader instance];
-		if (IsEmpty(meta.selectedState))
-			return;
-		
-		NSDictionary *queryParams = @{@"sponsor_id": searchSponsorID,
-									 @"state": meta.selectedState,
-									 @"search_window": @"session",
-									 @"apikey": SUNLIGHT_APIKEY,
-									 // now for the fun part
-									 @"fields": @"sponsors,bill_id,title,session,state,type,update_at,subjects"};
+	if (!SLTypeNonEmptyStringOrNil(searchSponsorID))
+        return;
 
-		RKRequest *request = [self startSearchWithQueryString:@"/bills" params:queryParams];
-		if (request)
-        {
-			request.userData = @{@"sponsor_id": searchSponsorID};
-		}
-		
-	}
+    StateMetaLoader *meta = [StateMetaLoader instance];
+    NSString *state = SLTypeNonEmptyStringOrNil(meta.selectedState);
+    if (!state)
+        return;
+    
+    NSDictionary *queryParams = @{@"sponsor_id": searchSponsorID,
+                                  @"state": state,
+                                  @"search_window": @"session",
+                                  @"apikey": SUNLIGHT_APIKEY,
+                                  @"fields": @"sponsors,bill_id,title,session,state,type,update_at,subjects"};
+
+    RKRequest *request = [self startSearchWithQueryString:@"/bills" params:queryParams];
+    if (request)
+    {
+        request.userData = @{@"sponsor_id": searchSponsorID};
+    }
 }
 
-- (BOOL)pruneBillsForAuthor:(NSString *)sponsorID
+- (NSArray *)billsForAuthor:(NSString *)sponsorID
 {
-	// We must be requesting specific bills for a given sponsors
-
-	if (IsEmpty(self.rows) || IsEmpty(sponsorID))
-		return NO;
+    NSArray *rows = self.rows;
+    if (!SLTypeNonEmptyStringOrNil(sponsorID) || !SLTypeNonEmptyArrayOrNil(rows))
+        return nil;
 
 	debug_NSLog(@"Pruning the list of sought-after bills for a given sponsor...");
 
     NSMutableArray *authoredRows = [[NSMutableArray alloc] init];
 
-    [self.rows enumerateObjectsWithOptions:0 usingBlock:^(NSDictionary *bill, NSUInteger billIndex, BOOL * billsStop) {
-        if (![bill isKindOfClass:[NSDictionary class]])
-            return;
-        NSArray *sponsors = bill[@"sponsors"];
-        if (!sponsors || ![sponsors isKindOfClass:[NSArray class]])
+    [rows enumerateObjectsWithOptions:0 usingBlock:^(NSDictionary *bill, NSUInteger billIndex, BOOL * billsStop) {
+        if (!SLTypeDictionaryOrNil(bill))
+            return ;
+        NSArray *sponsors = SLTypeNonEmptyArrayOrNil(bill[@"sponsors"]);
+        if (!sponsors)
             return;
 
         [sponsors enumerateObjectsUsingBlock:^(NSDictionary *sponsor, NSUInteger sponsorIndex, BOOL * sponsorsStop) {
-            if (![sponsor isKindOfClass:[NSDictionary class]])
+            if (!SLTypeDictionaryOrNil(sponsor))
                 return;
 
-            NSString *billSponsorID = sponsor[@"leg_id"];
-            if (!billSponsorID || ![billSponsorID isKindOfClass:[NSString class]])
+            NSString *billSponsorID = SLTypeStringOrNil(sponsor[@"leg_id"]);
+            if (!billSponsorID)
                 return;
             if (![sponsorID isEqualToString:billSponsorID])
                 return;
-            NSString *sponsorshipType = sponsor[@"official_type"];
-            if (!sponsorshipType || ![sponsorshipType isKindOfClass:[NSString class]])
+            NSString *sponsorshipType = SLTypeStringOrNil(sponsor[@"official_type"]);
+            if (!sponsorshipType)
             {
-                sponsorshipType = sponsor[@"type"];
-                if (!sponsorshipType || ![sponsorshipType isKindOfClass:[NSString class]])
+                sponsorshipType = SLTypeStringOrNil(sponsor[@"type"]);
+                if (!sponsorshipType)
                     return;
             }
             if ([sponsorshipType caseInsensitiveCompare:@"author"] == NSOrderedSame)
@@ -448,27 +444,16 @@
                 return;
             }
         }];
-
-//        if (!didAuthor)
-//        {
-//            [self.rows removeObjectAtIndex:billIndex];
-//        }
     }];
 
-//    if (tempRows)
-//        [tempRows release];
-
-    self.rows = authoredRows;
-
-    return YES;
+    rows = [authoredRows copy];
+    return rows;
 }
 
-
-#pragma mark -
-#pragma mark RestKit:RKObjectLoaderDelegate
-
-- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error {
-	if (error && request) {
+- (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
+{
+	if (error && request)
+    {
 		debug_NSLog(@"Error loading search results from %@: %@", [request description], [error localizedDescription]);
 	}	
 	
@@ -504,33 +489,32 @@
 		if (self.useLoadingDataCell)
 			self.loadingStatus = LOADING_IDLE;
 
-        _rows = [[NSMutableArray alloc] init];
-
         NSError *error = nil;
-        id results= [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
-
-		if ([results isKindOfClass:[NSArray class]])
-			[_rows addObjectsFromArray:results];
-		else if ([results isKindOfClass:[NSDictionary class]])
-			[_rows addObject:results];
-
-		// if we wanted blocks, we'd do this instead:
-		[_rows sortUsingComparator:^(NSDictionary *item1, NSDictionary *item2) {
-			NSString *bill_id1 = item1[@"bill_id"];
-			NSString *bill_id2 = item2[@"bill_id"];
-			return [bill_id1 compare:bill_id2 options:NSNumericSearch];
-		}];
-
-        [self generateSections];
+        id results = [NSJSONSerialization JSONObjectWithData:response.body options:0 error:&error];
+        NSArray *rows = SLTypeArrayOrNil(results);
+        if (!rows)
+        {
+            NSDictionary *asDict = SLTypeDictionaryOrNil(results);
+            if (asDict)
+                rows = @[asDict];
+        }
+        
+        rows = [rows sortedArrayUsingComparator:^(NSDictionary *item1, NSDictionary *item2) {
+            NSString *bill_id1 = SLTypeStringOrNil(item1[@"bill_id"]);
+            NSString *bill_id2 = SLTypeStringOrNil(item2[@"bill_id"]);
+            return [bill_id1 compare:bill_id2 options:NSNumericSearch];
+        }];
+        self.rows = rows;
+        [self generateSectionsWithRows:rows];
 
 		if (request.userData)
         {
-			NSString *sponsorID = (request.userData)[@"sponsor_id"];
-			if (NO == IsEmpty(sponsorID))
+			NSString *sponsorID = SLTypeNonEmptyStringOrNil(request.userData[@"sponsor_id"]);
+			if (sponsorID)
             {
 				// We must be requesting specific bills for a given sponsors			
-				if ([self pruneBillsForAuthor:sponsorID])
-                    [self generateSections];
+                NSArray *sponsoredBills = [self billsForAuthor:sponsorID];
+                [self generateSectionsWithRows:sponsoredBills];
 			}
 		}
 
