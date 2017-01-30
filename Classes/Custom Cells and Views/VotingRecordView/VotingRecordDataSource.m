@@ -75,25 +75,27 @@
 	aView.highlightColor = [UIColor colorWithRed:0.6f green:0.745f blue:0.353f alpha:.3f]; // accent + transp
 	
 	aView.xUnit = NSLocalizedStringFromTable(@"Year", @"DataTableUI", @"The year for a given legislative session");
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
-    numberFormatter.minimumFractionDigits = 1;
-    numberFormatter.maximumFractionDigits = 1;
     
-    aView.yValuesFormatter = numberFormatter;
+    static NSNumberFormatter *decimalFormatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        decimalFormatter = [[NSNumberFormatter alloc] init];
+        decimalFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+        decimalFormatter.minimumFractionDigits = 1;
+        decimalFormatter.maximumFractionDigits = 1;
+    });
+    aView.yValuesFormatter = decimalFormatter;
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"''yy";
+    NSDateFormatter *dateFormatter = [NSDateFormatter dateFormatterWithID:@"TXLPartisanVoteDate" format:@"''yy"];
     aView.xValuesFormatter = dateFormatter;
-    
     
     aView.yUnit = NSLocalizedStringFromTable(@"Partisanship", @"DataTableUI", @"The data value axis for the partisanship chart, like 'dollars', or 'car sales'");
 }
 
 #pragma mark protocol S7GraphViewDataSource
 
-- (NSDictionary *)graphViewMinAndMaxY:(S7GraphView *)graphView {
-	
+- (NSDictionary *)graphViewMinAndMaxY:(S7GraphView *)graphView
+{
 	PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
     NSNumber *legType = self.legType;
     if (!indexStats || !legType)
@@ -107,22 +109,25 @@
 	else
 		sliderMax = (-sliderMin);
 	
-	return @{@"minY": @(sliderMin),
-			@"maxY": @(sliderMax)};
+    return @{@"minY": @(sliderMin),
+             @"maxY": @(sliderMax)};
 }
 
-- (NSUInteger)graphViewMaximumNumberOfXaxisValues:(S7GraphView *)graphView {
+- (NSUInteger)graphViewMaximumNumberOfXaxisValues:(S7GraphView *)graphView
+{
 	if (_chartData)
 		return [_chartData[@"member"] count];
     return 0;
 }
 
-- (NSUInteger)graphViewNumberOfPlots:(S7GraphView *)graphView {
+- (NSUInteger)graphViewNumberOfPlots:(S7GraphView *)graphView
+{
     /* Return the number of plots you are going to have in the view. 1+ */
     return 3;
 }
 
-- (UIColor *)graphView:(S7GraphView *)graphView colorForPlot:(NSUInteger)plotIndex {
+- (UIColor *)graphView:(S7GraphView *)graphView colorForPlot:(NSUInteger)plotIndex
+{
 	if (plotIndex == 0)
 		return [TexLegeTheme texasRed];
 	else if (plotIndex == 2)
@@ -132,14 +137,16 @@
 }
 
 
-- (NSArray *)graphViewXValues:(S7GraphView *)graphView {
+- (NSArray *)graphViewXValues:(S7GraphView *)graphView
+{
     /* An array of objects that will be further formatted to be displayed on the X-axis.
      The number of elements should be equal to the number of points you have for every plot. */
 	
 	return self.chartData[@"time"];
 }
 
-- (NSArray *)graphView:(S7GraphView *)graphView yValuesForPlot:(NSUInteger)plotIndex {
+- (NSArray *)graphView:(S7GraphView *)graphView yValuesForPlot:(NSUInteger)plotIndex
+{
     /* Return the values for a specific graph. Each plot is meant to have equal number of points.
      And this amount should be equal to the amount of elements you return from graphViewXValues: method. */
 	
@@ -164,31 +171,13 @@
     return items;
 }
 
-- (BOOL)graphView:(S7GraphView *)graphView shouldFillPlot:(NSUInteger)plotIndex {
+- (BOOL)graphView:(S7GraphView *)graphView shouldFillPlot:(NSUInteger)plotIndex
+{
     return NO;
 }
 
-- (void)graphView:(S7GraphView *)graphView indexOfTappedXaxis:(NSInteger)indexOfTappedXaxis {
-/*
- NSNumber *repub = [[chartData objectForKey:@"repub"] objectAtIndex:indexOfTappedXaxis];
-	NSNumber *democ = [[chartData objectForKey:@"democ"] objectAtIndex:indexOfTappedXaxis];
-	NSNumber *member = [[chartData objectForKey:@"member"] objectAtIndex:indexOfTappedXaxis];
-	NSDate *time = [[chartData objectForKey:@"time"] objectAtIndex:indexOfTappedXaxis];
-	
-	if ([member floatValue] == CGFLOAT_MIN)
-		return;
-	
-	LegislatorObj *legislator = [LegislatorObj objectWithPrimaryKeyValue:self.legislatorID];
-
-	CGFloat diff1 = (CGFloat)([member floatValue] - [repub floatValue]);
-	CGFloat diff2 = (CGFloat)([member floatValue] - [democ floatValue]);
-	NSString *string = [NSString stringWithFormat:@"For %@:\n%@ is %01.2f pts from %@\n%@ is %01.2f pts from %@",
-						[time stringWithFormat:@"yyyy"],
-						[legislator legProperName], diff1, @"repubs",
-						[legislator legProperName], diff2, @"dems"];
-	
-    debug_NSLog(@"%@",string);
- */
+- (void)graphView:(S7GraphView *)graphView indexOfTappedXaxis:(NSInteger)indexOfTappedXaxis
+{
 }
 
 - (NSString *)graphView:(S7GraphView *)graphView nameForPlot:(NSInteger)plotIndex {
