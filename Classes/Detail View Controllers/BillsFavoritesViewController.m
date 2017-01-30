@@ -18,6 +18,7 @@
 #import "DisclosureQuartzView.h"
 #import "OpenLegislativeAPIs.h"
 #import "TexLegeStandardGroupCell.h"
+#import "SLToastManager+TexLege.h"
 
 @interface BillsFavoritesViewController ()
 - (void)configureCell:(TexLegeStandardGroupCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -58,6 +59,8 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 		
+    [self.tableView registerClass:[TXLClickableSubtitleCell class] forCellReuseIdentifier:[TXLClickableSubtitleCell cellIdentifier]];
+    
 	NSString *myClass = NSStringFromClass([self class]);
 	NSArray *menuArray = [UtilityMethods texLegeStringWithKeyPath:@"BillMenuItems"];
 	NSDictionary *menuItem = [menuArray findWhereKeyPath:@"class" equals:myClass];
@@ -98,22 +101,18 @@
 	
 	if (!_watchList.count)
     {
-		UIAlertView *noWatchedBills = [[ UIAlertView alloc ] 
-										 initWithTitle:NSLocalizedStringFromTable(@"No Watched Bills, Yet", @"AppAlerts", @"Alert box title")
-										 message:NSLocalizedStringFromTable(@"To add a bill to this watch list, first search for one, open it, and then tap the star button in it's header.", @"AppAlerts", @"") 
-										 delegate:nil // we're static, so don't do "self"
-										 cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel", @"StandardUI", @"Button to cancel something") 
-										 otherButtonTitles:nil];
-		[ noWatchedBills show ];	
-		
+        NSString *title = NSLocalizedStringFromTable(@"No Watched Bills, Yet", @"AppAlerts", nil);
+        NSString *message = NSLocalizedStringFromTable(@"To add a bill to this watch list, first search for one, open it, and then tap the star button in it's header.", @"AppAlerts", nil);
+        
+        [[SLToastManager txlSharedManager] addToastWithIdentifier:@"TXLBillsNoneWatched"
+                                                             type:SLToastTypeInfo
+                                                            title:title
+                                                         subtitle:message
+                                                            image:nil
+                                                         duration:1.5];
 	}
 	[self.tableView reloadData];
 }
-
-/*- (void)viewWillDisappear:(BOOL)animated {
-//	[self save:nil];
-	[super viewWillDisappear:animated];
-}*/
 
 - (IBAction)loadBills:(id)sender {
 	/*
@@ -137,9 +136,6 @@
 {
 	[super viewDidUnload];
 }
-
-#pragma mark -
-#pragma mark Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -173,26 +169,13 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSString *CellIdentifier = @"CellOff";
-/*	if (_watchList && [_watchList count] > indexPath.row) 
-    {
-		NSString *watchID = [[_watchList objectAtIndex:indexPath.row] objectForKey:@"watchID"];
-		if (watchID && _cachedBills && _cachedBills[watchID])
-			CellIdentifier = @"CellOn";
-	}
-*/	
-	TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+	NSString *reuseId = [TXLClickableSubtitleCell cellIdentifier];
+
+    TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:reuseId];
 	if (cell == nil)
 	{
-		cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle 
-									   reuseIdentifier:CellIdentifier];
-		
-		cell.textLabel.textColor = [TexLegeTheme textDark];
-		cell.textLabel.font = [TexLegeTheme boldFifteen];
-		cell.detailTextLabel.textColor = [TexLegeTheme indexText];
-		
-//		if ([CellIdentifier isEqualToString:@"CellOff"])
-//			cell.selectionStyle = UITableViewCellSelectionStyleNone;
+		cell = [[TXLClickableSubtitleCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+									   reuseIdentifier:reuseId];
     }
 	
 	if (_watchList && _watchList.count)

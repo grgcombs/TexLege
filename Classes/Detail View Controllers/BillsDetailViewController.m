@@ -88,6 +88,9 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
 {
     [super viewDidLoad];
 
+    [self.tableView registerClass:[TXLClickableSubtitleCell class] forCellReuseIdentifier:[TXLClickableSubtitleCell cellIdentifier]];
+    [self.tableView registerClass:[TXLUnclickableSubtitleCell class] forCellReuseIdentifier:[TXLUnclickableSubtitleCell cellIdentifier]];
+    
 	self.voteDataSource = nil;
 
 	//self.tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
@@ -460,21 +463,15 @@ const NSUInteger BillDetailSection_LAST_ITEM = BillDetailSectionActions + 1;
     if (indexPath.section >= 0 && indexPath.section < BillDetailSection_LAST_ITEM)
         billSection = (BillDetailSection)indexPath.section;
 
-	BOOL isClickable = 	NO == ((billSection == BillDetailSectionActions) ||
-							   (billSection == BillDetailSectionVotes));
+	BOOL isClickable = (billSection != BillDetailSectionActions
+                        && billSection != BillDetailSectionVotes);
 	
-    NSString *cellIdentifier =[[TexLegeStandardGroupCell cellIdentifier] stringByAppendingFormat:@"-%d", isClickable];
+    NSString *reuseId = (isClickable) ? [TXLClickableSubtitleCell cellIdentifier] : [TXLUnclickableSubtitleCell cellIdentifier];
     
-    TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:reuseId];
     if (cell == nil)
     {
-        cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-		if (!isClickable)
-        {
-			cell.selectionStyle = UITableViewCellSelectionStyleNone;
-			cell.accessoryType = UITableViewCellAccessoryNone;
-			cell.accessoryView = nil;
-		}
+        cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseId];
     }
 
     if (!self.bill)

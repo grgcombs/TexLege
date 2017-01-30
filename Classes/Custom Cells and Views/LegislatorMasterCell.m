@@ -31,6 +31,7 @@
 		CGRect tzvFrame = CGRectMake(53.f, 0.0, endX, CGRectGetHeight(self.contentView.bounds));
 		_cellView = [[LegislatorMasterCellView alloc] initWithFrame:tzvFrame];
 		_cellView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleRightMargin;
+        _cellView.useDarkBackground = NO;
 		[self.contentView addSubview:_cellView];
 
 		_disclosure = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(-30.f, -30.f, 28.f, 28.f)];

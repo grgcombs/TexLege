@@ -22,6 +22,7 @@
 #import "LocalyticsSession.h"
 #import "LoadingCell.h"
 #import "StateMetaLoader.h"
+#import "SLToastManager+TexLege.h"
 
 @interface BillSearchDataSource ()
 @property (NS_NONATOMIC_IOSONLY, copy) NSMutableArray *rows;
@@ -237,15 +238,15 @@
 	if (!bill || [[NSNull null] isEqual:bill])
 		return;  // ?????
 	
-	NSString *bill_id = bill[@"bill_id"];
-	NSString *bill_title = bill[@"title"];
-	
-	bill_title = [bill_title chopPrefix:@"Relating to " capitalizingFirst:YES];
-	
-	cell.textLabel.text = [NSString stringWithFormat:@"(%@) %@", 
-						   bill[@"session"],
-						   bill_id];
-	cell.detailTextLabel.text = bill_title;
+	NSString *bill_id = SLTypeStringOrNil(bill[@"bill_id"]);
+	NSString *title = SLTypeStringOrNil(bill[@"title"]);
+    NSString *session = SLTypeStringOrNil(bill[@"session"]);
+    if (!bill_id || !title || !session)
+        return;
+    
+	title = [title chopPrefix:@"Relating to " capitalizingFirst:YES];
+	cell.textLabel.text = [NSString stringWithFormat:@"(%@) %@", session, bill_id];
+	cell.detailTextLabel.text = title;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -261,25 +262,14 @@
 		}
 	}
 	
-	NSString *CellIdentifier = @"CellOn";
+	NSString *cellReuse = [TXLClickableSubtitleCell cellIdentifier];
 	
-	TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+	TexLegeStandardGroupCell *cell = (TexLegeStandardGroupCell *)[tableView dequeueReusableCellWithIdentifier:cellReuse];
 	if (cell == nil)
 	{
-		cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-
-		cell.textLabel.textColor = [TexLegeTheme textDark];
-		cell.detailTextLabel.textColor = [TexLegeTheme indexText];
-		cell.textLabel.font = [TexLegeTheme boldFifteen];
-				
-		if ([CellIdentifier isEqualToString:@"CellOff"]) {
-			cell.selectionStyle = UITableViewCellSelectionStyleNone;
-			cell.accessoryView = nil;
-			cell.accessoryType = UITableViewCellAccessoryNone;
-		}
+		cell = [[TexLegeStandardGroupCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellReuse];
     }
-	if (_rows.count > indexPath.row)
-		[self configureCell:cell atIndexPath:indexPath];		
+    [self configureCell:cell atIndexPath:indexPath];
 
 	return cell;
 }
@@ -487,16 +477,18 @@
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:kBillSearchNotifyDataError object:self];
 
-	if (!self.useLoadingDataCell) {	// if we don't have some visual cue (loading cell) already, send up an alert
-		UIAlertView *alert = [[ UIAlertView alloc ] 
-							   initWithTitle:NSLocalizedStringFromTable(@"Network Error", @"AppAlerts", @"Title for alert stating there's been an error when connecting to a server")
-							   message:NSLocalizedStringFromTable(@"There was an error while contacting the server for bill information.  Please check your network connectivity or try again.", @"AppAlerts", @"")
-							   delegate:nil // we're static, so don't do "self"
-							   cancelButtonTitle: NSLocalizedStringFromTable(@"Cancel", @"StandardUI", @"Button cancelling some activity")
-							   otherButtonTitles:nil];
-		[ alert show ];	
+	if (!self.useLoadingDataCell)
+    {
+        // if we don't have some visual cue (loading cell) already, send up an alert
+        NSString *title = NSLocalizedStringFromTable(@"Network Error", @"AppAlerts", nil);
+        NSString *message = NSLocalizedStringFromTable(@"There was an error while contacting the server for bill information.  Please check your network connectivity or try again.", @"AppAlerts", nil);
+        [[SLToastManager txlSharedManager] addToastWithIdentifier:@"BillSearchNetError"
+                                                             type:SLToastTypeError
+                                                            title:title
+                                                         subtitle:message
+                                                            image:nil
+                                                         duration:4];
 	}
-	
 }
 
 // Handling GET /BillMetadata.json  

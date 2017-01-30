@@ -18,6 +18,8 @@
 #import "DisclosureQuartzView.h"
 #import "BillSearchDataSource.h"
 #import "OpenLegislativeAPIs.h"
+#import "TexLegeStandardGroupCell.h"
+#import <SLToastKit/SLTypeCheck.h>
 
 @interface BillsListViewController (Private)
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -45,11 +47,9 @@
 	return self;
 }
 
-
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (BOOL)shouldAutorotate
 {
-	return YES;
+    return YES;
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
@@ -63,14 +63,6 @@
 	}	
 }
 
-- (void)didReceiveMemoryWarning
-{
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
-}
-
-
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -80,6 +72,7 @@
 {
 	[super viewDidLoad];
 	
+    [self.tableView registerClass:[TXLClickableSubtitleCell class] forCellReuseIdentifier:[TXLClickableSubtitleCell cellIdentifier]];
 	self.tableView.delegate = self;
 	self.tableView.dataSource = self.dataSource;
 	self.tableView.separatorColor = [TexLegeTheme separator];
@@ -94,18 +87,10 @@
 	self.navigationController.navigationBar.tintColor = [TexLegeTheme navbar];
 }
 
-- (void)viewDidUnload
-{
-	[super viewDidUnload];
-}
-
 - (void)reloadData:(NSNotification *)notification
 {
 	[self.tableView reloadData];
 }
-
-#pragma mark -
-#pragma mark Table view data source
 
 - (void)tableView:(UITableView *)aTableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -119,9 +104,9 @@
 		[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
 	NSDictionary *bill = [self.dataSource dataObjectForIndexPath:indexPath];
-	if (!bill)
+	if (!SLTypeDictionaryOrNil(bill))
         return;
-    NSString *billID = bill[@"bill_id"];
+    NSString *billID = SLTypeStringOrNil(bill[@"bill_id"]);
     if (!billID)
         return;
 
@@ -147,11 +132,11 @@
 
     detailView.dataObject = bill;
     [[OpenLegislativeAPIs sharedOpenLegislativeAPIs] queryOpenStatesBillWithID:billID
-                                                                       session:bill[@"session"]
+                                                                       session:SLTypeStringOrNil(bill[@"session"])
                                                                       delegate:detailView];
     if (needsPushVC)
         [self.navigationController pushViewController:detailView animated:YES];
-    else if (changingViews)
+    else if (changingViews && detailView)
         //[detailNav pushViewController:detailView animated:YES];
         [detailNav setViewControllers:@[detailView] animated:NO];
 }
