@@ -22,17 +22,24 @@
 #import "LinkObj.h"
 #import "NSDate+Helper.h"
 #import "UtilityMethods.h"
+#import "TexLegePrivateStrings.h"
 
 @implementation TexLegeObjectCache
 
 - (NSFetchRequest *)fetchRequestForResourcePath:(NSString*)resourcePath
 {
+    if (!resourcePath || ![resourcePath isKindOfClass:[NSString class]])
+        return nil;
 
+#if USE_PRIVATE_MYSQL_SERVER
+    NSString *modelString = [resourcePath lastPathComponent];
+#else
     if (![resourcePath hasSuffix:@".json"])
         return nil;
 
     NSString *filename = resourcePath.lastPathComponent;
     NSString *modelString = [filename stringByDeletingPathExtension];
+#endif
     Class modelClass = NSClassFromString(modelString);
     if (!modelClass)
         return nil;

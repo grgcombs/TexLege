@@ -24,7 +24,7 @@ typedef NS_ENUM(UInt8, TXLChamberType) {
 };
 
 typedef NS_ENUM(UInt8, TXLPartyType) {
-    kUnknownParty = 0,
+    BOTH_PARTIES = 0,
     DEMOCRAT,
     REPUBLICAN
 };

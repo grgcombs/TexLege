@@ -200,9 +200,11 @@
 		self.leg_chamberPartyLab.text = [self chamberPartyAbbrev];
 		self.leg_chamberLab.text = [[member chamberName] stringByAppendingFormat:@" %@", NSLocalizedStringFromTable(@"Avg.", @"DataTableUI", @"Abbreviation for 'average'")];				
 	}
-	
-	CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:(member.legtype).integerValue];
-	CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:(member.legtype).integerValue];
+
+    TXLChamberType chamber = member.legtype.intValue;
+    TXLPartyType party = member.party_id.intValue;
+	double minSlider = [indexStats minPartisanIndexUsingChamber:chamber];
+	double maxSlider = [indexStats maxPartisanIndexUsingChamber:chamber];
 	
 	if (self.indivSlider)
     {
@@ -214,13 +216,13 @@
     {
 		self.partySlider.sliderMin = minSlider;
 		self.partySlider.sliderMax = maxSlider;
-		self.partySlider.sliderValue = [indexStats partyPartisanIndexUsingChamber:(member.legtype).integerValue andPartyID:(member.party_id).integerValue];
+		self.partySlider.sliderValue = [indexStats partyPartisanIndexUsingChamber:chamber andPartyID:party];
 	}	
 	if (self.allSlider)
     {
 		self.allSlider.sliderMin = minSlider;
 		self.allSlider.sliderMax = maxSlider;
-		self.allSlider.sliderValue = [indexStats overallPartisanIndexUsingChamber:(member.legtype).integerValue];
+		self.allSlider.sliderValue = [indexStats overallPartisanIndexUsingChamber:chamber];
 	}	
 	
 	BOOL hasScores = !IsEmpty(member.wnomScores);

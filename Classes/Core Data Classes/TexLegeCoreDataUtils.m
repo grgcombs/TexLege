@@ -28,6 +28,7 @@
 #import "LocalyticsSession.h"
 #import "TexLegeObjectCache.h"
 #import "UtilityMethods.h"
+#import "TexLegePrivateStrings.h"
 
 #import <SLFRestKit/NSManagedObject+RestKit.h>
 
@@ -122,7 +123,7 @@ static os_log_t txlCoreDataUtilsLog;
 	
 	NSFetchRequest *fetchRequest = [LegislatorObj rkFetchRequest];
 	NSString *predicateString = nil;
-	if (party > kUnknownParty)
+	if (party > BOTH_PARTIES)
 		predicateString = [NSString stringWithFormat:@"legtype == %ld AND party_id == %ld", (long)chamber, (long)party];
 	else
 		predicateString = [NSString stringWithFormat:@"legtype == %ld", (long)chamber];
@@ -335,9 +336,11 @@ static os_log_t txlCoreDataUtilsLog;
     if (client && userAgent)
         client.HTTPHeaders[@"User-Agent"] = userAgent;
 
-	//objectManager.client.username = RESTKIT_USERNAME;
-	//objectManager.client.password = RESTKIT_PASSWORD;
-    
+#ifdef USE_PRIVATE_MYSQL_SERVER
+    objectManager.client.username = RESTKIT_USERNAME;
+    objectManager.client.password = RESTKIT_PASSWORD;
+#endif
+
 	[RKClient sharedClient].requestQueue.showsNetworkActivityIndicatorWhenBusy = YES;
 
 //GREG here was registerObjectMapping

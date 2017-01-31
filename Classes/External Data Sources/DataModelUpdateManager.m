@@ -22,6 +22,7 @@
 #import "LegislatorObj.h"
 #import "PartyPartisanshipObj.h"
 #import "PartisanIndexStats.h"
+#import "TexLegePrivateStrings.h"
 
 #define TXLUPDMGR_CLASSKEY		@"className"
 #define TXLUPDMGR_QUERYKEY		@"queryType"
@@ -167,12 +168,25 @@ typedef NS_ENUM(NSUInteger, TXL_QueryTypes) {
     {
         [self addUpdateActivity:objectType];
 
-        NSString *resourcePath = [NSString stringWithFormat:@"/%@.json", objectType];
+        NSString *resourcePath = nil;
+
+#if USE_PRIVATE_MYSQL_SERVER
+        resourcePath = [NSString stringWithFormat:@"/rest.php/%@", objectType];
+#else
+        resourcePath = [NSString stringWithFormat:@"/%@.json", objectType];
+#endif
+        //NSString *resourcePath = [NSString stringWithFormat:@"/rest.php/%@/", entityName];
+        //NSDictionary *queryParams = @{TXLUPDMGR_UPDATEDPARAM: localTS};
 
         RKObjectLoader *loader = nil;
         if ([objectType isEqualToString:NSStringFromClass([PartyPartisanshipObj class])])
         {
-            resourcePath = @"/WnomAggregateObj.json";
+            #if USE_PRIVATE_MYSQL_SERVER
+                resourcePath = @"/rest.php/WnomAggregateObj";
+            #else
+                resourcePath = @"/WnomAggregateObj.json";
+            #endif
+
             loader = [RKObjectLoader loaderWithResourcePath:resourcePath objectManager:objectManager delegate:self];
             loader.cachePolicy = RKRequestCachePolicyDefault | RKRequestCachePolicyLoadIfOffline;
             loader.cacheTimeoutInterval = 60 * 60 * 3; // don't abuse the network for it since this isn't updated often

@@ -101,12 +101,10 @@
     if (!_partisanIndexAggregates || !_partisanIndexAggregates.count)
     {
         NSMutableDictionary *tempAggregates = [NSMutableDictionary dictionaryWithCapacity:4];
-        int chamber = HOUSE;
-        int party = kUnknownParty;
 
-		for (chamber = HOUSE; chamber <= SENATE; chamber++)
+		for (TXLChamberType chamber = HOUSE; chamber <= SENATE; chamber++)
         {
-			for (party = kUnknownParty; party <= REPUBLICAN; party++)
+			for (TXLPartyType party = BOTH_PARTIES; party <= REPUBLICAN; party++)
             {
 				NSArray *aggregatesArray = [self aggregatePartisanIndexForChamber:chamber andPartyID:party];
 				if (aggregatesArray && aggregatesArray.count == 3)
@@ -139,24 +137,37 @@
 }
 
 /* These are convenience methods for accessing our aggregate calculations from cache */
-- (CGFloat) minPartisanIndexUsingChamber:(NSInteger)chamber
+- (double)minPartisanIndexUsingChamber:(TXLChamberType)chamber
 {
-	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"MinC%ld+P0", (long)chamber]] floatValue];
+    NSDictionary *aggregates = self.partisanIndexAggregates;
+    if (!aggregates)
+        return 0;
+	return [aggregates[[NSString stringWithFormat:@"MinC%d+P0", chamber]] doubleValue];
 };
 
-- (CGFloat) maxPartisanIndexUsingChamber:(NSInteger)chamber
+- (double)maxPartisanIndexUsingChamber:(TXLChamberType)chamber
 {
-	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"MaxC%ld+P0", (long)chamber]] floatValue];
+    NSDictionary *aggregates = self.partisanIndexAggregates;
+    if (!aggregates)
+        return 0;
+	return [aggregates[[NSString stringWithFormat:@"MaxC%d+P0", chamber]] doubleValue];
 };
 
-- (CGFloat) overallPartisanIndexUsingChamber:(NSInteger)chamber
+- (double) overallPartisanIndexUsingChamber:(TXLChamberType)chamber
 {
-	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"AvgC%ld+P0", (long)chamber]] floatValue];
+    NSDictionary *aggregates = self.partisanIndexAggregates;
+    if (!aggregates)
+        return 0;
+	return [aggregates[[NSString stringWithFormat:@"AvgC%d+P0", chamber]] doubleValue];
 };
 
 
-- (CGFloat) partyPartisanIndexUsingChamber:(NSInteger)chamber andPartyID:(NSInteger)party {
-	return [(self.partisanIndexAggregates)[[NSString stringWithFormat:@"AvgC%ld+P%ld", (long)chamber, (long)party]] floatValue];
+- (double)partyPartisanIndexUsingChamber:(TXLChamberType)chamber andPartyID:(TXLPartyType)party
+{
+    NSDictionary *aggregates = self.partisanIndexAggregates;
+    if (!aggregates)
+        return 0;
+	return [aggregates[[NSString stringWithFormat:@"AvgC%d+P%d", chamber, party]] doubleValue];
 };
 
 
@@ -172,7 +183,7 @@
 }
 
 /* This queries the partisan index from each legislator and calculates aggregate statistics */
-- (NSArray *)aggregatePartisanIndexForChamber:(NSInteger)chamber andPartyID:(NSInteger)party
+- (NSArray *)aggregatePartisanIndexForChamber:(TXLChamberType)chamber andPartyID:(TXLPartyType)party
 {
 	if (chamber == BOTH_CHAMBERS)
     {
@@ -185,68 +196,71 @@
 	if (tempNum)
 		maxWnomSession = tempNum.integerValue;
 	
-	NSMutableString *predicateString = [NSMutableString stringWithFormat:@"self.legislator.legtype == %ld AND self.session == %ld", (long)chamber, (long)maxWnomSession];
+	NSMutableString *predicateString = [NSMutableString stringWithFormat:@"self.legislator != nil AND self.legislator.legtype == %d AND self.session == %d", chamber, maxWnomSession];
 	
-	if (party > kUnknownParty)
-		[predicateString appendFormat:@" AND self.legislator.party_id == %ld", (long)party];
+	if (party > BOTH_PARTIES)
+		[predicateString appendFormat:@" AND self.legislator.party_id == %d", party];
 
 	if (maxWnomSession == 81)	// let's try some special cases for the party switchers Pena and Hopson and Ritter
 		[predicateString appendString:@" AND self.legislator.legislatorID != 50000 AND self.legislator.legislatorID != 49745 AND self.legislator.legislatorID != 25363"];
 	
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateString]; 
+    NSArray *allResults = nil;
+
+#if 0
 
 	NSExpression *ex = [NSExpression expressionForFunction:@"average:" arguments:
 						@[[NSExpression expressionForKeyPath:@"wnomAdj"]]];
 	NSExpressionDescription *edAvg = [[NSExpressionDescription alloc] init];
 	edAvg.name = @"averagePartisanIndex";
 	edAvg.expression = ex;
-	edAvg.expressionResultType = NSFloatAttributeType;
+	edAvg.expressionResultType = NSDoubleAttributeType;
 	
 	ex = [NSExpression expressionForFunction:@"max:" arguments:
 		  @[[NSExpression expressionForKeyPath:@"wnomAdj"]]];
 	NSExpressionDescription *edMax = [[NSExpressionDescription alloc] init];
 	edMax.name = @"maxPartisanIndex";
 	edMax.expression = ex;
-	edMax.expressionResultType = NSFloatAttributeType;
+	edMax.expressionResultType = NSDoubleAttributeType;
 	
 	ex = [NSExpression expressionForFunction:@"min:" arguments:
 		  @[[NSExpression expressionForKeyPath:@"wnomAdj"]]];
 	NSExpressionDescription *edMin = [[NSExpressionDescription alloc] init];
 	edMin.name = @"minPartisanIndex";
 	edMin.expression = ex;
-	edMin.expressionResultType = NSFloatAttributeType;
-	
-	/*_____________________*/
-	
-	NSFetchRequest *request = [WnomObj rkFetchRequest];
-	request.predicate = predicate;
-	request.propertiesToFetch = @[edAvg, edMax, edMin, @"legislator"];
-	request.resultType = NSDictionaryResultType;
+	edMin.expressionResultType = NSDoubleAttributeType;
+
+
+    /*_____________________*/
+
+    NSFetchRequest *request = [WnomObj rkFetchRequest];
+    request.predicate = predicate;
+    request.propertiesToFetch = @[edAvg, edMax, edMin, @"legislator"];
+    request.resultType = NSDictionaryResultType;
     request.relationshipKeyPathsForPrefetching = @[@"legislator"];
     request.includesSubentities = YES;
     request.includesPropertyValues = YES;
     request.includesPendingChanges = YES;
     request.returnsObjectsAsFaults = NO;
 
-    NSArray *allResults = nil;
-	NSArray *objects = [WnomObj objectsWithFetchRequest:request];
-	if (IsEmpty(objects)) {
-		debug_NSLog(@"PartisanIndexStats Error while fetching Legislators");
-	}
-	else {
+    NSArray *objects = [WnomObj objectsWithFetchRequest:request];
+    if (IsEmpty(objects)) {
+        debug_NSLog(@"PartisanIndexStats Error while fetching Legislators");
+    }
+    else {
         NSDictionary *first = objects.firstObject;
-		NSNumber *avgPartisanIndex = [first valueForKey:@"averagePartisanIndex"];
-		NSNumber *maxPartisanIndex = [first valueForKey:@"maxPartisanIndex"];
-		NSNumber *minPartisanIndex = [first valueForKey:@"minPartisanIndex"];
+        NSNumber *avgPartisanIndex = [first valueForKey:@"averagePartisanIndex"];
+        NSNumber *maxPartisanIndex = [first valueForKey:@"maxPartisanIndex"];
+        NSNumber *minPartisanIndex = [first valueForKey:@"minPartisanIndex"];
 
-/*		debug_NSLog(@"Partisanship for Chamber (%d) Party (%d): min=%@ max=%@ avg=%@", 
-					chamber, party, minPartisanIndex, maxPartisanIndex, avgPartisanIndex);
-*/
+        /*		debug_NSLog(@"Partisanship for Chamber (%d) Party (%d): min=%@ max=%@ avg=%@",
+         chamber, party, minPartisanIndex, maxPartisanIndex, avgPartisanIndex);
+         */
         if (avgPartisanIndex && maxPartisanIndex && minPartisanIndex)
             allResults = @[avgPartisanIndex, maxPartisanIndex, minPartisanIndex];
         else
             allResults = nil;
-	}
+    }
 
     if (!allResults)
     {
@@ -263,8 +277,36 @@
                 break;
         }
     }
-	
-	return allResults;
+    
+#else
+
+    NSArray<WnomObj *> *scores = [WnomObj objectsWithPredicate:predicate];
+
+    double count = (double)scores.count;
+    double total = 0;
+    double minimum = 100;
+    double maximum = -100;
+
+    for (WnomObj *score in scores)
+    {
+        NSNumber *value = SLTypeNumberOrNil(SLValueIfClass(WnomObj, score).wnomAdj);
+        if (!value)
+        {
+            count--;
+            continue;
+        }
+
+        double adjWnom = value.doubleValue;
+        minimum = MIN(minimum, adjWnom);
+        maximum = MAX(maximum, adjWnom);
+        total += adjWnom;
+    }
+
+    double average = (count > 0 && total != 0) ? (total / count) : 0;
+    allResults = @[@(average), @(maximum), @(minimum)];
+#endif
+
+    return allResults;
 }
 
 #pragma mark -
@@ -272,7 +314,7 @@
 
 /* This gathers our pre-calculated overall aggregate scores for parties and chambers, from JSON		
 	We use this for our red/blue lines in our historical partisanship chart.*/
-- (NSArray *)historyForParty:(NSInteger)party chamber:(NSInteger)chamber
+- (NSArray *)historyForParty:(TXLPartyType)party chamber:(TXLChamberType)chamber
 {
     if (IsEmpty(_partyPartisanship) || !self.isFresh || !_updated ||
 		([[NSDate date] timeIntervalSinceDate:_updated] > (3600*24*2)))
@@ -314,7 +356,7 @@
     NSInteger countOfScores = sortedScores.count;
 
 
-    NSInteger chamber = (legislator.legtype).integerValue;
+    TXLChamberType chamber = (legislator.legtype).intValue;
     NSArray *democHistory = [self historyForParty:DEMOCRAT chamber:chamber];
     NSArray *repubHistory = [self historyForParty:REPUBLICAN chamber:chamber];
 
@@ -351,7 +393,7 @@
         [demScores addObject:democY];
         [dates addObject:date];
 
-        CGFloat legVal = wnomObj.wnomAdj.floatValue;
+        double legVal = wnomObj.wnomAdj.doubleValue;
         if (legVal != 0.0f)
             [memberScores addObject:wnomObj.wnomAdj];
         else

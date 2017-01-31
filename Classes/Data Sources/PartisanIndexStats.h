@@ -11,6 +11,7 @@
 //
 
 #import <SLFRestKit/SLFRestKit.h>
+#import "TexLegeLibrary.h"
 
 #define kPartisanIndexNotifyError	@"PARTISAN_INDEX_ERROR"
 #define kPartisanIndexNotifyLoaded	@"PARTISAN_INDEX_LOADED"
@@ -28,11 +29,11 @@
 
 + (PartisanIndexStats *)sharedPartisanIndexStats;
 
-- (CGFloat) minPartisanIndexUsingChamber:(NSInteger)chamber;
-- (CGFloat) maxPartisanIndexUsingChamber:(NSInteger)chamber;
-- (CGFloat) overallPartisanIndexUsingChamber:(NSInteger)chamber;
-- (CGFloat) partyPartisanIndexUsingChamber:(NSInteger)chamber andPartyID:(NSInteger)party;
-- (NSArray *) historyForParty:(NSInteger)party chamber:(NSInteger)chamber;
+- (double) minPartisanIndexUsingChamber:(TXLChamberType)chamber;
+- (double) maxPartisanIndexUsingChamber:(TXLChamberType)chamber;
+- (double) overallPartisanIndexUsingChamber:(TXLChamberType)chamber;
+- (double) partyPartisanIndexUsingChamber:(TXLChamberType)chamber andPartyID:(TXLPartyType)party;
+- (NSArray *) historyForParty:(TXLPartyType)party chamber:(TXLChamberType)chamber;
 - (NSDictionary *)partisanshipDataForLegislatorID:(NSNumber*)legislatorID;
 - (NSDictionary *)partisanshipDataForLegislator:(LegislatorObj*)legislator;
 

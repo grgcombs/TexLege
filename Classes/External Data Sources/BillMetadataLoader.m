@@ -15,6 +15,8 @@
 #import "TexLegeReachability.h"
 #import "OpenLegislativeAPIs.h"
 
+NSString * const BillMetadataFile = @"BillMetadata.json";
+
 @interface BillMetadataLoader()
 @property (nonatomic,copy) NSDictionary *metadata;
 @property (nonatomic,copy) NSDate *updated;
@@ -63,7 +65,7 @@
 		
 		self.loading = YES;
 		
-		[[RKClient sharedClient] get:[NSString stringWithFormat:@"/%@", kBillMetadataFile] delegate:self];  	
+		[[RKClient sharedClient] get:[NSString stringWithFormat:@"/%@", BillMetadataFile] delegate:self];
 	}
 	else {
 		[self request:nil didFailLoadWithError:nil];
@@ -82,9 +84,6 @@
 	return _metadata;
 }
 
-#pragma mark -
-#pragma mark RestKit:RKObjectLoaderDelegate
-
 - (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
 {
 	self.loading = NO;
@@ -93,22 +92,41 @@
 		debug_NSLog(@"Error loading bill metadata from %@: %@", [request description], [error localizedDescription]);
 		[[NSNotificationCenter defaultCenter] postNotificationName:kBillMetadataNotifyError object:nil];
 	}
-	
+
 	// We had trouble loading the metadata online, so pull it up from the one in the documents folder (or the app bundle)
 	NSError *newError = nil;
-	NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kBillMetadataFile];
+	NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:BillMetadataFile];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
-	if (![fileManager fileExistsAtPath:localPath]) {
-		NSString *defaultPath = [[NSBundle mainBundle] pathForResource:kBillMetadataPath ofType:@"json"];
-		[fileManager copyItemAtPath:defaultPath toPath:localPath error:&newError];
-		debug_NSLog(@"BillMetadata: copied metadata from the app bundle's original.");
-	}
-	else {
-		debug_NSLog(@"BillMetadata: using cached metadata in the documents folder.");
+	if ([fileManager fileExistsAtPath:localPath])
+    {
+        debug_NSLog(@"BillMetadata: using cached metadata in the documents folder.");
+    }
+    else
+    {
+        NSString *fileComponent = localPath.lastPathComponent;
+        NSString *extension = [fileComponent pathExtension];
+        NSString *fileName = [fileComponent stringByDeletingPathExtension];
+		NSString *defaultPath = [[NSBundle mainBundle] pathForResource:fileName ofType:extension];
+        if (defaultPath)
+        {
+            [fileManager copyItemAtPath:defaultPath toPath:localPath error:&newError];
+            if (newError)
+            {
+                NSLog(@"BillMetadata: Error copying metadata from the app bundle's original: %@", newError);
+            }
+            else
+            {
+                debug_NSLog(@"BillMetadata: copied metadata from the app bundle's original.");
+            }
+        }
 	}
 
-	NSData *jsonFile = [NSData dataWithContentsOfFile:localPath];
-    self.metadata = [NSJSONSerialization JSONObjectWithData:jsonFile options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&newError];
+	NSData *jsonData = [NSData dataWithContentsOfFile:localPath];
+    self.metadata = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&newError];
+    if (newError)
+    {
+        NSLog(@"BillMetadata: Error parsing BillMetadata from %@: %@", localPath, newError);
+    }
 	if (self.metadata) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:kBillMetadataNotifyLoaded object:nil];
 	}
@@ -128,7 +146,7 @@
 		if (self.metadata) {
 			self.updated = [NSDate date];
 			
-			NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kBillMetadataFile];
+			NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:BillMetadataFile];
 
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:_metadata options:NSJSONWritingPrettyPrinted error:&error];
 			if (![jsonData writeToFile:localPath atomically:YES])

@@ -13,9 +13,6 @@
 #import <Foundation/Foundation.h>
 #import <SLFRestKit/SLFRestKit.h>
 
-#define kBillMetadataFile @"BillMetadata.json"
-#define kBillMetadataPath @"BillMetadata"
-
 #define kBillMetadataNotifyError	@"BILL_METADATA_ERROR"
 #define kBillMetadataNotifyLoaded	@"BILL_METADATA_LOADED"
 
