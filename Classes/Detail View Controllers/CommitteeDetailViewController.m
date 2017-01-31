@@ -463,7 +463,7 @@ NSString * const TXLCommitteeMemberCellReuse = @"CommitteeMember";
     TXLCommitteeSections detailSection = section;
 
     NSString *reuseIdentifier = nil;
-    UITableViewCellStyle style = UITableViewCellStyleValue2;
+    //UITableViewCellStyle style = UITableViewCellStyleValue2;
     CommitteeObj *committee = self.committee;
     LegislatorObj *legislator = nil;
     TableCellDataObject *infoObject = nil;

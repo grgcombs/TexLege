@@ -3,137 +3,290 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1D3623260D0F684500981E51 /* TexLegeAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* TexLegeAppDelegate.m */; };
-		1D3623EC0D0F72F000981E51 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D3623EB0D0F72F000981E51 /* CoreGraphics.framework */; };
-		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
-		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
-		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		3701B64019AD34F500A9F631 /* libSDWebImage iOS static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA1116A227CC005C7CCE /* libSDWebImage iOS static.a */; };
-		370298CE11F97C7A00D65FCB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 370298CD11F97C7A00D65FCB /* MapKit.framework */; };
-		3704F4D6122437AC00DC486F /* AnalyticsOptInAlertController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3704F4D5122437AC00DC486F /* AnalyticsOptInAlertController.m */; };
-		370813E6122C537800D8CA69 /* DisclosureQuartzView.m in Sources */ = {isa = PBXBuildFile; fileRef = 370813E5122C536B00D8CA69 /* DisclosureQuartzView.m */; };
 		37094D96133B162E00B9693C /* TexLegeBadgeGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37094D95133B162E00B9693C /* TexLegeBadgeGroupCell.m */; };
-		37094D97133B162E00B9693C /* TexLegeBadgeGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37094D95133B162E00B9693C /* TexLegeBadgeGroupCell.m */; };
-		3709AEAE101FBE7900C1061B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 3709AEAD101FBE7900C1061B /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		3709AF0D101FBF5100C1061B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3709AF0C101FBF5100C1061B /* SystemConfiguration.framework */; };
-		370B9DC1122AC5DF00AC9CC8 /* LegislatorDetailDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 370B9DC0122AC5DF00AC9CC8 /* LegislatorDetailDataSource.m */; };
-		370B9DD0122AD22C00AC9CC8 /* TexLegeStandardGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 370B9DCF122AD22C00AC9CC8 /* TexLegeStandardGroupCell.m */; };
-		370C270C1225BF7E004273E3 /* DistrictMapDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 370C270B1225BF7E004273E3 /* DistrictMapDataSource.m */; };
 		370EAD311338029E007788BC /* OpenLegislativeAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAD301338029E007788BC /* OpenLegislativeAPIs.m */; };
-		370EAD321338029E007788BC /* OpenLegislativeAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAD301338029E007788BC /* OpenLegislativeAPIs.m */; };
-		370F7AA911FEAF730004AC50 /* PolygonMath.m in Sources */ = {isa = PBXBuildFile; fileRef = 370F7AA811FEAF730004AC50 /* PolygonMath.m */; };
-		3714574E1E3D8AA700AEE449 /* TexLegeObjectCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAC361337E3CF007788BC /* TexLegeObjectCache.m */; };
 		371457551E3D8AAA00AEE449 /* TexLegeObjectCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAC361337E3CF007788BC /* TexLegeObjectCache.m */; };
-		37155728100859E700FA57DB /* CommitteeObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37155727100859E700FA57DB /* CommitteeObj+RestKit.m */; };
-		3718895C12EE917B00E3300D /* NSDate+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3718895B12EE917B00E3300D /* NSDate+Helper.m */; };
+		371457F91E4144F100AEE449 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3738E0791226A86B00DDD605 /* Settings.bundle */; };
+		371457FA1E4144F100AEE449 /* NotesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 379C1F021012E0CD007844B5 /* NotesView.xib */; };
+		371457FB1E4144F100AEE449 /* LegislatorDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */; };
+		371457FC1E4144F100AEE449 /* CommitteeDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37AD57BA11DA651700D68934 /* CommitteeDetailViewController~iphone.xib */; };
+		371457FD1E4144F100AEE449 /* TabBarController~iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3732A0F711DB203F009E8957 /* TabBarController~iPhone.xib */; };
+		371457FE1E4144F100AEE449 /* LegislatorMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 373B820511E378CD00A81142 /* LegislatorMasterViewController.xib */; };
+		371457FF1E4144F100AEE449 /* CapitolMapsDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3786786211E442800003690F /* CapitolMapsDetailViewController.xib */; };
+		371458001E4144F100AEE449 /* CalendarDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C5CC12027D2D00507757 /* CalendarDetailViewController~ipad.xib */; };
+		371458011E4144F100AEE449 /* 01-refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C806120344D000507757 /* 01-refresh.png */; };
+		371458021E4144F100AEE449 /* CalendarDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3735DD3C12087CEF0000AF5A /* CalendarDetailViewController~iphone.xib */; };
+		371458031E4144F100AEE449 /* CommitteeMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3735DFFD120917490000AF5A /* CommitteeMasterViewController.xib */; };
+		371458041E4144F100AEE449 /* 01-refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3726FC34120A99800043D6B9 /* 01-refresh@2x.png */; };
+		371458051E4144F100AEE449 /* TexLegeStrings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3766EFC012109F110073C705 /* TexLegeStrings.plist */; };
+		371458061E4144F100AEE449 /* Map.WheelchairAccess.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 376B5BDB0FC1DC640094D80B /* Map.WheelchairAccess.pdf */; };
+		371458071E4144F100AEE449 /* Map.CapitolComplex.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 376B5BDC0FC1DC640094D80B /* Map.CapitolComplex.pdf */; };
+		371458081E4144F100AEE449 /* Map.MonumentGuide.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 376B5BE10FC1DC640094D80B /* Map.MonumentGuide.pdf */; };
+		371458091E4144F100AEE449 /* Map.Floor4.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B271002C492003FD09F /* Map.Floor4.pdf */; };
+		3714580A1E4144F100AEE449 /* Map.Floor2.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B281002C492003FD09F /* Map.Floor2.pdf */; };
+		3714580B1E4144F100AEE449 /* Map.FloorG.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B291002C492003FD09F /* Map.FloorG.pdf */; };
+		3714580C1E4144F100AEE449 /* Map.Floor1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2A1002C492003FD09F /* Map.Floor1.pdf */; };
+		3714580D1E4144F100AEE449 /* Map.FloorE1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2B1002C492003FD09F /* Map.FloorE1.pdf */; };
+		3714580E1E4144F100AEE449 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3768911A19ACE0F900E38DEB /* Images.xcassets */; };
+		3714580F1E4144F100AEE449 /* Map.Floor3.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2C1002C492003FD09F /* Map.Floor3.pdf */; };
+		371458101E4144F100AEE449 /* Map.FloorE2.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2D1002C492003FD09F /* Map.FloorE2.pdf */; };
+		371458111E4144F100AEE449 /* Map.SamHoustonLoc.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37D6E8C41017772B00D4D7C2 /* Map.SamHoustonLoc.pdf */; };
+		371458121E4144F100AEE449 /* MapViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37CDD9CC12150651004EC1B7 /* MapViewController~ipad.xib */; };
+		371458131E4144F100AEE449 /* NotesView~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3764E8CA1217B83F008DF726 /* NotesView~ipad.xib */; };
+		371458141E4144F100AEE449 /* bluestar.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C31220779B00103D76 /* bluestar.png */; };
+		371458151E4144F100AEE449 /* bluestar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C41220779B00103D76 /* bluestar@2x.png */; };
+		371458161E4144F100AEE449 /* redstar.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C51220779B00103D76 /* redstar.png */; };
+		371458171E4144F100AEE449 /* redstar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C61220779B00103D76 /* redstar@2x.png */; };
+		371458181E4144F100AEE449 /* silverstar.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9848812217C8600950298 /* silverstar.png */; };
+		371458191E4144F100AEE449 /* silverstar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9848912217C8600950298 /* silverstar@2x.png */; };
+		3714581A1E4144F100AEE449 /* locationarrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A2CCF0122C129B00339495 /* locationarrow.png */; };
+		3714581B1E4144F100AEE449 /* locationarrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A2CCF1122C129B00339495 /* locationarrow@2x.png */; };
+		3714581C1E4144F100AEE449 /* MapViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37A2CCF5122C173B00339495 /* MapViewController~iphone.xib */; };
+		3714581D1E4144F100AEE449 /* TexLegeInfo~ipad.htm in Resources */ = {isa = PBXBuildFile; fileRef = 3760AB8B139EFAA700386A90 /* TexLegeInfo~ipad.htm */; };
+		3714581E1E4144F100AEE449 /* TexLegeInfoImage~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A72062122EB9A30015AAE0 /* TexLegeInfoImage~ipad.png */; };
+		3714581F1E4144F100AEE449 /* IconWood_80.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A720AC122ECBBD0015AAE0 /* IconWood_80.png */; };
+		371458201E4144F100AEE449 /* TexLegeInfo~iphone.htm in Resources */ = {isa = PBXBuildFile; fileRef = 37A720B3122ECD3B0015AAE0 /* TexLegeInfo~iphone.htm */; };
+		371458211E4144F100AEE449 /* LegislatorDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3739DBE4123355EF00D4F7D2 /* LegislatorDetailViewController~iphone.xib */; };
+		371458221E4144F100AEE449 /* PinHeadBlue.png in Resources */ = {isa = PBXBuildFile; fileRef = 37C945D91237DDC000D2D582 /* PinHeadBlue.png */; };
+		371458231E4144F100AEE449 /* PinHeadBlue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37C945DA1237DDC000D2D582 /* PinHeadBlue@2x.png */; };
+		371458241E4144F100AEE449 /* DistrictMapMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37C94A3912387D6500D2D582 /* DistrictMapMasterViewController.xib */; };
+		371458251E4144F100AEE449 /* CommitteeDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37D46DC9123BFA9800C2C403 /* CommitteeDetailViewController~ipad.xib */; };
+		371458261E4144F100AEE449 /* TabBarController~iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B8A0CE1DCE5EFC0073BFB0 /* TabBarController~iPad.xib */; };
+		371458271E4144F100AEE449 /* MapMiniDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B3CE981249373100FB3F94 /* MapMiniDetailViewController~ipad.xib */; };
+		371458281E4144F100AEE449 /* MapMiniDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B3CEB312493D3100FB3F94 /* MapMiniDetailViewController~iphone.xib */; };
+		371458291E4144F100AEE449 /* Kal.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 372D061812FC799200E63696 /* Kal.bundle */; };
+		3714582A1E4144F100AEE449 /* 11-clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C81A120344D000507757 /* 11-clock.png */; };
+		3714582B1E4144F100AEE449 /* 28-star.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C840120344D000507757 /* 28-star.png */; };
+		3714582C1E4144F100AEE449 /* 30-key.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C842120344D000507757 /* 30-key.png */; };
+		3714582D1E4144F100AEE449 /* 96-book.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C886120344D000507757 /* 96-book.png */; };
+		3714582E1E4144F100AEE449 /* BillsMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B2C1FA130BCEFC00140212 /* BillsMasterViewController.xib */; };
+		3714582F1E4144F100AEE449 /* BillsDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37F4926E1311C556005D5DE1 /* BillsDetailViewController~iphone.xib */; };
+		371458301E4144F100AEE449 /* BillsDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B2C206130BCF9800140212 /* BillsDetailViewController~ipad.xib */; };
+		371458311E4144F100AEE449 /* TexLegeSeed.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 37735E22132363930033F343 /* TexLegeSeed.sqlite */; };
+		371458321E4144F100AEE449 /* WnomAggregateObj.json in Resources */ = {isa = PBXBuildFile; fileRef = 376C2811132583C800EB7688 /* WnomAggregateObj.json */; };
+		371458331E4144F100AEE449 /* CapitolMaps.plist in Resources */ = {isa = PBXBuildFile; fileRef = 374DA89A1325C6FB00CCBC40 /* CapitolMaps.plist */; };
+		371458341E4144F100AEE449 /* BillMetadata.json in Resources */ = {isa = PBXBuildFile; fileRef = 376F62D3132973D800F2B3DA /* BillMetadata.json */; };
+		371458351E4144F100AEE449 /* starButtonLargeOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9EA1343AD45001D9D7B /* starButtonLargeOff.png */; };
+		371458361E4144F100AEE449 /* starButtonLargeOff@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9EB1343AD45001D9D7B /* starButtonLargeOff@2x.png */; };
+		371458371E4144F100AEE449 /* starButtonLargeOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9EC1343AD45001D9D7B /* starButtonLargeOn.png */; };
+		371458381E4144F100AEE449 /* starButtonLargeOn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9ED1343AD45001D9D7B /* starButtonLargeOn@2x.png */; };
+		371458391E4144F100AEE449 /* VoteNay.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A44281346597000DFDBB8 /* VoteNay.png */; };
+		3714583A1E4144F100AEE449 /* VoteNay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A44291346597000DFDBB8 /* VoteNay@2x.png */; };
+		3714583B1E4144F100AEE449 /* VotePNV.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442A1346597000DFDBB8 /* VotePNV.png */; };
+		3714583C1E4144F100AEE449 /* VotePNV@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442B1346597000DFDBB8 /* VotePNV@2x.png */; };
+		3714583D1E4144F100AEE449 /* VoteYea.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442C1346597000DFDBB8 /* VoteYea.png */; };
+		3714583E1E4144F100AEE449 /* VoteYea@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442D1346597000DFDBB8 /* VoteYea@2x.png */; };
+		3714583F1E4144F100AEE449 /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = 376DFE9213492C1400360BF4 /* error.png */; };
+		371458401E4144F100AEE449 /* error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 376DFE9413492C1400360BF4 /* error@2x.png */; };
+		371458411E4144F100AEE449 /* grabthumb.png in Resources */ = {isa = PBXBuildFile; fileRef = 379C8C89139A03230035C321 /* grabthumb.png */; };
+		371458421E4144F100AEE449 /* grabthumb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 379C8C8A139A03230035C321 /* grabthumb@2x.png */; };
+		371458431E4144F100AEE449 /* 113-navigation-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F38139A9BC100CDBACE /* 113-navigation-inv.png */; };
+		371458441E4144F100AEE449 /* 113-navigation-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F39139A9BC100CDBACE /* 113-navigation-inv@2x.png */; };
+		371458451E4144F100AEE449 /* 123-id-card-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F3B139A9BC100CDBACE /* 123-id-card-inv.png */; };
+		371458461E4144F100AEE449 /* 123-id-card-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F3C139A9BC100CDBACE /* 123-id-card-inv@2x.png */; };
+		371458471E4144F100AEE449 /* 60-signpost-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F3E139A9BC100CDBACE /* 60-signpost-inv.png */; };
+		371458481E4144F100AEE449 /* 60-signpost-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F3F139A9BC100CDBACE /* 60-signpost-inv@2x.png */; };
+		371458491E4144F100AEE449 /* 73-radar-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F43139A9BC100CDBACE /* 73-radar-inv.png */; };
+		3714584A1E4144F100AEE449 /* 73-radar-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F44139A9BC100CDBACE /* 73-radar-inv@2x.png */; };
+		3714584B1E4144F100AEE449 /* 83-calendar-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F47139A9BC100CDBACE /* 83-calendar-inv.png */; };
+		3714584C1E4144F100AEE449 /* 83-calendar-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F48139A9BC100CDBACE /* 83-calendar-inv@2x.png */; };
+		3714584D1E4144F100AEE449 /* gavel-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F4A139A9BC100CDBACE /* gavel-inv.png */; };
+		3714584E1E4144F100AEE449 /* gavel-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F4B139A9BC100CDBACE /* gavel-inv@2x.png */; };
+		3714584F1E4144F100AEE449 /* 11-clock@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F76139A9C0C00CDBACE /* 11-clock@2x.png */; };
+		371458501E4144F100AEE449 /* 28-star@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F77139A9C0C00CDBACE /* 28-star@2x.png */; };
+		371458511E4144F100AEE449 /* 30-key@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F78139A9C0C00CDBACE /* 30-key@2x.png */; };
+		371458521E4144F100AEE449 /* 96-book@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F79139A9C0C00CDBACE /* 96-book@2x.png */; };
+		371458531E4144F100AEE449 /* 138-scales.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E36CF7139E69F800917F40 /* 138-scales.png */; };
+		371458541E4144F100AEE449 /* 138-scales@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E36CF8139E69F800917F40 /* 138-scales@2x.png */; };
+		371458551E4144F100AEE449 /* AppAlerts.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378ABD29139F0BCA00928FBF /* AppAlerts.strings */; };
+		371458561E4144F100AEE449 /* DataTableUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378ABD2B139F0BCA00928FBF /* DataTableUI.strings */; };
+		371458571E4144F100AEE449 /* StandardUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378ABD2D139F0BCA00928FBF /* StandardUI.strings */; };
+		371458581E4144F100AEE449 /* Abbreviations.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37CD0A9113A3567900F4C68B /* Abbreviations.strings */; };
+		371458591E4144F100AEE449 /* SVWebViewController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3768E93813B156F600BA5A67 /* SVWebViewController.bundle */; };
+		3714585A1E4144F100AEE449 /* action.png in Resources */ = {isa = PBXBuildFile; fileRef = 375F316113B238CC0002F12F /* action.png */; };
+		3714585B1E4144F100AEE449 /* action@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 375F316213B238CC0002F12F /* action@2x.png */; };
+		3714585C1E4144F100AEE449 /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
+		3714585D1E4144F100AEE449 /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
+		3714585E1E4144F100AEE449 /* gavel.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3575E13CA684200C1EE29 /* gavel.png */; };
+		3714585F1E4144F100AEE449 /* gavel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3575F13CA684200C1EE29 /* gavel@2x.png */; };
+		371458601E4144F100AEE449 /* multipins.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3577913CA684200C1EE29 /* multipins.png */; };
+		371458611E4144F100AEE449 /* multipins@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3577A13CA684200C1EE29 /* multipins@2x.png */; };
+		371458621E4144F100AEE449 /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9CA2B16A22D17005C7CCE /* placeholder.png */; };
+		371458631E4144F100AEE449 /* placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9CA2C16A22D17005C7CCE /* placeholder@2x.png */; };
+		371458651E4144F100AEE449 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		371458661E4144F100AEE449 /* TexLegeAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* TexLegeAppDelegate.m */; };
+		371458671E4144F100AEE449 /* LinksDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0E4450FD2DEAA009B65F7 /* LinksDataSource.m */; };
+		371458681E4144F100AEE449 /* CapitolMapsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0E4480FD2DEAA009B65F7 /* CapitolMapsDetailViewController.m */; };
+		371458691E4144F100AEE449 /* GeneralTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0E44A0FD2DEAA009B65F7 /* GeneralTableViewController.m */; };
+		3714586A1E4144F100AEE449 /* CapitolMapsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0E44E0FD2DEAA009B65F7 /* CapitolMapsDataSource.m */; };
+		3714586B1E4144F100AEE449 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1C7513CB677100655550 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3714586C1E4144F100AEE449 /* TableCellDataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 373AB3B80FD3389F0065740E /* TableCellDataObject.m */; };
+		3714586D1E4144F100AEE449 /* CommitteePositionObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 378A1CD71007FF4600BEC4ED /* CommitteePositionObj+RestKit.m */; };
+		3714586E1E4144F100AEE449 /* LegislatorObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 378A1CD91007FF4600BEC4ED /* LegislatorObj+RestKit.m */; };
+		3714586F1E4144F100AEE449 /* LinkObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 378A1CDB1007FF4600BEC4ED /* LinkObj+RestKit.m */; };
+		371458701E4144F100AEE449 /* CommitteeObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37155727100859E700FA57DB /* CommitteeObj+RestKit.m */; };
+		371458711E4144F100AEE449 /* CommitteesDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 378AFC7F100BDD640040706A /* CommitteesDataSource.m */; };
+		371458721E4144F100AEE449 /* LegislatorsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 378AFC82100BDD940040706A /* LegislatorsDataSource.m */; };
+		371458731E4144F100AEE449 /* TexLege.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 37C9B67D11EDB28E001F0010 /* TexLege.xcdatamodeld */; };
+		371458741E4144F100AEE449 /* NotesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 379C1EE81012DF28007844B5 /* NotesViewController.m */; };
+		371458751E4144F100AEE449 /* UtilityMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D6E82710175F0800D4D7C2 /* UtilityMethods.m */; };
+		371458761E4144F100AEE449 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 3709AEAD101FBE7900C1061B /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		371458771E4144F100AEE449 /* LegislatorDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3775FA3B11D86E1700D69AC5 /* LegislatorDetailViewController.m */; };
+		371458781E4144F100AEE449 /* LegislatorMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3775FA4B11D8701B00D69AC5 /* LegislatorMasterViewController.m */; };
+		371458791E4144F100AEE449 /* CommitteeDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AD57B911DA651500D68934 /* CommitteeDetailViewController.m */; };
+		3714587A1E4144F100AEE449 /* PartisanIndexStats.m in Sources */ = {isa = PBXBuildFile; fileRef = 3747C25C11E7B15300A6D8C6 /* PartisanIndexStats.m */; };
+		3714587B1E4144F100AEE449 /* CapitolMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D5CBF11E9983A005A21E2 /* CapitolMap.m */; };
+		3714587C1E4144F100AEE449 /* SLAbstractCodableObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C0FC1E1DACE800EBE66B /* SLAbstractCodableObject.m */; };
+		3714587D1E4144F100AEE449 /* WnomObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3737803A11F8082500E36500 /* WnomObj+RestKit.m */; };
+		3714587E1E4144F100AEE449 /* PolygonMath.m in Sources */ = {isa = PBXBuildFile; fileRef = 370F7AA811FEAF730004AC50 /* PolygonMath.m */; };
+		3714587F1E4144F100AEE449 /* CalendarDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 377ACE4711FFA30E002C7E49 /* CalendarDataSource.m */; };
+		371458801E4144F100AEE449 /* CalendarDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D1C526120272F000507757 /* CalendarDetailViewController.m */; };
+		371458811E4144F100AEE449 /* UISearchDisplayController+NoHideNav.m in Sources */ = {isa = PBXBuildFile; fileRef = 3735DDAE120899980000AF5A /* UISearchDisplayController+NoHideNav.m */; };
+		371458821E4144F100AEE449 /* CommitteeMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3735DFFC120917490000AF5A /* CommitteeMasterViewController.m */; };
+		371458831E4144F100AEE449 /* TexLegeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 3735E1CD1209B09F0000AF5A /* TexLegeTheme.m */; };
+		371458841E4144F100AEE449 /* LegislatorMasterCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37892DCD120EA44300AB1752 /* LegislatorMasterCellView.m */; };
+		371458851E4144F100AEE449 /* LegislatorMasterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B64233120FE9FF0076B196 /* LegislatorMasterCell.m */; };
+		371458861E4144F100AEE449 /* TexLegeEmailComposer.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0C6021211DB810067F7AF /* TexLegeEmailComposer.m */; };
+		371458871E4144F100AEE449 /* ChamberCalendarObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 372FAB5912147B2000AEF237 /* ChamberCalendarObj.m */; };
+		371458881E4144F100AEE449 /* CalendarMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 374C36B91215E55F006B6ADA /* CalendarMasterViewController.m */; };
+		371458891E4144F100AEE449 /* CapitolMapsMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 374C36E51215E8DA006B6ADA /* CapitolMapsMasterViewController.m */; };
+		3714588A1E4144F100AEE449 /* LinksMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 374C37041215EB2D006B6ADA /* LinksMasterViewController.m */; };
+		3714588B1E4144F100AEE449 /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 378B57A91219913400F7ED0B /* MapViewController.m */; };
+		3714588C1E4144F100AEE449 /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 3767140011E8319900D004C8 /* UIDevice-Hardware.m */; };
+		3714588D1E4144F100AEE449 /* TexLegeObjectCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAC361337E3CF007788BC /* TexLegeObjectCache.m */; };
+		3714588E1E4144F100AEE449 /* UserPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EAE54E121A6D9A00BF4277 /* UserPinAnnotation.m */; };
+		3714588F1E4144F100AEE449 /* DistrictOfficeObj+MapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E2068112204D5000103D76 /* DistrictOfficeObj+MapKit.m */; };
+		371458901E4144F100AEE449 /* DistrictMapObj+MapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E2068312204D5000103D76 /* DistrictMapObj+MapKit.m */; };
+		371458911E4144F100AEE449 /* AnalyticsOptInAlertController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3704F4D5122437AC00DC486F /* AnalyticsOptInAlertController.m */; };
+		371458921E4144F100AEE449 /* DistrictMapDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 370C270B1225BF7E004273E3 /* DistrictMapDataSource.m */; };
+		371458931E4144F100AEE449 /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CF6BB81226597500456D29 /* UIColor-Expanded.m */; };
+		371458941E4144F100AEE449 /* LegislatorDetailDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 370B9DC0122AC5DF00AC9CC8 /* LegislatorDetailDataSource.m */; };
+		371458951E4144F100AEE449 /* TexLegeStandardGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 370B9DCF122AD22C00AC9CC8 /* TexLegeStandardGroupCell.m */; };
+		371458961E4144F100AEE449 /* DisclosureQuartzView.m in Sources */ = {isa = PBXBuildFile; fileRef = 370813E5122C536B00D8CA69 /* DisclosureQuartzView.m */; };
+		371458971E4144F100AEE449 /* TexLegeCoreDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 379D0CC2122D49000021969C /* TexLegeCoreDataUtils.m */; };
+		371458981E4144F100AEE449 /* DistrictMapSearchOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3742D6EE122E18D100698483 /* DistrictMapSearchOperation.m */; };
+		371458991E4144F100AEE449 /* NSInvocation+CWVariableArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 3742D722122E1FDF00698483 /* NSInvocation+CWVariableArguments.m */; };
+		3714589A1E4144F100AEE449 /* PartisanScaleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 376850211234AAFD00AEEC3D /* PartisanScaleView.m */; };
+		3714589B1E4144F100AEE449 /* TexLegeMapPins.m in Sources */ = {isa = PBXBuildFile; fileRef = 374E2A6A12360C6E0005E245 /* TexLegeMapPins.m */; };
+		3714589C1E4144F100AEE449 /* UserPinAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D3649C1236869200CCF86E /* UserPinAnnotationView.m */; };
+		3714589D1E4144F100AEE449 /* DistrictMapMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C94A2612387ABA00D2D582 /* DistrictMapMasterViewController.m */; };
+		3714589E1E4144F100AEE449 /* CommitteeMemberCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 379393FD123B1A82003103B3 /* CommitteeMemberCellView.m */; };
+		3714589F1E4144F100AEE449 /* CommitteeMemberCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D46C00123B483800C2C403 /* CommitteeMemberCell.m */; };
+		371458A01E4144F100AEE449 /* DistrictPinAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0A8EE123ED55A00232B2C /* DistrictPinAnnotationView.m */; };
+		371458A11E4144F100AEE449 /* LegislatorContributionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37242D3512415CC4005C43D3 /* LegislatorContributionsViewController.m */; };
+		371458A21E4144F100AEE449 /* LegislatorContributionsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37412A38124322C400807502 /* LegislatorContributionsDataSource.m */; };
+		371458A31E4144F100AEE449 /* MapMiniDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B3CE901249365E00FB3F94 /* MapMiniDetailViewController.m */; };
+		371458A41E4144F100AEE449 /* TexLegeReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 379B9CD01250FE7E0032E616 /* TexLegeReachability.m */; };
+		371458A51E4144F100AEE449 /* StafferObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B253E412EBF681000B6EE2 /* StafferObj+RestKit.m */; };
+		371458A61E4144F100AEE449 /* NSDate+Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3718895B12EE917B00E3300D /* NSDate+Helper.m */; };
+		371458A71E4144F100AEE449 /* DataModelUpdateManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 373EBA5012F0A01100A3E604 /* DataModelUpdateManager.m */; };
+		371458A81E4144F100AEE449 /* TexLegeLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D066612FC901C00E63696 /* TexLegeLibrary.m */; };
+		371458A91E4144F100AEE449 /* TexLegeNavBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 374F70A512FD45D600AD7EEC /* TexLegeNavBar.m */; };
+		371458AA1E4144F100AEE449 /* BillsMenuDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F4A815130CAA4F00705EDD /* BillsMenuDataSource.m */; };
+		371458AB1E4144F100AEE449 /* BillsMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CFBA0312FE8936007C3808 /* BillsMasterViewController.m */; };
+		371458AC1E4144F100AEE449 /* BillSearchDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FC486F13110A9E00A4C0B2 /* BillSearchDataSource.m */; };
+		371458AD1E4144F100AEE449 /* BillsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F492751311C640005D5DE1 /* BillsDetailViewController.m */; };
+		371458AE1E4144F100AEE449 /* BillsFavoritesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3770F57413182BF500686DE3 /* BillsFavoritesViewController.m */; };
+		371458AF1E4144F100AEE449 /* BillsCategoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 376F62D0132972E200F2B3DA /* BillsCategoriesViewController.m */; };
+		371458B01E4144F100AEE449 /* BillsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D38B0E132ECFFA002F1730 /* BillsListViewController.m */; };
+		371458B11E4144F100AEE449 /* BillMetadataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A8F14413315D4D00085AAF /* BillMetadataLoader.m */; };
+		371458B21E4144F100AEE449 /* CalendarEventsLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 371FB1D71333B43C0003740A /* CalendarEventsLoader.m */; };
+		371458B31E4144F100AEE449 /* OpenLegislativeAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 370EAD301338029E007788BC /* OpenLegislativeAPIs.m */; };
+		371458B41E4144F100AEE449 /* TexLegeBadgeGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37094D95133B162E00B9693C /* TexLegeBadgeGroupCell.m */; };
+		371458B51E4144F100AEE449 /* S7GraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5ACC133D6F9E0070EA64 /* S7GraphView.m */; };
+		371458B61E4144F100AEE449 /* DDActionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F2CA101343AE40001D9D7B /* DDActionHeaderView.m */; };
+		371458B71E4144F100AEE449 /* BillVotesDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 377DC4A81344D475000068E1 /* BillVotesDataSource.m */; };
+		371458B81E4144F100AEE449 /* BillsTodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 371A447213467C8C00DFDBB8 /* BillsTodayViewController.m */; };
+		371458B91E4144F100AEE449 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 376C1CC21345A7EB009436B5 /* XMLReader.m */; };
+		371458BA1E4144F100AEE449 /* LoadingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 376DFEB513492FF700360BF4 /* LoadingCell.m */; };
+		371458BB1E4144F100AEE449 /* UIImage+ResolutionIndependent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3763ED6E1354E0F4000E524C /* UIImage+ResolutionIndependent.m */; };
+		371458BC1E4144F100AEE449 /* CommitteeObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1D91357A198003DA1BB /* CommitteeObj.m */; };
+		371458BD1E4144F100AEE449 /* StafferObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E11357A198003DA1BB /* StafferObj.m */; };
+		371458BE1E4144F100AEE449 /* DistrictOfficeObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E31357A198003DA1BB /* DistrictOfficeObj.m */; };
+		371458BF1E4144F100AEE449 /* WnomObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E51357A198003DA1BB /* WnomObj.m */; };
+		371458C01E4144F100AEE449 /* DistrictMapObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E71357A198003DA1BB /* DistrictMapObj.m */; };
+		371458C11E4144F100AEE449 /* DistrictOfficeObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D2091357A534003DA1BB /* DistrictOfficeObj+RestKit.m */; };
+		371458C21E4144F100AEE449 /* DistrictMapObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D20F1357A685003DA1BB /* DistrictMapObj+RestKit.m */; };
+		371458C31E4144F100AEE449 /* PartyPartisanshipObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C1041E1DAD4200EBE66B /* PartyPartisanshipObj.m */; };
+		371458C41E4144F100AEE449 /* CommitteePositionObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DF1357A198003DA1BB /* CommitteePositionObj.m */; };
+		371458C51E4144F100AEE449 /* LinkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DB1357A198003DA1BB /* LinkObj.m */; };
+		371458C61E4144F100AEE449 /* LegislatorObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DD1357A198003DA1BB /* LegislatorObj.m */; };
+		371458C71E4144F100AEE449 /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E635FA139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m */; };
+		371458C81E4144F100AEE449 /* BillsRecentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36CF0139E695C00917F40 /* BillsRecentViewController.m */; };
+		371458C91E4144F100AEE449 /* VTPGAdvancedLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36D02139E6D0A00917F40 /* VTPGAdvancedLog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		371458CA1E4144F100AEE449 /* StateMetaLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CD09B013A2A6F100F4C68B /* StateMetaLoader.m */; };
+		371458CB1E4144F100AEE449 /* BillActionParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3770C66713A49BE800906021 /* BillActionParser.m */; };
+		371458CC1E4144F100AEE449 /* SVWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3768E93613B156F600BA5A67 /* SVWebViewController.m */; };
+		371458CD1E4144F100AEE449 /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CD913CB75FD00655550 /* LocalyticsSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		371458CE1E4144F100AEE449 /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CDB13CB75FD00655550 /* UploaderThread.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		371458CF1E4144F100AEE449 /* AppendingFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1D9A13CB8E3300655550 /* AppendingFlowView.m */; };
+		371458D01E4144F100AEE449 /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C7845814D30444006BBEDE /* LocalyticsDatabase.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		371458D11E4144F100AEE449 /* KalDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04314D32775000853D5 /* KalDataSource.m */; };
+		371458D21E4144F100AEE449 /* VotingRecordDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5AC7133D6F8B0070EA64 /* VotingRecordDataSource.m */; };
+		371458D31E4144F100AEE449 /* KalDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04514D32775000853D5 /* KalDate.m */; };
+		371458D41E4144F100AEE449 /* SLToastManager+TexLege.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E208B31E117CCD00D95154 /* SLToastManager+TexLege.m */; };
+		371458D51E4144F100AEE449 /* KalGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04714D32775000853D5 /* KalGridView.m */; };
+		371458D61E4144F100AEE449 /* KalLogic.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04914D32775000853D5 /* KalLogic.m */; };
+		371458D71E4144F100AEE449 /* KalMonthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04B14D32775000853D5 /* KalMonthView.m */; };
+		371458D81E4144F100AEE449 /* KalPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04D14D32775000853D5 /* KalPrivate.m */; };
+		371458D91E4144F100AEE449 /* KalTileView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04F14D32775000853D5 /* KalTileView.m */; };
+		371458DA1E4144F100AEE449 /* KalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05114D32775000853D5 /* KalView.m */; };
+		371458DB1E4144F100AEE449 /* KalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05314D32775000853D5 /* KalViewController.m */; };
+		371458DC1E4144F100AEE449 /* NSDateAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05514D32775000853D5 /* NSDateAdditions.m */; };
+		371458DD1E4144F100AEE449 /* UIViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05714D32775000853D5 /* UIViewAdditions.m */; };
+		371458DF1E4144F100AEE449 /* libSDWebImage iOS static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA1116A227CC005C7CCE /* libSDWebImage iOS static.a */; };
+		371458E01E4144F100AEE449 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA2716A22959005C7CCE /* ImageIO.framework */; };
+		371458E11E4144F100AEE449 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845E14D30A97006BBEDE /* libz.dylib */; };
+		371458E21E4144F100AEE449 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3709AF0C101FBF5100C1061B /* SystemConfiguration.framework */; };
+		371458E31E4144F100AEE449 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845B14D304B2006BBEDE /* libsqlite3.dylib */; };
+		371458E41E4144F100AEE449 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		371458E51E4144F100AEE449 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		371458E61E4144F100AEE449 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D3623EB0D0F72F000981E51 /* CoreGraphics.framework */; };
+		371458E71E4144F100AEE449 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3729EC2810077F83000AD804 /* CoreData.framework */; };
+		371458E81E4144F100AEE449 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 370298CD11F97C7A00D65FCB /* MapKit.framework */; };
+		371458E91E4144F100AEE449 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37413B1612114D09003CA7E8 /* MessageUI.framework */; };
+		371458EA1E4144F100AEE449 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 378B58FA1219BB9C00F7ED0B /* CoreLocation.framework */; };
+		371458EB1E4144F100AEE449 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D364F512369DDC00CCF86E /* AddressBookUI.framework */; };
+		371458EC1E4144F100AEE449 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379D718F123C2B470094F45B /* EventKitUI.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		371458ED1E4144F100AEE449 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379D7144123C1FB80094F45B /* EventKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		371458EE1E4144F100AEE449 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2883B6A00D944613003F08B5 /* QuartzCore.framework */; };
+		371458EF1E4144F100AEE449 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3775C7FB131C459900638ED4 /* CFNetwork.framework */; };
+		371458F01E4144F100AEE449 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3775C7FD131C459900638ED4 /* MobileCoreServices.framework */; };
+		371458F11E4144F100AEE449 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 377075421397E4C300E82CA8 /* AddressBook.framework */; };
+		371458F31E4144F100AEE449 /* SLToastKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3795B4FF1E1FFE42008F6FD9 /* SLToastKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		371459031E41455500AEE449 /* SLFRestKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 371459021E41455500AEE449 /* SLFRestKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		371A442E1346597000DFDBB8 /* VoteNay.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A44281346597000DFDBB8 /* VoteNay.png */; };
 		371A442F1346597000DFDBB8 /* VoteNay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A44291346597000DFDBB8 /* VoteNay@2x.png */; };
 		371A44301346597000DFDBB8 /* VotePNV.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442A1346597000DFDBB8 /* VotePNV.png */; };
 		371A44311346597000DFDBB8 /* VotePNV@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442B1346597000DFDBB8 /* VotePNV@2x.png */; };
 		371A44321346597000DFDBB8 /* VoteYea.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442C1346597000DFDBB8 /* VoteYea.png */; };
 		371A44331346597000DFDBB8 /* VoteYea@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442D1346597000DFDBB8 /* VoteYea@2x.png */; };
-		371A44341346597000DFDBB8 /* VoteNay.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A44281346597000DFDBB8 /* VoteNay.png */; };
-		371A44351346597000DFDBB8 /* VoteNay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A44291346597000DFDBB8 /* VoteNay@2x.png */; };
-		371A44361346597000DFDBB8 /* VotePNV.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442A1346597000DFDBB8 /* VotePNV.png */; };
-		371A44371346597000DFDBB8 /* VotePNV@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442B1346597000DFDBB8 /* VotePNV@2x.png */; };
-		371A44381346597000DFDBB8 /* VoteYea.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442C1346597000DFDBB8 /* VoteYea.png */; };
-		371A44391346597000DFDBB8 /* VoteYea@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442D1346597000DFDBB8 /* VoteYea@2x.png */; };
 		371A447313467C8C00DFDBB8 /* BillsTodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 371A447213467C8C00DFDBB8 /* BillsTodayViewController.m */; };
-		371A447413467C8C00DFDBB8 /* BillsTodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 371A447213467C8C00DFDBB8 /* BillsTodayViewController.m */; };
-		371A449D134682E100DFDBB8 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 376C1CC21345A7EB009436B5 /* XMLReader.m */; };
-		371E96F6131211E50035439E /* BillsDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B2C206130BCF9800140212 /* BillsDetailViewController~ipad.xib */; };
 		371FB1D81333B43C0003740A /* CalendarEventsLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 371FB1D71333B43C0003740A /* CalendarEventsLoader.m */; };
-		371FB1D91333B43C0003740A /* CalendarEventsLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 371FB1D71333B43C0003740A /* CalendarEventsLoader.m */; };
-		37242D3612415CC4005C43D3 /* LegislatorContributionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37242D3512415CC4005C43D3 /* LegislatorContributionsViewController.m */; };
-		3726FC3F120A99800043D6B9 /* 01-refresh@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3726FC34120A99800043D6B9 /* 01-refresh@2x.png */; };
-		3729EC2910077F83000AD804 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3729EC2810077F83000AD804 /* CoreData.framework */; };
-		372D061C12FC799200E63696 /* Kal.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 372D061812FC799200E63696 /* Kal.bundle */; };
-		372D066712FC901C00E63696 /* TexLegeLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D066612FC901C00E63696 /* TexLegeLibrary.m */; };
-		372D5CC011E9983A005A21E2 /* CapitolMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D5CBF11E9983A005A21E2 /* CapitolMap.m */; };
-		372FAB5A12147B2000AEF237 /* ChamberCalendarObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 372FAB5912147B2000AEF237 /* ChamberCalendarObj.m */; };
-		372FDB23139F1CFB00D39374 /* LegislatorDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3739DBE4123355EF00D4F7D2 /* LegislatorDetailViewController~iphone.xib */; };
 		372FDB24139F1CFB00D39374 /* LegislatorDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3739DBE4123355EF00D4F7D2 /* LegislatorDetailViewController~iphone.xib */; };
-		3732A0F811DB203F009E8957 /* TabBarController~iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3732A0F711DB203F009E8957 /* TabBarController~iPhone.xib */; };
-		3735DD3D12087CEF0000AF5A /* CalendarDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3735DD3C12087CEF0000AF5A /* CalendarDetailViewController~iphone.xib */; };
-		3735DDAF120899980000AF5A /* UISearchDisplayController+NoHideNav.m in Sources */ = {isa = PBXBuildFile; fileRef = 3735DDAE120899980000AF5A /* UISearchDisplayController+NoHideNav.m */; };
-		3735DFFE120917490000AF5A /* CommitteeMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3735DFFC120917490000AF5A /* CommitteeMasterViewController.m */; };
-		3735DFFF120917490000AF5A /* CommitteeMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3735DFFD120917490000AF5A /* CommitteeMasterViewController.xib */; };
-		3735E1CE1209B09F0000AF5A /* TexLegeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 3735E1CD1209B09F0000AF5A /* TexLegeTheme.m */; };
-		3737803B11F8082500E36500 /* WnomObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 3737803A11F8082500E36500 /* WnomObj+RestKit.m */; };
-		3738E07A1226A86B00DDD605 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3738E0791226A86B00DDD605 /* Settings.bundle */; };
-		373AB3B90FD3389F0065740E /* TableCellDataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 373AB3B80FD3389F0065740E /* TableCellDataObject.m */; };
-		373B820611E378CD00A81142 /* LegislatorMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 373B820511E378CD00A81142 /* LegislatorMasterViewController.xib */; };
-		373EBA5112F0A01100A3E604 /* DataModelUpdateManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 373EBA5012F0A01100A3E604 /* DataModelUpdateManager.m */; };
-		37412A39124322C400807502 /* LegislatorContributionsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37412A38124322C400807502 /* LegislatorContributionsDataSource.m */; };
-		37413B1712114D09003CA7E8 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37413B1612114D09003CA7E8 /* MessageUI.framework */; };
-		3742D6EF122E18D100698483 /* DistrictMapSearchOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3742D6EE122E18D100698483 /* DistrictMapSearchOperation.m */; };
-		3742D723122E1FDF00698483 /* NSInvocation+CWVariableArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 3742D722122E1FDF00698483 /* NSInvocation+CWVariableArguments.m */; };
-		3747C25D11E7B15300A6D8C6 /* PartisanIndexStats.m in Sources */ = {isa = PBXBuildFile; fileRef = 3747C25C11E7B15300A6D8C6 /* PartisanIndexStats.m */; };
 		374BEC541D7F3420009645A2 /* VotingRecordDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5AC7133D6F8B0070EA64 /* VotingRecordDataSource.m */; };
-		374C36BA1215E55F006B6ADA /* CalendarMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 374C36B91215E55F006B6ADA /* CalendarMasterViewController.m */; };
-		374C36E61215E8DA006B6ADA /* CapitolMapsMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 374C36E51215E8DA006B6ADA /* CapitolMapsMasterViewController.m */; };
-		374C37051215EB2D006B6ADA /* LinksMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 374C37041215EB2D006B6ADA /* LinksMasterViewController.m */; };
-		374DA89B1325C6FB00CCBC40 /* CapitolMaps.plist in Resources */ = {isa = PBXBuildFile; fileRef = 374DA89A1325C6FB00CCBC40 /* CapitolMaps.plist */; };
 		374DA89C1325C6FB00CCBC40 /* CapitolMaps.plist in Resources */ = {isa = PBXBuildFile; fileRef = 374DA89A1325C6FB00CCBC40 /* CapitolMaps.plist */; };
-		374E2A6B12360C6E0005E245 /* TexLegeMapPins.m in Sources */ = {isa = PBXBuildFile; fileRef = 374E2A6A12360C6E0005E245 /* TexLegeMapPins.m */; };
-		374F70A612FD45D600AD7EEC /* TexLegeNavBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 374F70A512FD45D600AD7EEC /* TexLegeNavBar.m */; };
-		37507ED5130F64BF00A925F5 /* 11-clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C81A120344D000507757 /* 11-clock.png */; };
-		37507ED6130F64D000A925F5 /* 28-star.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C840120344D000507757 /* 28-star.png */; };
-		37507ED7130F64D400A925F5 /* 30-key.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C842120344D000507757 /* 30-key.png */; };
-		37507ED8130F64EE00A925F5 /* 96-book.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C886120344D000507757 /* 96-book.png */; };
-		37507F36130F816500A925F5 /* BillsMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B2C1FA130BCEFC00140212 /* BillsMasterViewController.xib */; };
 		375E5ACE133D6F9E0070EA64 /* S7GraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5ACC133D6F9E0070EA64 /* S7GraphView.m */; };
-		375E5ACF133D6F9E0070EA64 /* S7GraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5ACC133D6F9E0070EA64 /* S7GraphView.m */; };
-		375F316313B238CC0002F12F /* action.png in Resources */ = {isa = PBXBuildFile; fileRef = 375F316113B238CC0002F12F /* action.png */; };
-		375F316413B238CC0002F12F /* action@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 375F316213B238CC0002F12F /* action@2x.png */; };
 		375F316513B238CC0002F12F /* action.png in Resources */ = {isa = PBXBuildFile; fileRef = 375F316113B238CC0002F12F /* action.png */; };
 		375F316613B238CC0002F12F /* action@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 375F316213B238CC0002F12F /* action@2x.png */; };
-		3760AB89139EFAA700386A90 /* TexLegeInfo~ipad.htm in Resources */ = {isa = PBXBuildFile; fileRef = 3760AB8B139EFAA700386A90 /* TexLegeInfo~ipad.htm */; };
 		3760AB8A139EFAA700386A90 /* TexLegeInfo~ipad.htm in Resources */ = {isa = PBXBuildFile; fileRef = 3760AB8B139EFAA700386A90 /* TexLegeInfo~ipad.htm */; };
 		3763ED6F1354E0F4000E524C /* UIImage+ResolutionIndependent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3763ED6E1354E0F4000E524C /* UIImage+ResolutionIndependent.m */; };
-		3763ED701354E0F4000E524C /* UIImage+ResolutionIndependent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3763ED6E1354E0F4000E524C /* UIImage+ResolutionIndependent.m */; };
-		3764E8CB1217B83F008DF726 /* NotesView~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3764E8CA1217B83F008DF726 /* NotesView~ipad.xib */; };
-		3766EFC112109F110073C705 /* TexLegeStrings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3766EFC012109F110073C705 /* TexLegeStrings.plist */; };
-		37674B2E1002C492003FD09F /* Map.Floor4.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B271002C492003FD09F /* Map.Floor4.pdf */; };
-		37674B2F1002C492003FD09F /* Map.Floor2.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B281002C492003FD09F /* Map.Floor2.pdf */; };
-		37674B301002C492003FD09F /* Map.FloorG.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B291002C492003FD09F /* Map.FloorG.pdf */; };
-		37674B311002C492003FD09F /* Map.Floor1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2A1002C492003FD09F /* Map.Floor1.pdf */; };
-		37674B321002C492003FD09F /* Map.FloorE1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2B1002C492003FD09F /* Map.FloorE1.pdf */; };
-		37674B331002C492003FD09F /* Map.Floor3.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2C1002C492003FD09F /* Map.Floor3.pdf */; };
-		37674B341002C492003FD09F /* Map.FloorE2.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37674B2D1002C492003FD09F /* Map.FloorE2.pdf */; };
-		37678F491AFFE92F0016B8E5 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1C7513CB677100655550 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37678F4A1AFFE93E0016B8E5 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1C7513CB677100655550 /* JSONKit.m */; };
-		37678F561AFFEC9F0016B8E5 /* VotingRecordDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5AC7133D6F8B0070EA64 /* VotingRecordDataSource.m */; };
-		376850221234AAFD00AEEC3D /* PartisanScaleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 376850211234AAFD00AEEC3D /* PartisanScaleView.m */; };
-		3768911B19ACE0F900E38DEB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3768911A19ACE0F900E38DEB /* Images.xcassets */; };
-		3768E93913B156F600BA5A67 /* SVWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3768E93613B156F600BA5A67 /* SVWebViewController.m */; };
-		3768E93B13B156F600BA5A67 /* SVWebViewController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3768E93813B156F600BA5A67 /* SVWebViewController.bundle */; };
 		3768E93C13B156F600BA5A67 /* SVWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3768E93613B156F600BA5A67 /* SVWebViewController.m */; };
 		3768E93E13B156F600BA5A67 /* SVWebViewController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3768E93813B156F600BA5A67 /* SVWebViewController.bundle */; };
-		376B5BE20FC1DC640094D80B /* Map.WheelchairAccess.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 376B5BDB0FC1DC640094D80B /* Map.WheelchairAccess.pdf */; };
-		376B5BE30FC1DC640094D80B /* Map.CapitolComplex.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 376B5BDC0FC1DC640094D80B /* Map.CapitolComplex.pdf */; };
-		376B5BE80FC1DC640094D80B /* Map.MonumentGuide.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 376B5BE10FC1DC640094D80B /* Map.MonumentGuide.pdf */; };
 		376C1CC31345A7EB009436B5 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 376C1CC21345A7EB009436B5 /* XMLReader.m */; };
-		376C2812132583C800EB7688 /* WnomAggregateObj.json in Resources */ = {isa = PBXBuildFile; fileRef = 376C2811132583C800EB7688 /* WnomAggregateObj.json */; };
 		376C2813132583C800EB7688 /* WnomAggregateObj.json in Resources */ = {isa = PBXBuildFile; fileRef = 376C2811132583C800EB7688 /* WnomAggregateObj.json */; };
 		376DFE9513492C1400360BF4 /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = 376DFE9213492C1400360BF4 /* error.png */; };
 		376DFE9713492C1400360BF4 /* error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 376DFE9413492C1400360BF4 /* error@2x.png */; };
-		376DFE9813492C1400360BF4 /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = 376DFE9213492C1400360BF4 /* error.png */; };
-		376DFE9A13492C1400360BF4 /* error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 376DFE9413492C1400360BF4 /* error@2x.png */; };
-		376DFEB613492FF700360BF4 /* LoadingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 376DFEB513492FF700360BF4 /* LoadingCell.m */; };
 		376DFEB713492FF800360BF4 /* LoadingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 376DFEB513492FF700360BF4 /* LoadingCell.m */; };
 		376F62D1132972E200F2B3DA /* BillsCategoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 376F62D0132972E200F2B3DA /* BillsCategoriesViewController.m */; };
 		376F62D4132973D800F2B3DA /* BillMetadata.json in Resources */ = {isa = PBXBuildFile; fileRef = 376F62D3132973D800F2B3DA /* BillMetadata.json */; };
-		376F62D5132973D800F2B3DA /* BillMetadata.json in Resources */ = {isa = PBXBuildFile; fileRef = 376F62D3132973D800F2B3DA /* BillMetadata.json */; };
-		376F632D13298DE000F2B3DA /* BillsCategoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 376F62D0132972E200F2B3DA /* BillsCategoriesViewController.m */; };
-		377075431397E4C300E82CA8 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 377075421397E4C300E82CA8 /* AddressBook.framework */; };
 		3770C66813A49BE800906021 /* BillActionParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3770C66713A49BE800906021 /* BillActionParser.m */; };
-		3770C66913A49BE800906021 /* BillActionParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3770C66713A49BE800906021 /* BillActionParser.m */; };
-		3770F57513182BF500686DE3 /* BillsFavoritesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3770F57413182BF500686DE3 /* BillsFavoritesViewController.m */; };
 		3773597A1323104A0033F343 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3738E0791226A86B00DDD605 /* Settings.bundle */; };
 		3773597C1323104A0033F343 /* NotesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 379C1F021012E0CD007844B5 /* NotesView.xib */; };
 		3773597E1323104A0033F343 /* LegislatorDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */; };
@@ -288,23 +441,6 @@
 		37735C011323104A0033F343 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2883B6A00D944613003F08B5 /* QuartzCore.framework */; };
 		37735C081323104A0033F343 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3775C7FB131C459900638ED4 /* CFNetwork.framework */; };
 		37735C091323104A0033F343 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3775C7FD131C459900638ED4 /* MobileCoreServices.framework */; };
-		37735E23132363930033F343 /* TexLegeSeed.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 37735E22132363930033F343 /* TexLegeSeed.sqlite */; };
-		3775C7FC131C459900638ED4 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3775C7FB131C459900638ED4 /* CFNetwork.framework */; };
-		3775C7FE131C459900638ED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3775C7FD131C459900638ED4 /* MobileCoreServices.framework */; };
-		3775FA3D11D86E1700D69AC5 /* LegislatorDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3775FA3B11D86E1700D69AC5 /* LegislatorDetailViewController.m */; };
-		3775FA4C11D8701B00D69AC5 /* LegislatorMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3775FA4B11D8701B00D69AC5 /* LegislatorMasterViewController.m */; };
-		377A4F4D139A9BC100CDBACE /* 113-navigation-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F38139A9BC100CDBACE /* 113-navigation-inv.png */; };
-		377A4F4E139A9BC100CDBACE /* 113-navigation-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F39139A9BC100CDBACE /* 113-navigation-inv@2x.png */; };
-		377A4F50139A9BC100CDBACE /* 123-id-card-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F3B139A9BC100CDBACE /* 123-id-card-inv.png */; };
-		377A4F51139A9BC100CDBACE /* 123-id-card-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F3C139A9BC100CDBACE /* 123-id-card-inv@2x.png */; };
-		377A4F53139A9BC100CDBACE /* 60-signpost-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F3E139A9BC100CDBACE /* 60-signpost-inv.png */; };
-		377A4F54139A9BC100CDBACE /* 60-signpost-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F3F139A9BC100CDBACE /* 60-signpost-inv@2x.png */; };
-		377A4F58139A9BC100CDBACE /* 73-radar-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F43139A9BC100CDBACE /* 73-radar-inv.png */; };
-		377A4F59139A9BC100CDBACE /* 73-radar-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F44139A9BC100CDBACE /* 73-radar-inv@2x.png */; };
-		377A4F5C139A9BC100CDBACE /* 83-calendar-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F47139A9BC100CDBACE /* 83-calendar-inv.png */; };
-		377A4F5D139A9BC100CDBACE /* 83-calendar-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F48139A9BC100CDBACE /* 83-calendar-inv@2x.png */; };
-		377A4F5F139A9BC100CDBACE /* gavel-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F4A139A9BC100CDBACE /* gavel-inv.png */; };
-		377A4F60139A9BC100CDBACE /* gavel-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F4B139A9BC100CDBACE /* gavel-inv@2x.png */; };
 		377A4F62139A9BC100CDBACE /* 113-navigation-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F38139A9BC100CDBACE /* 113-navigation-inv.png */; };
 		377A4F63139A9BC100CDBACE /* 113-navigation-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F39139A9BC100CDBACE /* 113-navigation-inv@2x.png */; };
 		377A4F65139A9BC100CDBACE /* 123-id-card-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F3B139A9BC100CDBACE /* 123-id-card-inv.png */; };
@@ -319,99 +455,28 @@
 		377A4F72139A9BC100CDBACE /* 83-calendar-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F48139A9BC100CDBACE /* 83-calendar-inv@2x.png */; };
 		377A4F74139A9BC100CDBACE /* gavel-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F4A139A9BC100CDBACE /* gavel-inv.png */; };
 		377A4F75139A9BC100CDBACE /* gavel-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F4B139A9BC100CDBACE /* gavel-inv@2x.png */; };
-		377A4F7A139A9C0C00CDBACE /* 11-clock@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F76139A9C0C00CDBACE /* 11-clock@2x.png */; };
-		377A4F7B139A9C0C00CDBACE /* 28-star@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F77139A9C0C00CDBACE /* 28-star@2x.png */; };
-		377A4F7C139A9C0C00CDBACE /* 30-key@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F78139A9C0C00CDBACE /* 30-key@2x.png */; };
-		377A4F7D139A9C0C00CDBACE /* 96-book@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F79139A9C0C00CDBACE /* 96-book@2x.png */; };
 		377A4F7E139A9C0C00CDBACE /* 11-clock@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F76139A9C0C00CDBACE /* 11-clock@2x.png */; };
 		377A4F7F139A9C0C00CDBACE /* 28-star@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F77139A9C0C00CDBACE /* 28-star@2x.png */; };
 		377A4F80139A9C0C00CDBACE /* 30-key@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F78139A9C0C00CDBACE /* 30-key@2x.png */; };
 		377A4F81139A9C0C00CDBACE /* 96-book@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 377A4F79139A9C0C00CDBACE /* 96-book@2x.png */; };
-		377ACE4811FFA30E002C7E49 /* CalendarDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 377ACE4711FFA30E002C7E49 /* CalendarDataSource.m */; };
 		377DC4A91344D475000068E1 /* BillVotesDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 377DC4A81344D475000068E1 /* BillVotesDataSource.m */; };
-		377DC4AA1344D475000068E1 /* BillVotesDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 377DC4A81344D475000068E1 /* BillVotesDataSource.m */; };
-		3786786311E442800003690F /* CapitolMapsDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3786786211E442800003690F /* CapitolMapsDetailViewController.xib */; };
-		37892DCE120EA44300AB1752 /* LegislatorMasterCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37892DCD120EA44300AB1752 /* LegislatorMasterCellView.m */; };
-		378A1CDD1007FF4600BEC4ED /* CommitteePositionObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 378A1CD71007FF4600BEC4ED /* CommitteePositionObj+RestKit.m */; };
-		378A1CDE1007FF4600BEC4ED /* LegislatorObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 378A1CD91007FF4600BEC4ED /* LegislatorObj+RestKit.m */; };
-		378A1CDF1007FF4600BEC4ED /* LinkObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 378A1CDB1007FF4600BEC4ED /* LinkObj+RestKit.m */; };
-		378ABD31139F0BCA00928FBF /* AppAlerts.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378ABD29139F0BCA00928FBF /* AppAlerts.strings */; };
 		378ABD32139F0BCA00928FBF /* AppAlerts.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378ABD29139F0BCA00928FBF /* AppAlerts.strings */; };
-		378ABD33139F0BCA00928FBF /* DataTableUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378ABD2B139F0BCA00928FBF /* DataTableUI.strings */; };
 		378ABD34139F0BCA00928FBF /* DataTableUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378ABD2B139F0BCA00928FBF /* DataTableUI.strings */; };
-		378ABD35139F0BCA00928FBF /* StandardUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378ABD2D139F0BCA00928FBF /* StandardUI.strings */; };
 		378ABD36139F0BCA00928FBF /* StandardUI.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378ABD2D139F0BCA00928FBF /* StandardUI.strings */; };
-		378AFC81100BDD640040706A /* CommitteesDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 378AFC7F100BDD640040706A /* CommitteesDataSource.m */; };
-		378AFC84100BDD940040706A /* LegislatorsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 378AFC82100BDD940040706A /* LegislatorsDataSource.m */; };
-		378B57AA1219913400F7ED0B /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 378B57A91219913400F7ED0B /* MapViewController.m */; };
-		378B57BE121994C400F7ED0B /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 3767140011E8319900D004C8 /* UIDevice-Hardware.m */; };
-		378B58FB1219BB9C00F7ED0B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 378B58FA1219BB9C00F7ED0B /* CoreLocation.framework */; };
-		378E1242130F4D6100C425D4 /* BillsMenuDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F4A815130CAA4F00705EDD /* BillsMenuDataSource.m */; };
-		378E1247130F4D7900C425D4 /* BillsMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CFBA0312FE8936007C3808 /* BillsMasterViewController.m */; };
-		379393FE123B1A82003103B3 /* CommitteeMemberCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 379393FD123B1A82003103B3 /* CommitteeMemberCellView.m */; };
-		3795B5041E1FFE6B008F6FD9 /* SLToastKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3795B4FF1E1FFE42008F6FD9 /* SLToastKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		379B9CD11250FE7E0032E616 /* TexLegeReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 379B9CD01250FE7E0032E616 /* TexLegeReachability.m */; };
-		379C1EEA1012DF28007844B5 /* NotesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 379C1EE81012DF28007844B5 /* NotesViewController.m */; };
-		379C1F031012E0CD007844B5 /* NotesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 379C1F021012E0CD007844B5 /* NotesView.xib */; };
-		379C8C8B139A03230035C321 /* grabthumb.png in Resources */ = {isa = PBXBuildFile; fileRef = 379C8C89139A03230035C321 /* grabthumb.png */; };
-		379C8C8C139A03230035C321 /* grabthumb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 379C8C8A139A03230035C321 /* grabthumb@2x.png */; };
 		379C8C8D139A03230035C321 /* grabthumb.png in Resources */ = {isa = PBXBuildFile; fileRef = 379C8C89139A03230035C321 /* grabthumb.png */; };
 		379C8C8E139A03230035C321 /* grabthumb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 379C8C8A139A03230035C321 /* grabthumb@2x.png */; };
-		379D0D45122D5CDE0021969C /* TexLegeCoreDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 379D0CC2122D49000021969C /* TexLegeCoreDataUtils.m */; };
-		379D7190123C2B470094F45B /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379D718F123C2B470094F45B /* EventKitUI.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		379D7193123C2B510094F45B /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379D7144123C1FB80094F45B /* EventKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		379D72AA123CA39B0094F45B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2883B6A00D944613003F08B5 /* QuartzCore.framework */; };
-		37A002D21B41D16800B48D48 /* TexLege.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 37C9B67D11EDB28E001F0010 /* TexLege.xcdatamodeld */; };
-		37A0C6031211DB810067F7AF /* TexLegeEmailComposer.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0C6021211DB810067F7AF /* TexLegeEmailComposer.m */; };
-		37A0E4720FD2DEAA009B65F7 /* LinksDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0E4450FD2DEAA009B65F7 /* LinksDataSource.m */; };
-		37A0E4730FD2DEAA009B65F7 /* CapitolMapsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0E4480FD2DEAA009B65F7 /* CapitolMapsDetailViewController.m */; };
-		37A0E4740FD2DEAA009B65F7 /* GeneralTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0E44A0FD2DEAA009B65F7 /* GeneralTableViewController.m */; };
-		37A0E4750FD2DEAA009B65F7 /* CapitolMapsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0E44E0FD2DEAA009B65F7 /* CapitolMapsDataSource.m */; };
-		37A2CCF2122C129B00339495 /* locationarrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A2CCF0122C129B00339495 /* locationarrow.png */; };
-		37A2CCF3122C129B00339495 /* locationarrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A2CCF1122C129B00339495 /* locationarrow@2x.png */; };
-		37A2CCF6122C173B00339495 /* MapViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37A2CCF5122C173B00339495 /* MapViewController~iphone.xib */; };
-		37A72064122EB9A30015AAE0 /* TexLegeInfoImage~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A72062122EB9A30015AAE0 /* TexLegeInfoImage~ipad.png */; };
-		37A720AE122ECBBD0015AAE0 /* IconWood_80.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A720AC122ECBBD0015AAE0 /* IconWood_80.png */; };
-		37A720B4122ECD3B0015AAE0 /* TexLegeInfo~iphone.htm in Resources */ = {isa = PBXBuildFile; fileRef = 37A720B3122ECD3B0015AAE0 /* TexLegeInfo~iphone.htm */; };
 		37A8F14513315D4D00085AAF /* BillMetadataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A8F14413315D4D00085AAF /* BillMetadataLoader.m */; };
-		37A8F14613315D4D00085AAF /* BillMetadataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A8F14413315D4D00085AAF /* BillMetadataLoader.m */; };
 		37A9D3181D7F335F00403A59 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA2716A22959005C7CCE /* ImageIO.framework */; };
 		37A9D3191D7F336B00403A59 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 377075421397E4C300E82CA8 /* AddressBook.framework */; };
-		37AD57BB11DA651700D68934 /* CommitteeDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AD57B911DA651500D68934 /* CommitteeDetailViewController.m */; };
-		37AD57BC11DA651700D68934 /* CommitteeDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37AD57BA11DA651700D68934 /* CommitteeDetailViewController~iphone.xib */; };
-		37B253E512EBF681000B6EE2 /* StafferObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B253E412EBF681000B6EE2 /* StafferObj+RestKit.m */; };
-		37B3CE911249365E00FB3F94 /* MapMiniDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B3CE901249365E00FB3F94 /* MapMiniDetailViewController.m */; };
-		37B3CE991249373100FB3F94 /* MapMiniDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B3CE981249373100FB3F94 /* MapMiniDetailViewController~ipad.xib */; };
-		37B3CEB412493D3100FB3F94 /* MapMiniDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B3CEB312493D3100FB3F94 /* MapMiniDetailViewController~iphone.xib */; };
 		37B614F4139D1863003B85B4 /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
 		37B614F5139D1863003B85B4 /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
-		37B64234120FE9FF0076B196 /* LegislatorMasterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37B64233120FE9FF0076B196 /* LegislatorMasterCell.m */; };
-		37B8A0CF1DCE5EFC0073BFB0 /* TabBarController~iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37B8A0CE1DCE5EFC0073BFB0 /* TabBarController~iPad.xib */; };
-		37BA166813B2FCFA0088057B /* 103-map-inv@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F0139D1863003B85B4 /* 103-map-inv@2x.png */; };
-		37BA166913B2FCFB0088057B /* 103-map-inv.png in Resources */ = {isa = PBXBuildFile; fileRef = 37B614F1139D1863003B85B4 /* 103-map-inv.png */; };
-		37BF251211D64B5400B71688 /* LegislatorDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37BF251111D64B5400B71688 /* LegislatorDetailViewController~ipad.xib */; };
-		37C4C0FD1E1DACE800EBE66B /* SLAbstractCodableObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C0FC1E1DACE800EBE66B /* SLAbstractCodableObject.m */; };
-		37C4C1051E1DAD4200EBE66B /* PartyPartisanshipObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C1041E1DAD4200EBE66B /* PartyPartisanshipObj.m */; };
 		37C4C12E1E1EB1A900EBE66B /* PartyPartisanshipObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4C1041E1DAD4200EBE66B /* PartyPartisanshipObj.m */; };
-		37C7845914D30444006BBEDE /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C7845814D30444006BBEDE /* LocalyticsDatabase.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37C7845A14D30444006BBEDE /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C7845814D30444006BBEDE /* LocalyticsDatabase.m */; };
-		37C7845C14D304B2006BBEDE /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845B14D304B2006BBEDE /* libsqlite3.dylib */; };
 		37C7845D14D304DF006BBEDE /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845B14D304B2006BBEDE /* libsqlite3.dylib */; };
-		37C7845F14D30A98006BBEDE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845E14D30A97006BBEDE /* libz.dylib */; };
 		37C7846014D30AA3006BBEDE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37C7845E14D30A97006BBEDE /* libz.dylib */; };
-		37C864E71DD7E73B000B0B60 /* libSDWebImage iOS static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA1116A227CC005C7CCE /* libSDWebImage iOS static.a */; };
-		37C945DB1237DDC000D2D582 /* PinHeadBlue.png in Resources */ = {isa = PBXBuildFile; fileRef = 37C945D91237DDC000D2D582 /* PinHeadBlue.png */; };
-		37C945DC1237DDC000D2D582 /* PinHeadBlue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37C945DA1237DDC000D2D582 /* PinHeadBlue@2x.png */; };
-		37C94A2712387ABA00D2D582 /* DistrictMapMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C94A2612387ABA00D2D582 /* DistrictMapMasterViewController.m */; };
-		37C94A3A12387D6500D2D582 /* DistrictMapMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37C94A3912387D6500D2D582 /* DistrictMapMasterViewController.xib */; };
 		37CD09B113A2A6F100F4C68B /* StateMetaLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CD09B013A2A6F100F4C68B /* StateMetaLoader.m */; };
-		37CD09B213A2A6F100F4C68B /* StateMetaLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CD09B013A2A6F100F4C68B /* StateMetaLoader.m */; };
 		37CD0A6B13A340E100F4C68B /* NSString+DKAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CD0A6A13A340E100F4C68B /* NSString+DKAdditions.m */; };
 		37CD0A9313A3567900F4C68B /* Abbreviations.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37CD0A9113A3567900F4C68B /* Abbreviations.strings */; };
-		37CD0A9413A3567900F4C68B /* Abbreviations.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37CD0A9113A3567900F4C68B /* Abbreviations.strings */; };
-		37CDD9CD12150651004EC1B7 /* MapViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37CDD9CC12150651004EC1B7 /* MapViewController~ipad.xib */; };
-		37CF6BB91226597500456D29 /* UIColor-Expanded.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CF6BB81226597500456D29 /* UIColor-Expanded.m */; };
-		37D0A8EF123ED55A00232B2C /* DistrictPinAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0A8EE123ED55A00232B2C /* DistrictPinAnnotationView.m */; };
 		37D0D1E81357A198003DA1BB /* CommitteeObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1D91357A198003DA1BB /* CommitteeObj.m */; };
 		37D0D1E91357A198003DA1BB /* LinkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DB1357A198003DA1BB /* LinkObj.m */; };
 		37D0D1EA1357A198003DA1BB /* LegislatorObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DD1357A198003DA1BB /* LegislatorObj.m */; };
@@ -420,104 +485,39 @@
 		37D0D1ED1357A198003DA1BB /* DistrictOfficeObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E31357A198003DA1BB /* DistrictOfficeObj.m */; };
 		37D0D1EE1357A198003DA1BB /* WnomObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E51357A198003DA1BB /* WnomObj.m */; };
 		37D0D1EF1357A198003DA1BB /* DistrictMapObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E71357A198003DA1BB /* DistrictMapObj.m */; };
-		37D0D1F01357A198003DA1BB /* CommitteeObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1D91357A198003DA1BB /* CommitteeObj.m */; };
-		37D0D1F41357A198003DA1BB /* StafferObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E11357A198003DA1BB /* StafferObj.m */; };
-		37D0D1F51357A198003DA1BB /* DistrictOfficeObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E31357A198003DA1BB /* DistrictOfficeObj.m */; };
-		37D0D1F61357A198003DA1BB /* WnomObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E51357A198003DA1BB /* WnomObj.m */; };
-		37D0D1F71357A198003DA1BB /* DistrictMapObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1E71357A198003DA1BB /* DistrictMapObj.m */; };
 		37D0D20A1357A534003DA1BB /* DistrictOfficeObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D2091357A534003DA1BB /* DistrictOfficeObj+RestKit.m */; };
-		37D0D20B1357A534003DA1BB /* DistrictOfficeObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D2091357A534003DA1BB /* DistrictOfficeObj+RestKit.m */; };
 		37D0D2101357A685003DA1BB /* DistrictMapObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D20F1357A685003DA1BB /* DistrictMapObj+RestKit.m */; };
-		37D0D2111357A685003DA1BB /* DistrictMapObj+RestKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D20F1357A685003DA1BB /* DistrictMapObj+RestKit.m */; };
-		37D1C527120272F000507757 /* CalendarDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D1C526120272F000507757 /* CalendarDetailViewController.m */; };
-		37D1C5CD12027D2D00507757 /* CalendarDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C5CC12027D2D00507757 /* CalendarDetailViewController~ipad.xib */; };
-		37D1C89F120344D000507757 /* 01-refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1C806120344D000507757 /* 01-refresh.png */; };
-		37D3649D1236869200CCF86E /* UserPinAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D3649C1236869200CCF86E /* UserPinAnnotationView.m */; };
-		37D364F612369DDC00CCF86E /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D364F512369DDC00CCF86E /* AddressBookUI.framework */; };
 		37D38B0F132ECFFA002F1730 /* BillsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D38B0E132ECFFA002F1730 /* BillsListViewController.m */; };
-		37D38B10132ECFFB002F1730 /* BillsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D38B0E132ECFFA002F1730 /* BillsListViewController.m */; };
-		37D46C01123B483800C2C403 /* CommitteeMemberCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D46C00123B483800C2C403 /* CommitteeMemberCell.m */; };
-		37D46DCA123BFA9800C2C403 /* CommitteeDetailViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37D46DC9123BFA9800C2C403 /* CommitteeDetailViewController~ipad.xib */; };
-		37D6E82810175F0800D4D7C2 /* UtilityMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D6E82710175F0800D4D7C2 /* UtilityMethods.m */; };
-		37D6E8C51017772B00D4D7C2 /* Map.SamHoustonLoc.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 37D6E8C41017772B00D4D7C2 /* Map.SamHoustonLoc.pdf */; };
-		37E2068412204D5000103D76 /* DistrictOfficeObj+MapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E2068112204D5000103D76 /* DistrictOfficeObj+MapKit.m */; };
-		37E2068512204D5000103D76 /* DistrictMapObj+MapKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E2068312204D5000103D76 /* DistrictMapObj+MapKit.m */; };
-		37E207C71220779B00103D76 /* bluestar.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C31220779B00103D76 /* bluestar.png */; };
-		37E207C81220779B00103D76 /* bluestar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C41220779B00103D76 /* bluestar@2x.png */; };
-		37E207C91220779B00103D76 /* redstar.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C51220779B00103D76 /* redstar.png */; };
-		37E207CA1220779B00103D76 /* redstar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E207C61220779B00103D76 /* redstar@2x.png */; };
-		37E208B51E11933800D95154 /* SLToastManager+TexLege.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E208B31E117CCD00D95154 /* SLToastManager+TexLege.m */; };
-		37E208C31E13226500D95154 /* SLFRestKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 37E208C01E1321D700D95154 /* SLFRestKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		37E36CF1139E695C00917F40 /* BillsRecentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36CF0139E695C00917F40 /* BillsRecentViewController.m */; };
 		37E36CF2139E695C00917F40 /* BillsRecentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36CF0139E695C00917F40 /* BillsRecentViewController.m */; };
-		37E36CF9139E69F800917F40 /* 138-scales.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E36CF7139E69F800917F40 /* 138-scales.png */; };
-		37E36CFA139E69F800917F40 /* 138-scales@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E36CF8139E69F800917F40 /* 138-scales@2x.png */; };
 		37E36CFB139E69F800917F40 /* 138-scales.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E36CF7139E69F800917F40 /* 138-scales.png */; };
 		37E36CFC139E69F800917F40 /* 138-scales@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E36CF8139E69F800917F40 /* 138-scales@2x.png */; };
-		37E36D03139E6D0A00917F40 /* VTPGAdvancedLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36D02139E6D0A00917F40 /* VTPGAdvancedLog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37E36D04139E6D0A00917F40 /* VTPGAdvancedLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E36D02139E6D0A00917F40 /* VTPGAdvancedLog.m */; };
-		37E635FC139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E635FA139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m */; };
 		37E635FE139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E635FA139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m */; };
-		37E9848A12217C8600950298 /* silverstar.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9848812217C8600950298 /* silverstar.png */; };
-		37E9848B12217C8600950298 /* silverstar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9848912217C8600950298 /* silverstar@2x.png */; };
-		37E9CA2816A22959005C7CCE /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E9CA2716A22959005C7CCE /* ImageIO.framework */; };
-		37E9CA2D16A22D17005C7CCE /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9CA2B16A22D17005C7CCE /* placeholder.png */; };
 		37E9CA2E16A22D17005C7CCE /* placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9CA2B16A22D17005C7CCE /* placeholder.png */; };
-		37E9CA2F16A22D17005C7CCE /* placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9CA2C16A22D17005C7CCE /* placeholder@2x.png */; };
 		37E9CA3016A22D17005C7CCE /* placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E9CA2C16A22D17005C7CCE /* placeholder@2x.png */; };
-		37EAE54F121A6D9A00BF4277 /* UserPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EAE54E121A6D9A00BF4277 /* UserPinAnnotation.m */; };
 		37F2C9EE1343AD45001D9D7B /* starButtonLargeOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9EA1343AD45001D9D7B /* starButtonLargeOff.png */; };
 		37F2C9EF1343AD45001D9D7B /* starButtonLargeOff@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9EB1343AD45001D9D7B /* starButtonLargeOff@2x.png */; };
 		37F2C9F01343AD45001D9D7B /* starButtonLargeOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9EC1343AD45001D9D7B /* starButtonLargeOn.png */; };
 		37F2C9F11343AD45001D9D7B /* starButtonLargeOn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9ED1343AD45001D9D7B /* starButtonLargeOn@2x.png */; };
-		37F2C9F21343AD45001D9D7B /* starButtonLargeOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9EA1343AD45001D9D7B /* starButtonLargeOff.png */; };
-		37F2C9F31343AD45001D9D7B /* starButtonLargeOff@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9EB1343AD45001D9D7B /* starButtonLargeOff@2x.png */; };
-		37F2C9F41343AD45001D9D7B /* starButtonLargeOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9EC1343AD45001D9D7B /* starButtonLargeOn.png */; };
-		37F2C9F51343AD45001D9D7B /* starButtonLargeOn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F2C9ED1343AD45001D9D7B /* starButtonLargeOn@2x.png */; };
 		37F2CA111343AE40001D9D7B /* DDActionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F2CA101343AE40001D9D7B /* DDActionHeaderView.m */; };
-		37F2CA121343AE40001D9D7B /* DDActionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F2CA101343AE40001D9D7B /* DDActionHeaderView.m */; };
 		37F3577B13CA684200C1EE29 /* gavel.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3575E13CA684200C1EE29 /* gavel.png */; };
 		37F3577C13CA684200C1EE29 /* gavel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3575F13CA684200C1EE29 /* gavel@2x.png */; };
 		37F3579513CA684200C1EE29 /* multipins.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3577913CA684200C1EE29 /* multipins.png */; };
 		37F3579613CA684200C1EE29 /* multipins@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3577A13CA684200C1EE29 /* multipins@2x.png */; };
-		37F3579713CA684200C1EE29 /* gavel.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3575E13CA684200C1EE29 /* gavel.png */; };
-		37F3579813CA684200C1EE29 /* gavel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3575F13CA684200C1EE29 /* gavel@2x.png */; };
-		37F357B113CA684200C1EE29 /* multipins.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3577913CA684200C1EE29 /* multipins.png */; };
-		37F357B213CA684200C1EE29 /* multipins@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F3577A13CA684200C1EE29 /* multipins@2x.png */; };
-		37F4926F1311C556005D5DE1 /* BillsDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37F4926E1311C556005D5DE1 /* BillsDetailViewController~iphone.xib */; };
-		37F492761311C640005D5DE1 /* BillsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F492751311C640005D5DE1 /* BillsDetailViewController.m */; };
-		37F7C05814D32775000853D5 /* KalDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04314D32775000853D5 /* KalDataSource.m */; };
 		37F7C05914D32775000853D5 /* KalDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04314D32775000853D5 /* KalDataSource.m */; };
-		37F7C05A14D32775000853D5 /* KalDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04514D32775000853D5 /* KalDate.m */; };
 		37F7C05B14D32775000853D5 /* KalDate.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04514D32775000853D5 /* KalDate.m */; };
-		37F7C05C14D32775000853D5 /* KalGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04714D32775000853D5 /* KalGridView.m */; };
 		37F7C05D14D32775000853D5 /* KalGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04714D32775000853D5 /* KalGridView.m */; };
-		37F7C05E14D32775000853D5 /* KalLogic.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04914D32775000853D5 /* KalLogic.m */; };
 		37F7C05F14D32775000853D5 /* KalLogic.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04914D32775000853D5 /* KalLogic.m */; };
-		37F7C06014D32775000853D5 /* KalMonthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04B14D32775000853D5 /* KalMonthView.m */; };
 		37F7C06114D32775000853D5 /* KalMonthView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04B14D32775000853D5 /* KalMonthView.m */; };
-		37F7C06214D32775000853D5 /* KalPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04D14D32775000853D5 /* KalPrivate.m */; };
 		37F7C06314D32775000853D5 /* KalPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04D14D32775000853D5 /* KalPrivate.m */; };
-		37F7C06414D32775000853D5 /* KalTileView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04F14D32775000853D5 /* KalTileView.m */; };
 		37F7C06514D32775000853D5 /* KalTileView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C04F14D32775000853D5 /* KalTileView.m */; };
-		37F7C06614D32775000853D5 /* KalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05114D32775000853D5 /* KalView.m */; };
 		37F7C06714D32775000853D5 /* KalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05114D32775000853D5 /* KalView.m */; };
-		37F7C06814D32775000853D5 /* KalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05314D32775000853D5 /* KalViewController.m */; };
 		37F7C06914D32775000853D5 /* KalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05314D32775000853D5 /* KalViewController.m */; };
-		37F7C06A14D32775000853D5 /* NSDateAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05514D32775000853D5 /* NSDateAdditions.m */; };
 		37F7C06B14D32775000853D5 /* NSDateAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05514D32775000853D5 /* NSDateAdditions.m */; };
-		37F7C06C14D32775000853D5 /* UIViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05714D32775000853D5 /* UIViewAdditions.m */; };
 		37F7C06D14D32775000853D5 /* UIViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F7C05714D32775000853D5 /* UIViewAdditions.m */; };
-		37FC487013110A9E00A4C0B2 /* BillSearchDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FC486F13110A9E00A4C0B2 /* BillSearchDataSource.m */; };
-		37FE1CDD13CB75FD00655550 /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CD913CB75FD00655550 /* LocalyticsSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		37FE1CDE13CB75FD00655550 /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CDB13CB75FD00655550 /* UploaderThread.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37FE1CDF13CB75FD00655550 /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CD913CB75FD00655550 /* LocalyticsSession.m */; };
 		37FE1CE013CB75FD00655550 /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1CDB13CB75FD00655550 /* UploaderThread.m */; };
-		37FE1E0C13CB8E3300655550 /* AppendingFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1D9A13CB8E3300655550 /* AppendingFlowView.m */; };
 		37FE1E5613CB8E3300655550 /* AppendingFlowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FE1D9A13CB8E3300655550 /* AppendingFlowView.m */; };
-		37FE46301357BF1600E8C038 /* CommitteePositionObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DF1357A198003DA1BB /* CommitteePositionObj.m */; };
-		37FE46311357BF1900E8C038 /* LinkObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DB1357A198003DA1BB /* LinkObj.m */; };
-		37FE46321357BF2100E8C038 /* LegislatorObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D0D1DD1357A198003DA1BB /* LegislatorObj.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -527,6 +527,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 53761307155AD0D5005750A4;
 			remoteInfo = SDWebImage;
+		};
+		371457F41E4144F100AEE449 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3795B4F91E1FFE42008F6FD9 /* SLToastKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 37CF0B351E05D8DD00323E1C;
+			remoteInfo = SLToastKit;
+		};
+		371457F61E4144F100AEE449 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37E208BA1E1321D700D95154 /* RestKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 370859FF1CEBCB960035BBC0;
+			remoteInfo = SLFRestKit;
 		};
 		3749152F1DCBAB4B00C3B765 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -556,13 +570,6 @@
 			remoteGlobalIDString = 37CF0B3F1E05D8DD00323E1C;
 			remoteInfo = SLToastKitTests;
 		};
-		3795B5021E1FFE56008F6FD9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3795B4F91E1FFE42008F6FD9 /* SLToastKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 37CF0B351E05D8DD00323E1C;
-			remoteInfo = SLToastKit;
-		};
 		37B8A0D61DCE5EFD0073BFB0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
@@ -591,13 +598,6 @@
 			remoteGlobalIDString = 37085A001CEBCB960035BBC0;
 			remoteInfo = SLFRestKit;
 		};
-		37E208C11E13222D00D95154 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 37E208BA1E1321D700D95154 /* RestKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 370859FF1CEBCB960035BBC0;
-			remoteInfo = SLFRestKit;
-		};
 		37E9CA1016A227CC005C7CCE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 37E9C9FD16A227CC005C7CCE /* SDWebImage.xcodeproj */;
@@ -608,14 +608,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		37E208AE1E10DB0F00D95154 /* Embed Frameworks */ = {
+		371458F21E4144F100AEE449 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3795B5041E1FFE6B008F6FD9 /* SLToastKit.framework in Embed Frameworks */,
-				37E208C31E13226500D95154 /* SLFRestKit.framework in Embed Frameworks */,
+				371459031E41455500AEE449 /* SLFRestKit.framework in Embed Frameworks */,
+				371458F31E4144F100AEE449 /* SLToastKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -627,7 +627,6 @@
 		1D3623240D0F684500981E51 /* TexLegeAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TexLegeAppDelegate.h; path = "Classes/Application Support/TexLegeAppDelegate.h"; sourceTree = SOURCE_ROOT; };
 		1D3623250D0F684500981E51 /* TexLegeAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TexLegeAppDelegate.m; path = "Classes/Application Support/TexLegeAppDelegate.m"; sourceTree = SOURCE_ROOT; };
 		1D3623EB0D0F72F000981E51 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		1D6058910D05DD3D006BFB54 /* TexLege.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TexLege.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2883B6A00D944613003F08B5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "Classes/Application Support/main.m"; sourceTree = SOURCE_ROOT; };
@@ -656,6 +655,8 @@
 		370EAD301338029E007788BC /* OpenLegislativeAPIs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenLegislativeAPIs.m; sourceTree = "<group>"; };
 		370F7AA711FEAF730004AC50 /* PolygonMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PolygonMath.h; path = Classes/MapKit/PolygonMath.h; sourceTree = SOURCE_ROOT; };
 		370F7AA811FEAF730004AC50 /* PolygonMath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PolygonMath.m; path = Classes/MapKit/PolygonMath.m; sourceTree = SOURCE_ROOT; };
+		371458FA1E4144F100AEE449 /* TexLege Distribution.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "TexLege Distribution.app"; path = TexLege.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		371459021E41455500AEE449 /* SLFRestKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SLFRestKit.framework; path = "Builds/Build/Products/Debug-iphoneos/SLFRestKit.framework"; sourceTree = "<group>"; };
 		37155726100859E700FA57DB /* CommitteeObj+RestKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CommitteeObj+RestKit.h"; sourceTree = "<group>"; };
 		37155727100859E700FA57DB /* CommitteeObj+RestKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CommitteeObj+RestKit.m"; sourceTree = "<group>"; };
 		3718895A12EE917B00E3300D /* NSDate+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Helper.h"; sourceTree = "<group>"; };
@@ -1167,29 +1168,29 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1D60588F0D05DD3D006BFB54 /* Frameworks */ = {
+		371458DE1E4144F100AEE449 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37C864E71DD7E73B000B0B60 /* libSDWebImage iOS static.a in Frameworks */,
-				37E9CA2816A22959005C7CCE /* ImageIO.framework in Frameworks */,
-				37C7845F14D30A98006BBEDE /* libz.dylib in Frameworks */,
-				3709AF0D101FBF5100C1061B /* SystemConfiguration.framework in Frameworks */,
-				37C7845C14D304B2006BBEDE /* libsqlite3.dylib in Frameworks */,
-				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
-				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
-				1D3623EC0D0F72F000981E51 /* CoreGraphics.framework in Frameworks */,
-				3729EC2910077F83000AD804 /* CoreData.framework in Frameworks */,
-				370298CE11F97C7A00D65FCB /* MapKit.framework in Frameworks */,
-				37413B1712114D09003CA7E8 /* MessageUI.framework in Frameworks */,
-				378B58FB1219BB9C00F7ED0B /* CoreLocation.framework in Frameworks */,
-				37D364F612369DDC00CCF86E /* AddressBookUI.framework in Frameworks */,
-				379D7190123C2B470094F45B /* EventKitUI.framework in Frameworks */,
-				379D7193123C2B510094F45B /* EventKit.framework in Frameworks */,
-				379D72AA123CA39B0094F45B /* QuartzCore.framework in Frameworks */,
-				3775C7FC131C459900638ED4 /* CFNetwork.framework in Frameworks */,
-				3775C7FE131C459900638ED4 /* MobileCoreServices.framework in Frameworks */,
-				377075431397E4C300E82CA8 /* AddressBook.framework in Frameworks */,
+				371458DF1E4144F100AEE449 /* libSDWebImage iOS static.a in Frameworks */,
+				371458E01E4144F100AEE449 /* ImageIO.framework in Frameworks */,
+				371458E11E4144F100AEE449 /* libz.dylib in Frameworks */,
+				371458E21E4144F100AEE449 /* SystemConfiguration.framework in Frameworks */,
+				371458E31E4144F100AEE449 /* libsqlite3.dylib in Frameworks */,
+				371458E41E4144F100AEE449 /* Foundation.framework in Frameworks */,
+				371458E51E4144F100AEE449 /* UIKit.framework in Frameworks */,
+				371458E61E4144F100AEE449 /* CoreGraphics.framework in Frameworks */,
+				371458E71E4144F100AEE449 /* CoreData.framework in Frameworks */,
+				371458E81E4144F100AEE449 /* MapKit.framework in Frameworks */,
+				371458E91E4144F100AEE449 /* MessageUI.framework in Frameworks */,
+				371458EA1E4144F100AEE449 /* CoreLocation.framework in Frameworks */,
+				371458EB1E4144F100AEE449 /* AddressBookUI.framework in Frameworks */,
+				371458EC1E4144F100AEE449 /* EventKitUI.framework in Frameworks */,
+				371458ED1E4144F100AEE449 /* EventKit.framework in Frameworks */,
+				371458EE1E4144F100AEE449 /* QuartzCore.framework in Frameworks */,
+				371458EF1E4144F100AEE449 /* CFNetwork.framework in Frameworks */,
+				371458F01E4144F100AEE449 /* MobileCoreServices.framework in Frameworks */,
+				371458F11E4144F100AEE449 /* AddressBook.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1241,8 +1242,8 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* TexLege.app */,
 				37735C101323104A0033F343 /* TexLege.app */,
+				371458FA1E4144F100AEE449 /* TexLege Distribution.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1256,7 +1257,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				3738E0791226A86B00DDD605 /* Settings.bundle */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -1264,11 +1264,12 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3738E0791226A86B00DDD605 /* Settings.bundle */,
+				8D1107310486CEB800E47090 /* Info.plist */,
 				3768911A19ACE0F900E38DEB /* Images.xcassets */,
 				372FDB25139F1D4500D39374 /* Strings */,
 				374036D91186AE2F0047E70A /* Resources-iPad */,
 				378678F511E452EF0003690F /* Resources-iPhone */,
-				8D1107310486CEB800E47090 /* Info.plist */,
 				37B2C1FA130BCEFC00140212 /* BillsMasterViewController.xib */,
 				373B820511E378CD00A81142 /* LegislatorMasterViewController.xib */,
 				3735DFFD120917490000AF5A /* CommitteeMasterViewController.xib */,
@@ -1289,6 +1290,7 @@
 			children = (
 				37C7845B14D304B2006BBEDE /* libsqlite3.dylib */,
 				37C7845E14D30A97006BBEDE /* libz.dylib */,
+				371459021E41455500AEE449 /* SLFRestKit.framework */,
 				37E9CA2716A22959005C7CCE /* ImageIO.framework */,
 				3775C7FB131C459900638ED4 /* CFNetwork.framework */,
 				3775C7FD131C459900638ED4 /* MobileCoreServices.framework */,
@@ -2219,25 +2221,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058900D05DD3D006BFB54 /* TexLege */ = {
+		371457F21E4144F100AEE449 /* TexLege */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "TexLege" */;
+			buildConfigurationList = 371458F51E4144F100AEE449 /* Build configuration list for PBXNativeTarget "TexLege" */;
 			buildPhases = (
-				37C6FECE1243A13E00B158D8 /* ShellScript */,
-				1D60588D0D05DD3D006BFB54 /* Resources */,
-				1D60588E0D05DD3D006BFB54 /* Sources */,
-				1D60588F0D05DD3D006BFB54 /* Frameworks */,
-				37E208AE1E10DB0F00D95154 /* Embed Frameworks */,
+				371457F71E4144F100AEE449 /* ShellScript */,
+				371457F81E4144F100AEE449 /* Resources */,
+				371458641E4144F100AEE449 /* Sources */,
+				371458DE1E4144F100AEE449 /* Frameworks */,
+				371458F21E4144F100AEE449 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				3795B5031E1FFE56008F6FD9 /* PBXTargetDependency */,
-				37E208C21E13222D00D95154 /* PBXTargetDependency */,
+				371457F31E4144F100AEE449 /* PBXTargetDependency */,
+				371457F51E4144F100AEE449 /* PBXTargetDependency */,
 			);
 			name = TexLege;
 			productName = foo;
-			productReference = 1D6058910D05DD3D006BFB54 /* TexLege.app */;
+			productReference = 371458FA1E4144F100AEE449 /* TexLege Distribution.app */;
 			productType = "com.apple.product-type.application";
 		};
 		3773596F1323104A0033F343 /* TexLege (Seeding DB) */ = {
@@ -2269,13 +2271,13 @@
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Gregory S. Combs";
 				TargetAttributes = {
-					1D6058900D05DD3D006BFB54 = {
+					371457F21E4144F100AEE449 = {
 						DevelopmentTeam = X69RXDFP2D;
 					};
 				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TexLege" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -2300,7 +2302,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* TexLege */,
+				371457F21E4144F100AEE449 /* TexLege */,
 				3773596F1323104A0033F343 /* TexLege (Seeding DB) */,
 			);
 		};
@@ -2373,117 +2375,117 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1D60588D0D05DD3D006BFB54 /* Resources */ = {
+		371457F81E4144F100AEE449 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3738E07A1226A86B00DDD605 /* Settings.bundle in Resources */,
-				379C1F031012E0CD007844B5 /* NotesView.xib in Resources */,
-				37BF251211D64B5400B71688 /* LegislatorDetailViewController~ipad.xib in Resources */,
-				37AD57BC11DA651700D68934 /* CommitteeDetailViewController~iphone.xib in Resources */,
-				3732A0F811DB203F009E8957 /* TabBarController~iPhone.xib in Resources */,
-				373B820611E378CD00A81142 /* LegislatorMasterViewController.xib in Resources */,
-				3786786311E442800003690F /* CapitolMapsDetailViewController.xib in Resources */,
-				37D1C5CD12027D2D00507757 /* CalendarDetailViewController~ipad.xib in Resources */,
-				37D1C89F120344D000507757 /* 01-refresh.png in Resources */,
-				3735DD3D12087CEF0000AF5A /* CalendarDetailViewController~iphone.xib in Resources */,
-				3735DFFF120917490000AF5A /* CommitteeMasterViewController.xib in Resources */,
-				3726FC3F120A99800043D6B9 /* 01-refresh@2x.png in Resources */,
-				3766EFC112109F110073C705 /* TexLegeStrings.plist in Resources */,
-				376B5BE20FC1DC640094D80B /* Map.WheelchairAccess.pdf in Resources */,
-				376B5BE30FC1DC640094D80B /* Map.CapitolComplex.pdf in Resources */,
-				376B5BE80FC1DC640094D80B /* Map.MonumentGuide.pdf in Resources */,
-				37674B2E1002C492003FD09F /* Map.Floor4.pdf in Resources */,
-				37674B2F1002C492003FD09F /* Map.Floor2.pdf in Resources */,
-				37674B301002C492003FD09F /* Map.FloorG.pdf in Resources */,
-				37674B311002C492003FD09F /* Map.Floor1.pdf in Resources */,
-				37674B321002C492003FD09F /* Map.FloorE1.pdf in Resources */,
-				3768911B19ACE0F900E38DEB /* Images.xcassets in Resources */,
-				37674B331002C492003FD09F /* Map.Floor3.pdf in Resources */,
-				37674B341002C492003FD09F /* Map.FloorE2.pdf in Resources */,
-				37D6E8C51017772B00D4D7C2 /* Map.SamHoustonLoc.pdf in Resources */,
-				37CDD9CD12150651004EC1B7 /* MapViewController~ipad.xib in Resources */,
-				3764E8CB1217B83F008DF726 /* NotesView~ipad.xib in Resources */,
-				37E207C71220779B00103D76 /* bluestar.png in Resources */,
-				37E207C81220779B00103D76 /* bluestar@2x.png in Resources */,
-				37E207C91220779B00103D76 /* redstar.png in Resources */,
-				37E207CA1220779B00103D76 /* redstar@2x.png in Resources */,
-				37E9848A12217C8600950298 /* silverstar.png in Resources */,
-				37E9848B12217C8600950298 /* silverstar@2x.png in Resources */,
-				37A2CCF2122C129B00339495 /* locationarrow.png in Resources */,
-				37A2CCF3122C129B00339495 /* locationarrow@2x.png in Resources */,
-				37A2CCF6122C173B00339495 /* MapViewController~iphone.xib in Resources */,
-				3760AB89139EFAA700386A90 /* TexLegeInfo~ipad.htm in Resources */,
-				37A72064122EB9A30015AAE0 /* TexLegeInfoImage~ipad.png in Resources */,
-				37A720AE122ECBBD0015AAE0 /* IconWood_80.png in Resources */,
-				37A720B4122ECD3B0015AAE0 /* TexLegeInfo~iphone.htm in Resources */,
-				372FDB23139F1CFB00D39374 /* LegislatorDetailViewController~iphone.xib in Resources */,
-				37C945DB1237DDC000D2D582 /* PinHeadBlue.png in Resources */,
-				37C945DC1237DDC000D2D582 /* PinHeadBlue@2x.png in Resources */,
-				37C94A3A12387D6500D2D582 /* DistrictMapMasterViewController.xib in Resources */,
-				37D46DCA123BFA9800C2C403 /* CommitteeDetailViewController~ipad.xib in Resources */,
-				37B8A0CF1DCE5EFC0073BFB0 /* TabBarController~iPad.xib in Resources */,
-				37B3CE991249373100FB3F94 /* MapMiniDetailViewController~ipad.xib in Resources */,
-				37B3CEB412493D3100FB3F94 /* MapMiniDetailViewController~iphone.xib in Resources */,
-				372D061C12FC799200E63696 /* Kal.bundle in Resources */,
-				37507ED5130F64BF00A925F5 /* 11-clock.png in Resources */,
-				37507ED6130F64D000A925F5 /* 28-star.png in Resources */,
-				37507ED7130F64D400A925F5 /* 30-key.png in Resources */,
-				37507ED8130F64EE00A925F5 /* 96-book.png in Resources */,
-				37507F36130F816500A925F5 /* BillsMasterViewController.xib in Resources */,
-				37F4926F1311C556005D5DE1 /* BillsDetailViewController~iphone.xib in Resources */,
-				371E96F6131211E50035439E /* BillsDetailViewController~ipad.xib in Resources */,
-				37735E23132363930033F343 /* TexLegeSeed.sqlite in Resources */,
-				376C2812132583C800EB7688 /* WnomAggregateObj.json in Resources */,
-				374DA89B1325C6FB00CCBC40 /* CapitolMaps.plist in Resources */,
-				376F62D5132973D800F2B3DA /* BillMetadata.json in Resources */,
-				37F2C9F21343AD45001D9D7B /* starButtonLargeOff.png in Resources */,
-				37F2C9F31343AD45001D9D7B /* starButtonLargeOff@2x.png in Resources */,
-				37F2C9F41343AD45001D9D7B /* starButtonLargeOn.png in Resources */,
-				37F2C9F51343AD45001D9D7B /* starButtonLargeOn@2x.png in Resources */,
-				371A44341346597000DFDBB8 /* VoteNay.png in Resources */,
-				371A44351346597000DFDBB8 /* VoteNay@2x.png in Resources */,
-				371A44361346597000DFDBB8 /* VotePNV.png in Resources */,
-				371A44371346597000DFDBB8 /* VotePNV@2x.png in Resources */,
-				371A44381346597000DFDBB8 /* VoteYea.png in Resources */,
-				371A44391346597000DFDBB8 /* VoteYea@2x.png in Resources */,
-				376DFE9813492C1400360BF4 /* error.png in Resources */,
-				376DFE9A13492C1400360BF4 /* error@2x.png in Resources */,
-				379C8C8B139A03230035C321 /* grabthumb.png in Resources */,
-				379C8C8C139A03230035C321 /* grabthumb@2x.png in Resources */,
-				377A4F4D139A9BC100CDBACE /* 113-navigation-inv.png in Resources */,
-				377A4F4E139A9BC100CDBACE /* 113-navigation-inv@2x.png in Resources */,
-				377A4F50139A9BC100CDBACE /* 123-id-card-inv.png in Resources */,
-				377A4F51139A9BC100CDBACE /* 123-id-card-inv@2x.png in Resources */,
-				377A4F53139A9BC100CDBACE /* 60-signpost-inv.png in Resources */,
-				377A4F54139A9BC100CDBACE /* 60-signpost-inv@2x.png in Resources */,
-				377A4F58139A9BC100CDBACE /* 73-radar-inv.png in Resources */,
-				377A4F59139A9BC100CDBACE /* 73-radar-inv@2x.png in Resources */,
-				377A4F5C139A9BC100CDBACE /* 83-calendar-inv.png in Resources */,
-				377A4F5D139A9BC100CDBACE /* 83-calendar-inv@2x.png in Resources */,
-				377A4F5F139A9BC100CDBACE /* gavel-inv.png in Resources */,
-				377A4F60139A9BC100CDBACE /* gavel-inv@2x.png in Resources */,
-				377A4F7A139A9C0C00CDBACE /* 11-clock@2x.png in Resources */,
-				377A4F7B139A9C0C00CDBACE /* 28-star@2x.png in Resources */,
-				377A4F7C139A9C0C00CDBACE /* 30-key@2x.png in Resources */,
-				377A4F7D139A9C0C00CDBACE /* 96-book@2x.png in Resources */,
-				37E36CF9139E69F800917F40 /* 138-scales.png in Resources */,
-				37E36CFA139E69F800917F40 /* 138-scales@2x.png in Resources */,
-				378ABD31139F0BCA00928FBF /* AppAlerts.strings in Resources */,
-				378ABD33139F0BCA00928FBF /* DataTableUI.strings in Resources */,
-				378ABD35139F0BCA00928FBF /* StandardUI.strings in Resources */,
-				37CD0A9413A3567900F4C68B /* Abbreviations.strings in Resources */,
-				3768E93B13B156F600BA5A67 /* SVWebViewController.bundle in Resources */,
-				375F316313B238CC0002F12F /* action.png in Resources */,
-				375F316413B238CC0002F12F /* action@2x.png in Resources */,
-				37BA166813B2FCFA0088057B /* 103-map-inv@2x.png in Resources */,
-				37BA166913B2FCFB0088057B /* 103-map-inv.png in Resources */,
-				37F3579713CA684200C1EE29 /* gavel.png in Resources */,
-				37F3579813CA684200C1EE29 /* gavel@2x.png in Resources */,
-				37F357B113CA684200C1EE29 /* multipins.png in Resources */,
-				37F357B213CA684200C1EE29 /* multipins@2x.png in Resources */,
-				37E9CA2D16A22D17005C7CCE /* placeholder.png in Resources */,
-				37E9CA2F16A22D17005C7CCE /* placeholder@2x.png in Resources */,
+				371457F91E4144F100AEE449 /* Settings.bundle in Resources */,
+				371457FA1E4144F100AEE449 /* NotesView.xib in Resources */,
+				371457FB1E4144F100AEE449 /* LegislatorDetailViewController~ipad.xib in Resources */,
+				371457FC1E4144F100AEE449 /* CommitteeDetailViewController~iphone.xib in Resources */,
+				371457FD1E4144F100AEE449 /* TabBarController~iPhone.xib in Resources */,
+				371457FE1E4144F100AEE449 /* LegislatorMasterViewController.xib in Resources */,
+				371457FF1E4144F100AEE449 /* CapitolMapsDetailViewController.xib in Resources */,
+				371458001E4144F100AEE449 /* CalendarDetailViewController~ipad.xib in Resources */,
+				371458011E4144F100AEE449 /* 01-refresh.png in Resources */,
+				371458021E4144F100AEE449 /* CalendarDetailViewController~iphone.xib in Resources */,
+				371458031E4144F100AEE449 /* CommitteeMasterViewController.xib in Resources */,
+				371458041E4144F100AEE449 /* 01-refresh@2x.png in Resources */,
+				371458051E4144F100AEE449 /* TexLegeStrings.plist in Resources */,
+				371458061E4144F100AEE449 /* Map.WheelchairAccess.pdf in Resources */,
+				371458071E4144F100AEE449 /* Map.CapitolComplex.pdf in Resources */,
+				371458081E4144F100AEE449 /* Map.MonumentGuide.pdf in Resources */,
+				371458091E4144F100AEE449 /* Map.Floor4.pdf in Resources */,
+				3714580A1E4144F100AEE449 /* Map.Floor2.pdf in Resources */,
+				3714580B1E4144F100AEE449 /* Map.FloorG.pdf in Resources */,
+				3714580C1E4144F100AEE449 /* Map.Floor1.pdf in Resources */,
+				3714580D1E4144F100AEE449 /* Map.FloorE1.pdf in Resources */,
+				3714580E1E4144F100AEE449 /* Images.xcassets in Resources */,
+				3714580F1E4144F100AEE449 /* Map.Floor3.pdf in Resources */,
+				371458101E4144F100AEE449 /* Map.FloorE2.pdf in Resources */,
+				371458111E4144F100AEE449 /* Map.SamHoustonLoc.pdf in Resources */,
+				371458121E4144F100AEE449 /* MapViewController~ipad.xib in Resources */,
+				371458131E4144F100AEE449 /* NotesView~ipad.xib in Resources */,
+				371458141E4144F100AEE449 /* bluestar.png in Resources */,
+				371458151E4144F100AEE449 /* bluestar@2x.png in Resources */,
+				371458161E4144F100AEE449 /* redstar.png in Resources */,
+				371458171E4144F100AEE449 /* redstar@2x.png in Resources */,
+				371458181E4144F100AEE449 /* silverstar.png in Resources */,
+				371458191E4144F100AEE449 /* silverstar@2x.png in Resources */,
+				3714581A1E4144F100AEE449 /* locationarrow.png in Resources */,
+				3714581B1E4144F100AEE449 /* locationarrow@2x.png in Resources */,
+				3714581C1E4144F100AEE449 /* MapViewController~iphone.xib in Resources */,
+				3714581D1E4144F100AEE449 /* TexLegeInfo~ipad.htm in Resources */,
+				3714581E1E4144F100AEE449 /* TexLegeInfoImage~ipad.png in Resources */,
+				3714581F1E4144F100AEE449 /* IconWood_80.png in Resources */,
+				371458201E4144F100AEE449 /* TexLegeInfo~iphone.htm in Resources */,
+				371458211E4144F100AEE449 /* LegislatorDetailViewController~iphone.xib in Resources */,
+				371458221E4144F100AEE449 /* PinHeadBlue.png in Resources */,
+				371458231E4144F100AEE449 /* PinHeadBlue@2x.png in Resources */,
+				371458241E4144F100AEE449 /* DistrictMapMasterViewController.xib in Resources */,
+				371458251E4144F100AEE449 /* CommitteeDetailViewController~ipad.xib in Resources */,
+				371458261E4144F100AEE449 /* TabBarController~iPad.xib in Resources */,
+				371458271E4144F100AEE449 /* MapMiniDetailViewController~ipad.xib in Resources */,
+				371458281E4144F100AEE449 /* MapMiniDetailViewController~iphone.xib in Resources */,
+				371458291E4144F100AEE449 /* Kal.bundle in Resources */,
+				3714582A1E4144F100AEE449 /* 11-clock.png in Resources */,
+				3714582B1E4144F100AEE449 /* 28-star.png in Resources */,
+				3714582C1E4144F100AEE449 /* 30-key.png in Resources */,
+				3714582D1E4144F100AEE449 /* 96-book.png in Resources */,
+				3714582E1E4144F100AEE449 /* BillsMasterViewController.xib in Resources */,
+				3714582F1E4144F100AEE449 /* BillsDetailViewController~iphone.xib in Resources */,
+				371458301E4144F100AEE449 /* BillsDetailViewController~ipad.xib in Resources */,
+				371458311E4144F100AEE449 /* TexLegeSeed.sqlite in Resources */,
+				371458321E4144F100AEE449 /* WnomAggregateObj.json in Resources */,
+				371458331E4144F100AEE449 /* CapitolMaps.plist in Resources */,
+				371458341E4144F100AEE449 /* BillMetadata.json in Resources */,
+				371458351E4144F100AEE449 /* starButtonLargeOff.png in Resources */,
+				371458361E4144F100AEE449 /* starButtonLargeOff@2x.png in Resources */,
+				371458371E4144F100AEE449 /* starButtonLargeOn.png in Resources */,
+				371458381E4144F100AEE449 /* starButtonLargeOn@2x.png in Resources */,
+				371458391E4144F100AEE449 /* VoteNay.png in Resources */,
+				3714583A1E4144F100AEE449 /* VoteNay@2x.png in Resources */,
+				3714583B1E4144F100AEE449 /* VotePNV.png in Resources */,
+				3714583C1E4144F100AEE449 /* VotePNV@2x.png in Resources */,
+				3714583D1E4144F100AEE449 /* VoteYea.png in Resources */,
+				3714583E1E4144F100AEE449 /* VoteYea@2x.png in Resources */,
+				3714583F1E4144F100AEE449 /* error.png in Resources */,
+				371458401E4144F100AEE449 /* error@2x.png in Resources */,
+				371458411E4144F100AEE449 /* grabthumb.png in Resources */,
+				371458421E4144F100AEE449 /* grabthumb@2x.png in Resources */,
+				371458431E4144F100AEE449 /* 113-navigation-inv.png in Resources */,
+				371458441E4144F100AEE449 /* 113-navigation-inv@2x.png in Resources */,
+				371458451E4144F100AEE449 /* 123-id-card-inv.png in Resources */,
+				371458461E4144F100AEE449 /* 123-id-card-inv@2x.png in Resources */,
+				371458471E4144F100AEE449 /* 60-signpost-inv.png in Resources */,
+				371458481E4144F100AEE449 /* 60-signpost-inv@2x.png in Resources */,
+				371458491E4144F100AEE449 /* 73-radar-inv.png in Resources */,
+				3714584A1E4144F100AEE449 /* 73-radar-inv@2x.png in Resources */,
+				3714584B1E4144F100AEE449 /* 83-calendar-inv.png in Resources */,
+				3714584C1E4144F100AEE449 /* 83-calendar-inv@2x.png in Resources */,
+				3714584D1E4144F100AEE449 /* gavel-inv.png in Resources */,
+				3714584E1E4144F100AEE449 /* gavel-inv@2x.png in Resources */,
+				3714584F1E4144F100AEE449 /* 11-clock@2x.png in Resources */,
+				371458501E4144F100AEE449 /* 28-star@2x.png in Resources */,
+				371458511E4144F100AEE449 /* 30-key@2x.png in Resources */,
+				371458521E4144F100AEE449 /* 96-book@2x.png in Resources */,
+				371458531E4144F100AEE449 /* 138-scales.png in Resources */,
+				371458541E4144F100AEE449 /* 138-scales@2x.png in Resources */,
+				371458551E4144F100AEE449 /* AppAlerts.strings in Resources */,
+				371458561E4144F100AEE449 /* DataTableUI.strings in Resources */,
+				371458571E4144F100AEE449 /* StandardUI.strings in Resources */,
+				371458581E4144F100AEE449 /* Abbreviations.strings in Resources */,
+				371458591E4144F100AEE449 /* SVWebViewController.bundle in Resources */,
+				3714585A1E4144F100AEE449 /* action.png in Resources */,
+				3714585B1E4144F100AEE449 /* action@2x.png in Resources */,
+				3714585C1E4144F100AEE449 /* 103-map-inv@2x.png in Resources */,
+				3714585D1E4144F100AEE449 /* 103-map-inv.png in Resources */,
+				3714585E1E4144F100AEE449 /* gavel.png in Resources */,
+				3714585F1E4144F100AEE449 /* gavel@2x.png in Resources */,
+				371458601E4144F100AEE449 /* multipins.png in Resources */,
+				371458611E4144F100AEE449 /* multipins@2x.png in Resources */,
+				371458621E4144F100AEE449 /* placeholder.png in Resources */,
+				371458631E4144F100AEE449 /* placeholder@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2619,7 +2621,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		37735C0A1323104A0033F343 /* ShellScript */ = {
+		371457F71E4144F100AEE449 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			comments = "This generates a build number for versioning automatically.";
@@ -2633,7 +2635,7 @@
 			shellPath = /bin/sh;
 			shellScript = "#!/bin/sh\n#\ngit=`sh /etc/profile; which git`\n## For the App Store, instead use: git describe –abbrev=0 –tags\nversion=`$git describe --tags --always`\ncount=`$git rev-list --all |wc -l`\necho -e \"#define GIT_VERSION $version\\n#define GIT_COMMIT_COUNT $count\" > Resources/InfoPlist.h";
 		};
-		37C6FECE1243A13E00B158D8 /* ShellScript */ = {
+		37735C0A1323104A0033F343 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			comments = "This generates a build number for versioning automatically.";
@@ -2650,131 +2652,131 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1D60588E0D05DD3D006BFB54 /* Sources */ = {
+		371458641E4144F100AEE449 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
-				1D3623260D0F684500981E51 /* TexLegeAppDelegate.m in Sources */,
-				37A0E4720FD2DEAA009B65F7 /* LinksDataSource.m in Sources */,
-				37A0E4730FD2DEAA009B65F7 /* CapitolMapsDetailViewController.m in Sources */,
-				37A0E4740FD2DEAA009B65F7 /* GeneralTableViewController.m in Sources */,
-				37A0E4750FD2DEAA009B65F7 /* CapitolMapsDataSource.m in Sources */,
-				37678F491AFFE92F0016B8E5 /* JSONKit.m in Sources */,
-				373AB3B90FD3389F0065740E /* TableCellDataObject.m in Sources */,
-				378A1CDD1007FF4600BEC4ED /* CommitteePositionObj+RestKit.m in Sources */,
-				378A1CDE1007FF4600BEC4ED /* LegislatorObj+RestKit.m in Sources */,
-				378A1CDF1007FF4600BEC4ED /* LinkObj+RestKit.m in Sources */,
-				37155728100859E700FA57DB /* CommitteeObj+RestKit.m in Sources */,
-				378AFC81100BDD640040706A /* CommitteesDataSource.m in Sources */,
-				378AFC84100BDD940040706A /* LegislatorsDataSource.m in Sources */,
-				37A002D21B41D16800B48D48 /* TexLege.xcdatamodeld in Sources */,
-				379C1EEA1012DF28007844B5 /* NotesViewController.m in Sources */,
-				37D6E82810175F0800D4D7C2 /* UtilityMethods.m in Sources */,
-				3709AEAE101FBE7900C1061B /* Reachability.m in Sources */,
-				3775FA3D11D86E1700D69AC5 /* LegislatorDetailViewController.m in Sources */,
-				3775FA4C11D8701B00D69AC5 /* LegislatorMasterViewController.m in Sources */,
-				37AD57BB11DA651700D68934 /* CommitteeDetailViewController.m in Sources */,
-				3747C25D11E7B15300A6D8C6 /* PartisanIndexStats.m in Sources */,
-				372D5CC011E9983A005A21E2 /* CapitolMap.m in Sources */,
-				37C4C0FD1E1DACE800EBE66B /* SLAbstractCodableObject.m in Sources */,
-				3737803B11F8082500E36500 /* WnomObj+RestKit.m in Sources */,
-				370F7AA911FEAF730004AC50 /* PolygonMath.m in Sources */,
-				377ACE4811FFA30E002C7E49 /* CalendarDataSource.m in Sources */,
-				37D1C527120272F000507757 /* CalendarDetailViewController.m in Sources */,
-				3735DDAF120899980000AF5A /* UISearchDisplayController+NoHideNav.m in Sources */,
-				3735DFFE120917490000AF5A /* CommitteeMasterViewController.m in Sources */,
-				3735E1CE1209B09F0000AF5A /* TexLegeTheme.m in Sources */,
-				37892DCE120EA44300AB1752 /* LegislatorMasterCellView.m in Sources */,
-				37B64234120FE9FF0076B196 /* LegislatorMasterCell.m in Sources */,
-				37A0C6031211DB810067F7AF /* TexLegeEmailComposer.m in Sources */,
-				372FAB5A12147B2000AEF237 /* ChamberCalendarObj.m in Sources */,
-				374C36BA1215E55F006B6ADA /* CalendarMasterViewController.m in Sources */,
-				374C36E61215E8DA006B6ADA /* CapitolMapsMasterViewController.m in Sources */,
-				374C37051215EB2D006B6ADA /* LinksMasterViewController.m in Sources */,
-				378B57AA1219913400F7ED0B /* MapViewController.m in Sources */,
-				378B57BE121994C400F7ED0B /* UIDevice-Hardware.m in Sources */,
-				3714574E1E3D8AA700AEE449 /* TexLegeObjectCache.m in Sources */,
-				37EAE54F121A6D9A00BF4277 /* UserPinAnnotation.m in Sources */,
-				37E2068412204D5000103D76 /* DistrictOfficeObj+MapKit.m in Sources */,
-				37E2068512204D5000103D76 /* DistrictMapObj+MapKit.m in Sources */,
-				3704F4D6122437AC00DC486F /* AnalyticsOptInAlertController.m in Sources */,
-				370C270C1225BF7E004273E3 /* DistrictMapDataSource.m in Sources */,
-				37CF6BB91226597500456D29 /* UIColor-Expanded.m in Sources */,
-				370B9DC1122AC5DF00AC9CC8 /* LegislatorDetailDataSource.m in Sources */,
-				370B9DD0122AD22C00AC9CC8 /* TexLegeStandardGroupCell.m in Sources */,
-				370813E6122C537800D8CA69 /* DisclosureQuartzView.m in Sources */,
-				379D0D45122D5CDE0021969C /* TexLegeCoreDataUtils.m in Sources */,
-				3742D6EF122E18D100698483 /* DistrictMapSearchOperation.m in Sources */,
-				3742D723122E1FDF00698483 /* NSInvocation+CWVariableArguments.m in Sources */,
-				376850221234AAFD00AEEC3D /* PartisanScaleView.m in Sources */,
-				374E2A6B12360C6E0005E245 /* TexLegeMapPins.m in Sources */,
-				37D3649D1236869200CCF86E /* UserPinAnnotationView.m in Sources */,
-				37C94A2712387ABA00D2D582 /* DistrictMapMasterViewController.m in Sources */,
-				379393FE123B1A82003103B3 /* CommitteeMemberCellView.m in Sources */,
-				37D46C01123B483800C2C403 /* CommitteeMemberCell.m in Sources */,
-				37D0A8EF123ED55A00232B2C /* DistrictPinAnnotationView.m in Sources */,
-				37242D3612415CC4005C43D3 /* LegislatorContributionsViewController.m in Sources */,
-				37412A39124322C400807502 /* LegislatorContributionsDataSource.m in Sources */,
-				37B3CE911249365E00FB3F94 /* MapMiniDetailViewController.m in Sources */,
-				379B9CD11250FE7E0032E616 /* TexLegeReachability.m in Sources */,
-				37B253E512EBF681000B6EE2 /* StafferObj+RestKit.m in Sources */,
-				3718895C12EE917B00E3300D /* NSDate+Helper.m in Sources */,
-				373EBA5112F0A01100A3E604 /* DataModelUpdateManager.m in Sources */,
-				372D066712FC901C00E63696 /* TexLegeLibrary.m in Sources */,
-				374F70A612FD45D600AD7EEC /* TexLegeNavBar.m in Sources */,
-				378E1242130F4D6100C425D4 /* BillsMenuDataSource.m in Sources */,
-				378E1247130F4D7900C425D4 /* BillsMasterViewController.m in Sources */,
-				37FC487013110A9E00A4C0B2 /* BillSearchDataSource.m in Sources */,
-				37F492761311C640005D5DE1 /* BillsDetailViewController.m in Sources */,
-				3770F57513182BF500686DE3 /* BillsFavoritesViewController.m in Sources */,
-				376F632D13298DE000F2B3DA /* BillsCategoriesViewController.m in Sources */,
-				37D38B10132ECFFB002F1730 /* BillsListViewController.m in Sources */,
-				37A8F14613315D4D00085AAF /* BillMetadataLoader.m in Sources */,
-				371FB1D91333B43C0003740A /* CalendarEventsLoader.m in Sources */,
-				370EAD321338029E007788BC /* OpenLegislativeAPIs.m in Sources */,
-				37094D97133B162E00B9693C /* TexLegeBadgeGroupCell.m in Sources */,
-				375E5ACF133D6F9E0070EA64 /* S7GraphView.m in Sources */,
-				37F2CA121343AE40001D9D7B /* DDActionHeaderView.m in Sources */,
-				377DC4AA1344D475000068E1 /* BillVotesDataSource.m in Sources */,
-				371A447413467C8C00DFDBB8 /* BillsTodayViewController.m in Sources */,
-				371A449D134682E100DFDBB8 /* XMLReader.m in Sources */,
-				376DFEB613492FF700360BF4 /* LoadingCell.m in Sources */,
-				3763ED701354E0F4000E524C /* UIImage+ResolutionIndependent.m in Sources */,
-				37D0D1F01357A198003DA1BB /* CommitteeObj.m in Sources */,
-				37D0D1F41357A198003DA1BB /* StafferObj.m in Sources */,
-				37D0D1F51357A198003DA1BB /* DistrictOfficeObj.m in Sources */,
-				37D0D1F61357A198003DA1BB /* WnomObj.m in Sources */,
-				37D0D1F71357A198003DA1BB /* DistrictMapObj.m in Sources */,
-				37D0D20B1357A534003DA1BB /* DistrictOfficeObj+RestKit.m in Sources */,
-				37D0D2111357A685003DA1BB /* DistrictMapObj+RestKit.m in Sources */,
-				37C4C1051E1DAD4200EBE66B /* PartyPartisanshipObj.m in Sources */,
-				37FE46301357BF1600E8C038 /* CommitteePositionObj.m in Sources */,
-				37FE46311357BF1900E8C038 /* LinkObj.m in Sources */,
-				37FE46321357BF2100E8C038 /* LegislatorObj.m in Sources */,
-				37E635FC139B4B3200A9CC27 /* TTTOrdinalNumberFormatter.m in Sources */,
-				37E36CF1139E695C00917F40 /* BillsRecentViewController.m in Sources */,
-				37E36D03139E6D0A00917F40 /* VTPGAdvancedLog.m in Sources */,
-				37CD09B213A2A6F100F4C68B /* StateMetaLoader.m in Sources */,
-				3770C66913A49BE800906021 /* BillActionParser.m in Sources */,
-				3768E93913B156F600BA5A67 /* SVWebViewController.m in Sources */,
-				37FE1CDD13CB75FD00655550 /* LocalyticsSession.m in Sources */,
-				37FE1CDE13CB75FD00655550 /* UploaderThread.m in Sources */,
-				37FE1E0C13CB8E3300655550 /* AppendingFlowView.m in Sources */,
-				37C7845914D30444006BBEDE /* LocalyticsDatabase.m in Sources */,
-				37F7C05814D32775000853D5 /* KalDataSource.m in Sources */,
-				37678F561AFFEC9F0016B8E5 /* VotingRecordDataSource.m in Sources */,
-				37F7C05A14D32775000853D5 /* KalDate.m in Sources */,
-				37E208B51E11933800D95154 /* SLToastManager+TexLege.m in Sources */,
-				37F7C05C14D32775000853D5 /* KalGridView.m in Sources */,
-				37F7C05E14D32775000853D5 /* KalLogic.m in Sources */,
-				37F7C06014D32775000853D5 /* KalMonthView.m in Sources */,
-				37F7C06214D32775000853D5 /* KalPrivate.m in Sources */,
-				37F7C06414D32775000853D5 /* KalTileView.m in Sources */,
-				37F7C06614D32775000853D5 /* KalView.m in Sources */,
-				37F7C06814D32775000853D5 /* KalViewController.m in Sources */,
-				37F7C06A14D32775000853D5 /* NSDateAdditions.m in Sources */,
-				37F7C06C14D32775000853D5 /* UIViewAdditions.m in Sources */,
+				371458651E4144F100AEE449 /* main.m in Sources */,
+				371458661E4144F100AEE449 /* TexLegeAppDelegate.m in Sources */,
+				371458671E4144F100AEE449 /* LinksDataSource.m in Sources */,
+				371458681E4144F100AEE449 /* CapitolMapsDetailViewController.m in Sources */,
+				371458691E4144F100AEE449 /* GeneralTableViewController.m in Sources */,
+				3714586A1E4144F100AEE449 /* CapitolMapsDataSource.m in Sources */,
+				3714586B1E4144F100AEE449 /* JSONKit.m in Sources */,
+				3714586C1E4144F100AEE449 /* TableCellDataObject.m in Sources */,
+				3714586D1E4144F100AEE449 /* CommitteePositionObj+RestKit.m in Sources */,
+				3714586E1E4144F100AEE449 /* LegislatorObj+RestKit.m in Sources */,
+				3714586F1E4144F100AEE449 /* LinkObj+RestKit.m in Sources */,
+				371458701E4144F100AEE449 /* CommitteeObj+RestKit.m in Sources */,
+				371458711E4144F100AEE449 /* CommitteesDataSource.m in Sources */,
+				371458721E4144F100AEE449 /* LegislatorsDataSource.m in Sources */,
+				371458731E4144F100AEE449 /* TexLege.xcdatamodeld in Sources */,
+				371458741E4144F100AEE449 /* NotesViewController.m in Sources */,
+				371458751E4144F100AEE449 /* UtilityMethods.m in Sources */,
+				371458761E4144F100AEE449 /* Reachability.m in Sources */,
+				371458771E4144F100AEE449 /* LegislatorDetailViewController.m in Sources */,
+				371458781E4144F100AEE449 /* LegislatorMasterViewController.m in Sources */,
+				371458791E4144F100AEE449 /* CommitteeDetailViewController.m in Sources */,
+				3714587A1E4144F100AEE449 /* PartisanIndexStats.m in Sources */,
+				3714587B1E4144F100AEE449 /* CapitolMap.m in Sources */,
+				3714587C1E4144F100AEE449 /* SLAbstractCodableObject.m in Sources */,
+				3714587D1E4144F100AEE449 /* WnomObj+RestKit.m in Sources */,
+				3714587E1E4144F100AEE449 /* PolygonMath.m in Sources */,
+				3714587F1E4144F100AEE449 /* CalendarDataSource.m in Sources */,
+				371458801E4144F100AEE449 /* CalendarDetailViewController.m in Sources */,
+				371458811E4144F100AEE449 /* UISearchDisplayController+NoHideNav.m in Sources */,
+				371458821E4144F100AEE449 /* CommitteeMasterViewController.m in Sources */,
+				371458831E4144F100AEE449 /* TexLegeTheme.m in Sources */,
+				371458841E4144F100AEE449 /* LegislatorMasterCellView.m in Sources */,
+				371458851E4144F100AEE449 /* LegislatorMasterCell.m in Sources */,
+				371458861E4144F100AEE449 /* TexLegeEmailComposer.m in Sources */,
+				371458871E4144F100AEE449 /* ChamberCalendarObj.m in Sources */,
+				371458881E4144F100AEE449 /* CalendarMasterViewController.m in Sources */,
+				371458891E4144F100AEE449 /* CapitolMapsMasterViewController.m in Sources */,
+				3714588A1E4144F100AEE449 /* LinksMasterViewController.m in Sources */,
+				3714588B1E4144F100AEE449 /* MapViewController.m in Sources */,
+				3714588C1E4144F100AEE449 /* UIDevice-Hardware.m in Sources */,
+				3714588D1E4144F100AEE449 /* TexLegeObjectCache.m in Sources */,
+				3714588E1E4144F100AEE449 /* UserPinAnnotation.m in Sources */,
+				3714588F1E4144F100AEE449 /* DistrictOfficeObj+MapKit.m in Sources */,
+				371458901E4144F100AEE449 /* DistrictMapObj+MapKit.m in Sources */,
+				371458911E4144F100AEE449 /* AnalyticsOptInAlertController.m in Sources */,
+				371458921E4144F100AEE449 /* DistrictMapDataSource.m in Sources */,
+				371458931E4144F100AEE449 /* UIColor-Expanded.m in Sources */,
+				371458941E4144F100AEE449 /* LegislatorDetailDataSource.m in Sources */,
+				371458951E4144F100AEE449 /* TexLegeStandardGroupCell.m in Sources */,
+				371458961E4144F100AEE449 /* DisclosureQuartzView.m in Sources */,
+				371458971E4144F100AEE449 /* TexLegeCoreDataUtils.m in Sources */,
+				371458981E4144F100AEE449 /* DistrictMapSearchOperation.m in Sources */,
+				371458991E4144F100AEE449 /* NSInvocation+CWVariableArguments.m in Sources */,
+				3714589A1E4144F100AEE449 /* PartisanScaleView.m in Sources */,
+				3714589B1E4144F100AEE449 /* TexLegeMapPins.m in Sources */,
+				3714589C1E4144F100AEE449 /* UserPinAnnotationView.m in Sources */,
+				3714589D1E4144F100AEE449 /* DistrictMapMasterViewController.m in Sources */,
+				3714589E1E4144F100AEE449 /* CommitteeMemberCellView.m in Sources */,
+				3714589F1E4144F100AEE449 /* CommitteeMemberCell.m in Sources */,
+				371458A01E4144F100AEE449 /* DistrictPinAnnotationView.m in Sources */,
+				371458A11E4144F100AEE449 /* LegislatorContributionsViewController.m in Sources */,
+				371458A21E4144F100AEE449 /* LegislatorContributionsDataSource.m in Sources */,
+				371458A31E4144F100AEE449 /* MapMiniDetailViewController.m in Sources */,
+				371458A41E4144F100AEE449 /* TexLegeReachability.m in Sources */,
+				371458A51E4144F100AEE449 /* StafferObj+RestKit.m in Sources */,
+				371458A61E4144F100AEE449 /* NSDate+Helper.m in Sources */,
+				371458A71E4144F100AEE449 /* DataModelUpdateManager.m in Sources */,
+				371458A81E4144F100AEE449 /* TexLegeLibrary.m in Sources */,
+				371458A91E4144F100AEE449 /* TexLegeNavBar.m in Sources */,
+				371458AA1E4144F100AEE449 /* BillsMenuDataSource.m in Sources */,
+				371458AB1E4144F100AEE449 /* BillsMasterViewController.m in Sources */,
+				371458AC1E4144F100AEE449 /* BillSearchDataSource.m in Sources */,
+				371458AD1E4144F100AEE449 /* BillsDetailViewController.m in Sources */,
+				371458AE1E4144F100AEE449 /* BillsFavoritesViewController.m in Sources */,
+				371458AF1E4144F100AEE449 /* BillsCategoriesViewController.m in Sources */,
+				371458B01E4144F100AEE449 /* BillsListViewController.m in Sources */,
+				371458B11E4144F100AEE449 /* BillMetadataLoader.m in Sources */,
+				371458B21E4144F100AEE449 /* CalendarEventsLoader.m in Sources */,
+				371458B31E4144F100AEE449 /* OpenLegislativeAPIs.m in Sources */,
+				371458B41E4144F100AEE449 /* TexLegeBadgeGroupCell.m in Sources */,
+				371458B51E4144F100AEE449 /* S7GraphView.m in Sources */,
+				371458B61E4144F100AEE449 /* DDActionHeaderView.m in Sources */,
+				371458B71E4144F100AEE449 /* BillVotesDataSource.m in Sources */,
+				371458B81E4144F100AEE449 /* BillsTodayViewController.m in Sources */,
+				371458B91E4144F100AEE449 /* XMLReader.m in Sources */,
+				371458BA1E4144F100AEE449 /* LoadingCell.m in Sources */,
+				371458BB1E4144F100AEE449 /* UIImage+ResolutionIndependent.m in Sources */,
+				371458BC1E4144F100AEE449 /* CommitteeObj.m in Sources */,
+				371458BD1E4144F100AEE449 /* StafferObj.m in Sources */,
+				371458BE1E4144F100AEE449 /* DistrictOfficeObj.m in Sources */,
+				371458BF1E4144F100AEE449 /* WnomObj.m in Sources */,
+				371458C01E4144F100AEE449 /* DistrictMapObj.m in Sources */,
+				371458C11E4144F100AEE449 /* DistrictOfficeObj+RestKit.m in Sources */,
+				371458C21E4144F100AEE449 /* DistrictMapObj+RestKit.m in Sources */,
+				371458C31E4144F100AEE449 /* PartyPartisanshipObj.m in Sources */,
+				371458C41E4144F100AEE449 /* CommitteePositionObj.m in Sources */,
+				371458C51E4144F100AEE449 /* LinkObj.m in Sources */,
+				371458C61E4144F100AEE449 /* LegislatorObj.m in Sources */,
+				371458C71E4144F100AEE449 /* TTTOrdinalNumberFormatter.m in Sources */,
+				371458C81E4144F100AEE449 /* BillsRecentViewController.m in Sources */,
+				371458C91E4144F100AEE449 /* VTPGAdvancedLog.m in Sources */,
+				371458CA1E4144F100AEE449 /* StateMetaLoader.m in Sources */,
+				371458CB1E4144F100AEE449 /* BillActionParser.m in Sources */,
+				371458CC1E4144F100AEE449 /* SVWebViewController.m in Sources */,
+				371458CD1E4144F100AEE449 /* LocalyticsSession.m in Sources */,
+				371458CE1E4144F100AEE449 /* UploaderThread.m in Sources */,
+				371458CF1E4144F100AEE449 /* AppendingFlowView.m in Sources */,
+				371458D01E4144F100AEE449 /* LocalyticsDatabase.m in Sources */,
+				371458D11E4144F100AEE449 /* KalDataSource.m in Sources */,
+				371458D21E4144F100AEE449 /* VotingRecordDataSource.m in Sources */,
+				371458D31E4144F100AEE449 /* KalDate.m in Sources */,
+				371458D41E4144F100AEE449 /* SLToastManager+TexLege.m in Sources */,
+				371458D51E4144F100AEE449 /* KalGridView.m in Sources */,
+				371458D61E4144F100AEE449 /* KalLogic.m in Sources */,
+				371458D71E4144F100AEE449 /* KalMonthView.m in Sources */,
+				371458D81E4144F100AEE449 /* KalPrivate.m in Sources */,
+				371458D91E4144F100AEE449 /* KalTileView.m in Sources */,
+				371458DA1E4144F100AEE449 /* KalView.m in Sources */,
+				371458DB1E4144F100AEE449 /* KalViewController.m in Sources */,
+				371458DC1E4144F100AEE449 /* NSDateAdditions.m in Sources */,
+				371458DD1E4144F100AEE449 /* UIViewAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2914,15 +2916,15 @@
 			name = SDWebImage;
 			targetProxy = 3701B63719AD34E400A9F631 /* PBXContainerItemProxy */;
 		};
-		3795B5031E1FFE56008F6FD9 /* PBXTargetDependency */ = {
+		371457F31E4144F100AEE449 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SLToastKit;
-			targetProxy = 3795B5021E1FFE56008F6FD9 /* PBXContainerItemProxy */;
+			targetProxy = 371457F41E4144F100AEE449 /* PBXContainerItemProxy */;
 		};
-		37E208C21E13222D00D95154 /* PBXTargetDependency */ = {
+		371457F51E4144F100AEE449 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SLFRestKit;
-			targetProxy = 37E208C11E13222D00D95154 /* PBXContainerItemProxy */;
+			targetProxy = 371457F61E4144F100AEE449 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2962,7 +2964,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		1D6058940D05DD3E006BFB54 /* Debug */ = {
+		371458F61E4144F100AEE449 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -2991,6 +2993,7 @@
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = 5EMVYB9KRX.com.texlege.TexLege;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "1f7f1909-efbe-4eeb-ae6b-31a37f4ca85b";
 				PROVISIONING_PROFILE_SPECIFIER = "Gregory S Combs Distribution";
 				STRIP_STYLE = "non-global";
@@ -2999,7 +3002,7 @@
 			};
 			name = Debug;
 		};
-		1D6058950D05DD3E006BFB54 /* Release */ = {
+		371458F71E4144F100AEE449 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3028,6 +3031,7 @@
 				INFOPLIST_PREPROCESS = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = 5EMVYB9KRX.com.texlege.TexLege;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "1f7f1909-efbe-4eeb-ae6b-31a37f4ca85b";
 				PROVISIONING_PROFILE_SPECIFIER = "Gregory S Combs Distribution";
 				STRIP_STYLE = "non-global";
@@ -3075,213 +3079,6 @@
 				INFOPLIST_PREPROCESS = YES;
 			};
 			name = Release;
-		};
-		37735C0E1323104A0033F343 /* AdHoc Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/include",
-					"\"$(SRCROOT)/Vendor/RestKit\"/**",
-					"\"$(SRCROOT)/Vendor/SDWebImage\"",
-					"\"$(SRCROOT)/Vendor/Kal/src/\"",
-					"\"/usr/include/libxml2\"/**",
-					"${inherited}",
-				);
-				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
-				INFOPLIST_PREPROCESS = YES;
-			};
-			name = "AdHoc Distribution";
-		};
-		37735C0F1323104A0033F343 /* iTunes Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/include",
-					"\"$(SRCROOT)/Vendor/RestKit\"/**",
-					"\"$(SRCROOT)/Vendor/SDWebImage\"",
-					"\"$(SRCROOT)/Vendor/Kal/src/\"",
-					"\"/usr/include/libxml2\"/**",
-					"${inherited}",
-				);
-				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
-				INFOPLIST_PREPROCESS = YES;
-			};
-			name = "iTunes Distribution";
-		};
-		377629C9102A0A45004700EC /* iTunes Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
-				CURRENT_PROJECT_VERSION = 2.8.2;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = (
-					"-licucore",
-					"-ObjC",
-					"-all_load",
-					"-lxml2",
-				);
-				PRODUCT_NAME = TexLege;
-				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos;
-				SEPARATE_STRIP = YES;
-				STRIP_STYLE = all;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "";
-				VERSION_INFO_BUILDER = greg;
-			};
-			name = "iTunes Distribution";
-		};
-		377629CA102A0A45004700EC /* iTunes Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CURRENT_PROJECT_VERSION = 3;
-				DEAD_CODE_STRIPPING = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/include",
-					"\"$(SRCROOT)/Carthage/Build/iOS/*.framework\"",
-					"\"$(SRCROOT)/Carthage/Build/iOS/*.framework/Headers\"",
-					"\"$(SRCROOT)/Vendor/SLFRestKit\"",
-					"\"$(SRCROOT)/Vendor/SDWebImage\"",
-					"\"$(SRCROOT)/Vendor/Kal/src/\"",
-					"\"/usr/include/libxml2\"/**",
-					"${inherited}",
-				);
-				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
-				INFOPLIST_PREPROCESS = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = 5EMVYB9KRX.com.texlege.TexLege;
-				PROVISIONING_PROFILE = "db3443be-fef5-4761-ac07-b17a10529e1b";
-				STRIP_STYLE = "non-global";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = TXL;
-			};
-			name = "iTunes Distribution";
-		};
-		37B2D28410224AC900B493C8 /* AdHoc Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Gregory Combs (X69RXDFP2D)";
-				CURRENT_PROJECT_VERSION = 2.8.2;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
-				LLVM_LTO = NO;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = (
-					"-licucore",
-					"-ObjC",
-					"-all_load",
-					"-lxml2",
-				);
-				PRODUCT_NAME = TexLege;
-				PUBLIC_HEADERS_FOLDER_PATH = Headers;
-				SDKROOT = iphoneos;
-				SEPARATE_STRIP = YES;
-				STRIP_STYLE = all;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "";
-				VERSION_INFO_BUILDER = greg;
-			};
-			name = "AdHoc Distribution";
-		};
-		37B2D28510224AC900B493C8 /* AdHoc Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CURRENT_PROJECT_VERSION = 3;
-				DEAD_CODE_STRIPPING = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/include",
-					"\"$(SRCROOT)/Carthage/Build/iOS/*.framework\"",
-					"\"$(SRCROOT)/Carthage/Build/iOS/*.framework/Headers\"",
-					"\"$(SRCROOT)/Vendor/SLFRestKit\"",
-					"\"$(SRCROOT)/Vendor/SDWebImage\"",
-					"\"$(SRCROOT)/Vendor/Kal/src/\"",
-					"\"/usr/include/libxml2\"/**",
-					"${inherited}",
-				);
-				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_PREFIX_HEADER = Resources/InfoPlist.h;
-				INFOPLIST_PREPROCESS = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = 5EMVYB9KRX.com.texlege.TexLege;
-				PROVISIONING_PROFILE = "db3443be-fef5-4761-ac07-b17a10529e1b";
-				STRIP_STYLE = "non-global";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = TXL;
-			};
-			name = "AdHoc Distribution";
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -3393,13 +3190,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "TexLege" */ = {
+		371458F51E4144F100AEE449 /* Build configuration list for PBXNativeTarget "TexLege" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1D6058940D05DD3E006BFB54 /* Debug */,
-				1D6058950D05DD3E006BFB54 /* Release */,
-				37B2D28510224AC900B493C8 /* AdHoc Distribution */,
-				377629CA102A0A45004700EC /* iTunes Distribution */,
+				371458F61E4144F100AEE449 /* Debug */,
+				371458F71E4144F100AEE449 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -3409,8 +3204,6 @@
 			buildConfigurations = (
 				37735C0C1323104A0033F343 /* Debug */,
 				37735C0D1323104A0033F343 /* Release */,
-				37735C0E1323104A0033F343 /* AdHoc Distribution */,
-				37735C0F1323104A0033F343 /* iTunes Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -3420,8 +3213,6 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
-				37B2D28410224AC900B493C8 /* AdHoc Distribution */,
-				377629C9102A0A45004700EC /* iTunes Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

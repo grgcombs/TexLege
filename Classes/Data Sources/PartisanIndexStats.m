@@ -196,7 +196,7 @@
 	if (tempNum)
 		maxWnomSession = tempNum.integerValue;
 	
-	NSMutableString *predicateString = [NSMutableString stringWithFormat:@"self.legislator != nil AND self.legislator.legtype == %d AND self.session == %d", chamber, maxWnomSession];
+	NSMutableString *predicateString = [NSMutableString stringWithFormat:@"self.legislator != nil AND self.legislator.legtype == %d AND self.session == %d", chamber, (UInt16)maxWnomSession];
 	
 	if (party > BOTH_PARTIES)
 		[predicateString appendFormat:@" AND self.legislator.party_id == %d", party];
