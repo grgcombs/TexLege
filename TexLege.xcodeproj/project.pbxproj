@@ -259,7 +259,6 @@
 		371458F01E4144F100AEE449 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3775C7FD131C459900638ED4 /* MobileCoreServices.framework */; };
 		371458F11E4144F100AEE449 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 377075421397E4C300E82CA8 /* AddressBook.framework */; };
 		371458F31E4144F100AEE449 /* SLToastKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3795B4FF1E1FFE42008F6FD9 /* SLToastKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		371459031E41455500AEE449 /* SLFRestKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 371459021E41455500AEE449 /* SLFRestKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		371A442E1346597000DFDBB8 /* VoteNay.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A44281346597000DFDBB8 /* VoteNay.png */; };
 		371A442F1346597000DFDBB8 /* VoteNay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A44291346597000DFDBB8 /* VoteNay@2x.png */; };
 		371A44301346597000DFDBB8 /* VotePNV.png in Resources */ = {isa = PBXBuildFile; fileRef = 371A442A1346597000DFDBB8 /* VotePNV.png */; };
@@ -269,6 +268,8 @@
 		371A447313467C8C00DFDBB8 /* BillsTodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 371A447213467C8C00DFDBB8 /* BillsTodayViewController.m */; };
 		371FB1D81333B43C0003740A /* CalendarEventsLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 371FB1D71333B43C0003740A /* CalendarEventsLoader.m */; };
 		372FDB24139F1CFB00D39374 /* LegislatorDetailViewController~iphone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3739DBE4123355EF00D4F7D2 /* LegislatorDetailViewController~iphone.xib */; };
+		37315D7D1E42682F00D93CEA /* SLFRestKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E208C01E1321D700D95154 /* SLFRestKit.framework */; };
+		37315D7E1E42683C00D93CEA /* SLFRestKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 37E208C01E1321D700D95154 /* SLFRestKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		374BEC541D7F3420009645A2 /* VotingRecordDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5AC7133D6F8B0070EA64 /* VotingRecordDataSource.m */; };
 		374DA89C1325C6FB00CCBC40 /* CapitolMaps.plist in Resources */ = {isa = PBXBuildFile; fileRef = 374DA89A1325C6FB00CCBC40 /* CapitolMaps.plist */; };
 		375E5ACE133D6F9E0070EA64 /* S7GraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 375E5ACC133D6F9E0070EA64 /* S7GraphView.m */; };
@@ -614,7 +615,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				371459031E41455500AEE449 /* SLFRestKit.framework in Embed Frameworks */,
+				37315D7E1E42683C00D93CEA /* SLFRestKit.framework in Embed Frameworks */,
 				371458F31E4144F100AEE449 /* SLToastKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -655,8 +656,7 @@
 		370EAD301338029E007788BC /* OpenLegislativeAPIs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenLegislativeAPIs.m; sourceTree = "<group>"; };
 		370F7AA711FEAF730004AC50 /* PolygonMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PolygonMath.h; path = Classes/MapKit/PolygonMath.h; sourceTree = SOURCE_ROOT; };
 		370F7AA811FEAF730004AC50 /* PolygonMath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PolygonMath.m; path = Classes/MapKit/PolygonMath.m; sourceTree = SOURCE_ROOT; };
-		371458FA1E4144F100AEE449 /* TexLege Distribution.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "TexLege Distribution.app"; path = TexLege.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		371459021E41455500AEE449 /* SLFRestKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SLFRestKit.framework; path = "Builds/Build/Products/Debug-iphoneos/SLFRestKit.framework"; sourceTree = "<group>"; };
+		371458FA1E4144F100AEE449 /* TexLege.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TexLege.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		37155726100859E700FA57DB /* CommitteeObj+RestKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CommitteeObj+RestKit.h"; sourceTree = "<group>"; };
 		37155727100859E700FA57DB /* CommitteeObj+RestKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CommitteeObj+RestKit.m"; sourceTree = "<group>"; };
 		3718895A12EE917B00E3300D /* NSDate+Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Helper.h"; sourceTree = "<group>"; };
@@ -1172,6 +1172,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37315D7D1E42682F00D93CEA /* SLFRestKit.framework in Frameworks */,
 				371458DF1E4144F100AEE449 /* libSDWebImage iOS static.a in Frameworks */,
 				371458E01E4144F100AEE449 /* ImageIO.framework in Frameworks */,
 				371458E11E4144F100AEE449 /* libz.dylib in Frameworks */,
@@ -1243,7 +1244,7 @@
 			isa = PBXGroup;
 			children = (
 				37735C101323104A0033F343 /* TexLege.app */,
-				371458FA1E4144F100AEE449 /* TexLege Distribution.app */,
+				371458FA1E4144F100AEE449 /* TexLege.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1290,7 +1291,6 @@
 			children = (
 				37C7845B14D304B2006BBEDE /* libsqlite3.dylib */,
 				37C7845E14D30A97006BBEDE /* libz.dylib */,
-				371459021E41455500AEE449 /* SLFRestKit.framework */,
 				37E9CA2716A22959005C7CCE /* ImageIO.framework */,
 				3775C7FB131C459900638ED4 /* CFNetwork.framework */,
 				3775C7FD131C459900638ED4 /* MobileCoreServices.framework */,
@@ -2239,7 +2239,7 @@
 			);
 			name = TexLege;
 			productName = foo;
-			productReference = 371458FA1E4144F100AEE449 /* TexLege Distribution.app */;
+			productReference = 371458FA1E4144F100AEE449 /* TexLege.app */;
 			productType = "com.apple.product-type.application";
 		};
 		3773596F1323104A0033F343 /* TexLege (Seeding DB) */ = {

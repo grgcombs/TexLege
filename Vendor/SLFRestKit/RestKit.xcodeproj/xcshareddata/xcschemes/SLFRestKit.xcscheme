@@ -28,26 +28,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "372E57C314153D07000652B1"
-               BuildableName = "OpenStatesSpecs.xctest"
-               BlueprintName = "OpenStatesSpecs"
-               ReferencedContainer = "container:../../OpenStates.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "370859FF1CEBCB960035BBC0"
-            BuildableName = "SLFRestKit.framework"
-            BlueprintName = "SLFRestKit"
-            ReferencedContainer = "container:RestKit.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -79,15 +60,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "370859FF1CEBCB960035BBC0"
-            BuildableName = "SLFRestKit.framework"
-            BlueprintName = "SLFRestKit"
-            ReferencedContainer = "container:RestKit.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
