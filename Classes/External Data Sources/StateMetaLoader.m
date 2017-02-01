@@ -185,7 +185,7 @@ const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
 	NSDictionary *queryParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:SUNLIGHT_APIKEY, @"apikey",nil];
 	NSString *method = [NSString stringWithFormat:@"/metadata/%@", stateID];
 	request = [osApiClient get:method queryParams:queryParams delegate:self];	
-	if (request) {
+	if (request && stateID) {
 		request.userData = @{StateMetadataKeys.selectedState: stateID};
 	}
 	else {

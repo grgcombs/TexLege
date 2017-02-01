@@ -138,10 +138,7 @@
 	[self redisplayVisibleCells:nil];	
 }
 
-#pragma mark -
-#pragma mark Table view delegate
 
-//START:code.split.delegate
 - (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath withAnimation:(BOOL)animated {
 	TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
 

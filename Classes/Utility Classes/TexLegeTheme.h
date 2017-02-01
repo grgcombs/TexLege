@@ -20,7 +20,6 @@
 + (UIFont *)boldFourteen;
 + (UIFont *)boldFifteen;
 + (UIFont *)boldEighteen;
-+ (void) logFontNames;	
 + (UIFont *)disclosureFontSmall;
 + (UIFont *)disclosureFont;
 + (NSString *)disclosureChar;
@@ -42,5 +41,9 @@
 + (UIColor *)texasRed;
 + (UIColor *)texasGreen;
 + (UIColor *)texasOrange;
+
+#ifdef DEBUG
++ (void) logFontNames;
+#endif
 
 @end

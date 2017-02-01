@@ -1074,7 +1074,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
     [_stagedFlowEvents release];
     [_screens release];
 	[_sharedLocalyticsSession release];
-
+    [_sessionResumeTime release];
 	[super dealloc];
 }
 

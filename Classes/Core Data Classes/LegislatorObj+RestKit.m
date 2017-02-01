@@ -235,7 +235,7 @@ static RKManagedObjectMapping *legislatorAttributesMapping = nil;
 						 years];
 			break;
 		default:
-			stringVal = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%d Years", @"DataTableUI", @"Plural form of a year"), 
+			stringVal = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%d Years", @"DataTableUI", nil),
 						 years];
 			break;
 	}
@@ -268,13 +268,37 @@ static RKManagedObjectMapping *legislatorAttributesMapping = nil;
 	return  stringForChamber(self.legtype.integerValue, TLReturnFull);
 }
 
+- (NSArray<WnomObj *> *)sortedWnomScores
+{
+    NSSortDescriptor *sortBySession = [[NSSortDescriptor alloc] initWithKey:@"session" ascending:YES];
+    NSArray *sortDescriptors = @[sortBySession];
+    NSArray<WnomObj *> *scores = [self.wnomScores sortedArrayUsingDescriptors:sortDescriptors];
+    if (scores.count == 0 && self.tenure.intValue > 0)
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"legislatorID = %@", self.legislatorID];
+        NSFetchRequest *request = [WnomObj requestAll];
+        request.returnsObjectsAsFaults = NO;
+        request.includesSubentities = YES;
+        request.includesPendingChanges = YES;
+        request.relationshipKeyPathsForPrefetching = @[@"legislator"];
+        request.predicate = predicate;
+        request.sortDescriptors = sortDescriptors;
+        @try {
+            scores = [WnomObj executeFetchRequest:request];
+            if (scores.count)
+                self.wnomScores = [NSSet setWithArray:scores];
+        } @catch (NSException *exception) {
+            NSLog(@"Error fetching and setting wnomScores for a legislator: %@", exception);
+        }
+    }
+    return scores;
+}
+
 - (WnomObj *)latestWnomScore
 {
-	NSSortDescriptor *sortBySession = [NSSortDescriptor sortDescriptorWithKey:@"session" ascending:NO];
-    NSSet *scores = self.wnomScores;
-	NSArray *wnoms = [scores sortedArrayUsingDescriptors:@[sortBySession]];
+	NSArray *wnoms = [self sortedWnomScores];
 	if (!IsEmpty(wnoms))
-		return wnoms[0];
+		return [wnoms lastObject];
 	return nil;
 }
 
