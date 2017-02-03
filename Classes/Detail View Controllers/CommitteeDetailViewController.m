@@ -406,23 +406,19 @@ NSString * const TXLCommitteeMemberCellReuse = @"CommitteeMember";
     {
         switch (section) {
             case TXLCommitteeInfoSection:
-                if (self.infoSectionArray.count > 0)
-                    sectionCount++;
+                sectionCount++;
                 break;
 
             case TXLCommitteeChairSection:
-                if (committee.chair)
-                    sectionCount++;
+                sectionCount++;
                 break;
 
             case TXLCommitteeViceChairSection:
-                if (committee.vicechair)
-                    sectionCount++;
+                sectionCount++;
                 break;
 
             case TXLCommitteeMembersSection:
-                if (committee.sortedMembers.count > 0)
-                    sectionCount++;
+                sectionCount++;
                 break;
         }
     }
