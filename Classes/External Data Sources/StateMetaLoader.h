@@ -12,6 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <SLFRestKit/SLFRestKit.h>
+#import "TexLegeLibrary.h"
 
 #define kStateMetaFile				@"StateMetadata.json"
 #define kStateMetaPath				@"StateMetadata"
@@ -24,7 +25,7 @@
 + (instancetype)instance;	// Singleton
 
 // Oftentimes, we just need a quick and dirty answer from our singleton
-+ (NSString *)nameForChamber:(NSInteger)chamber;
++ (NSString *)nameForChamber:(TXLChamberType)chamber;
 
 - (void)loadMetadataForState:(NSString *)stateID;
 

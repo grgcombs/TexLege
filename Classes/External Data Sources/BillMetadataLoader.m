@@ -122,12 +122,13 @@ NSString * const BillMetadataFile = @"BillMetadata.json";
 	}
 
 	NSData *jsonData = [NSData dataWithContentsOfFile:localPath];
-    self.metadata = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&newError];
+    _metadata = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&newError];
     if (newError)
     {
         NSLog(@"BillMetadata: Error parsing BillMetadata from %@: %@", localPath, newError);
     }
-	if (self.metadata) {
+	if (_metadata)
+    {
 		[[NSNotificationCenter defaultCenter] postNotificationName:kBillMetadataNotifyLoaded object:nil];
 	}
 }
@@ -136,14 +137,14 @@ NSString * const BillMetadataFile = @"BillMetadata.json";
 	
 	self.loading = NO;
 
-	if ([request isGET] && [response isOK]) {  
+	if ([request isGET] && [response isOK])
+    {
 		// Success! Let's take a look at the data
-        self.metadata = nil;
-
         NSError *error = nil;
-        self.metadata = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
+        _metadata = [NSJSONSerialization JSONObjectWithData:response.body options:0 error:&error];
 
-		if (self.metadata) {
+		if (_metadata)
+        {
 			self.updated = [NSDate date];
 			
 			NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:BillMetadataFile];

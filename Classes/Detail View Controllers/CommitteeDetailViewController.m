@@ -145,7 +145,7 @@ NSString * const TXLCommitteeMemberCellReuse = @"CommitteeMember";
 
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-    [self willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
 
     [coordinator notifyWhenInteractionChangesUsingBlock:^(id<UIViewControllerTransitionCoordinatorContext> context) {
         if ([context percentComplete] >= 1.0)

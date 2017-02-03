@@ -11,10 +11,10 @@
 //
 
 #import "StateMetaLoader.h"
+#import "TexLegeLibrary.h"
 #import "UtilityMethods.h"
 #import "TexLegeReachability.h"
 #import "OpenLegislativeAPIs.h"
-#import "TexLegeLibrary.h"
 #import "NSDate+Helper.h"
 
 const struct StateMetadataKeys StateMetadataKeys = {
@@ -69,7 +69,7 @@ const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
 
 @interface StateMetaLoader ()
 
-@property (NS_NONATOMIC_IOSONLY,copy) NSMutableDictionary *metadata;
+@property (NS_NONATOMIC_IOSONLY,copy) NSDictionary *metadata;
 @property (NS_NONATOMIC_IOSONLY,copy) NSDictionary *stateMetadata;
 @property (NS_NONATOMIC_IOSONLY,copy) NSMutableArray *loadingStates;
 
@@ -86,11 +86,39 @@ const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
 	return foo;
 }
 
-+ (NSString *)nameForChamber:(NSInteger)chamber
+- (instancetype)init
+{
+    self = [super init];
+    if (self)
+    {
+        _updated = nil;
+        _fresh = NO;
+        _currentSession = nil;
+        _selectedState = nil;
+        _loadingStates = [[NSMutableArray alloc] init];
+
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        NSString *tempState = [[NSUserDefaults standardUserDefaults] stringForKey:StateMetadataKeys.selectedState];
+        if (tempState) {
+            _selectedState = [tempState copy];
+        }
+
+        [self metadataFromCache];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [[RKClient sharedClient].requestQueue cancelRequestsWithDelegate:self];
+    self.selectedState = nil;
+}
+
++ (NSString *)nameForChamber:(TXLChamberType)chamber
 {
 	NSString *name = nil;
-	// prepare to make some assumptions
-	if (chamber == HOUSE || chamber == SENATE)
+
+    if (chamber == HOUSE || chamber == SENATE)
     {
 		NSDictionary *stateMeta = [[StateMetaLoader instance] stateMetadata];
 		if (NO == IsEmpty(stateMeta))
@@ -100,43 +128,40 @@ const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
             NSDictionary *chambers = stateMeta[keys.chambers.metaLookup];
             name = chambers[chamberKeys.metaLookup][chamberKeys.name];
 
-            if (NO == IsEmpty(name))
+            if ([name isKindOfClass:[NSString class]] && name.length)
             {
 				NSArray *words = [name componentsSeparatedByString:@" "];
-				if (words.count > 1 && [words[0] length] > 4) { // just to make sure we have a decent, single name
-					name = words[0];
-				}
+                if (words.count)
+                {
+                    NSString *word = words[0];
+                    if (word.length > 4)
+                        name = word;
+                }
 			}
 		}
 	}
-	return name;
-}
 
-- (instancetype)init
-{
-	if ((self=[super init]))
-    {
-		_updated = nil;
-		_fresh = NO;
-		_currentSession = nil;
-		_selectedState = nil;
-		_loadingStates = [[NSMutableArray alloc] init];
-		
-		[[NSUserDefaults standardUserDefaults] synchronize];
-		NSString *tempState = [[NSUserDefaults standardUserDefaults] stringForKey:StateMetadataKeys.selectedState];
-		if (tempState) {
-			_selectedState = [tempState copy];
-		}
-		
-		[self metadataFromCache];
-	}
-	return self;
-}
+    if (name)
+        return name;
 
-- (void)dealloc
-{
-    [[RKClient sharedClient].requestQueue cancelRequestsWithDelegate:self];
-    self.selectedState = nil;
+    switch (chamber) {
+        case HOUSE:
+            name = NSLocalizedStringFromTable(@"House", @"DataTableUI", nil);
+            break;
+        case SENATE:
+            name = NSLocalizedStringFromTable(@"Senate", @"DataTableUI", nil);
+            break;
+        case JOINT:
+            name = NSLocalizedStringFromTable(@"Joint", @"DataTableUI", nil);
+            break;
+        case BOTH_CHAMBERS:
+            name = NSLocalizedStringFromTable(@"All", @"DataTableUI", nil);
+            break;
+        case EXECUTIVE:
+            name = NSLocalizedStringFromTable(@"Executive", @"DataTableUI", nil);
+    }
+
+    return name;
 }
 
 - (void)setSelectedState:(NSString *)stateID
@@ -159,14 +184,21 @@ const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
 {
     _metadata = nil;
 
-	NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kStateMetaFile];
+    NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kStateMetaFile];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	if (![fileManager fileExistsAtPath:localPath])
         return @{};
 
     NSData *jsonFile = [NSData dataWithContentsOfFile:localPath];
-    NSError *error = nil;
-    self.metadata = [NSJSONSerialization JSONObjectWithData:jsonFile options:NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers error:&error];
+    if (jsonFile.length)
+    {
+        NSError *error = nil;
+        self.metadata = [NSJSONSerialization JSONObjectWithData:jsonFile options:0 error:&error];
+        if (error || !_metadata)
+        {
+            NSLog(@"Unable to parse state metadata at %@: %@", localPath, error.localizedDescription);
+        }
+    }
 	return _metadata;
 }
 		
@@ -182,15 +214,13 @@ const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
         [_loadingStates addObject:stateID];	// add it to our list of active loads
 	
 	RKClient *osApiClient = [OpenLegislativeAPIs sharedOpenLegislativeAPIs].osApiClient;
-	NSDictionary *queryParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:SUNLIGHT_APIKEY, @"apikey",nil];
+    NSDictionary *queryParams = @{@"apiKey": SUNLIGHT_APIKEY};
 	NSString *method = [NSString stringWithFormat:@"/metadata/%@", stateID];
 	request = [osApiClient get:method queryParams:queryParams delegate:self];	
-	if (request && stateID) {
+	if (request && stateID)
 		request.userData = @{StateMetadataKeys.selectedState: stateID};
-	}
-	else {
+	else
 		[self request:nil didFailLoadWithError:nil];
-	}
 }
 
 - (NSDictionary *)stateMetadata
@@ -286,9 +316,6 @@ const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
 	return _currentSession;	
 }
 
-#pragma mark -
-#pragma mark RestKit:RKObjectLoaderDelegate
-
 - (void)request:(RKRequest*)request didFailLoadWithError:(NSError*)error
 {
 	self.fresh = NO;
@@ -304,67 +331,72 @@ const struct StateMetadataSessionTypeKeys StateMetadataSessionTypeKeys = {
 	}
 }
 
-- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response {  
-	if ([request isGET] && [response isOK])
+- (void)request:(RKRequest*)request didLoadResponse:(RKResponse*)response
+{
+	if (![request isGET] || ![response isOK])
+        return;
+
+    // Success! Let's take a look at the data
+
+    if (NO == [request.resourcePath hasPrefix:@"/metadata"])
+        return;
+
+    NSError *error = nil;
+    NSDictionary *stateMeta = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingAllowFragments error:&error];
+
+    if (IsEmpty(stateMeta))
     {
-		// Success! Let's take a look at the data  
+        [self request:request didFailLoadWithError:error];
+        return;
+    }
 
-		if (NO == [request.resourcePath hasPrefix:@"/metadata"]) 
-			return;
+    struct StateMetadataKeys keys = StateMetadataKeys;
 
-		NSError *error = nil;
-        NSDictionary *stateMeta = [NSJSONSerialization JSONObjectWithData:response.body options:NSJSONReadingAllowFragments error:&error];
-
-		if (IsEmpty(stateMeta)) {
-			[self request:request didFailLoadWithError:nil];
-			return;
-		}
-
-        struct StateMetadataKeys keys = StateMetadataKeys;
-
-		NSString *wantedStateID = nil;
-		if (request.userData) {	// try getting our new state id from our initial query info
-			wantedStateID = (request.userData)[keys.selectedState];
-			if (!IsEmpty(wantedStateID) && [_loadingStates containsObject:wantedStateID]) {
-				[_loadingStates removeObject:wantedStateID];
-			}			
-		}
-		
-		NSString *gotStateID = stateMeta[keys.abbreviation];
-				
-		if (IsEmpty(wantedStateID) || IsEmpty(gotStateID) || NO == [wantedStateID isEqualToString:gotStateID]) {
-			NSLog(@"StateMetaDataLoader: requested metadata for %@, but incoming data is for %@", wantedStateID, gotStateID);
-			[self request:request didFailLoadWithError:nil];
-		}
-
-        self.updated = [NSDate date];
-
-		if (NO == IsEmpty(gotStateID))
+    NSString *wantedStateID = nil;
+    NSDictionary *userData = request.userData;
+    if (userData)
+    {
+        wantedStateID = userData[keys.selectedState];
+        if (!IsEmpty(wantedStateID) && [_loadingStates containsObject:wantedStateID])
         {
-            if (!_metadata || ![_metadata isKindOfClass:[NSMutableDictionary class]])
-            {
-                _metadata = [[NSMutableDictionary alloc] init];
-            }
-			_metadata[gotStateID] = stateMeta;
-		
-			if ([_loadingStates containsObject:gotStateID]) {
-				[_loadingStates removeObject:gotStateID];
-			}
-			
-			NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kStateMetaFile];
+            [_loadingStates removeObject:wantedStateID];
+        }
+    }
 
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self.metadata options:NSJSONWritingPrettyPrinted error:&error];
-			if (![jsonData writeToFile:localPath atomically:YES])
-				NSLog(@"StateMetadataLoader: error writing cache to file: %@", localPath);
-			self.fresh = YES;
-			[[NSNotificationCenter defaultCenter] postNotificationName:kStateMetaNotifyLoaded object:nil];
-			debug_NSLog(@"StateMetadata network download successful, archiving.");
-		}		
-		else {
-			[self request:request didFailLoadWithError:nil];
-			return;
-		}
-	}
+    NSString *gotStateID = stateMeta[keys.abbreviation];
+
+    if (IsEmpty(wantedStateID) || IsEmpty(gotStateID) || NO == [wantedStateID isEqualToString:gotStateID])
+    {
+        NSLog(@"StateMetaDataLoader: requested metadata for %@, but incoming data is for %@", wantedStateID, gotStateID);
+        [self request:request didFailLoadWithError:nil];
+
+        return;
+    }
+
+    self.updated = [NSDate date];
+
+    NSMutableDictionary *metadata = [NSMutableDictionary dictionaryWithDictionary:self.metadata];
+    metadata[gotStateID] = stateMeta;
+    self.metadata = [metadata copy];
+
+    if ([_loadingStates containsObject:gotStateID])
+    {
+        [_loadingStates removeObject:gotStateID];
+    }
+
+    NSString *localPath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kStateMetaFile];
+
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self.metadata options:NSJSONWritingPrettyPrinted error:&error];
+    if (![jsonData writeToFile:localPath atomically:YES])
+    {
+        NSLog(@"StateMetadataLoader: error writing cache to file: %@", localPath);
+    }
+    else
+    {
+        debug_NSLog(@"StateMetadata network download successfully archived.");
+    }
+    self.fresh = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:kStateMetaNotifyLoaded object:nil];
 }
 
 @end

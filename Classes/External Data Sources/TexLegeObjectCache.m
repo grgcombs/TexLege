@@ -11,6 +11,7 @@
 //
 
 #import "TexLegeObjectCache.h"
+#import <SLFRestKit/SLFRestKit.h>
 
 #import "LegislatorObj.h"
 #import "CommitteeObj.h"
@@ -44,12 +45,13 @@
     if (!modelClass)
         return nil;
 
-    NSFetchRequest* request = [modelClass fetchRequest];
+    NSFetchRequest *request = [modelClass rkFetchRequest];
     NSString *primaryKeyName = [modelClass primaryKeyProperty];
-    //NSPredicate* predicate = [NSPredicate predicateWithFormat:@"%@ = %@", primaryKey, ID, nil];
-    //request.predicate = predicate;
-    NSSortDescriptor *sortByPrimaryKey = [NSSortDescriptor sortDescriptorWithKey:primaryKeyName ascending:YES] ;
-    request.sortDescriptors = @[sortByPrimaryKey];
+    if (request && primaryKeyName)
+    {
+        NSSortDescriptor *sortByPrimaryKey = [NSSortDescriptor sortDescriptorWithKey:primaryKeyName ascending:YES] ;
+        request.sortDescriptors = @[sortByPrimaryKey];
+    }
     return request;
 }
 
