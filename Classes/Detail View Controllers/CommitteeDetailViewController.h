@@ -19,7 +19,6 @@
 
 @property (nonatomic, strong) NSNumber *dataObjectID;
 @property (nonatomic, strong) CommitteeObj *committee;
-@property (nonatomic, strong) UIPopoverController *masterPopover;
 @property (nonatomic, strong) IBOutlet UILabel *membershipLab;
 @property (nonatomic, strong) IBOutlet PartisanScaleView *partisanSlider;
 @property (nonatomic, strong) NSArray *infoSectionArray;

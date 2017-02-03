@@ -84,13 +84,7 @@
     if ([UtilityMethods isIPadDevice]
         && self.detailViewController)
     {
-        if ([self.detailViewController respondsToSelector:@selector(masterPopover)])
-        {
-            UIPopoverController *masterPopover = [self.detailViewController masterPopover];
-            if (masterPopover)
-                return NO;
-        }
-        else if (![UtilityMethods isLandscapeOrientation])
+        if (![UtilityMethods isLandscapeOrientation])
             return NO;
     }
     return YES;

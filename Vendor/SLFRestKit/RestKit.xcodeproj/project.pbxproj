@@ -183,8 +183,8 @@
 		37085ABC1CEBCF460035BBC0 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 2540EB72144E7DFB00E4FC71 /* NSData+Base64.m */; };
 		37085ABE1CEBCF4C0035BBC0 /* FileMD5Hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 25552DDA14341324007E10F1 /* FileMD5Hash.c */; };
 		37085ABF1CEBCF4C0035BBC0 /* FileMD5Hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 25552DDB14341324007E10F1 /* FileMD5Hash.h */; };
-		37085AC01CEBCF550035BBC0 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 73057FC71331AA3D001908EE /* JSONKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		37085AC11CEBCF550035BBC0 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 73057FC81331AA3D001908EE /* JSONKit.m */; };
+		37085AC01CEBCF550035BBC0 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 73057FC71331AA3D001908EE /* JSONKit.h */; };
+		37085AC11CEBCF550035BBC0 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 73057FC81331AA3D001908EE /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37085AC21CEBCF5C0035BBC0 /* SOCKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 37CA4C6F1410A7CF009A3DCE /* SOCKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37085AC31CEBCF5C0035BBC0 /* SOCKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37CA4C701410A7CF009A3DCE /* SOCKit.m */; };
 		37085AC41CEBCF620035BBC0 /* UDTableView.h in Headers */ = {isa = PBXBuildFile; fileRef = 73CE45D614BB984B00C533CF /* UDTableView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1006,7 +1006,6 @@
 				37085A471CEBCEFF0035BBC0 /* RKObjectRelationshipMapping.h in Headers */,
 				37085A831CEBCF310035BBC0 /* RKParser.h in Headers */,
 				37E86DE41E133E1B00AB2979 /* NSManagedObject+RestKit.h in Headers */,
-				37085AC01CEBCF550035BBC0 /* JSONKit.h in Headers */,
 				37085A691CEBCF060035BBC0 /* RKManagedObjectStore.h in Headers */,
 				37085A881CEBCF310035BBC0 /* RKMIMETypes.h in Headers */,
 				37085A9E1CEBCF3D0035BBC0 /* RKControlTableViewCell.h in Headers */,
@@ -1040,6 +1039,7 @@
 				37085A2B1CEBCEF70035BBC0 /* RKResponse.h in Headers */,
 				37085A501CEBCEFF0035BBC0 /* RKErrorMessage.h in Headers */,
 				37085A9C1CEBCF3D0035BBC0 /* RKControlTableItem.h in Headers */,
+				37085AC01CEBCF550035BBC0 /* JSONKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,7 +14,6 @@
 #import "LegislatorDetailViewController.h"
 #import "LegislatorDetailDataSource.h"
 #import "LegislatorContributionsViewController.h"
-
 #import "LegislatorMasterViewController.h"
 #import "LegislatorObj+RestKit.h"
 #import "DistrictOfficeObj+MapKit.h"
@@ -29,45 +28,28 @@
 #import "TableCellDataObject.h"
 #import "NotesViewController.h"
 #import "TexLegeAppDelegate.h"
-
 #import "BillSearchDataSource.h"
 #import "BillsListViewController.h"
 #import "CommitteeDetailViewController.h"
 #import "DistrictOfficeMasterViewController.h"
-
 #import "MapMiniDetailViewController.h"
 #import "SVWebViewController.h"
 #import "CapitolMapsDetailViewController.h"
-
 #import "PartisanIndexStats.h"
 #import <SDWebImage/UIImageView+WebCache.h>
-
 #import "TexLegeEmailComposer.h"
 #import "PartisanScaleView.h"
 #import "LocalyticsSession.h"
-
 #import "VotingRecordDataSource.h"
-
 #import "OpenLegislativeAPIs.h"
 #import "TexLegeTheme.h"
-
 #import <SLToastKit/SLTypeCheck.h>
-
 #import <SafariServices/SFSafariViewController.h>
-
-@interface LegislatorDetailViewController ()
-- (void)setupHeader;
-@end
-
 
 @implementation LegislatorDetailViewController
 
-@synthesize masterPopover = _masterPopover;
 @synthesize dataSource = _dataSource;
 @synthesize dataObject = _dataObject;
-
-#pragma mark -
-#pragma mark View lifecycle
 
 - (NSString *)nibName
 {
@@ -117,9 +99,6 @@
 	self.votingDataSource = nil;
 	[super viewDidUnload];
 }
-
-#pragma mark -
-#pragma mark Memory management
 
 - (void)didReceiveMemoryWarning
 {
@@ -313,25 +292,12 @@
     [self.chartView reloadData];
 }
 
-#pragma mark -
-#pragma mark Managing the popover
-
 - (IBAction)resetTableData:(id)sender
 {
     LegislatorObj *legislator = self.legislator;
     [self configureWithLegislator:legislator];
 }
 
-// Called on the delegate when the user has taken action to dismiss the popover. This is not called when -dismissPopoverAnimated: is called directly.
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
-{
-	[self.tableView reloadData];
-	if (self.notesPopover && [self.notesPopover isEqual:popoverController])
-    {
-		self.notesPopover = nil;
-	}
-}
-	
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -379,46 +345,49 @@
     }];
 }
 
-#pragma mark -
-#pragma mark Table View Delegate
-
-- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	// deselect the new row using animation
-	[aTableView deselectRowAtIndexPath:newIndexPath animated:YES];	
+	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-	TableCellDataObject *cellInfo = [self.dataSource dataObjectForIndexPath:newIndexPath];
+	TableCellDataObject *cellInfo = [self.dataSource dataObjectForIndexPath:indexPath];
 	LegislatorObj *member = self.legislator;
 
 	if (!cellInfo.isClickable)
 		return;
-	
+
     if (cellInfo.entryType == DirectoryTypeNotes)
     {
-        NotesViewController *nextViewController = nil;
-        if ([UtilityMethods isIPadDevice])
-            nextViewController = [[NotesViewController alloc] initWithNibName:@"NotesView~ipad" bundle:nil];
+        BOOL isTablet = [UtilityMethods isIPadDevice];
+
+        NotesViewController *notesController = nil;
+        if (isTablet)
+            notesController = [[NotesViewController alloc] initWithNibName:@"NotesView~ipad" bundle:nil];
         else
-            nextViewController = [[NotesViewController alloc] initWithNibName:@"NotesView" bundle:nil];
-        
-        // If we got a new view controller, push it .
-        if (nextViewController)
+            notesController = [[NotesViewController alloc] initWithNibName:@"NotesView" bundle:nil];
+
+        NSAssert(notesController != NULL, @"Unable to instanciate a Notes View Controller");
+        if (!notesController)
+            return;
+
+        notesController.legislator = member;
+        notesController.backViewController = self;
+
+        if (isTablet)
         {
-            nextViewController.legislator = member;
-            nextViewController.backViewController = self;
-            
-            if ([UtilityMethods isIPadDevice])
-            {
-                self.notesPopover = [[UIPopoverController alloc] initWithContentViewController:nextViewController];
-                self.notesPopover.delegate = self;
-                CGRect cellRect = [aTableView rectForRowAtIndexPath:newIndexPath];
-                [self.notesPopover presentPopoverFromRect:cellRect inView:aTableView permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-            }
-            else
-            {
-                [self.navigationController pushViewController:nextViewController animated:YES];
-            }
-            
+            notesController.modalPresentationStyle = UIModalPresentationPopover;
+            CGRect cellRect = [tableView rectForRowAtIndexPath:indexPath];
+            UIPopoverPresentationController *presenter = notesController.popoverPresentationController;
+            presenter.delegate = self;
+            presenter.sourceRect = cellRect;
+            presenter.sourceView = tableView;
+            presenter.permittedArrowDirections = UIPopoverArrowDirectionAny;
+            [self presentViewController:notesController animated:YES completion:nil];
+        }
+        else
+        {
+            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+            [self showViewController:notesController sender:cell];
+            //[self.navigationController pushViewController:notesController animated:YES];
         }
     }
     else if (cellInfo.entryType == DirectoryTypeCommittee)
@@ -555,6 +524,13 @@
         
         [UtilityMethods openURLWithoutTrepidation:myURL];
     }
+}
+
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
+{
+    if (!self.isViewLoaded)
+        return;
+    [self.tableView reloadData];
 }
 
 - (CGFloat)tableView:(UITableView *)aTableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

@@ -44,8 +44,6 @@
 static MKCoordinateSpan kStandardZoomSpan = {2.f, 2.f};
 
 @implementation MapViewController
-
-@synthesize masterPopover = _masterPopover;
 @synthesize dataObject = _dataObject;
 
 #pragma mark -

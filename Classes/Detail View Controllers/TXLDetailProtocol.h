@@ -18,6 +18,4 @@
 
     - (IBAction)resetTableData:(id)sender;
 
-    @property (NS_NONATOMIC_IOSONLY,strong) UIPopoverController *masterPopover;
-
 @end

@@ -22,4 +22,3 @@ FOUNDATION_EXPORT const unsigned char SLFRestKitVersionString[];
 #import <SLFRestKit/CoreData.h>
 #import <SLFRestKit/ObjectMapping.h>
 #import <SLFRestKit/UI.h>
-#import <SLFRestKit/JSONKit.h>

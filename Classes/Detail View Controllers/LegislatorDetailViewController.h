@@ -21,9 +21,9 @@
 @class VotingRecordDataSource;
 
 @interface LegislatorDetailViewController : UITableViewController <UISplitViewControllerDelegate, 
-													UIPopoverControllerDelegate, TXLDetailProtocol>
+                                                                   UIPopoverPresentationControllerDelegate,
+                                                                   TXLDetailProtocol>
 
-//@property (nonatomic,strong) id dataObject;
 @property (nonatomic,strong) NSNumber *dataObjectID;
 
 @property (nonatomic,strong) IBOutlet S7GraphView *chartView;
@@ -37,7 +37,6 @@
 @property (nonatomic,strong) IBOutlet UILabel *leg_reelection;
 @property (nonatomic,strong) IBOutlet PartisanScaleView *indivSlider, *partySlider, *allSlider;
 
-@property (nonatomic,strong) UIPopoverController *notesPopover;
 @property (nonatomic,assign) LegislatorObj *legislator;
 @property (nonatomic,strong) LegislatorDetailDataSource *dataSource;
 

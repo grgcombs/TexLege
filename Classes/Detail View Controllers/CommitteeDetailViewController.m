@@ -96,6 +96,10 @@ NSString * const TXLCommitteeMemberCellReuse = @"CommitteeMember";
 											 selector:@selector(resetTableData:) name:@"RESTKIT_LOADED_COMMITTEEPOSITIONOBJ" object:nil];
 	
 	self.clearsSelectionOnViewWillAppear = NO;
+
+    CommitteeObj *committee = self.committee;
+    if (committee)
+        [self configureWithCommittee:committee];
 }
 
 - (void)viewDidUnload
