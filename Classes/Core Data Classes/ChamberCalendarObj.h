@@ -14,11 +14,12 @@
 
 @interface ChamberCalendarObj : NSObject <KalDataSource>
 
-@property (nonatomic,strong) NSString *title;
-@property (nonatomic,strong) NSNumber *chamber;
+@property (nonatomic,copy) NSString *title;
+@property (nonatomic,copy) NSNumber *chamber;
+@property (nonatomic,strong) NSCalendar *calendar;
 
-- (NSDictionary *)eventForIndexPath:(NSIndexPath*)indexPath;
+- (NSDictionary *)eventForIndexPath:(NSIndexPath *)indexPath;
 - (NSArray *)filterEventsByString:(NSString *)filterString;
-- (instancetype)initWithDictionary:(NSDictionary *)calendarDict;
+- (instancetype)initWithDictionary:(NSDictionary *)calendarDict calendar:(NSCalendar *)calendar;
 
 @end

@@ -15,6 +15,7 @@
 #import "NSDate+Helper.h"
 #import "LoadingCell.h"
 #import "CalendarEventsLoader.h"
+#import <SLToastKit/SLTypeCheck.h>
 
 static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 {
@@ -23,22 +24,27 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 
 @interface ChamberCalendarObj()
 @property (nonatomic,assign) BOOL hasPostedAlert;
-@property (nonatomic,copy) NSMutableArray *rows;
+@property (nonatomic,copy) NSArray *rows;
 @end
 
 @implementation ChamberCalendarObj
 
-- (instancetype)initWithDictionary:(NSDictionary *)calendarDict
+- (instancetype)initWithDictionary:(NSDictionary *)calendarDict calendar:(NSCalendar *)calendar
 {
-	if ((self = [super init])) {
-		self.title = [calendarDict valueForKey:@"title"];
-		self.chamber = [calendarDict valueForKey:@"chamber"];
-		_rows = [[NSMutableArray alloc] init];
+    calendarDict = SLTypeDictionaryOrNil(calendarDict);
+    if (!calendar)
+        calendar = [NSCalendar autoupdatingCurrentCalendar];
+    self = [super init];
+	if (self)
+    {
+        _calendar = calendar;
+		_title = SLTypeStringOrNil(calendarDict[@"title"]);
+		_chamber = SLTypeNumberOrNil(calendarDict[@"chamber"]);
+		_rows = @[];
 		_hasPostedAlert = NO;
 	}
 	return self;
 }
-
 
 - (NSString *)description
 {
@@ -48,14 +54,9 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 
 - (NSDictionary *)eventForIndexPath:(NSIndexPath *)indexPath
 {
-	NSDictionary *event = nil;
-	@try {
-		event = self.rows[indexPath.row];
-	}
-	@catch (NSException * e) {
-		event = nil;
-	}
-	return event;	
+    NSUInteger row = indexPath.row;
+    NSArray *rows = self.rows;
+	return (rows.count > row) ? rows[row] : nil;
 }
 
 #pragma mark UITableViewDataSource
@@ -130,28 +131,25 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	NSInteger count = 0;
-	if (!IsEmpty(self.rows))
-		count = self.rows.count;
+    if (section > 0)
+        return 0;
+	NSInteger count = self.rows.count;
 	if ([CalendarEventsLoader sharedCalendarEventsLoader].loadingStatus > LOADING_IDLE)
 		count++;
 	return count;	
 }
 
-#pragma mark -
-#pragma mark Data Storage
-
 - (NSArray *)eventsFrom:(NSDate *)fromDate to:(NSDate *)toDate
 {
 	NSMutableArray *matches = [NSMutableArray array];
-	NSArray *events = [[CalendarEventsLoader sharedCalendarEventsLoader] commiteeeMeetingsForChamber:(self.chamber).integerValue];
-	for (NSDictionary *event in events) {
-		
+	NSArray *events = [[CalendarEventsLoader sharedCalendarEventsLoader] commiteeeMeetingsForChamber:self.chamber.intValue];
+	for (NSDictionary *event in events)
+    {
 		if (IsDateBetweenInclusive(event[kCalendarEventsLocalizedDateKey], fromDate, toDate))
 			[matches addObject:event];
 	}
 	
-	return matches;
+	return [matches copy];
 }
 
 #pragma mark KalDataSource protocol conformance
@@ -181,46 +179,42 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 		
 	//if (!events || ![events count])
 	//	[self fetchEvents];
-	
-	if (delegate && [delegate respondsToSelector:@selector(loadedDataSource:)])
-    {
-		[delegate loadedDataSource:self];
-	}
-	
+	if (!delegate || ![delegate conformsToProtocol:@protocol(KalDataSourceCallbacks)])
+        return;
+    [delegate loadedDataSource:self];
 }
 
 - (NSArray *)markedDatesFrom:(NSDate *)fromDate to:(NSDate *)toDate
-{	
-	NSArray *temp = [[self eventsFrom:fromDate to:toDate] valueForKeyPath:kCalendarEventsLocalizedDateKey];
-	if (!temp)
-		temp = [NSArray array];
-	return temp;
+{
+    NSArray *events = [self eventsFrom:fromDate to:toDate];
+	NSArray *eventDates = [events valueForKeyPath:kCalendarEventsLocalizedDateKey];
+	return SLTypeArrayOrNil(eventDates);
 }
 
 - (void)loadItemsFromDate:(NSDate *)fromDate toDate:(NSDate *)toDate
 {
-	NSArray *temp = [self eventsFrom:fromDate to:toDate];
-	if (!temp || ![temp isKindOfClass:[NSArray class]])
-		temp = [NSArray array];
-	
-	[self.rows addObjectsFromArray:temp];
+	NSArray *events = SLTypeNonEmptyArrayOrNil([self eventsFrom:fromDate to:toDate]);
+	if (!events)
+        events = @[];
+    self.rows = events;
 }
 
 - (void)removeAllItems
 {
-	[self.rows removeAllObjects];
+    self.rows = @[];
 }
 
 - (NSArray *)filterEventsByString:(NSString *)filterString
 {
+    filterString = SLTypeNonEmptyStringOrNil(filterString);
 	if (!filterString)
 		filterString = @"";
 
-	NSArray *newEvents = [[CalendarEventsLoader sharedCalendarEventsLoader] commiteeeMeetingsForChamber:(self.chamber).integerValue];
-	if (!IsEmpty(newEvents))
+    NSMutableArray *filteredRows = [[NSMutableArray alloc] init];
+    NSArray *newEvents = [[CalendarEventsLoader sharedCalendarEventsLoader] commiteeeMeetingsForChamber:(self.chamber).unsignedIntValue];
+
+	if (SLTypeNonEmptyArrayOrNil(newEvents))
     {
-		[self.rows removeAllObjects];
-		
 		for (NSDictionary *event in newEvents)
         {
 			NSRange committeeRange = [event[kCalendarEventsCommitteeNameKey] 
@@ -231,11 +225,12 @@ static BOOL IsDateBetweenInclusive(NSDate *date, NSDate *begin, NSDate *end)
 			
 			if (committeeRange.location != NSNotFound || locationRange.location != NSNotFound)
             {
-				[self.rows addObject:event];
+				[filteredRows addObject:event];
 			}
 		}
 	}
-	return self.rows;
+    self.rows = [filteredRows copy];
+	return filteredRows;
 }
 
 @end

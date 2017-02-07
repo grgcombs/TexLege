@@ -11,137 +11,149 @@
 #import "DisclosureQuartzView.h"
 #import "TexLegeAppDelegate.h"
 #import "CalendarEventsLoader.h"
+#import <SLToastKit/SLTypeCheck.h>
 
-@interface CalendarDataSource (Private)
-- (void) loadChamberCalendars;
+@interface CalendarDataSource()
+@property (nonatomic,copy) NSArray<NSNumber *> *orderedChamberIDs;
+@property (nonatomic,strong) NSDictionary<NSNumber *,ChamberCalendarObj *> *chamberCalendars;
 @end
 
-
 @implementation CalendarDataSource
-@synthesize calendarList;
 
 
-- (NSString *)name 
-{ return NSLocalizedStringFromTable(@"Meetings", @"StandardUI", @"The short title for buttons and tabs related to committee meetings (or calendar events)"); }
+- (NSString *)name
+{
+    return NSLocalizedStringFromTable(@"Meetings", @"StandardUI", @"The short title for buttons and tabs related to committee meetings (or calendar events)");
+}
 
 - (NSString *)navigationBarName 
-{ return NSLocalizedStringFromTable(@"Upcoming Meetings", @"StandardUI", @"The long title for buttons and tabs related to committee meetings (or calendar events)"); }
+{
+    return NSLocalizedStringFromTable(@"Upcoming Meetings", @"StandardUI", @"The long title for buttons and tabs related to committee meetings (or calendar events)");
+}
 
 - (UIImage *)tabBarImage 
-{ return [UIImage imageNamed:@"83-calendar-inv.png"]; }
+{
+    return [UIImage imageNamed:@"83-calendar-inv.png"];
+}
 
 - (BOOL)showDisclosureIcon
-{ return YES; }
+{
+    return YES;
+}
 
 - (BOOL)usesCoreData
-{ return NO; }
+{
+    return NO;
+}
 
 - (BOOL)canEdit
-{ return NO; }
+{
+    return NO;
+}
 
-
-// displayed in a plain style tableview
-- (UITableViewStyle)tableViewStyle {
+- (UITableViewStyle)tableViewStyle
+{
 	return UITableViewStylePlain;
 }
 
-- (instancetype)init {
-	if ((self = [super init])) {
-		
+- (instancetype)init
+{
+	if ((self = [super init]))
+    {
 		[self loadChamberCalendars];
-		
 	}
 	return self;
 }
 
+- (void)loadChamberCalendars
+{
+    NSArray<NSNumber *> *orderedChamberIDs = @[@(BOTH_CHAMBERS),
+                                               @(HOUSE),
+                                               @(SENATE),
+                                               @(JOINT)];
+    _orderedChamberIDs = orderedChamberIDs;
 
-- (void) loadChamberCalendars {
-	[[CalendarEventsLoader sharedCalendarEventsLoader] loadEvents:self];
-	
-    @autoreleasepool {
-        self.calendarList = [NSMutableArray arrayWithCapacity:4];
+    NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+    NSMutableDictionary<NSNumber *,ChamberCalendarObj *> *chamberCalendars = [[NSMutableDictionary alloc] init];
 
-        /* ALL OR BOTH LEGISLATIVE CHAMBERS */
-        NSInteger numberOfChambers = 4;	// All chambers, House only, Senate only, Joint committees
-        NSInteger chamberIndex = BOTH_CHAMBERS;
-        NSString *chamberName = stringForChamber(chamberIndex, TLReturnFull);
-
-        NSString *localizedString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ Upcoming Meetings", @"DataTableUI", @"Menu item to display upcoming calendar events in a legislative chamber"),
-                                     chamberName];
-
-        NSMutableDictionary *calendarDict = [[NSMutableDictionary alloc] initWithCapacity:10];
-        ChamberCalendarObj *calendar = nil;
-        calendarDict[@"title"] = localizedString;
-        calendarDict[@"chamber"] = @(chamberIndex);
-        calendar = [[ChamberCalendarObj alloc] initWithDictionary:calendarDict];
-        [self.calendarList addObject:calendar];
-        [calendarDict removeAllObjects];
-
-        for (chamberIndex=HOUSE; chamberIndex < numberOfChambers; chamberIndex++) {
-            chamberName = stringForChamber(chamberIndex, TLReturnFull);
-            localizedString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Upcoming %@ Meetings", @"DataTableUI", @"Menu item to display upcoming calendar events in a legislative chamber"),
-                               chamberName];
-            calendarDict[@"title"] = localizedString;
-            calendarDict[@"chamber"] = @(chamberIndex);
-            calendar = [[ChamberCalendarObj alloc] initWithDictionary:calendarDict];
-            [self.calendarList addObject:calendar];
-            [calendarDict removeAllObjects];
-        }
+    for (NSNumber *chamberNumber in orderedChamberIDs)
+    {
+        TXLChamberType chamber = chamberNumber.unsignedIntValue;
+        NSString *chamberName = stringForChamber(chamber, TLReturnFull);
+        NSAssert1(chamberName != NULL, @"Should have a name for chamber (chamber = %d)", chamber);
+        NSString *localizedString = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ Upcoming Meetings", @"DataTableUI", nil), chamberName];
+        NSDictionary *dictionary = @{@"title": localizedString, @"chamber": chamberNumber};
+        ChamberCalendarObj *meetingsContainer = [[ChamberCalendarObj alloc] initWithDictionary:dictionary calendar:calendar];
+        if (!meetingsContainer)
+            continue;
+        chamberCalendars[chamberNumber] = meetingsContainer;
     }
+    _chamberCalendars = [chamberCalendars copy];
+
+    [[CalendarEventsLoader sharedCalendarEventsLoader] loadEvents:self];
 }
 
-- (id) dataObjectForIndexPath:(NSIndexPath *)indexPath {
-    if (self.calendarList.count <= indexPath.row)
+- (id)dataObjectForIndexPath:(NSIndexPath *)indexPath
+{
+    NSArray *chamberIDs = self.orderedChamberIDs;
+    if (chamberIDs.count > indexPath.row)
+    {
+        NSNumber *chamberID = chamberIDs[indexPath.row];
+        return self.chamberCalendars[chamberID];
+    }
+    return nil;
+}
+
+- (NSIndexPath *)indexPathForDataObject:(id)dataObject
+{
+    ChamberCalendarObj *chamberObject = SLValueIfClass(ChamberCalendarObj, dataObject);
+    if (!chamberObject)
         return nil;
-	return (self.calendarList)[indexPath.row];
+    __block NSUInteger row = NSNotFound;
+    [self.orderedChamberIDs enumerateObjectsUsingBlock:^(NSNumber *chamberID, NSUInteger idx, BOOL * stop) {
+        ChamberCalendarObj *item = self.chamberCalendars[chamberID];
+        if (item && [item isEqual:chamberObject])
+        {
+            row = idx;
+            *stop = YES;
+        }
+    }];
+
+    if (row == NSNotFound)
+        return nil;
+    return [NSIndexPath indexPathForRow:row inSection:0];
 }
-
-- (NSIndexPath *)indexPathForDataObject:(id)dataObject {
-	
-	NSInteger row = [self.calendarList indexOfObject:dataObject];
-	if (row == NSNotFound)
-		row = 0;
-		
-	return [NSIndexPath indexPathForRow:row inSection:0];
-}
-
-
-#pragma mark -
-#pragma mark UITableViewDataSource methods
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {		
 	static NSString *CellIdentifier = @"Cell";
-	
+
 	/* Look up cell in the table queue */
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	
 	/* Not found in queue, create a new cell object */
-    if (cell == nil) {
+    if (cell == nil)
+    {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		cell.textLabel.textColor =	[TexLegeTheme textDark];
 		cell.textLabel.textAlignment = NSTextAlignmentLeft;
-		cell.textLabel.font = [UIFont boldSystemFontOfSize:15];
+
+        static UIFont *bold15 = nil;
+        if (!bold15)
+            bold15 = [UIFont boldSystemFontOfSize:15];
+		cell.textLabel.font = bold15;
 		
 		cell.selectionStyle = UITableViewCellSelectionStyleBlue;
 		cell.textLabel.adjustsFontSizeToFitWidth = YES;
-        cell.textLabel.minimumScaleFactor = (12.0 / cell.textLabel.font.pointSize); // 12.f = deprecated minimumFontSize
-		//cell.accessoryView = [TexLegeTheme disclosureLabel:YES];
-		//cell.accessoryView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure"]] autorelease];
+        cell.textLabel.minimumScaleFactor = (12.0 / bold15.pointSize);
 		DisclosureQuartzView *qv = [[DisclosureQuartzView alloc] initWithFrame:CGRectMake(0.f, 0.f, 28.f, 28.f)];
-		//UIImageView *iv = [[UIImageView alloc] initWithImage:[qv imageFromUIView]];
 		cell.accessoryView = qv;
-		//[iv release];
-		
+
     }
-	// configure cell contents
 
 	BOOL useDark = (indexPath.row % 2 == 0);
 	cell.backgroundColor = useDark ? [TexLegeTheme backgroundDark] : [TexLegeTheme backgroundLight];
-	
-	//if ([self showDisclosureIcon])
-	//	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-	
+
 	ChamberCalendarObj *calendar = [self dataObjectForIndexPath:indexPath];
 	if (calendar)
         cell.textLabel.text = calendar.title;
@@ -151,10 +163,10 @@
 
 
 - (NSInteger)tableView:(UITableView *)tableView  numberOfRowsInSection:(NSInteger)section 
-{		
-	return (self.calendarList).count;
+{
+    if (section > 0)
+        return 0;
+	return self.chamberCalendars.count;
 }
-
-
 
 @end

@@ -22,6 +22,7 @@
 
 #import "CalendarDetailViewController.h"
 #import "StateMetaLoader.h"
+#import <SLToastKit/SLTypeCheck.h>
 
 /*
  Sorts an array of CalendarItems objects by date.
@@ -119,7 +120,7 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if (!IsEmpty(keyPath) && [keyPath isEqualToString:@"openstatesConnectionStatus"])
+	if (SLTypeNonEmptyStringOrNil(keyPath) && [keyPath isEqualToString:@"openstatesConnectionStatus"])
     {
 		/*
          if ([change valueForKey:NSKeyValueChangeKindKey] == NSKeyValueChangeSetting) {
@@ -141,7 +142,7 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
     {
 		StateMetaLoader *meta = [StateMetaLoader instance];
 
-		if (IsEmpty(meta.selectedState))
+		if (!SLTypeNonEmptyStringOrNil(meta.selectedState))
 			return;
 
 		//	http://openstates.sunlightlabs.com/api/v1/events/?state=tx&apikey=xxxxxxxxxxxxxxxx
@@ -226,7 +227,7 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
     NSError *error = nil;
     NSArray *allEvents = [NSJSONSerialization JSONObjectWithData:response.body options:0 error:&error];
 
-    if (IsEmpty(allEvents))
+    if (!SLTypeNonEmptyArrayOrNil(allEvents))
     {
         self.events = @[];
         [[NSNotificationCenter defaultCenter] postNotificationName:kCalendarEventsNotifyLoaded object:nil];
@@ -239,27 +240,18 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
         NSMutableArray *events = [[NSMutableArray alloc] init];
         for (NSDictionary *event in allEvents)
         {
-            NSString *when = event[kCalendarEventsWhenKey];
+            NSString *when = SLTypeStringOrNil(event[kCalendarEventsWhenKey]);
             NSInteger daysAgo = [[NSDate dateFromTimestampString:when] daysAgo];
             if (daysAgo < 5)
             {
-                NSMutableDictionary *newEvent = [self parseEvent:event];
-                NSArray *tempKeys = newEvent.allKeys;
-                for (NSString *key in tempKeys)
-                {
-                    id value = newEvent[key];
-                    if ([[NSNull null] isEqual:value])
-                    {
-                        [newEvent removeObjectForKey:key];
-                    }
-                }
+                NSDictionary *newEvent = [self parseEvent:event];
                 [events addObject:newEvent];
             }
         }
         [events sortUsingFunction:sortByDate context:nil];
 
         NSString *thePath = [[UtilityMethods applicationCachesDirectory] stringByAppendingPathComponent:kCalendarEventsCacheFile];
-        if (![events writeToFile:thePath atomically:YES])
+        if (![NSKeyedArchiver archiveRootObject:events toFile:thePath])
         {
             NSLog(@"CalendarEventsLoader: Error writing event cache to file: %@", thePath);
         }
@@ -275,7 +267,7 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
     }
 }
 
-- (NSMutableDictionary *)parseEvent:(NSDictionary *)inEvent
+- (NSDictionary *)parseEvent:(NSDictionary *)inEvent
 {
 	NSMutableDictionary *loadedEvent = [NSMutableDictionary dictionaryWithDictionary:inEvent];
 
@@ -299,39 +291,58 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
 			loadedEvent[kCalendarEventsLocalizedDateStringKey] = dateString;
 
 		NSString *timeString = [localDate stringWithDateStyle:NSDateFormatterNoStyle timeStyle:NSDateFormatterShortStyle];
-		if (timeString) {
+		if (timeString)
 			loadedEvent[kCalendarEventsLocalizedTimeStringKey] = timeString;
-		}
 	}
 
 	NSArray *participants = loadedEvent[kCalendarEventsParticipantsKey];
 	if (participants)
     {
 		NSDictionary *participant = [participants findWhereKeyPath:kCalendarEventsParticipantTypeKey equals:@"committee"];
-		if (participant) {
-			loadedEvent[kCalendarEventsCommitteeNameKey] = participant[kCalendarEventsParticipantNameKey];
+		if (participant)
+        {
+            NSString *name = SLTypeStringOrNil(participant[kCalendarEventsParticipantNameKey]);
+            if (name)
+                loadedEvent[kCalendarEventsCommitteeNameKey] = name;
 
-			NSString * chamberString = participant[kCalendarEventsTypeChamberValue];
-			if (!IsEmpty(chamberString))
+			NSString *chamberString = SLTypeNonEmptyStringOrNil(participant[kCalendarEventsTypeChamberValue]);
+			if (chamberString)
 				loadedEvent[kCalendarEventsTypeChamberValue] = @(chamberFromOpenStatesString(chamberString));
 		}
 	}
 
-	BOOL canceled = ([loadedEvent[kCalendarEventsStatusKey] isEqualToString:kCalendarEventsCanceledKey]);
-	loadedEvent[kCalendarEventsCanceledKey] = @(canceled);
+    BOOL agendaSaysCancelled = NO;
+    NSString *agenda = SLTypeNonEmptyStringOrNil(loadedEvent[kCalendarEventsAgendaKey]);
+    if (agenda)
+    {
+        NSRange foundRange = [agenda rangeOfString:@"MEETING CANCELED" options:NSLiteralSearch];
+        if (foundRange.location != NSNotFound && foundRange.length > 0)
+            agendaSaysCancelled = YES;
+    }
+	BOOL metadataSaysCancelled = ([loadedEvent[kCalendarEventsStatusKey] isEqualToString:kCalendarEventsCanceledKey]);
+	loadedEvent[kCalendarEventsCanceledKey] = @(metadataSaysCancelled || agendaSaysCancelled);
 
     NSURL *announcementURL = [self announcementURLForEvent:loadedEvent];
     if (announcementURL)
     {
         loadedEvent[kCalendarEventsAnnouncementURLKey] = announcementURL;
     }
-	return loadedEvent;
+
+    NSMutableArray *keysToRemove = [[NSMutableArray alloc] init];
+    [loadedEvent enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop) {
+        if ([[NSNull null] isEqual:obj])
+            [keysToRemove addObject:key];
+    }];
+    if (keysToRemove.count)
+        [loadedEvent removeObjectsForKeys:keysToRemove];
+
+	return [loadedEvent copy];
 }
 
-- (NSArray *)commiteeeMeetingsForChamber:(NSInteger)chamber
+- (NSArray *)commiteeeMeetingsForChamber:(TXLChamberType)chamber
 {
     NSArray *events = self.events;
-	if (IsEmpty(events))
+	if (!SLTypeNonEmptyArrayOrNil(events))
 		return nil;
 
 	if (chamber == BOTH_CHAMBERS)
@@ -340,13 +351,11 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
 		return [events findAllWhereKeyPath:kCalendarEventsTypeChamberValue equals:@(chamber)];
 }
 
-
-#pragma mark -
-#pragma mark EventKit
+#pragma mark - EventKit
 
 - (void)addAllEventsToiCal:(id)sender
 {
-    //#warning see about asking what calendar they want to put these in
+    // if you do this, find a way to ask which calendar to store these
 
 	if (![UtilityMethods supportsEventKit] || !self.eventStore)
     {
@@ -458,13 +467,30 @@ NSComparisonResult sortByDate(id firstItem, id secondItem, void *context)
     }
 
     if (!event)
+    {
         event = [EKEvent eventWithEventStore:self.eventStore];  // we didn't find an event, so lets create
+        EKCalendar *calendar = event.calendar;
+        if (!calendar)
+        {
+            calendar = [self.eventStore defaultCalendarForNewEvents];
+            if (!calendar)
+                return nil;
+            event.calendar = calendar;
+        }
+    }
     if (!event)
         return nil;
 
+    NSString *agenda = eventDict[kCalendarEventsAgendaKey];
+    if (agenda && [agenda isKindOfClass:[NSString class]])
+    {
+
+    }
     if ([eventDict[kCalendarEventsCanceledKey] boolValue] == YES)
+    {
         event.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"%@ (CANCELED)", @"DataTableUI", @"the event was cancelled"),
                        chamberCommitteeString];
+    }
     else
         event.title = chamberCommitteeString;
 

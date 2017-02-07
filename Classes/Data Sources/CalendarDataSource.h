@@ -6,8 +6,6 @@
 
 #import "TableDataSourceProtocol.h"
 
-@interface CalendarDataSource : NSObject <TableDataSource> {
-}
-@property (nonatomic,strong) NSMutableArray *calendarList;
+@interface CalendarDataSource : NSObject <TableDataSource>
 
 @end

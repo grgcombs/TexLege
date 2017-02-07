@@ -130,14 +130,6 @@
     }
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	if ([UtilityMethods isIPadDevice])
-		return YES;
-	else
-		return UIInterfaceOrientationIsPortrait(interfaceOrientation);
-}
-
 - (void)splitViewController:(UISplitViewController *)svc willChangeToDisplayMode:(UISplitViewControllerDisplayMode)displayMode
 {
     if (svc.displayMode == UISplitViewControllerDisplayModePrimaryHidden)
@@ -159,7 +151,7 @@
 
 - (void)setDataObject:(id)newObj
 {
-	self.chamberCalendar = newObj;
+    [self setChamberCalendar:newObj];
 }
 
 - (void)setChamberCalendar:(ChamberCalendarObj *)newObj
@@ -178,15 +170,18 @@
     _chamberCalendar = newObj;
 	if (!newObj)
         return;
-
-    if (!self.isViewLoaded)
-        [self loadView];
-		
     self.delegate = self;
     self.dataSource = newObj;
+		
     self.searchDisplayController.searchResultsDataSource = newObj;
-				
-    [self showAndSelectDate:[NSDate date]];
+    if (self.isViewLoaded)
+    {
+        [self showAndSelectDate:[NSDate date]];
+    }
+    else
+    {
+        self.initialSelectedDate = [NSDate date];
+    }
 }
 
 - (void)tableView:(UITableView *)tv accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath

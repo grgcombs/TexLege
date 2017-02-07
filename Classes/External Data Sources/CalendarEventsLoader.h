@@ -14,6 +14,7 @@
 #import <EventKit/EventKit.h>
 #import <SLFRestKit/SLFRestKit.h>
 #import "Kal.h"
+#import "TexLegeLibrary.h"
 
 #define kCalendarEventsNotifyError	@"CALENDAR_EVENTS_ERROR"
 #define kCalendarEventsNotifyLoaded	KalDataSourceChangedNotification 
@@ -28,7 +29,7 @@
 @interface CalendarEventsLoader : NSObject <RKRequestDelegate>
 + (instancetype)sharedCalendarEventsLoader;
 - (void)loadEvents:(id)sender;
-- (NSArray *)commiteeeMeetingsForChamber:(NSInteger)chamber;
+- (NSArray *)commiteeeMeetingsForChamber:(TXLChamberType)chamber;
 - (void)addEventsToiCal:(NSArray *)eventDicts delegate:(id)delegate;
 - (void)addAllEventsToiCal:(id)sender;
 
