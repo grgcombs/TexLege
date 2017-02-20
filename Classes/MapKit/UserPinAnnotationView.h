@@ -13,8 +13,5 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 
-@interface UserPinAnnotationView : MKPinAnnotationView {
-
-}
-
+@interface UserPinAnnotationView : MKPinAnnotationView
 @end

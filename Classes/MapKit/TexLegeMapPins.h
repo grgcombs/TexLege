@@ -10,37 +10,13 @@
 //
 //
 
-#import <Foundation/Foundation.h>
-#import <MapKit/MapKit.h>
+#import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSUInteger, TexLegePinAnnotationColor) {
     TexLegePinAnnotationColorRed = 0,
     TexLegePinAnnotationColorGreen,
     TexLegePinAnnotationColorPurple,
-	// end compatibility with MKPinAnnotation colors
 	TexLegePinAnnotationColorBlue = 99
 };
 
-
-typedef NS_ENUM(NSUInteger, TexLegePinAnnotationStatus) {
-    TexLegePinAnnotationStatusNormal = 0,
-    TexLegePinAnnotationStatusDown1,
-    TexLegePinAnnotationStatusDown2,
-	TexLegePinAnnotationStatusDown3,
-	TexLegePinAnnotationStatusFloating,
-	TexLegePinAnnotationStatusPressed,
-	//
-	TexLegePinAnnotationStatusHead = 99
-	
-};
-
-
-
-@interface TexLegeMapPins : NSObject {
-
-}
-
-+ (UIImage *)imageForMapAnnotation:(id <MKAnnotation>)annotation status:(NSInteger)status;
-+ (UIImage *)imageForPinColorIndex:(NSInteger)index status:(NSInteger)status;
-+ (NSString *)imageFileForPinColorIndex:(NSInteger)index status:(NSInteger)status;
-@end
+UIColor * pinTintColorForColorIndex(TexLegePinAnnotationColor pinColorIndex);

@@ -28,20 +28,14 @@
 
 
 @implementation LegislatorMasterViewController
-@synthesize chamberControl;
-
-#pragma mark -
-#pragma mark Initialization
 
 - (NSString *)nibName {
 	return NSStringFromClass([self class]);
 }
 
-
 - (Class)dataSourceClass {
 	return [LegislatorsDataSource class];
 }
-
 
 - (void)configure {
 	[super configure];	
@@ -49,17 +43,8 @@
 		self.initialObjectToSelect = [self firstDataObject];
 }
 
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    // Relinquish ownership any cached data, images, etc that aren't in use.
-}
-
-#pragma mark -
-#pragma mark View lifecycle
-
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 			
 	self.tableView.rowHeight = 73.0f;
@@ -85,11 +70,13 @@
 	[super viewDidUnload];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
 
 	NSDictionary *segPrefs = [[NSUserDefaults standardUserDefaults] objectForKey:kSegmentControlPrefKey];
-	if (segPrefs) {
+	if (segPrefs)
+    {
 		NSNumber *segIndex = segPrefs[NSStringFromClass([self class])];
 		if (segIndex)
 			self.chamberControl.selectedSegmentIndex = segIndex.integerValue;
@@ -138,8 +125,8 @@
 	[self redisplayVisibleCells:nil];	
 }
 
-
-- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath withAnimation:(BOOL)animated {
+- (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath withAnimation:(BOOL)animated
+{
 	TexLegeAppDelegate *appDelegate = [TexLegeAppDelegate appDelegate];
 
     BOOL isTablet = [UtilityMethods isIPadDevice];

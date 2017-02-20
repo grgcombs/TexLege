@@ -14,26 +14,27 @@
 #import "UtilityMethods.h"
 #import "StateMetaLoader.h"
 
-NSString *stringInitial(NSString *inString, BOOL parens) {
+NSString *stringInitial(NSString *inString, BOOL parens)
+{
 	if (IsEmpty(inString))
 		return nil;
 	NSString * initial = [inString substringToIndex:1];
 	if ([inString isEqualToString:NSLocalizedStringFromTable(@"All", @"DataTableUI", @"As in all chambers")] 
-		|| [inString isEqualToString:NSLocalizedStringFromTable(@"Both", @"DataTableUI", @"As in both chambers")]) {
+		|| [inString isEqualToString:NSLocalizedStringFromTable(@"Both", @"DataTableUI", @"As in both chambers")])
+    {
 		initial = inString;
 	}
-	if (parens) {
+	if (parens)
 		initial = [NSString stringWithFormat:@"(%@)", initial];
-	}
 	return initial;
-
 }
 
-NSString *abbreviateString(NSString *inString) {
+NSString *abbreviateString(NSString *inString)
+{
 	if (IsEmpty(inString))
 		return nil;
 	
-	NSString *outString = NSLocalizedStringFromTable(inString, @"Abbreviations", @"");
+	NSString *outString = NSLocalizedStringFromTable(inString, @"Abbreviations", nil);
 	if (IsEmpty(outString)) {
 		outString = inString;
 	}
@@ -64,8 +65,7 @@ NSString *stringForChamber(TXLChamberType chamber, TLStringReturnType type)
         }
     }
 
-
-	if (IsEmpty(chamberName))
+	if (!chamberName)
     {
 		switch (chamber) {
 			case HOUSE:
@@ -78,7 +78,7 @@ NSString *stringForChamber(TXLChamberType chamber, TLStringReturnType type)
 				chamberName = NSLocalizedStringFromTable(@"Joint", @"DataTableUI", nil);
 				break;
 			case BOTH_CHAMBERS:
-				chamberName = NSLocalizedStringFromTable(@"All", @"DataTableUI", nil);
+                chamberName = NSLocalizedStringFromTable(@"All", @"DataTableUI", nil);
 				break;
             case EXECUTIVE:
                 chamberName = NSLocalizedStringFromTable(@"Executive", @"DataTableUI", nil);
@@ -118,7 +118,8 @@ NSString *stringForChamber(TXLChamberType chamber, TLStringReturnType type)
 		return title;
 	}			
 
-	if (type == TLReturnOpenStates) {
+	if (type == TLReturnOpenStates)
+    {
 		switch (chamber) {
 			case SENATE:
 				chamberName = @"upper";
@@ -141,8 +142,9 @@ NSString *stringForChamber(TXLChamberType chamber, TLStringReturnType type)
 	return chamberName;
 }
 
-TXLChamberType chamberFromOpenStatesString(NSString *chamberString) {	// upper, lower, joint ...
-	NSInteger chamber = BOTH_CHAMBERS;
+TXLChamberType chamberFromOpenStatesString(NSString *chamberString)
+{
+    TXLChamberType chamber = BOTH_CHAMBERS;
 	
 	if (NO == IsEmpty(chamberString)) {
 		if ([chamberString caseInsensitiveCompare:@"upper"] == NSOrderedSame)
@@ -159,18 +161,19 @@ TXLChamberType chamberFromOpenStatesString(NSString *chamberString) {	// upper, 
 }
 
 
-NSString *stringForParty(NSInteger party, TLStringReturnType type) {
+NSString *stringForParty(TXLPartyType party, TLStringReturnType type)
+{
 	NSString *partyString = nil;
 	
 	switch (party) {
 		case DEMOCRAT:
-			partyString = NSLocalizedStringFromTable(@"Democrat", @"DataTableUI", @"");
+			partyString = NSLocalizedStringFromTable(@"Democrat", @"DataTableUI", nil);
 			break;
 		case REPUBLICAN:
-			partyString = NSLocalizedStringFromTable(@"Republican", @"DataTableUI", @"");
+			partyString = NSLocalizedStringFromTable(@"Republican", @"DataTableUI", nil);
 			break;
 		default:
-			partyString = NSLocalizedStringFromTable(@"Independent", @"DataTableUI", @"");
+			partyString = NSLocalizedStringFromTable(@"Independent", @"DataTableUI", nil);
 			break;
 	}		
 	
@@ -189,19 +192,17 @@ NSString *stringForParty(NSInteger party, TLStringReturnType type) {
 	return partyString;
 }
 
-NSString *billTypeStringFromBillID(NSString *billID) {
+NSString *billTypeStringFromBillID(NSString *billID)
+{
 	NSArray *words = [billID componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 	if (!IsEmpty(words))
 		return words[0];
-	else
-		return nil;
+    return nil;
 }
 
-NSString * watchIDForBill(NSDictionary *aBill) {
+NSString * watchIDForBill(NSDictionary *aBill)
+{
 	if (aBill && aBill[@"session"] && aBill[@"bill_id"])
 		return [NSString stringWithFormat:@"%@:%@", aBill[@"session"],aBill[@"bill_id"]]; 
-	else
-		return @"";
+    return @"";
 }
-
-

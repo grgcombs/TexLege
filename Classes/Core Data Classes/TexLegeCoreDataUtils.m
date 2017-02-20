@@ -113,7 +113,7 @@ static os_log_t txlCoreDataUtilsLog;
 	return [LegislatorObj objectWithPredicate:predicate];
 }
 
-+ (NSArray *)allLegislatorsSortedByPartisanshipFromChamber:(NSInteger)chamber andPartyID:(NSInteger)party
++ (NSArray<LegislatorObj *> *)allLegislatorsSortedByPartisanshipFromChamber:(TXLChamberType)chamber andPartyID:(TXLPartyType)party
 {
 	if (chamber == BOTH_CHAMBERS)
     {
@@ -126,7 +126,7 @@ static os_log_t txlCoreDataUtilsLog;
 	if (party > BOTH_PARTIES)
 		predicateString = [NSString stringWithFormat:@"legtype == %ld AND party_id == %ld", (long)chamber, (long)party];
 	else
-		predicateString = [NSString stringWithFormat:@"legtype == %ld", (long)chamber];
+		predicateString = [NSString stringWithFormat:@"legtype == %d", chamber];
 	
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateString]; 
 	fetchRequest.predicate = predicate;

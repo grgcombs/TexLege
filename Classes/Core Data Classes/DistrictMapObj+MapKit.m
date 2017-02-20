@@ -125,4 +125,10 @@
 	return [PolygonMath insidePolygon:coordinates count:coordinateCount point:aCoordinate];
 }
 
+- (UIColor *)pinTintColor
+{
+    TexLegePinAnnotationColor pinColorIndex = self.pinColorIndex.unsignedIntegerValue;
+    return pinTintColorForColorIndex(pinColorIndex);
+}
+
 @end

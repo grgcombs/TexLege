@@ -12,12 +12,12 @@
 
 #import "PolygonMath.h"
 
+BOOL const INSIDE = YES;
+BOOL const OUTSIDE = NO;
+
 @implementation PolygonMath
 
 //The following C function returns INSIDE or OUTSIDE indicating the status of a point P with respect to a polygon with N points.
-
-#define INSIDE YES
-#define OUTSIDE NO
 
 /* This will supposedly work when there's holes ... but it'll have to go in the view controller, not in here.... ?
  
@@ -35,17 +35,19 @@
  
  */
 
-+ (BOOL)insidePolygon:(CLLocationCoordinate2D *)polygon count:(NSInteger)pointCount point:(CLLocationCoordinate2D) point
++ (BOOL)insidePolygon:(CLLocationCoordinate2D *)polygon count:(UInt64)count point:(CLLocationCoordinate2D) point
 {
-	NSInteger counter = 0;
-	NSInteger i = 0;
+	UInt64 counter = 0;
+	UInt64 i = 0;
 	double intersection = 0;
-	CLLocationCoordinate2D p1,p2;
-
+    CLLocationCoordinate2D p1 = kCLLocationCoordinate2DInvalid;
+    CLLocationCoordinate2D p2 = kCLLocationCoordinate2DInvalid;
+    if (!polygon)
+        return NO;
 	p1 = polygon[0];
-	for (i=1;i<=pointCount;i++)
+	for (i=1;i<=count;i++)
     {
-		p2 = polygon[(i % pointCount)];
+		p2 = polygon[(i % count)];
 		if (point.longitude > MIN(p1.longitude,p2.longitude))
         {
 			if (point.longitude <= MAX(p1.longitude,p2.longitude))
@@ -73,11 +75,13 @@
 }
 
 //The following code is by Randolph Franklin, it returns 1 for interior points and 0 for exterior points.
-+ (BOOL)pnpoly:(double *)xp yp:(double *)yp count:(NSInteger)npol x:(double)x y:(double)y
++ (BOOL)pnpoly:(double *)xp yp:(double *)yp count:(UInt64)count x:(double)x y:(double)y
 {
-	NSInteger i = 0, j = 0;
+    UInt64 i = 0;
+    UInt64 j = 0;
 	BOOL foundInside = NO;
-	for (i = 0, j = npol-1; i < npol; j = i++) {
+	for (i = 0, j = count-1; i < count; j = i++)
+    {
         if ((((yp[i] <= y) && (y < yp[j])) ||
              ((yp[j] <= y) && (y < yp[i]))) &&
             (x < (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i]))

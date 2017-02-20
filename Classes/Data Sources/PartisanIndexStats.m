@@ -20,7 +20,6 @@
 #import "TexLegeAppDelegate.h"
 #import "PartyPartisanshipObj.h"
 #import <SLFRestKit/SLFRestKit.h>
-@import SLToastKit;
 #import <SLToastKit/SLToastKit.h>
 
 @interface PartisanIndexStats ()
@@ -187,7 +186,7 @@
 {
 	if (chamber == BOTH_CHAMBERS)
     {
-		debug_NSLog(@"aggregatePartisanIndexForChamber: ... cannot be BOTH chambers");
+        debug_NSLog(@"aggregatePartisanIndexForChamber: ... cannot be BOTH chambers");
 		return nil;
 	}
 

@@ -13,58 +13,50 @@
 #import "UserPinAnnotationView.h"
 #import "UserPinAnnotation.h"
 #import "TexLegeMapPins.h"
-
-@interface UserPinAnnotationView (Private)
-
-- (void)annotationChanged_:(NSNotification *)notification;
-
-@end
+#import <SLToastKit/SLTypeCheck.h>
 
 @implementation UserPinAnnotationView
 
-- (void)dealloc {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];	
-
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-
-- (instancetype)initWithAnnotation:(id <MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier {
-	if ((self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier])) {
-		
-		
+- (instancetype)initWithAnnotation:(id <MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
+    
+	if (self)
+    {
 		self.animatesDrop = YES;
 		self.opaque = NO;
 		self.draggable = YES;
 		
-		if (![annotation isKindOfClass:[UserPinAnnotation class]])  
-			return self;
+        UserPinAnnotation *pinAnnoatation = SLValueIfClass(UserPinAnnotation, annotation);
+        if (!pinAnnoatation)
+            return self;
 		
-		UserPinAnnotation *customAnnotation = (UserPinAnnotation *)annotation;
-
 		self.canShowCallout = YES;
 
-		NSInteger pinColorIndex = customAnnotation.pinColorIndex.integerValue;
-		if (pinColorIndex >= TexLegePinAnnotationColorBlue) {
-			UIImage *pinImage = [TexLegeMapPins imageForPinColorIndex:pinColorIndex status:TexLegePinAnnotationStatusHead];
-			UIImageView *pinHead = [[UIImageView alloc] initWithImage:pinImage];
-			[self addSubview:pinHead];
-		}
-		else
-			self.pinColor = pinColorIndex;
+        TexLegePinAnnotationColor pinColorIndex = pinAnnoatation.pinColorIndex.unsignedIntegerValue;
+        self.pinTintColor = pinTintColorForColorIndex(pinColorIndex);
 
-
-		UIImage *anImage = [customAnnotation image];
-		if (anImage) {
-			UIImageView *iconView = [[UIImageView alloc] initWithImage:anImage];
+		UIImage *image = [pinAnnoatation image];
+		if (image)
+        {
+			UIImageView *iconView = [[UIImageView alloc] initWithImage:image];
 			self.leftCalloutAccessoryView = iconView;
 		}			
 	
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(annotationChanged_:) name:kUserPinAnnotationAddressChangeKey object:annotation];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(annotationChanged_:) name:kUserPinAnnotationAddressChangeKey object:annotation];
+        }];
 	}
 	return self;
 }
 
-- (void)annotationChanged_:(NSNotification *)notification {
+- (void)annotationChanged_:(NSNotification *)notification
+{
 	[self setNeedsDisplay];
 }
 	

@@ -94,4 +94,10 @@
 	return tempString;
 }
 
+- (UIColor *)pinTintColor
+{
+    TexLegePinAnnotationColor pinColorIndex = self.pinColorIndex.unsignedIntegerValue;
+    return pinTintColorForColorIndex(pinColorIndex);
+}
+
 @end

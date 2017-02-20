@@ -11,25 +11,23 @@
 //
 
 #import "DistrictPinAnnotationView.h"
-#import "DistrictMapObj.h"
-#import "DistrictOfficeObj.h"
-#import "TexLegeMapPins.h"
+#import "DistrictMapObj+MapKit.h"
+#import "DistrictOfficeObj+MapKit.h"
+#import <SLToastKit/SLTypeCheck.h>
 
-@interface DistrictPinAnnotationView (Private)
-- (void)resetPinColorWithAnnotation:(id <MKAnnotation>)anAnnotation;
-@end
-	
 @implementation DistrictPinAnnotationView
 
-
-- (instancetype)initWithAnnotation:(id <MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier {
-	if ((self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier])) {
+- (instancetype)initWithAnnotation:(id <MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
+	if (self)
+    {
 		self.animatesDrop = YES;
 		self.opaque = NO;
 		self.draggable = NO;
 		self.canShowCallout = YES;
 				
-		UIButton* rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];		// UIButtonTypeInfoLight
+		UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
 		self.rightCalloutAccessoryView = rightButton;
 		
 		[self resetPinColorWithAnnotation:annotation];
@@ -37,42 +35,30 @@
 	return self;
 }
 
-- (void)resetPinColorWithAnnotation:(id <MKAnnotation>)anAnnotation {
-	if (!anAnnotation || 
-		(![anAnnotation isKindOfClass:[DistrictMapObj class]] && ![anAnnotation isKindOfClass:[DistrictOfficeObj class]]))  
-		return;
-		
-	UIView *foundPinImage = nil;
-	for (UIView* suspect in self.subviews) {
-		if (suspect.tag == 999) {
-			foundPinImage = suspect;
-			break;
-		}
-	}
-	
-	if (foundPinImage)
-		[foundPinImage removeFromSuperview];
-	
-	NSInteger pinColorIndex = MKPinAnnotationColorRed;
-	if ([anAnnotation respondsToSelector:@selector(pinColorIndex)]) {
-		NSNumber *pinColorNumber = [anAnnotation performSelector:@selector(pinColorIndex)];
-		if (pinColorNumber)
-			pinColorIndex = pinColorNumber.integerValue;
-	}
-		
-	if (pinColorIndex < TexLegePinAnnotationColorBlue && pinColorIndex >= 0)
-		self.pinColor = pinColorIndex;
-	else {
-		UIImage *pinImage = [TexLegeMapPins imageForPinColorIndex:pinColorIndex status:TexLegePinAnnotationStatusHead];
-		if (pinImage) {
-			UIImageView *pinHead = [[UIImageView alloc] initWithImage:pinImage];
-			pinHead.tag = 999;
-			[self addSubview:pinHead];
-		}
-	}
-	UIImage *anImage = [self.annotation performSelector:@selector(image)];
-	if (anImage) {
-		UIImageView *iconView = [[UIImageView alloc] initWithImage:anImage];
+- (void)resetPinColorWithAnnotation:(id <MKAnnotation>)anAnnotation
+{
+    DistrictMapObj *asBoundary = SLValueIfClass(DistrictMapObj,anAnnotation);
+    DistrictOfficeObj *asOffice = SLValueIfClass(DistrictOfficeObj,anAnnotation);
+    
+    UIImage *image = nil;
+    UIColor *tintColor = nil;
+    if (asBoundary)
+    {
+        tintColor = asBoundary.pinTintColor;
+        image = asBoundary.image;
+    }
+    if (asOffice)
+    {
+        tintColor = asOffice.pinTintColor;
+        image = asOffice.image;
+    }
+    
+    if (tintColor)
+        self.pinTintColor = tintColor;
+    
+	if (image)
+    {
+		UIImageView *iconView = [[UIImageView alloc] initWithImage:image];
 		self.leftCalloutAccessoryView = iconView;
 	}
 }

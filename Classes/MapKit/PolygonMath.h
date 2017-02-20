@@ -10,19 +10,16 @@
 //
 //
 
-#import <Foundation/Foundation.h>
-#import <MapKit/MapKit.h>
+@import Foundation;
+@import CoreLocation;
 
 typedef struct {
 	double x,y;
 } MapPoint;
 
-@interface PolygonMath : NSObject {
-	
-}
-+ (BOOL) insidePolygon:(CLLocationCoordinate2D *)polygon count:(NSInteger)N point:(CLLocationCoordinate2D) p;
-+ (BOOL) pnpoly:(double *)xp yp:(double *)yp count:(NSInteger)npol x:(double)x y:(double)y;
+@interface PolygonMath : NSObject
 
-
++ (BOOL)insidePolygon:(CLLocationCoordinate2D *)polygon count:(UInt64)count point:(CLLocationCoordinate2D)point;
++ (BOOL)pnpoly:(double *)xp yp:(double *)yp count:(UInt64)npol x:(double)x y:(double)y;
 
 @end

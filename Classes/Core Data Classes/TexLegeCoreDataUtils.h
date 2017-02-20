@@ -21,19 +21,15 @@
 
 @interface TexLegeCoreDataUtils : NSObject<RKManagedObjectStoreDelegate>
 
-+ (id) fetchCalculation:(NSString *)calc ofProperty:(NSString *)prop withType:(NSAttributeType)retType onEntity:(NSString *)entityName;
++ (id)fetchCalculation:(NSString *)calc ofProperty:(NSString *)prop withType:(NSAttributeType)retType onEntity:(NSString *)entityName;
 
 + (id)dataObjectWithPredicate:(NSPredicate *)predicate entityName:(NSString*)entityName;
 + (LegislatorObj*)legislatorForDistrict:(NSNumber*)district andChamber:(NSNumber*)chamber;
 + (DistrictMapObj*)districtMapForDistrict:(NSNumber*)district andChamber:(NSNumber*)chamber;
 
-+ (NSArray *) allLegislatorsSortedByPartisanshipFromChamber:(NSInteger)chamber andPartyID:(NSInteger)party;
++ (NSArray<LegislatorObj *> *) allLegislatorsSortedByPartisanshipFromChamber:(TXLChamberType)chamber andPartyID:(TXLPartyType)party;
 + (NSArray *) allDistrictMapIDsWithBoundingBoxesContaining:(CLLocationCoordinate2D)coordinate;
-+ (NSArray*) allPrimaryKeyIDsInEntityNamed:(NSString*)entityName;
-
-#if 0 // can't get custom objects while using propertiesToFetch: anymore
-+ (NSArray *) allDistrictMapsLight;
-#endif
++ (NSArray *) allPrimaryKeyIDsInEntityNamed:(NSString*)entityName;
 
 + (void) deleteObjectInEntityNamed:(NSString *)entityName withPrimaryKeyValue:(id)keyValue;
 + (void) deleteAllObjectsInEntityNamed:(NSString*)entityName;

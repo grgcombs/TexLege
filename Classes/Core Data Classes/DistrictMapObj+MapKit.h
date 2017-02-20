@@ -19,7 +19,7 @@
 @property (NS_NONATOMIC_IOSONLY, readonly) UIImage *image;
 @property (NS_NONATOMIC_IOSONLY, readonly) MKPolyline *polyline;
 @property (NS_NONATOMIC_IOSONLY, readonly) MKPolygon *polygon;
-
+@property (NS_NONATOMIC_IOSONLY, readonly) UIColor *pinTintColor;
 - (BOOL) districtContainsCoordinate:(CLLocationCoordinate2D)aCoordinate;
 
 @end

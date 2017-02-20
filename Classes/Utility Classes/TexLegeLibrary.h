@@ -70,7 +70,7 @@ NSString *abbreviateString(NSString *inString);
 
 TXLChamberType chamberFromOpenStatesString(NSString *chamberString);
 NSString *stringForChamber(TXLChamberType chamber, TLStringReturnType type);
-NSString *stringForParty(NSInteger party, TLStringReturnType type);
+NSString *stringForParty(TXLPartyType party, TLStringReturnType type);
 NSString *billTypeStringFromBillID(NSString *billID);
 BOOL billTypeRequiresGovernor(NSString *billType);
 BOOL billTypeRequiresOpposingChamber(NSString *billType);

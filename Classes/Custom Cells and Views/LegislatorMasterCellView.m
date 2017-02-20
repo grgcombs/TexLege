@@ -75,15 +75,22 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 	else
 		_sliderMax = (-_sliderMin);
 		
-#define	kStarAtDemoc 0.5
-#define kStarAtRepub 162.0
-#define	kStarAtHalf 81.5
-#define kStarMagnifierBase (kStarAtRepub - kStarAtDemoc)
-	
-	CGFloat magicNumber = (kStarMagnifierBase / (_sliderMax - _sliderMin));
-	CGFloat offset = kStarAtHalf;
-		
-	_sliderValue = _sliderValue * magicNumber + offset;
+    const CGFloat kStarAtDemoc = 0.5;
+    const CGFloat kStarAtRepub = 162.0;
+    const CGFloat kStarAtHalf = 81.5;
+    const CGFloat kStarMagnifierBase = (kStarAtRepub - kStarAtDemoc);
+    CGFloat divisor = (_sliderMax - _sliderMin);
+    if (divisor != 0 && divisor != INFINITY && divisor != NAN)
+    {
+        CGFloat magicNumber = (kStarMagnifierBase / divisor);
+        CGFloat offset = kStarAtHalf;
+        
+        _sliderValue = value * magicNumber + offset;
+    }
+    else
+    {
+        NSLog(@"HERE!!");
+    }
 	
 	//[self setNeedsDisplay];
 }
@@ -114,9 +121,9 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 	[self setNeedsDisplay];
 }
 
-- (void)setLegislator:(LegislatorObj *)value
+- (void)setLegislator:(LegislatorObj *)legislator
 {
-    if (!value)
+    if (!legislator)
     {
         self.partisan_index = 0;
         self.title = nil;
@@ -128,18 +135,22 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
         [self setNeedsDisplay];
         return;
     }
-	self.partisan_index = value.latestWnomFloat;
-    self.title = [value.legtype_name stringByAppendingFormat:@" - %@", [value districtPartyString]];
-	self.name = [value legProperName];
-	self.tenure = [value tenureString];
+	self.partisan_index = legislator.latestWnomFloat;
+    self.title = [legislator.legtype_name stringByAppendingFormat:@" - %@", [legislator districtPartyString]];
+	self.name = [legislator legProperName];
+	self.tenure = [legislator tenureString];
 		
 	PartisanIndexStats *indexStats = [PartisanIndexStats sharedPartisanIndexStats];
     if (indexStats.hasData)
     {
-        CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:(value.legtype).integerValue];
-        CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:(value.legtype).integerValue];
-        self.sliderMax = maxSlider;
-        self.sliderMin = minSlider;
+        TXLChamberType chamber = legislator.legtype.intValue;
+        CGFloat minSlider = [indexStats minPartisanIndexUsingChamber:chamber];
+        CGFloat maxSlider = [indexStats maxPartisanIndexUsingChamber:chamber];
+        if (minSlider != maxSlider)
+        {
+            self.sliderMax = maxSlider;
+            self.sliderMin = minSlider;
+        }
         self.sliderValue = self.partisan_index;
     }
     
@@ -173,7 +184,6 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 		tenureColor = [TexLegeTheme textLight];
 		titleColor = [TexLegeTheme accent];
 	}
-
 
     CGFloat widthRatio = CGRectGetWidth(bounds) / CGRectGetWidth(imageBounds);
     CGFloat heightRatio = CGRectGetHeight(bounds) / CGRectGetHeight(imageBounds);
@@ -234,9 +244,9 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
         CGFloat stroke = 1.0f;
         stroke *= resolution;
         if (stroke < 1.0f) {
-            stroke = ceilf(stroke);
+            stroke = ceil(stroke);
         } else {
-            stroke = roundf(stroke);
+            stroke = round(stroke);
         }
         stroke /= resolution;
         stroke *= 2.0f;
@@ -269,15 +279,15 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
                 // Star
                 stroke = 1.0f;
                 stroke *= resolution;
-                if (stroke < 1.0f) {
-                    stroke = ceilf(stroke);
-                } else {
-                    stroke = roundf(stroke);
-                }
+                if (stroke < 1.0f)
+                    stroke = ceil(stroke);
+                else
+                    stroke = round(stroke);
+                
                 CGFloat starCenter = self.sliderValue;  // lets start at 86.5
 
                 stroke /= resolution;
-                CGFloat alignStroke = fmodf(0.5f * stroke * resolution, 1.0f);
+                CGFloat alignStroke = fmod(0.5f * stroke * resolution, 1.0f);
 
                 CGFloat yShift = 40.5f;
 
@@ -385,7 +395,8 @@ const CGFloat kLegislatorMasterCellViewHeight = 73.0f;
 
 - (CGFloat)scaleValue:(CGFloat)value forResolution:(CGFloat)resolution alignment:(CGFloat)alignment
 {
-    return (roundf(resolution * value + alignment) - alignment) / resolution;
+    CGFloat new = (roundf(resolution * value + alignment) - alignment) / resolution;
+    return new;
 }
 
 @end
